@@ -12,16 +12,16 @@ namespace ProcureEaseAPI.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class AspNetUser
+    public partial class AspNetUsers
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public AspNetUser()
+        public AspNetUsers()
         {
-            this.AspNetUserClaims = new HashSet<AspNetUserClaim>();
-            this.AspNetUserLogins = new HashSet<AspNetUserLogin>();
-            this.AspNetUserRoles = new HashSet<AspNetUserRole>();
-            this.Departments = new HashSet<Department>();
-            this.UserProfiles = new HashSet<UserProfile>();
+            this.AspNetUserClaims = new HashSet<AspNetUserClaims>();
+            this.AspNetUserLogins = new HashSet<AspNetUserLogins>();
+            this.AspNetUserRoles = new HashSet<AspNetUserRoles>();
+            this.Department = new HashSet<Department>();
+            this.UserProfile = new HashSet<UserProfile>();
         }
     
         public string Id { get; set; }
@@ -38,14 +38,14 @@ namespace ProcureEaseAPI.Models
         public string UserName { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AspNetUserClaim> AspNetUserClaims { get; set; }
+        public virtual ICollection<AspNetUserClaims> AspNetUserClaims { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AspNetUserLogin> AspNetUserLogins { get; set; }
+        public virtual ICollection<AspNetUserLogins> AspNetUserLogins { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AspNetUserRole> AspNetUserRoles { get; set; }
+        public virtual ICollection<AspNetUserRoles> AspNetUserRoles { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Department> Departments { get; set; }
+        public virtual ICollection<Department> Department { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserProfile> UserProfiles { get; set; }
+        public virtual ICollection<UserProfile> UserProfile { get; set; }
     }
 }

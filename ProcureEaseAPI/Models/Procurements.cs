@@ -12,13 +12,13 @@ namespace ProcureEaseAPI.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Procurement
+    public partial class Procurements
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Procurement()
+        public Procurements()
         {
-            this.AdvertLotNumbers = new HashSet<AdvertLotNumber>();
-            this.Items = new HashSet<Item>();
+            this.AdvertLotNumber = new HashSet<AdvertLotNumber>();
+            this.Items = new HashSet<Items>();
         }
     
         public System.Guid ProcurementID { get; set; }
@@ -34,14 +34,14 @@ namespace ProcureEaseAPI.Models
         public Nullable<System.DateTime> DateCreated { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AdvertLotNumber> AdvertLotNumbers { get; set; }
+        public virtual ICollection<AdvertLotNumber> AdvertLotNumber { get; set; }
         public virtual BudgetYear BudgetYear { get; set; }
         public virtual Department Department { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Item> Items { get; set; }
+        public virtual ICollection<Items> Items { get; set; }
         public virtual ProcurementMethod ProcurementMethod { get; set; }
-        public virtual ProcurementStatu ProcurementStatu { get; set; }
+        public virtual ProcurementStatus ProcurementStatus { get; set; }
         public virtual ProjectCategory ProjectCategory { get; set; }
-        public virtual SourceOfFund SourceOfFund { get; set; }
+        public virtual SourceOfFunds SourceOfFunds { get; set; }
     }
 }

@@ -12,13 +12,13 @@ namespace ProcureEaseAPI.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Advert
+    public partial class Adverts
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Advert()
+        public Adverts()
         {
-            this.AdvertCategoryNumbers = new HashSet<AdvertCategoryNumber>();
-            this.AdvertLotNumbers = new HashSet<AdvertLotNumber>();
+            this.AdvertCategoryNumber = new HashSet<AdvertCategoryNumber>();
+            this.AdvertLotNumber = new HashSet<AdvertLotNumber>();
         }
     
         public System.Guid AdvertID { get; set; }
@@ -38,10 +38,10 @@ namespace ProcureEaseAPI.Models
         public Nullable<System.DateTime> DateModified { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AdvertCategoryNumber> AdvertCategoryNumbers { get; set; }
+        public virtual ICollection<AdvertCategoryNumber> AdvertCategoryNumber { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AdvertLotNumber> AdvertLotNumbers { get; set; }
-        public virtual AdvertStatu AdvertStatu { get; set; }
+        public virtual ICollection<AdvertLotNumber> AdvertLotNumber { get; set; }
+        public virtual AdvertStatus AdvertStatus { get; set; }
         public virtual BudgetYear BudgetYear { get; set; }
     }
 }

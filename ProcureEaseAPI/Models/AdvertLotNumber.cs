@@ -22,7 +22,7 @@ namespace ProcureEaseAPI.Models
         public Nullable<System.DateTime> DateCreated { get; set; }
         public Nullable<System.DateTime> DateModified { get; set; }
     
-        public virtual Advert Advert { get; set; }
-        public virtual Procurement Procurement { get; set; }
+        public virtual Adverts Adverts { get; set; }
+        public virtual Procurements Procurements { get; set; }
     }
 }

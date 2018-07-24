@@ -12,21 +12,15 @@ namespace ProcureEaseAPI.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class OrganizationSetting
+    public partial class TelephoneNumbers
     {
-        public System.Guid OrganizationID { get; set; }
         public System.Guid TelephoneNumberID { get; set; }
-        public string OrganizationNameInFull { get; set; }
-        public string OrganizationNameAbbreviation { get; set; }
-        public string OrganizationEmail { get; set; }
-        public string Address { get; set; }
-        public string Country { get; set; }
-        public string State { get; set; }
-        public string AboutOrganization { get; set; }
+        public string TelephoneNumber { get; set; }
         public Nullable<System.DateTime> DateModified { get; set; }
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> DateCreated { get; set; }
+        public Nullable<System.Guid> OrganizationID { get; set; }
     
-        public virtual TelephoneNumber TelephoneNumber { get; set; }
+        public virtual OrganizationSettings OrganizationSettings { get; set; }
     }
 }

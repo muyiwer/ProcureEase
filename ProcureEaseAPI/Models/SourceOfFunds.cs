@@ -12,22 +12,22 @@ namespace ProcureEaseAPI.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class SourceOfFund
+    public partial class SourceOfFunds
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public SourceOfFund()
+        public SourceOfFunds()
         {
-            this.Procurements = new HashSet<Procurement>();
+            this.Procurements = new HashSet<Procurements>();
         }
     
         public System.Guid SourceOfFundID { get; set; }
-        public string SourceOfFund1 { get; set; }
+        public string SourceOfFund { get; set; }
         public Nullable<bool> EnableSourceOfFund { get; set; }
         public Nullable<System.DateTime> DateModified { get; set; }
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> DateCreated { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Procurement> Procurements { get; set; }
+        public virtual ICollection<Procurements> Procurements { get; set; }
     }
 }

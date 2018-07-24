@@ -25,7 +25,7 @@ namespace ProcureEaseAPI.Models
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> DateCreated { get; set; }
     
-        public virtual AspNetUser AspNetUser { get; set; }
+        public virtual AspNetUsers AspNetUsers { get; set; }
         public virtual Department Department { get; set; }
     }
 }

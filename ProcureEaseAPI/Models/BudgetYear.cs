@@ -17,8 +17,8 @@ namespace ProcureEaseAPI.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public BudgetYear()
         {
-            this.Adverts = new HashSet<Advert>();
-            this.Procurements = new HashSet<Procurement>();
+            this.Adverts = new HashSet<Adverts>();
+            this.Procurements = new HashSet<Procurements>();
         }
     
         public System.Guid BudgetYearID { get; set; }
@@ -28,8 +28,8 @@ namespace ProcureEaseAPI.Models
         public Nullable<System.DateTime> DateCreated { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Advert> Adverts { get; set; }
+        public virtual ICollection<Adverts> Adverts { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Procurement> Procurements { get; set; }
+        public virtual ICollection<Procurements> Procurements { get; set; }
     }
 }

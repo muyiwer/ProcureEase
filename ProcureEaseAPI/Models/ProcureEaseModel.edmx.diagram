@@ -4,30 +4,30 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="8a75b87610114f118696afe96022cfec" Name="Diagram1">
+      <Diagram DiagramId="f8348ca333ce4ea398c84103321b38c3" Name="Diagram1">
         <EntityTypeShape EntityType="ProcureEaseModel.C__MigrationHistory" Width="1.5" PointX="0.75" PointY="4.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.AdvertCategory" Width="1.5" PointX="5.25" PointY="29.375" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.AdvertCategoryNumber" Width="1.5" PointX="7.5" PointY="29.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProcureEaseModel.AdvertisedItem" Width="1.5" PointX="8.25" PointY="8.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProcureEaseModel.AdvertisedItems" Width="1.5" PointX="8.25" PointY="8.375" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.AdvertLotNumber" Width="1.5" PointX="7.5" PointY="16.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProcureEaseModel.Advert" Width="1.5" PointX="5.25" PointY="32.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProcureEaseModel.AdvertStatu" Width="1.5" PointX="3" PointY="33.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProcureEaseModel.ApprovedItem" Width="1.5" PointX="8.25" PointY="20.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProcureEaseModel.AspNetRole" Width="1.5" PointX="3.75" PointY="4.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProcureEaseModel.AspNetUserClaim" Width="1.5" PointX="3" PointY="7.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProcureEaseModel.AspNetUserLogin" Width="1.5" PointX="3" PointY="10.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProcureEaseModel.AspNetUserRole" Width="1.5" PointX="6" PointY="10.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProcureEaseModel.AspNetUser" Width="1.5" PointX="0.75" PointY="9.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProcureEaseModel.Adverts" Width="1.5" PointX="5.25" PointY="32.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProcureEaseModel.AdvertStatus" Width="1.5" PointX="3" PointY="33.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProcureEaseModel.ApprovedItems" Width="1.5" PointX="8.25" PointY="20.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProcureEaseModel.AspNetRoles" Width="1.5" PointX="3.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProcureEaseModel.AspNetUserClaims" Width="1.5" PointX="3" PointY="7.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProcureEaseModel.AspNetUserLogins" Width="1.5" PointX="3" PointY="10.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProcureEaseModel.AspNetUserRoles" Width="1.5" PointX="6" PointY="10.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProcureEaseModel.AspNetUsers" Width="1.5" PointX="0.75" PointY="9.375" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.BudgetYear" Width="1.5" PointX="3" PointY="1.375" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.Department" Width="1.5" PointX="3" PointY="15.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProcureEaseModel.Item" Width="1.5" PointX="10.5" PointY="15" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProcureEaseModel.OrganizationSetting" Width="1.5" PointX="8" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProcureEaseModel.Items" Width="1.5" PointX="10.5" PointY="15" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProcureEaseModel.OrganizationSettings" Width="1.5" PointX="5.75" PointY="1" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.ProcurementMethod" Width="1.5" PointX="3" PointY="19.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProcureEaseModel.Procurement" Width="1.5" PointX="5.25" PointY="14.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProcureEaseModel.ProcurementStatu" Width="1.5" PointX="3" PointY="22.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProcureEaseModel.Procurements" Width="1.5" PointX="5.25" PointY="14.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProcureEaseModel.ProcurementStatus" Width="1.5" PointX="3" PointY="22.625" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.ProjectCategory" Width="1.5" PointX="3" PointY="25.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProcureEaseModel.SourceOfFund" Width="1.5" PointX="3" PointY="29" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProcureEaseModel.TelephoneNumber" Width="1.5" PointX="5.75" PointY="1.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProcureEaseModel.SourceOfFunds" Width="1.5" PointX="3" PointY="29" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProcureEaseModel.TelephoneNumbers" Width="1.5" PointX="8" PointY="1.625" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.UserProfile" Width="1.5" PointX="8.25" PointY="12.125" IsExpanded="true" />
         <AssociationConnector Association="ProcureEaseModel.FK__AdvertCat__Adver__3D5E1FD2" ManuallyRouted="false" />
         <AssociationConnector Association="ProcureEaseModel.FK__AdvertCat__Adver__3C69FB99" ManuallyRouted="false" />
@@ -44,15 +44,15 @@
         <AssociationConnector Association="ProcureEaseModel.FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
         <AssociationConnector Association="ProcureEaseModel.FK__Departmen__Depar__46E78A0C" ManuallyRouted="false" />
         <AssociationConnector Association="ProcureEaseModel.FK__UserProfile__Id__52593CB8" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Budge__4BAC3F29" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Depar__4CA06362" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Budge__4AB81AF0" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Depar__4BAC3F29" ManuallyRouted="false" />
         <AssociationConnector Association="ProcureEaseModel.FK__UserProfi__Depar__5165187F" ManuallyRouted="false" />
         <AssociationConnector Association="ProcureEaseModel.FK__Items__Procureme__49C3F6B7" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__Organizat__Telep__5535A963" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Procu__4E88ABD4" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Telephone__Organ__5070F446" ManuallyRouted="false" />
         <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Procu__4D94879B" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Proje__4F7CD00D" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Sourc__5070F446" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Procu__4CA06362" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Proje__4E88ABD4" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Sourc__4F7CD00D" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

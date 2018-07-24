@@ -12,12 +12,12 @@ namespace ProcureEaseAPI.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class ApprovedItem
+    public partial class ApprovedItems
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public ApprovedItem()
+        public ApprovedItems()
         {
-            this.Items = new HashSet<Item>();
+            this.Items = new HashSet<Items>();
         }
     
         public System.Guid ItemID { get; set; }
@@ -27,6 +27,6 @@ namespace ProcureEaseAPI.Models
         public Nullable<System.DateTime> DateModified { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Item> Items { get; set; }
+        public virtual ICollection<Items> Items { get; set; }
     }
 }

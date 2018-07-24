@@ -64,8 +64,11 @@
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Owin, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.3.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
+    <Reference Include="Microsoft.Owin, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.4.0.0\lib\net451\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.4.0.0\lib\net451\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Owin.Security, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Owin.Security.3.0.1\lib\net45\Microsoft.Owin.Security.dll</HintPath>
@@ -211,100 +214,102 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="AuthRepository.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Advert.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\AdvertCategory.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AdvertCategoryNumber.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\AdvertisedItem.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
+    <Compile Include="Models\AdvertisedItems.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AdvertLotNumber.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\AdvertStatu.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
+    <Compile Include="Models\Adverts.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\ApprovedItem.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
+    <Compile Include="Models\AdvertStatus.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\AspNetRole.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
+    <Compile Include="Models\ApprovedItems.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\AspNetUser.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
+    <Compile Include="Models\AspNetRoles.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\AspNetUserClaim.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
+    <Compile Include="Models\AspNetUserClaims.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\AspNetUserLogin.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
+    <Compile Include="Models\AspNetUserLogins.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\AspNetUserRole.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
+    <Compile Include="Models\AspNetUserRoles.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AspNetUsers.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\BudgetYear.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\C__MigrationHistory.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Department.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\IdentityModel.cs" />
-    <Compile Include="Models\Item.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
+    <Compile Include="Models\Items.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Model1.Context.cs">
+    <Compile Include="Models\OrganizationSettings.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProcureEaseModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Model1.Context.tt</DependentUpon>
+      <DependentUpon>ProcureEaseModel.Context.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Model1.cs">
+    <Compile Include="Models\ProcureEaseModel.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Model1.tt</DependentUpon>
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Model1.Designer.cs">
+    <Compile Include="Models\ProcureEaseModel.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Model1.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Models\OrganizationSetting.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Procurement.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
+      <DependentUpon>ProcureEaseModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\ProcurementMethod.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\ProcurementStatu.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
+    <Compile Include="Models\Procurements.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProcurementStatus.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ProjectCategory.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\SourceOfFund.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
+    <Compile Include="Models\SourceOfFunds.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\TelephoneNumber.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
+    <Compile Include="Models\TelephoneNumbers.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\UserAccountModel.cs" />
     <Compile Include="Models\UserProfile.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\SimpleAuthorizationServerProvider.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -314,15 +319,15 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <Content Include="Models\Model1.Context.tt">
+    <Content Include="Models\ProcureEaseModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>Model1.edmx</DependentUpon>
-      <LastGenOutput>Model1.Context.cs</LastGenOutput>
+      <DependentUpon>ProcureEaseModel.edmx</DependentUpon>
+      <LastGenOutput>ProcureEaseModel.Context.cs</LastGenOutput>
     </Content>
-    <Content Include="Models\Model1.tt">
+    <Content Include="Models\ProcureEaseModel.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>Model1.edmx</DependentUpon>
-      <LastGenOutput>Model1.cs</LastGenOutput>
+      <DependentUpon>ProcureEaseModel.edmx</DependentUpon>
+      <LastGenOutput>ProcureEaseModel.cs</LastGenOutput>
     </Content>
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -348,12 +353,12 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <EntityDeploy Include="Models\Model1.edmx">
+    <EntityDeploy Include="Models\ProcureEaseModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>Model1.Designer.cs</LastGenOutput>
+      <LastGenOutput>ProcureEaseModel.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <Content Include="Models\Model1.edmx.diagram">
-      <DependentUpon>Model1.edmx</DependentUpon>
+    <Content Include="Models\ProcureEaseModel.edmx.diagram">
+      <DependentUpon>ProcureEaseModel.edmx</DependentUpon>
     </Content>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -378,6 +383,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Users\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -396,6 +402,12 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Utilities\Utilities.csproj">
+      <Project>{ef52ed7b-a909-48aa-b884-b3e35b662499}</Project>
+      <Name>Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

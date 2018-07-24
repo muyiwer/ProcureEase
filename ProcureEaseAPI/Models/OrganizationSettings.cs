@@ -12,21 +12,28 @@ namespace ProcureEaseAPI.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class TelephoneNumber
+    public partial class OrganizationSettings
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public TelephoneNumber()
+        public OrganizationSettings()
         {
-            this.OrganizationSettings = new HashSet<OrganizationSetting>();
+            this.TelephoneNumbers = new HashSet<TelephoneNumbers>();
         }
     
-        public System.Guid TelephoneNumberID { get; set; }
-        public string TelephoneNumber1 { get; set; }
+        public System.Guid OrganizationID { get; set; }
+        public string OrganizationNameInFull { get; set; }
+        public string OrganizationNameAbbreviation { get; set; }
+        public string OrganizationEmail { get; set; }
+        public string Address { get; set; }
+        public string Country { get; set; }
+        public string State { get; set; }
+        public string AboutOrganization { get; set; }
         public Nullable<System.DateTime> DateModified { get; set; }
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> DateCreated { get; set; }
+        public string OrganizationLogoPath { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<OrganizationSetting> OrganizationSettings { get; set; }
+        public virtual ICollection<TelephoneNumbers> TelephoneNumbers { get; set; }
     }
 }

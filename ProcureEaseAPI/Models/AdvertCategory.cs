@@ -17,7 +17,7 @@ namespace ProcureEaseAPI.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public AdvertCategory()
         {
-            this.AdvertCategoryNumbers = new HashSet<AdvertCategoryNumber>();
+            this.AdvertCategoryNumber = new HashSet<AdvertCategoryNumber>();
         }
     
         public System.Guid AdvertCategoryID { get; set; }
@@ -27,6 +27,6 @@ namespace ProcureEaseAPI.Models
         public Nullable<System.DateTime> DateModified { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AdvertCategoryNumber> AdvertCategoryNumbers { get; set; }
+        public virtual ICollection<AdvertCategoryNumber> AdvertCategoryNumber { get; set; }
     }
 }

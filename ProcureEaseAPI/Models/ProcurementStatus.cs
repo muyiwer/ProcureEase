@@ -12,21 +12,22 @@ namespace ProcureEaseAPI.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class AdvertisedItem
+    public partial class ProcurementStatus
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public AdvertisedItem()
+        public ProcurementStatus()
         {
-            this.Items = new HashSet<Item>();
+            this.Procurements = new HashSet<Procurements>();
         }
     
-        public System.Guid ItemID { get; set; }
-        public string Quantity { get; set; }
+        public System.Guid ProcurementStatusID { get; set; }
+        public string Status { get; set; }
+        public string Description { get; set; }
+        public Nullable<System.DateTime> DateModified { get; set; }
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> DateCreated { get; set; }
-        public Nullable<System.DateTime> DateModified { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Item> Items { get; set; }
+        public virtual ICollection<Procurements> Procurements { get; set; }
     }
 }

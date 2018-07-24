@@ -17,20 +17,20 @@ namespace ProcureEaseAPI.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public ProjectCategory()
         {
-            this.AdvertCategoryNumbers = new HashSet<AdvertCategoryNumber>();
-            this.Procurements = new HashSet<Procurement>();
+            this.AdvertCategoryNumber = new HashSet<AdvertCategoryNumber>();
+            this.Procurements = new HashSet<Procurements>();
         }
     
         public System.Guid ProjectCategoryID { get; set; }
-        public string ProjectCategory1 { get; set; }
+        public string Name { get; set; }
         public Nullable<bool> EnableProjectCategory { get; set; }
         public Nullable<System.DateTime> DateModified { get; set; }
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> DateCreated { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AdvertCategoryNumber> AdvertCategoryNumbers { get; set; }
+        public virtual ICollection<AdvertCategoryNumber> AdvertCategoryNumber { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Procurement> Procurements { get; set; }
+        public virtual ICollection<Procurements> Procurements { get; set; }
     }
 }

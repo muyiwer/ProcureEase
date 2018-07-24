@@ -24,7 +24,7 @@ namespace ProcureEaseAPI.Models
         public Nullable<System.DateTime> DateModified { get; set; }
     
         public virtual AdvertCategory AdvertCategory { get; set; }
-        public virtual Advert Advert { get; set; }
+        public virtual Adverts Adverts { get; set; }
         public virtual ProjectCategory ProjectCategory { get; set; }
     }
 }

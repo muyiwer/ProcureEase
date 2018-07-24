@@ -12,18 +12,21 @@ namespace ProcureEaseAPI.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class AspNetRole
+    public partial class AdvertStatus
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public AspNetRole()
+        public AdvertStatus()
         {
-            this.AspNetUserRoles = new HashSet<AspNetUserRole>();
+            this.Adverts = new HashSet<Adverts>();
         }
     
-        public string Id { get; set; }
-        public string Name { get; set; }
+        public System.Guid AdvertStatusID { get; set; }
+        public string Status { get; set; }
+        public Nullable<System.DateTime> DateModified { get; set; }
+        public string CreatedBy { get; set; }
+        public Nullable<System.DateTime> DateCreated { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AspNetUserRole> AspNetUserRoles { get; set; }
+        public virtual ICollection<Adverts> Adverts { get; set; }
     }
 }

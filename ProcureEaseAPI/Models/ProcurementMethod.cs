@@ -17,17 +17,17 @@ namespace ProcureEaseAPI.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public ProcurementMethod()
         {
-            this.Procurements = new HashSet<Procurement>();
+            this.Procurements = new HashSet<Procurements>();
         }
     
         public System.Guid ProcurementMethodID { get; set; }
-        public string ProcurementMethod1 { get; set; }
+        public string Name { get; set; }
         public Nullable<bool> EnableProcurementMethod { get; set; }
         public Nullable<System.DateTime> DateModified { get; set; }
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> DateCreated { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Procurement> Procurements { get; set; }
+        public virtual ICollection<Procurements> Procurements { get; set; }
     }
 }

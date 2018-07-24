@@ -12,7 +12,7 @@ namespace ProcureEaseAPI.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Item
+    public partial class Items
     {
         public System.Guid ItemID { get; set; }
         public Nullable<System.Guid> ProcurementID { get; set; }
@@ -27,8 +27,8 @@ namespace ProcureEaseAPI.Models
         public Nullable<System.DateTime> DateCreated { get; set; }
         public Nullable<System.DateTime> DateModified { get; set; }
     
-        public virtual AdvertisedItem AdvertisedItem { get; set; }
-        public virtual ApprovedItem ApprovedItem { get; set; }
-        public virtual Procurement Procurement { get; set; }
+        public virtual AdvertisedItems AdvertisedItems { get; set; }
+        public virtual ApprovedItems ApprovedItems { get; set; }
+        public virtual Procurements Procurements { get; set; }
     }
 }

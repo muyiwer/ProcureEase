@@ -12,7 +12,9 @@ namespace Utilities
         {
             ADD_EMAIL_TO_QUEUE,
             SEND_EMAIL,
-            ADD_USER
+            ADD_USER,
+            INITIATE_PASSWORD_RESET,
+            RESET_PASSWORD
         };
     }
 }

@@ -9,7 +9,8 @@ namespace Utilities
         public enum LogEvent
         {
             ADD_EMAIL_TO_QUEUE,
-            SEND_EMAIL
+            SEND_EMAIL,
+            ADD_USER
         };
 
         public LogHelper()

@@ -22,13 +22,13 @@ namespace ProcureEaseAPI.Controllers
             {                 
                 if(UserProfile.UserEmail == null)
                 {
-                    LogHelper.Log(LogHelper.LogEvent.ADD_USER, "User Email is null");
+                    LogHelper.Log(Log.Event.ADD_USER, "User Email is null");
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Please Input User Email");                  
                 }
                 var CheckIfEmailExist = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.UserEmail).FirstOrDefault();
                 if(CheckIfEmailExist != null)
                 {
-                    LogHelper.Log(LogHelper.LogEvent.ADD_USER, "User Email already Exist");
+                    LogHelper.Log(Log.Event.ADD_USER, "User Email already Exist");
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Email already exist! Please check and try again");
                 }
                 UserProfile.UserId = Guid.NewGuid();
@@ -38,7 +38,7 @@ namespace ProcureEaseAPI.Controllers
             }
             catch (Exception ex)
             {
-                LogHelper.Log(LogHelper.LogEvent.ADD_USER, ex.Message);
+                LogHelper.Log(Log.Event.ADD_USER, ex.Message);
                 return Json(ex.Message + ex.StackTrace, JsonRequestBehavior.AllowGet);
             }
             return Json(db.UserProfile.Where(x => x.UserId == UserProfile.UserId).Select(x => new

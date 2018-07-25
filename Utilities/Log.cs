@@ -11,7 +11,8 @@ namespace Utilities
         public enum Event
         {
             ADD_EMAIL_TO_QUEUE,
-            SEND_EMAIL
+            SEND_EMAIL,
+            ADD_USER
         };
     }
 }

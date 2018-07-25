@@ -26,18 +26,20 @@ namespace Utilities
                 await queue.CreateIfNotExistsAsync();
                 
                 await queue.AddMessageAsync(new CloudQueueMessage(JsonConvert.SerializeObject(message)));
-                LogHelper.Log(LogHelper.LogEvent.ADD_EMAIL_TO_QUEUE, "Mail added to queue. From: " + message.SenderEmail + ", To: " + message.RecipientEmail);
+                LogHelper.Log(Log.Event.ADD_EMAIL_TO_QUEUE, "Mail added to queue. From: " + message.SenderEmail + ", To: " + message.RecipientEmail);
+
+                return true;
 
                 // TODO: Remove the following lines once the AddEmailToQueue implementation has been fixed.
                 // There's an issue with the AddEmailToQueue implementation.
                 // So we're temporarily also calling the below function to send the mail directly.
-                bool successStatus = await SendMail(JsonConvert.SerializeObject(message));
-                return successStatus;
+                // bool successStatus = await SendMail(JsonConvert.SerializeObject(message));
+                // return successStatus;
             }
             catch (Exception ex)
             {
-                LogHelper.Log(LogHelper.LogEvent.ADD_EMAIL_TO_QUEUE, ex.Message);
-                LogHelper.Log(LogHelper.LogEvent.ADD_EMAIL_TO_QUEUE, ex.StackTrace);
+                LogHelper.Log(Log.Event.ADD_EMAIL_TO_QUEUE, ex.Message);
+                LogHelper.Log(Log.Event.ADD_EMAIL_TO_QUEUE, ex.StackTrace);
                 return false;
             }
         }
@@ -53,7 +55,7 @@ namespace Utilities
             {
                 Message message = JsonConvert.DeserializeObject<Message>(msg);
                 if(message == null || String.IsNullOrEmpty(msg)) {
-                    LogHelper.Log(LogHelper.LogEvent.SEND_EMAIL, "Email message can not be null or empty.");
+                    LogHelper.Log(Log.Event.SEND_EMAIL, "Email message can not be null or empty.");
                 } else
                 {
                     SmtpClient client = new SmtpClient();
@@ -68,14 +70,14 @@ namespace Utilities
                     mailMessage.Subject = message.Subject;
                     mailMessage.Body = message.Body;
                     await client.SendMailAsync(mailMessage);
-                    LogHelper.Log(LogHelper.LogEvent.SEND_EMAIL, "Mail sent successfully to " + message.RecipientEmail);
+                    LogHelper.Log(Log.Event.SEND_EMAIL, "Mail sent successfully to " + message.RecipientEmail);
                 }
                 return true;
             }
             catch (Exception ex)
             {
-                LogHelper.Log(LogHelper.LogEvent.SEND_EMAIL, ex.Message);
-                LogHelper.Log(LogHelper.LogEvent.ADD_EMAIL_TO_QUEUE, ex.StackTrace);
+                LogHelper.Log(Log.Event.SEND_EMAIL, ex.Message);
+                LogHelper.Log(Log.Event.ADD_EMAIL_TO_QUEUE, ex.StackTrace);
                 return false;
             }
         }
@@ -94,20 +96,28 @@ namespace Utilities
 
             public Message() { }
 
-            public Message(string senderEmail, string displayName, string recipientEmail, string bccEmail, string subject, string body) {
+            public Message(string recipientEmail, string subject, string body)
+            {
+                // TODO: Implement fetching of [senderEmail] and [displayName] from configuration.
+                string senderEmail = "ibrolive@gmail.com";
+                string displayName = "Ibrahim Dauda (test)";
                 SenderEmail = senderEmail; SenderDisplayName = displayName;
-                RecipientEmail = recipientEmail; BccEmail = bccEmail; Subject = subject; Body = body;
+                RecipientEmail = recipientEmail; Subject = subject; Body = body;
             }
 
-            public Message(string recipientEmail, string bccEmail, string subject, string body) {
+            public Message(string recipientEmail, string bccEmail, string subject, string body)
+            {
                 // TODO: Implement fetching of [senderEmail] and [displayName] from configuration.
                 string senderEmail = "ibrolive@gmail.com";
                 string displayName = "Ibrahim Dauda (test)";
                 SenderEmail = senderEmail; SenderDisplayName = displayName;
                 RecipientEmail = recipientEmail; BccEmail = bccEmail; Subject = subject; Body = body;
             }
+
+            public Message(string senderEmail, string displayName, string recipientEmail, string bccEmail, string subject, string body) {
+                SenderEmail = senderEmail; SenderDisplayName = displayName;
+                RecipientEmail = recipientEmail; BccEmail = bccEmail; Subject = subject; Body = body;
+            }
         }
     }
 }
-
-

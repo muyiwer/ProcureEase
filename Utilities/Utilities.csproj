@@ -53,6 +53,7 @@
     <Compile Include="EmailHelper.cs" />
     <Compile Include="EmailTemplateHelper.cs" />
     <Compile Include="FileUploadHelper.cs" />
+    <Compile Include="Log.cs" />
     <Compile Include="LogHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

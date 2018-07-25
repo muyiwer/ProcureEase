@@ -11,14 +11,12 @@ namespace Utilities.Test
         [TestMethod]
         public void TestSendMail_SuccessfullyWithoutAwait()
         {
-            string SenderEmail = "ibrolive@gmail.com";
-            string SenderDisplayName = "Ibrahim Dauda (test)";
             string RecipientEmail = "idauda@techspecialistlimited.com";
             string BccEmail = "ibrolive@hotmail.com";
-            string Subject = "MAIL SENT WITHOUT AWAIT - Testing 1 2 3 Testing";
+            string Subject = "UnitTest: MAIL SENT WITHOUT AWAIT";
             string Body = "this is the body of the email. some message here.";
 
-            EmailHelper.Message message = new EmailHelper.Message(SenderEmail, SenderDisplayName, RecipientEmail, BccEmail, Subject, Body);
+            EmailHelper.Message message = new EmailHelper.Message(RecipientEmail, BccEmail, Subject, Body);
 
             EmailHelper emailHelper = new EmailHelper();
             emailHelper.SendMail(JsonConvert.SerializeObject(message));
@@ -27,14 +25,12 @@ namespace Utilities.Test
         [TestMethod]
         public async Task TestSendMail_SuccessfullyWithAwait()
         {
-            string SenderEmail = "ibrolive@gmail.com";
-            string SenderDisplayName = "Ibrahim Dauda (test)";
             string RecipientEmail = "idauda@techspecialistlimited.com";
             string BccEmail = "ibrolive@hotmail.com";
-            string Subject = "MAIL SENT WITH AWAIT - Testing 1 2 3 Testing";
+            string Subject = "UnitTest: MAIL SENT WITH AWAIT";
             string Body = "this is the body of the email. some message here.";
 
-            EmailHelper.Message message = new EmailHelper.Message(SenderEmail, SenderDisplayName, RecipientEmail, BccEmail, Subject, Body);
+            EmailHelper.Message message = new EmailHelper.Message(RecipientEmail, BccEmail, Subject, Body);
 
             EmailHelper emailHelper = new EmailHelper();
             bool successStatus = await emailHelper.SendMail(JsonConvert.SerializeObject(message));
@@ -46,7 +42,7 @@ namespace Utilities.Test
         {
             string RecipientEmail = "idauda@techspecialistlimited.com";
             string BccEmail = "muyiweraro@gmail.com";
-            string Subject = "MAIL ADDED TO QUEUE - Testing 1 2 3 Testing";
+            string Subject = "UnitTest: NEW MAIL ADDED TO QUEUE";
             string Body = "this is the body of the email. some message here.";
 
             EmailHelper.Message message = new EmailHelper.Message(RecipientEmail, BccEmail, Subject, Body);
@@ -61,11 +57,24 @@ namespace Utilities.Test
         public async Task TestSendMail_SuccessfullyWithAwait_WithoutBccEmail()
         {
             string RecipientEmail = "idauda@techspecialistlimited.com";
-            string BccEmail = null;
-            string Subject = "MAIL ADDED TO QUEUE WITH NO BCC - Testing 1 2 3 Testing";
+            string Subject = "UnitTest: MAIL SENT WITH AWAIT - WITH NO BCC";
             string Body = "this is the body of the email. some message here.";
 
-            EmailHelper.Message message = new EmailHelper.Message(RecipientEmail, BccEmail, Subject, Body);
+            EmailHelper.Message message = new EmailHelper.Message(RecipientEmail, Subject, Body);
+
+            EmailHelper emailHelper = new EmailHelper();
+            bool successStatus = await emailHelper.SendMail(JsonConvert.SerializeObject(message));
+            Assert.IsTrue(successStatus);
+        }
+
+        [TestMethod]
+        public async Task TestSendMail_SuccessfullyWithAwait_WithTemplate()
+        {
+            string RecipientEmail = "idauda@techspecialistlimited.com";
+            string Subject = "UnitTest: MAIL SENT WITH AWAIT - WITH TEMPLATE";
+            string Body = new EmailTemplateHelper().GetTemplateContent("NMRC-Template");
+
+            EmailHelper.Message message = new EmailHelper.Message(RecipientEmail, Subject, Body);
 
             EmailHelper emailHelper = new EmailHelper();
             bool successStatus = await emailHelper.SendMail(JsonConvert.SerializeObject(message));

@@ -17,6 +17,7 @@ namespace ProcureEaseAPI.WebJobs
             try
             {
                 await SendEmail(message);
+                AuditTrailHelper.WriteToAuditLog(Log.Event.ADD_EMAIL_TO_QUEUE, message);
             }
             catch (Exception ex)
             {
@@ -24,7 +25,6 @@ namespace ProcureEaseAPI.WebJobs
                 log.WriteLine(ex.StackTrace);
                 throw ex;
             }
-            WriteToAuditLog();
         }
 
         private static async Task SendEmail(string message)
@@ -39,11 +39,6 @@ namespace ProcureEaseAPI.WebJobs
 
             EmailHelper emailHelper = new EmailHelper();
             await emailHelper.SendMail(message);
-        }
-
-        private static void WriteToAuditLog()
-        {
-            throw new NotImplementedException();
         }
     }
 }

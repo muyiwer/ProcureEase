@@ -4,10 +4,15 @@ using System.Text;
 
 namespace Utilities
 {
-    public class AuditTrailHelper
+    public class AuditTrailHelper : Log
     {
         public AuditTrailHelper()
         {
+        }
+
+        public static void WriteToAuditLog(Event logEvent, string message)
+        {
+            Console.WriteLine("Audit Log: " + logEvent + " : " + message);
         }
 
         //private void AuditMessage(string connectionString, AuditLog auditLog)
@@ -25,7 +30,6 @@ namespace Utilities
         //        {
         //            message.Abandon();
         //        }
-
         //    });
         //}
     }

@@ -90,7 +90,7 @@ namespace ProcureEaseAPI.Controllers
                 string Subject = "Password Reset";
                 string Body = new EmailTemplateHelper().GetTemplateContent("NMRC-Template");
                 var url = System.Web.HttpContext.Current.Request.Url.Host;
-                string newTemplateContent = string.Format(Body,"Please click the link to reset password", url + "/#/email/resetpassword/token" + PasswordToken);
+                string newTemplateContent = string.Format(Body,url + "/#/email/resetpassword/token" + PasswordToken);
                 Message message = new Message(RecipientEmail, Subject, newTemplateContent);
                 EmailHelper emailHelper = new EmailHelper();
                 await emailHelper.AddEmailToQueue(message);

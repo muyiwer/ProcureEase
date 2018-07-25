@@ -8,14 +8,22 @@ namespace ProcureEaseAPI.WebJobs
 {
     public class Functions
     {
-        EmailHelper _EmailHelper;
         // This function will get triggered/executed when a new message is written 
         // on an Azure Queue called queue.
-        public static void ProcessQueueMessage([QueueTrigger("EmailQueue")] string message, TextWriter log)
+        public async static void ProcessQueueMessage([QueueTrigger("emailqueue")] string message, TextWriter log)
         {
             // write code to reconstruct message into MailMessage
             log.WriteLine(message);
-            SendEmail(message);
+            try
+            {
+                await SendEmail(message);
+            }
+            catch (Exception ex)
+            {
+                log.WriteLine(ex.Message);
+                log.WriteLine(ex.StackTrace);
+                throw ex;
+            }
             WriteToAuditLog();
         }
 

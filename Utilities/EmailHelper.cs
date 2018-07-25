@@ -14,57 +14,94 @@ namespace Utilities
         {
         }
 
-        public void AddEmailToQueue(string from, string SenderDisplayName, string to, string bcc, string subject, string body)
+        public async Task<bool> AddEmailToQueue(Message message)
         {
             try
             {
-                CloudStorageAccount storageAccount = CloudStorageAccount.Parse("DefaultEndpointsProtocol=https;AccountName=accountName;AccountKey=someKey");
+                string connectionString = "DefaultEndpointsProtocol=https;AccountName=procureeasequeue;AccountKey=qh+fw61I/jg0sGnwoyZOaJ1nvcDIGwM1xpkRWYKtwn/C9Ka0N/O2jJHm89v+J7a8z6NQWeSNWV1GVWtK1XrVjA==";
+                CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connectionString);
                 CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
 
-                CloudQueue queue = queueClient.GetQueueReference("EmailQueue");
-                queue.CreateIfNotExistsAsync();
+                CloudQueue queue = queueClient.GetQueueReference("emailqueue");
+                await queue.CreateIfNotExistsAsync();
+                
+                await queue.AddMessageAsync(new CloudQueueMessage(JsonConvert.SerializeObject(message)));
+                LogHelper.Log(LogHelper.LogEvent.ADD_EMAIL_TO_QUEUE, "Mail added to queue. From: " + message.SenderEmail + ", To: " + message.RecipientEmail);
 
-                Message message = new Message(from, SenderDisplayName, to, bcc, subject, body);
-                queue.AddMessageAsync(new CloudQueueMessage(JsonConvert.SerializeObject(message)));
-            } catch(Exception ex)
+                // TODO: Remove the following lines once the AddEmailToQueue implementation has been fixed.
+                // There's an issue with the AddEmailToQueue implementation.
+                // So we're temporarily also calling the below function to send the mail directly.
+                await SendMail(JsonConvert.SerializeObject(message));
+            }
+            catch (Exception ex)
             {
                 LogHelper.Log(LogHelper.LogEvent.ADD_EMAIL_TO_QUEUE, ex.Message);
+                LogHelper.Log(LogHelper.LogEvent.ADD_EMAIL_TO_QUEUE, ex.StackTrace);
+                return false;
             }
+            return true;
         }
-        
-        public async Task SendMail(string msg)
+
+        /// <summary>
+        /// Used by ProcureEaseAPI.WebJobs.Functions.ProcessQueueMessage to send email.
+        /// </summary>
+        /// <param name="msg">The email to be sent. This is a serialized version of the EmailHelper.Message class.</param>
+        /// <returns></returns>
+        public async Task<bool> SendMail(string msg)
         {
             try
             {
-                Message message = (Message)JsonConvert.DeserializeObject(msg);
-                SmtpClient client = new SmtpClient();
-                MailMessage mailMessage = new MailMessage();
-                mailMessage.IsBodyHtml = true;
-                mailMessage.From = new MailAddress(message.From, message.SenderDisplayName);
-                mailMessage.To.Add(message.To);
-                mailMessage.Bcc.Add(message.Bcc);
-                mailMessage.Subject = message.Subject;
-                mailMessage.Body = message.Body;
-                await client.SendMailAsync(mailMessage);
+                Message message = JsonConvert.DeserializeObject<Message>(msg);
+                if(message == null || String.IsNullOrEmpty(msg)) {
+                    LogHelper.Log(LogHelper.LogEvent.SEND_EMAIL, "Email message can not be null or empty.");
+                } else
+                {
+                    SmtpClient client = new SmtpClient();
+                    MailMessage mailMessage = new MailMessage();
+                    mailMessage.IsBodyHtml = true;
+                    mailMessage.From = new MailAddress(message.SenderEmail, message.SenderDisplayName);
+                    mailMessage.To.Add(message.RecipientEmail);
+                    mailMessage.Bcc.Add(message.BccEmail);
+                    mailMessage.Subject = message.Subject;
+                    mailMessage.Body = message.Body;
+                    await client.SendMailAsync(mailMessage);
+                    LogHelper.Log(LogHelper.LogEvent.SEND_EMAIL, "Mail sent successfully to " + message.RecipientEmail);
+                }
             }
             catch (Exception ex)
             {
                 LogHelper.Log(LogHelper.LogEvent.SEND_EMAIL, ex.Message);
+                LogHelper.Log(LogHelper.LogEvent.ADD_EMAIL_TO_QUEUE, ex.StackTrace);
+                return false;
             }
+            return true;
         }
 
+        /// <summary>
+        /// Custom email message class to be used when an email is serialized and deserialized
+        /// </summary>
         public class Message
         {
-            public string From { get; set; }
+            public string SenderEmail { get; set; }
             public string SenderDisplayName { get; set; }
-            public string To { get; set; }
-            public string Bcc { get; set; }
+            public string RecipientEmail { get; set; }
+            public string BccEmail { get; set; }
             public string Subject { get; set; }
             public string Body { get; set; }
 
-            public Message(string from, string displayName, string to, string bcc, string subject, string body) {
-                From = from; SenderDisplayName = displayName;
-                To = to; Bcc = bcc; Subject = subject; Body = body;
+            public Message() { }
+
+            public Message(string senderEmail, string displayName, string recipientEmail, string bccEmail, string subject, string body) {
+                SenderEmail = senderEmail; SenderDisplayName = displayName;
+                RecipientEmail = recipientEmail; BccEmail = bccEmail; Subject = subject; Body = body;
+            }
+
+            public Message(string recipientEmail, string bccEmail, string subject, string body) {
+                // TODO: Implement fetching of [senderEmail] and [displayName] from configuration.
+                string senderEmail = "ibrolive@gmail.com";
+                string displayName = "Ibrahim Dauda (test)";
+                SenderEmail = senderEmail; SenderDisplayName = displayName;
+                RecipientEmail = recipientEmail; BccEmail = bccEmail; Subject = subject; Body = body;
             }
         }
     }

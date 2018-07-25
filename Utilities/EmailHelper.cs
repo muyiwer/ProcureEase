@@ -31,7 +31,8 @@ namespace Utilities
                 // TODO: Remove the following lines once the AddEmailToQueue implementation has been fixed.
                 // There's an issue with the AddEmailToQueue implementation.
                 // So we're temporarily also calling the below function to send the mail directly.
-                await SendMail(JsonConvert.SerializeObject(message));
+                bool successStatus = await SendMail(JsonConvert.SerializeObject(message));
+                return successStatus;
             }
             catch (Exception ex)
             {
@@ -39,7 +40,6 @@ namespace Utilities
                 LogHelper.Log(LogHelper.LogEvent.ADD_EMAIL_TO_QUEUE, ex.StackTrace);
                 return false;
             }
-            return true;
         }
 
         /// <summary>
@@ -61,12 +61,16 @@ namespace Utilities
                     mailMessage.IsBodyHtml = true;
                     mailMessage.From = new MailAddress(message.SenderEmail, message.SenderDisplayName);
                     mailMessage.To.Add(message.RecipientEmail);
-                    mailMessage.Bcc.Add(message.BccEmail);
+                    if (string.IsNullOrEmpty(message.BccEmail)==false) // check if BccEmail was provided
+                    {
+                        mailMessage.Bcc.Add(message.BccEmail); 
+                    }
                     mailMessage.Subject = message.Subject;
                     mailMessage.Body = message.Body;
                     await client.SendMailAsync(mailMessage);
                     LogHelper.Log(LogHelper.LogEvent.SEND_EMAIL, "Mail sent successfully to " + message.RecipientEmail);
                 }
+                return true;
             }
             catch (Exception ex)
             {
@@ -74,7 +78,6 @@ namespace Utilities
                 LogHelper.Log(LogHelper.LogEvent.ADD_EMAIL_TO_QUEUE, ex.StackTrace);
                 return false;
             }
-            return true;
         }
 
         /// <summary>

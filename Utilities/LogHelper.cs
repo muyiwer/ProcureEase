@@ -4,13 +4,13 @@ using System.Text;
 
 namespace Utilities
 {
-    public class LogHelper : Log
+    public class LogHelper
     {
         public LogHelper()
         {
         }
 
-        public static void Log(Event logEvent, string message)
+        public static void Log(Log.Event logEvent, string message)
         {
             Console.WriteLine(logEvent + " : " + message);
         }

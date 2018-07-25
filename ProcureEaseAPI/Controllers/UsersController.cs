@@ -23,30 +23,30 @@ namespace ProcureEaseAPI.Controllers
             {                 
                 if(UserProfile.UserEmail == null)
                 {
-                    LogHelper.Log(LogHelper.LogEvent.Initiate_Password_Reset, "User Email is null");
+                    LogHelper.Log(Log.Event.INITIATE_PASSWORD_RESET, "User Email is null");
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Please Input User Email");                  
                 }
                 var CheckIfEmailExist = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.UserEmail).FirstOrDefault();
                 if(CheckIfEmailExist != null)
                 {
-                    LogHelper.Log(LogHelper.LogEvent.ADD_USER, "User Email already Exist");
+                    LogHelper.Log(Log.Event.ADD_USER, "User Email already Exist");
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Email already exist! Please check and try again");
                 }
                 UserProfile.UserId = Guid.NewGuid();
                 db.UserProfile.Add(UserProfile);
                 db.SaveChanges();             
                 string RecipientEmail = UserProfile.UserEmail;
-                string BccEmail = "";
                 string Subject = "ProcureEase SignUp Invitation";
-                string Body = EmailTemplateHelper.NMRC_Template;
-
-                Message message = new Message( RecipientEmail, BccEmail, Subject, Body);
+                string Body = new EmailTemplateHelper().GetTemplateContent("NMRC_Template");
+                var url = System.Web.HttpContext.Current.Request.Url.Host;
+                string newTemplateContent = string.Format(Body,"Please click the link to Signup to ProcureEase", url + "/#/signup/" + UserProfile.UserEmail);
+                Message message = new Message( RecipientEmail,Subject, newTemplateContent);
                 EmailHelper emailHelper = new EmailHelper();
                 await emailHelper.AddEmailToQueue(message);
             }
             catch (Exception ex)
             {
-                LogHelper.Log(LogHelper.LogEvent.ADD_USER, ex.Message);
+                LogHelper.Log(Log.Event.ADD_USER, ex.Message);
                 return Json(ex.Message + ex.StackTrace, JsonRequestBehavior.AllowGet);
             }
             return Json(db.UserProfile.Select(x => new
@@ -71,7 +71,7 @@ namespace ProcureEaseAPI.Controllers
 
         }
 
-        ////TravMIS_User/InitiatePasswordReset
+          // Users/InitiatePasswordReset
         [HttpPost]
         [AllowAnonymous]
         public async Task<ActionResult> InitiatePasswordReset(string UserEmail)
@@ -82,22 +82,22 @@ namespace ProcureEaseAPI.Controllers
                 ApplicationUser user = await Repository.FindEmail(UserEmail);
                 if (user == null)
                 {
-                    LogHelper.Log(LogHelper.LogEvent.Initiate_Password_Reset, "UserEmail does not Exist");
+                    LogHelper.Log(Log.Event.INITIATE_PASSWORD_RESET, "UserEmail does not Exist");
                     return new HttpStatusCodeResult(HttpStatusCode.NotFound, "Email does not Exist! Please check and try again");
                 }
                 var PasswordToken = await Repository.GeneratePasswordToken(user.Id);
                 string RecipientEmail = UserEmail;
-                string BccEmail = "";
                 string Subject = "Password Reset";
-                string Body = EmailTemplateHelper.NMRC_Template;
-
-                Message message = new Message(RecipientEmail, BccEmail, Subject, Body);
+                string Body = new EmailTemplateHelper().GetTemplateContent("NMRC_Template");
+                var url = System.Web.HttpContext.Current.Request.Url.Host;
+                string newTemplateContent = string.Format(Body,"Please click the link to reset password", url + "/#/email/resetpassword/token" + PasswordToken);
+                Message message = new Message(RecipientEmail, Subject, newTemplateContent);
                 EmailHelper emailHelper = new EmailHelper();
                 await emailHelper.AddEmailToQueue(message);
             }
             catch(Exception ex)
             {
-                LogHelper.Log(LogHelper.LogEvent.Initiate_Password_Reset, ex.Message);
+                LogHelper.Log(Log.Event.INITIATE_PASSWORD_RESET, ex.Message);
                 return Json(ex.Message + ex.StackTrace, JsonRequestBehavior.AllowGet);
             }
             return Json(db.UserProfile.Select(x => new
@@ -122,7 +122,7 @@ namespace ProcureEaseAPI.Controllers
 
         }
 
-        ////TravMIS_User/InitiatePasswordReset
+        // Users/ResetPassword
         [HttpPost]
         [AllowAnonymous]
         public async Task<ActionResult> ResetPassword(ResetPasswordModel ResetPassword)
@@ -133,14 +133,14 @@ namespace ProcureEaseAPI.Controllers
                 ApplicationUser user = await Repository.FindEmail(ResetPassword.UserEmail);
                 if (user == null)
                 {
-                    LogHelper.Log(LogHelper.LogEvent.Reset_Password, "UserEmail does not Exist");
+                    LogHelper.Log(Log.Event.RESET_PASSWORD, "UserEmail does not Exist");
                     return new HttpStatusCodeResult(HttpStatusCode.NotFound, "Email does not Exist! Please check and try again");
                 }
                 var result = await Repository.ResetPassword(ResetPassword, user.Id);
             }
             catch (Exception ex)
             {
-              LogHelper.Log(LogHelper.LogEvent.Reset_Password, ex.Message);
+              LogHelper.Log(Log.Event.RESET_PASSWORD, ex.Message);
                 return Json(ex.Message + ex.StackTrace, JsonRequestBehavior.AllowGet);
             }
             return Json(db.UserProfile.Select(x => new

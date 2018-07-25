@@ -18,7 +18,7 @@ namespace Utilities
 
         public static void Log(LogEvent logEvent, string message)
         {
-            // implement logging
+            Console.WriteLine(logEvent + " : " + message);
         }
     }
 }

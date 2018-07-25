@@ -73,14 +73,11 @@ namespace ProcureEaseAPI.Models
 
     public class ResetPasswordModel
     {
-        [Required]
         [EmailAddress]
-        public string Email { get; set; }
-
-        [Required]
+        public string UserEmail { get; set; }
         [DataType(DataType.Password)]
-        public string Password { get; set; }
-        public string Code { get; set; }
+        public string NewPassword { get; set; }
+        public string ResetToken { get; set; }
     }
 
     public class ForgotPasswordModel

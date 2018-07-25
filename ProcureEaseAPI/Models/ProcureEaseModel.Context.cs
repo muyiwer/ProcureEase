@@ -47,7 +47,6 @@ namespace ProcureEaseAPI.Models
         public virtual DbSet<ProcurementStatus> ProcurementStatus { get; set; }
         public virtual DbSet<ProjectCategory> ProjectCategory { get; set; }
         public virtual DbSet<SourceOfFunds> SourceOfFunds { get; set; }
-        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<TelephoneNumbers> TelephoneNumbers { get; set; }
         public virtual DbSet<UserProfile> UserProfile { get; set; }
     }

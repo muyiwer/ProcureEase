@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Web.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ProcureEaseAPI;
+using ProcureEaseAPI.Models;
 using ProcureEaseAPI.Controllers;
 
 namespace ProcureEaseAPI.Tests.Controllers
@@ -13,69 +13,83 @@ namespace ProcureEaseAPI.Tests.Controllers
     [TestClass]
     public class ValuesControllerTest
     {
-        [TestMethod]
-        public void Get()
-        {
-            // Arrange
-            ValuesController controller = new ValuesController();
+        
+            [TestMethod]
+            public void TestAddUser()
+            {
+                UserProfile UserProfile = new UserProfile
+                {
+                    UserEmail = "muyiweraro@gmail.com"
+                };
+                var testAddUser = new UsersController();
+                var result = testAddUser.Add(UserProfile);
+                Assert.IsNotNull(result);
 
-            // Act
-            IEnumerable<string> result = controller.Get();
+            }
+            [TestMethod]
+            public void Get()
+            {
+                // Arrange
+                ValuesController controller = new ValuesController();
 
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(2, result.Count());
-            Assert.AreEqual("value1", result.ElementAt(0));
-            Assert.AreEqual("value2", result.ElementAt(1));
-        }
+                // Act
+                IEnumerable<string> result = controller.Get();
 
-        [TestMethod]
-        public void GetById()
-        {
-            // Arrange
-            ValuesController controller = new ValuesController();
+                // Assert
+                Assert.IsNotNull(result);
+                Assert.AreEqual(2, result.Count());
+                Assert.AreEqual("value1", result.ElementAt(0));
+                Assert.AreEqual("value2", result.ElementAt(1));
+            }
 
-            // Act
-            string result = controller.Get(5);
+            [TestMethod]
+            public void GetById()
+            {
+                // Arrange
+                ValuesController controller = new ValuesController();
 
-            // Assert
-            Assert.AreEqual("value", result);
-        }
+                // Act
+                string result = controller.Get(5);
 
-        [TestMethod]
-        public void Post()
-        {
-            // Arrange
-            ValuesController controller = new ValuesController();
+                // Assert
+                Assert.AreEqual("value", result);
+            }
 
-            // Act
-            controller.Post("value");
+            [TestMethod]
+            public void Post()
+            {
+                // Arrange
+                ValuesController controller = new ValuesController();
 
-            // Assert
-        }
+                // Act
+                controller.Post("value");
 
-        [TestMethod]
-        public void Put()
-        {
-            // Arrange
-            ValuesController controller = new ValuesController();
+                // Assert
+            }
 
-            // Act
-            controller.Put(5, "value");
+            [TestMethod]
+            public void Put()
+            {
+                // Arrange
+                ValuesController controller = new ValuesController();
 
-            // Assert
-        }
+                // Act
+                controller.Put(5, "value");
 
-        [TestMethod]
-        public void Delete()
-        {
-            // Arrange
-            ValuesController controller = new ValuesController();
+                // Assert
+            }
 
-            // Act
-            controller.Delete(5);
+            [TestMethod]
+            public void Delete()
+            {
+                // Arrange
+                ValuesController controller = new ValuesController();
 
-            // Assert
+                // Act
+                controller.Delete(5);
+
+                // Assert
+            }
         }
     }
-}
+

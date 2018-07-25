@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="15adc28e89184a819a19a816bf61ab71" Name="Diagram1">
+      <Diagram DiagramId="f8348ca333ce4ea398c84103321b38c3" Name="Diagram1">
         <EntityTypeShape EntityType="ProcureEaseModel.C__MigrationHistory" Width="1.5" PointX="0.75" PointY="4.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.AdvertCategory" Width="1.5" PointX="5.25" PointY="29.375" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.AdvertCategoryNumber" Width="1.5" PointX="7.5" PointY="29.875" IsExpanded="true" />
@@ -27,33 +27,32 @@
         <EntityTypeShape EntityType="ProcureEaseModel.ProcurementStatus" Width="1.5" PointX="3" PointY="22.625" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.ProjectCategory" Width="1.5" PointX="3" PointY="25.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.SourceOfFunds" Width="1.5" PointX="3" PointY="29" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProcureEaseModel.sysdiagrams" Width="1.5" PointX="7.75" PointY="4.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.TelephoneNumbers" Width="1.5" PointX="8" PointY="1.625" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.UserProfile" Width="1.5" PointX="8.25" PointY="12.125" IsExpanded="true" />
-        <AssociationConnector Association="ProcureEaseModel.FK__AdvertCat__Adver__71D1E811" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__AdvertCat__Adver__70DDC3D8" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__AdvertCat__Proje__72C60C4A" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__Items__Advertise__66603565" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__AdvertLot__Adver__75A278F5" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__AdvertLot__Procu__76969D2E" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__Adverts__AdvertS__6C190EBB" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__Adverts__BudgetY__6B24EA82" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__Items__ApprovedI__656C112C" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__AdvertCat__Adver__3D5E1FD2" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__AdvertCat__Adver__3C69FB99" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__AdvertCat__Proje__3E52440B" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Items__Advertise__47DBAE45" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__AdvertLot__Adver__3F466844" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__AdvertLot__Procu__403A8C7D" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Adverts__AdvertS__412EB0B6" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Adverts__BudgetY__4222D4EF" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Items__ApprovedI__48CFD27E" ManuallyRouted="false" />
         <AssociationConnector Association="ProcureEaseModel.FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId" ManuallyRouted="false" />
         <AssociationConnector Association="ProcureEaseModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
         <AssociationConnector Association="ProcureEaseModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
         <AssociationConnector Association="ProcureEaseModel.FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__Departmen__Depar__4E88ABD4" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__UserProfile__Id__5165187F" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Budge__59063A47" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Depar__59FA5E80" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__UserProfi__Depar__52593CB8" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__Items__Procureme__6477ECF3" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__Telephone__Organ__0B91BA14" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Procu__5CD6CB2B" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Procu__5BE2A6F2" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Proje__5AEE82B9" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Sourc__5DCAEF64" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Departmen__Depar__46E78A0C" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__UserProfile__Id__52593CB8" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Budge__4AB81AF0" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Depar__4BAC3F29" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__UserProfi__Depar__5165187F" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Items__Procureme__49C3F6B7" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Telephone__Organ__5070F446" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Procu__4D94879B" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Procu__4CA06362" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Proje__4E88ABD4" ManuallyRouted="false" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Sourc__4F7CD00D" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

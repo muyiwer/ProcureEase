@@ -52,8 +52,23 @@ namespace Utilities.Test
             EmailHelper.Message message = new EmailHelper.Message(RecipientEmail, BccEmail, Subject, Body);
 
             EmailHelper emailHelper = new EmailHelper();
-            
+
             bool successStatus = await emailHelper.AddEmailToQueue(message);
+            Assert.IsTrue(successStatus);
+        }
+
+        [TestMethod]
+        public async Task TestSendMail_SuccessfullyWithAwait_WithoutBccEmail()
+        {
+            string RecipientEmail = "idauda@techspecialistlimited.com";
+            string BccEmail = null;
+            string Subject = "MAIL ADDED TO QUEUE WITH NO BCC - Testing 1 2 3 Testing";
+            string Body = "this is the body of the email. some message here.";
+
+            EmailHelper.Message message = new EmailHelper.Message(RecipientEmail, BccEmail, Subject, Body);
+
+            EmailHelper emailHelper = new EmailHelper();
+            bool successStatus = await emailHelper.SendMail(JsonConvert.SerializeObject(message));
             Assert.IsTrue(successStatus);
         }
     }

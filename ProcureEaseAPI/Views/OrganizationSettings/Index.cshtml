@@ -1,0 +1,93 @@
+﻿@model IEnumerable<ProcureEaseAPI.Models.OrganizationSettings>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.OrganizationNameInFull)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.OrganizationNameAbbreviation)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.OrganizationEmail)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Address)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Country)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.State)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AboutOrganization)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DateModified)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreatedBy)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DateCreated)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.OrganizationLogoPath)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.OrganizationNameInFull)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.OrganizationNameAbbreviation)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.OrganizationEmail)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Address)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Country)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.State)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AboutOrganization)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DateModified)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CreatedBy)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DateCreated)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.OrganizationLogoPath)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.OrganizationID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.OrganizationID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.OrganizationID })
+        </td>
+    </tr>
+}
+
+</table>

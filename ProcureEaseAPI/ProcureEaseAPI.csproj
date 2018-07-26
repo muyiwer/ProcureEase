@@ -359,7 +359,6 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Properties\PublishProfiles\ProcureEaseAPI - Web Deploy.pubxml" />
     <EntityDeploy Include="Models\ProcureEaseModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>ProcureEaseModel.Designer.cs</LastGenOutput>

@@ -21,7 +21,7 @@ namespace ProcureEaseAPI
             _userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_ctx));
         }
 
-        public async Task<IdentityResult> RegisterUser(AddUserModel userModel)
+        public async Task<ApplicationUser> RegisterUser(AddUserModel userModel, string UserDepartment)
         {
             ApplicationUser user = new ApplicationUser
             {
@@ -29,8 +29,15 @@ namespace ProcureEaseAPI
             };
 
             var result = await _userManager.CreateAsync(user, userModel.Password);
-
-            return result;
+            if(UserDepartment == "Procurement")
+            {
+                var AddUserToProcurement = _userManager.AddToRole(user.Id, "Procurement Officer");
+            }
+            else
+            {
+                var AddUserToEmployee = _userManager.AddToRole(user.Id, "Employee");
+            }
+            return user;
         }
 
         public async Task<ApplicationUser> FindEmail(string UserEmail)

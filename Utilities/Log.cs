@@ -14,7 +14,8 @@ namespace Utilities
             SEND_EMAIL,
             ADD_USER,
             INITIATE_PASSWORD_RESET,
-            RESET_PASSWORD
+            RESET_PASSWORD,
+            SIGN_UP
         };
     }
 }

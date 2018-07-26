@@ -25,32 +25,35 @@ namespace ProcureEaseAPI.Controllers
         [HttpPost]
         public ActionResult AddProcurementMethod(ProcurementMethod procurementMethod)
         {
-            if (ModelState.IsValid)
+            DateTime dt = DateTime.Now;
+            procurementMethod.ProcurementMethodID = Guid.NewGuid();
+            procurementMethod.DateCreated = dt;
+            procurementMethod.DateModified = dt;
+            procurementMethod.CreatedBy = "Admin";
+            db.ProcurementMethod.Add(procurementMethod);
+            db.SaveChanges();
+            var ProcurementMethod = db.ProcurementMethod.Where(y => procurementMethod.ProcurementMethodID == procurementMethod.ProcurementMethodID).Select(x => new
             {
-                DateTime dt = DateTime.Now;
-                procurementMethod.ProcurementMethodID = Guid.NewGuid();
-                procurementMethod.DateCreated = dt;
-                procurementMethod.DateModified = dt;
-                procurementMethod.CreatedBy = "Admin";
-                db.ProcurementMethod.Add(procurementMethod);
-                db.SaveChanges();
-                var ProcurementMethod = db.ProcurementMethod.Where(y => procurementMethod.ProcurementMethodID == procurementMethod.ProcurementMethodID).Select(x => new
+                sucess = true,
+                message = "Procurement Method added successfully!!!",
+                data = new
                 {
-                    success = true,
-                    message = "Procurement Method added successfully!!!",
-                    data = new
-                    {
-                        x.ProcurementMethodID,
-                        x.Name,
-                        x.EnableProcurementMethod,
-                        x.CreatedBy,
-                        DateCreated = x.DateCreated.Value.ToString(),
-                        DateModified = x.DateModified.Value.ToString()
-                    }
-                });
-                return Json(ProcurementMethod);
-            }
-            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                    x.ProcurementMethodID,
+                    x.Name,
+                    x.EnableProcurementMethod,
+                    x.CreatedBy,
+                }
+            });
+            var AdminDashboard = new
+            {
+                success = true,
+                message = "Procurement Method added successfully!!!",
+                data = new
+                {
+                    ProcurementMethod = ProcurementMethod
+                }
+            };
+            return Json(AdminDashboard, JsonRequestBehavior.AllowGet);
         }
 
         // GET: ProcurementMethods/Details/5

@@ -306,6 +306,7 @@
     <Compile Include="Models\SourceOfFunds.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\sysdiagrams.cs" />
     <Compile Include="Models\TelephoneNumbers.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
@@ -357,7 +358,6 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Properties\PublishProfiles\ProcureEaseAPI - Web Deploy.pubxml" />
     <EntityDeploy Include="Models\ProcureEaseModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>ProcureEaseModel.Designer.cs</LastGenOutput>

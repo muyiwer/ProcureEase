@@ -32,7 +32,7 @@ namespace ProcureEaseAPI.Controllers
                 });
                 var AdminDashboard = new
                 {
-                    sucess = true,
+                    success = true,
                     message = "All source of funds",
                     data = new
                     {
@@ -59,7 +59,7 @@ namespace ProcureEaseAPI.Controllers
                 });
                 var AdminDashboard = new
                 {
-                    sucess = true,
+                    success = true,
                     message = "All Procurement Method",
                     data = new
                     {
@@ -86,7 +86,7 @@ namespace ProcureEaseAPI.Controllers
                 });
                 var AdminDashboard = new
                 {
-                    sucess = true,
+                    success = true,
                     message = "All Project Category",
                     data = new
                     {
@@ -101,21 +101,23 @@ namespace ProcureEaseAPI.Controllers
         //http://localhost:85/SetUp/UpdateBasicDetails
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult UpdateBasicDetails(OrganizationSettings organizationSetting, List<TelephoneNumbers> TelephoneNumber)
+        //[ValidateAntiForgeryToken]
+        public ActionResult UpdateBasicDetails([Bind(Include = "OrganizationID,OrganizationNameInFull,OrganizationNameAbbreviation,OrganizationEmail,Address,Country,State,AboutOrganization,DateModified,CreatedBy,DateCreated,OrganizationLogoPath")]OrganizationSettings organizationSettings, List<TelephoneNumbers> telephoneNumbers)
         {
             if (ModelState.IsValid)
             {
                 DateTime dt = DateTime.Now;
-                organizationSetting.OrganizationID = Guid.NewGuid();
-                organizationSetting.DateCreated = dt;
-                organizationSetting.DateModified = dt;
-                organizationSetting.CreatedBy = "Admin";
-                db.OrganizationSettings.Add(organizationSetting);
+                organizationSettings.OrganizationID = Guid.NewGuid();
+                organizationSettings.DateCreated = dt;
+                organizationSettings.DateModified = dt;
+                organizationSettings.CreatedBy = "Admin";
+                db.OrganizationSettings.Add(organizationSettings);
                 db.SaveChanges();
-                AddTelephone(TelephoneNumber);
-                return Json(db.OrganizationSettings.Where(y => y.OrganizationID == organizationSetting.OrganizationID).Select(x => new
+                AddTelephone(organizationSettings, telephoneNumbers);
+                var list = telephoneNumbers.ToArray();
+                var BasicDetails = db.OrganizationSettings.Where(y => organizationSettings.OrganizationID == organizationSettings.OrganizationID).Select(x => new
                 {
-                    sucess = true,
+                    success = true,
                     message = "Organization settings added successfully!!!",
                     data = new
                     {
@@ -127,27 +129,31 @@ namespace ProcureEaseAPI.Controllers
                         x.Country,
                         x.AboutOrganization,
                         x.Address,
-                        x.TelephoneNumbers,
                         x.OrganizationLogoPath,
-                        x.DateCreated,
-                        x.DateModified
+                        DateCreated = x.DateCreated.Value.ToString(),
+                        DateModified = x.DateModified.Value.ToString(),
+                        x.CreatedBy,
+                        TelephoneNumbers = db.TelephoneNumbers.Where(y => y.OrganizationID == x.OrganizationID).Select(y => new
+                        {
+                            y.TelephoneNumber
+                        })
                     }
-                }).FirstOrDefault(), JsonRequestBehavior.AllowGet);
+                });
+                return Json(BasicDetails);
             }
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
-
-        public void AddTelephone(List<TelephoneNumbers> telephoneNumbers)
+        public void AddTelephone(OrganizationSettings organizationSettings, List<TelephoneNumbers> telephoneNumbers)
         {
-            var OrganizationName = db.OrganizationSettings.Where(y => y.OrganizationNameInFull == y.OrganizationNameInFull).Select(y => y.OrganizationID).FirstOrDefault();
-            var organizationID = db.OrganizationSettings.Where(y => y.OrganizationID == OrganizationName).Select(y => y.OrganizationID).FirstOrDefault();
+            //var OrganizationName = db.OrganizationSettings.Where(y => y.OrganizationNameInFull == y.OrganizationNameInFull).Select(y => y.OrganizationID).SingleOrDefault();
+            //var organizationID = db.OrganizationSettings.Where(y => y.OrganizationID == OrganizationName).Select(y => y.OrganizationID).SingleOrDefault();
             foreach (var Telephone in telephoneNumbers)
             {
                 DateTime dt = DateTime.Now;
                 db.TelephoneNumbers.Add(new TelephoneNumbers
                 {
                     TelephoneNumberID = Guid.NewGuid(),
-                    OrganizationID = organizationID,
+                    OrganizationID = organizationSettings.OrganizationID,
                     TelephoneNumber = Telephone.TelephoneNumber,
                     DateCreated = dt,
                     DateModified = dt,
@@ -156,6 +162,115 @@ namespace ProcureEaseAPI.Controllers
                 db.SaveChanges();
             }
         }
+        //http://localhost:85/SetUp/OrganizationSettings
+        [AllowAnonymous]
+        [HttpGet]
+        public ActionResult OrganizationSettings(OrganizationSettings OrganizationSettings)
+        {
+            if (ModelState.IsValid)
+            {
+                Department department = new Department();
+                var userFirstName = db.UserProfile.Where(y => department.DepartmentID == department.DepartmentID).Select(y => y.FirstName).Distinct().ToArray();
+                var userLastName = db.UserProfile.Where(y => department.DepartmentID == department.DepartmentID).Select(y => y.LastName).Distinct().ToArray();
+                var BasicDetails = db.OrganizationSettings.Select(x => new
+                {
+                    x.OrganizationID,
+                    x.OrganizationEmail,
+                    x.OrganizationNameInFull,
+                    x.OrganizationNameAbbreviation,
+                    x.State,
+                    x.Country,
+                    x.AboutOrganization,
+                    x.OrganizationLogoPath,
+                    x.CreatedBy,
+                    TelephoneNumbers = db.TelephoneNumbers.Where(y => y.OrganizationID == x.OrganizationID).Select(y => new
+                    {
+                        y.TelephoneNumber
+                    })
 
+                });
+
+                var DepartmentSetup = db.Department.Select(x => new
+                {
+                    Department = db.Department.Where(y => y.DepartmentID == x.DepartmentID).Select(y => new
+                    {
+                        y.DepartmentID,
+                        y.DepartmentName
+                    }),
+
+                    Head = db.UserProfile.Where(y => x.DepartmentID == y.DepartmentID).Select(y => new
+                    {
+                        x.DepartmentHeadUserID,
+                        FullName = y.FirstName + " " + y.LastName
+                    })
+                });
+
+                var UserManagement = db.UserProfile.Select(x => new
+                {
+                    User = db.UserProfile.Where(y => y.UserId == x.UserId).Select(y => new
+                    {
+                        y.UserId,
+                        FullName = x.FirstName + " " + x.LastName
+                    }),
+                    Department = db.UserProfile.Where(y => y.UserId == x.UserId).Select(y => new
+                    {
+                        x.DepartmentID,
+                        y.Department.DepartmentName
+                    })
+                });
+
+                var SourceOfFunds = db.SourceOfFunds.Select(x => new
+                {
+                    x.SourceOfFundID,
+                    x.SourceOfFund,
+                    x.EnableSourceOfFund,
+                });
+
+                var ProcurementMethod = db.ProcurementMethod.Select(x => new
+                {
+                    x.ProcurementMethodID,
+                    x.Name,
+                    x.EnableProcurementMethod,
+                });
+
+                var ProjectCategory = db.ProjectCategory.Select(x => new
+                {
+                    x.ProjectCategoryID,
+                    x.Name,
+                    x.EnableProjectCategory,
+                });
+
+                var Users = db.UserProfile.Select(x => new
+                {
+                    x.UserId,
+                    FullName = x.FirstName + " " + x.LastName
+                });
+
+                var Departments = db.Department.Select(x => new
+                {
+                    x.DepartmentID,
+                    x.DepartmentName
+                });
+
+                var AdminDashboard = new
+                {
+                    success = true,
+                    message = "OK",
+                    data = new
+                    {
+                        BasicDetails = BasicDetails,
+                        DepartmentSetup = DepartmentSetup,
+                        UserManagement = UserManagement,
+                        SourceOfFunds = SourceOfFunds,
+                        ProcurementMethod = ProcurementMethod,
+                        ProjectCategory = ProjectCategory,
+                        Users = Users,
+                        Departments = Departments
+                    }
+                };
+                return Json(AdminDashboard, JsonRequestBehavior.AllowGet);
+            }
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        }
     }
 }

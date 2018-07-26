@@ -25,27 +25,32 @@ namespace ProcureEaseAPI.Controllers
         [HttpPost]
         public ActionResult AddProcurementMethod(ProcurementMethod procurementMethod)
         {
-            DateTime dt = DateTime.Now;
-            procurementMethod.ProcurementMethodID = Guid.NewGuid();
-            procurementMethod.DateCreated = dt;
-            procurementMethod.DateModified = dt;
-            procurementMethod.CreatedBy = "Admin";
-            db.ProcurementMethod.Add(procurementMethod);
-            db.SaveChanges();
-            return Json(db.ProcurementMethod.Where(y => y.ProcurementMethodID == procurementMethod.ProcurementMethodID).Select(x => new
+            if (ModelState.IsValid)
             {
-                sucess = true,
-                message = "Procurement Method added successfully!!!",
-                data = new
+                DateTime dt = DateTime.Now;
+                procurementMethod.ProcurementMethodID = Guid.NewGuid();
+                procurementMethod.DateCreated = dt;
+                procurementMethod.DateModified = dt;
+                procurementMethod.CreatedBy = "Admin";
+                db.ProcurementMethod.Add(procurementMethod);
+                db.SaveChanges();
+                var ProcurementMethod = db.ProcurementMethod.Where(y => procurementMethod.ProcurementMethodID == procurementMethod.ProcurementMethodID).Select(x => new
                 {
-                    x.ProcurementMethodID,
-                    x.Name,
-                    x.EnableProcurementMethod,
-                    x.CreatedBy,
-                    x.DateCreated,
-                    x.DateModified
-                }
-            }).FirstOrDefault(), JsonRequestBehavior.AllowGet);
+                    success = true,
+                    message = "Procurement Method added successfully!!!",
+                    data = new
+                    {
+                        x.ProcurementMethodID,
+                        x.Name,
+                        x.EnableProcurementMethod,
+                        x.CreatedBy,
+                        DateCreated = x.DateCreated.Value.ToString(),
+                        DateModified = x.DateModified.Value.ToString()
+                    }
+                });
+                return Json(ProcurementMethod);
+            }
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
 
         // GET: ProcurementMethods/Details/5

@@ -169,9 +169,6 @@ namespace ProcureEaseAPI.Controllers
         {
             if (ModelState.IsValid)
             {
-                Department department = new Department();
-                var userFirstName = db.UserProfile.Where(y => department.DepartmentID == department.DepartmentID).Select(y => y.FirstName).Distinct().ToArray();
-                var userLastName = db.UserProfile.Where(y => department.DepartmentID == department.DepartmentID).Select(y => y.LastName).Distinct().ToArray();
                 var BasicDetails = db.OrganizationSettings.Select(x => new
                 {
                     x.OrganizationID,

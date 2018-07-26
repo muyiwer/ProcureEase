@@ -20,37 +20,35 @@ namespace ProcureEaseAPI.Controllers
             return View(db.ProjectCategory.ToList());
         }
 
-        //http://localhost:86/ProjectCategories/AddProjectCategory
+        //http://localhost:85/ProjectCategories/AddProjectCategory
         [AllowAnonymous]
         [HttpPost]
         public ActionResult AddProjectCategory(ProjectCategory projectCategory)
         {
-            if (ModelState.IsValid)
+            DateTime dt = DateTime.Now;
+            projectCategory.ProjectCategoryID = Guid.NewGuid();
+            projectCategory.DateCreated = dt;
+            projectCategory.DateModified = dt;
+            projectCategory.CreatedBy = "Admin";
+            db.ProjectCategory.Add(projectCategory);
+            db.SaveChanges();
+            var ProjectCategory = db.ProjectCategory.Where(y => projectCategory.ProjectCategoryID == projectCategory.ProjectCategoryID).Select(x => new
             {
-                DateTime dt = DateTime.Now;
-                projectCategory.ProjectCategoryID = Guid.NewGuid();
-                projectCategory.DateCreated = dt;
-                projectCategory.DateModified = dt;
-                projectCategory.CreatedBy = "Admin";
-                db.ProjectCategory.Add(projectCategory);
-                db.SaveChanges();
-                var ProjectCategory = db.ProjectCategory.Where(y => projectCategory.ProjectCategoryID == projectCategory.ProjectCategoryID).Select(x => new
+                x.ProjectCategoryID,
+                x.Name,
+                x.EnableProjectCategory,
+                x.CreatedBy,
+            });
+            var AdminDashboard = new
+            {
+                success = true,
+                message = "Project Category added successfully!!!",
+                data = new
                 {
-                    success = true,
-                    message = "Project Category added successfully!!!",
-                    data = new
-                    {
-                        x.ProjectCategoryID,
-                        x.Name,
-                        x.EnableProjectCategory,
-                        x.CreatedBy,
-                        DateCreated = x.DateCreated.Value.ToString(),
-                        DateModified = x.DateModified.Value.ToString()
-                    }
-                });
-                return Json(ProjectCategory);
-            }
-            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                    ProjectCategory = ProjectCategory
+                }
+            };
+            return Json(AdminDashboard, JsonRequestBehavior.AllowGet);
         }
 
 

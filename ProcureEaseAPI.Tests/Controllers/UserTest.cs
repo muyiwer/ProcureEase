@@ -48,5 +48,20 @@ namespace ProcureEaseAPI.Tests.Controllers
         //    Assert.IsNotNull(result);
 
         //}
+
+        [TestMethod]
+        public void TestSignUp()
+        {
+            UserProfile UserProfile = new UserProfile
+            {
+                UserEmail = "muyiweraro@gmail.com",
+                FirstName = "Muyiwa",
+                LastName = "Aro"
+            };
+            string Password = "Muyiwer87";
+            var testSignUp = new UsersController();
+            var result = testSignUp.SignUp(UserProfile, Password);
+            Assert.IsNotNull(result);
+        }
     }
 }

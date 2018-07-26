@@ -9,6 +9,7 @@ using System.Net;
 using System.Threading.Tasks;
 using static Utilities.EmailHelper;
 using Newtonsoft.Json;
+using System.Data.Entity;
 
 namespace ProcureEaseAPI.Controllers
 {
@@ -164,6 +165,74 @@ namespace ProcureEaseAPI.Controllers
             }), JsonRequestBehavior.AllowGet);
 
         }
+
+        //POST: Users/SignUp
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> SignUp(UserProfile UserProfile, string Password)
+        {
+            try
+            {
+                var CheckIfUserHasSignedUp = db.AspNetUsers.Where(x => x.Email == UserProfile.UserEmail).Select(x => x.Email).FirstOrDefault();
+                if (CheckIfUserHasSignedUp != null)
+                {
+                    LogHelper.Log(Log.Event.SIGN_UP, "UserEmail already exist on AspNetUser");
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Email has already signed up! Please check and try again");
+                }
+                if (UserProfile.UserEmail == null)
+                {
+                    LogHelper.Log(Log.Event.SIGN_UP, "UserEmail is null");
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Please Input your email");
+                }
+                AddUserModel UserModel = new AddUserModel
+                {
+                    Email = UserProfile.UserEmail,
+                    Password = Password,
+                    UserName = UserProfile.UserEmail
+                };
+                var CheckUserDepartmentName = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.Department.DepartmentName).FirstOrDefault();
+                var UserDepartmentName = CheckUserDepartmentName;
+                AuthRepository Repository = new AuthRepository();
+                ApplicationUser User =  await Repository.RegisterUser(UserModel,UserDepartmentName);
+                var Id = db.AspNetUsers.Where(x => x.Email == UserProfile.UserEmail).Select(x => x.Id).FirstOrDefault();
+                var CheckIfUserIsAddedByAdmin = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.UserId).FirstOrDefault();
+                if (CheckIfUserIsAddedByAdmin == null)
+                {
+                    LogHelper.Log(Log.Event.SIGN_UP, "UserEmail has not yet been added to UserProfile table");
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Admin has not yet sent Invitation Emmail to this Email!!");
+                }
+                var UserID = CheckIfUserIsAddedByAdmin;
+                UserProfile EditProfile = db.UserProfile.Where(x => x.UserId == UserID).FirstOrDefault();
+                EditProfile.Id = User.Id;
+                EditProfile.FirstName = UserProfile.FirstName;
+                EditProfile.LastName = UserProfile.LastName;           
+                db.SaveChanges();
+            }catch(Exception ex)
+            {
+                LogHelper.Log(Log.Event.SIGN_UP, ex.Message);
+                return Json(ex.Message + ex.StackTrace, JsonRequestBehavior.AllowGet);
+            }
+            return Json(db.UserProfile.Select(x => new
+            {
+                success = true,
+                message = "SignUp successfull!!",
+                data = new
+                {
+                    User = new
+                    {
+                        x.UserId,
+                        FullName = x.FirstName + " " + x.LastName
+                    },
+                    Department = new
+                    {
+                        x.DepartmentID,
+                        x.Department.DepartmentName
+                    }
+
+                }
+            }), JsonRequestBehavior.AllowGet);
+        }
+
 
 
     }

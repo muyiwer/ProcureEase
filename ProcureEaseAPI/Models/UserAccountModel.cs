@@ -62,7 +62,7 @@ namespace ProcureEaseAPI.Models
         public string UserName { get; set; }
 
         [Required]
-        [DataType(DataType.Password)]
+        [DataType(DataType.Password)] 
         public string Password { get; set; }
 
         //   [DataType(DataType.Password)]

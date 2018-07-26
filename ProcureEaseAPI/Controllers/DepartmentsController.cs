@@ -15,7 +15,7 @@ namespace ProcureEaseAPI.Controllers
     {
         private ProcureEaseEntities db = new ProcureEaseEntities();
 
-        // GET: Departments http://localhost:86/Departments
+        // GET: Departments http://localhost:85/Departments
         public ActionResult Index()
         {
             //var department = db.Department.Include(d => d.AspNetUsers);
@@ -44,7 +44,7 @@ namespace ProcureEaseAPI.Controllers
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
 
-        // POST: Add Departments http://localhost:86/Departments/AddDepartment
+        // POST: Add Departments http://localhost:85/Departments/AddDepartment
         [HttpPost]
         [AllowAnonymous]
         public ActionResult AddDepartment(AspNetUsers aspNetUsers, string DepartmentName)
@@ -96,7 +96,7 @@ namespace ProcureEaseAPI.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
 
-        // PUT: Departments/Edit/5 http://localhost:86/Departments/Edit
+        // PUT: Departments/Edit/5 http://localhost:85/Departments/Edit
         [HttpPut]
         public ActionResult Edit([Bind(Include = "DepartmentID,DepartmentHeadUserID,DepartmentName,DateModified,CreatedBy,DateCreated")] Department department)
         {
@@ -138,7 +138,7 @@ namespace ProcureEaseAPI.Controllers
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
 
-        // POST: Departments/Delete/5 http://localhost:86/Departments/Delete
+        // POST: Departments/Delete/5 http://localhost:85/Departments/Delete
         [HttpPost, ActionName("Delete")]
         //[ValidateAntiForgeryToken]
         public ActionResult Delete(Guid id)
@@ -170,7 +170,7 @@ namespace ProcureEaseAPI.Controllers
             return HttpNotFound("User not found");
         }
 
-        // GET: Departments/Edit/5 http://localhost:86/Departments/Edit
+        // GET: Departments/Edit/5 http://localhost:85/Departments/Edit
         public ActionResult getEditedDetail(Guid? id)
         {
             if (id == null)

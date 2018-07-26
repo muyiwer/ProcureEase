@@ -37,9 +37,9 @@ namespace ProcureEaseAPI.Controllers
                 db.SaveChanges();             
                 string RecipientEmail = UserProfile.UserEmail;
                 string Subject = "ProcureEase SignUp Invitation";
-                string Body = new EmailTemplateHelper().GetTemplateContent("NMRC_Template");
+                string Body = new EmailTemplateHelper().GetTemplateContent("SignUpTemplate");
                 var url = System.Web.HttpContext.Current.Request.Url.Host;
-                string newTemplateContent = string.Format(Body,"Please click the link to Signup to ProcureEase", url + "/#/signup/" + UserProfile.UserEmail);
+                string newTemplateContent = string.Format(Body," " + "http://" + url + "/#/signup/" + UserProfile.UserEmail);
                 Message message = new Message( RecipientEmail,Subject, newTemplateContent);
                 EmailHelper emailHelper = new EmailHelper();
                 await emailHelper.AddEmailToQueue(message);
@@ -88,9 +88,9 @@ namespace ProcureEaseAPI.Controllers
                 var PasswordToken = await Repository.GeneratePasswordToken(user.Id);
                 string RecipientEmail = UserEmail;
                 string Subject = "Password Reset";
-                string Body = new EmailTemplateHelper().GetTemplateContent("NMRC_Template");
+                string Body = new EmailTemplateHelper().GetTemplateContent("NMRC-Template");
                 var url = System.Web.HttpContext.Current.Request.Url.Host;
-                string newTemplateContent = string.Format(Body,"Please click the link to reset password", url + "/#/email/resetpassword/token" + PasswordToken);
+                string newTemplateContent = string.Format(Body,url + "/#/email/resetpassword/token" + PasswordToken);
                 Message message = new Message(RecipientEmail, Subject, newTemplateContent);
                 EmailHelper emailHelper = new EmailHelper();
                 await emailHelper.AddEmailToQueue(message);

@@ -20,32 +20,37 @@ namespace ProcureEaseAPI.Controllers
             return View(db.SourceOfFunds.ToList());
         }
 
-        //http://localhost:85/SourceOfFunds/AddSourceOfFund
+        //http://localhost:86/SourceOfFunds/AddSourceOfFund
         [AllowAnonymous]
         [HttpPost]
         public ActionResult AddSourceOfFund(SourceOfFunds sourceOfFunds)
         {
-            DateTime dt = DateTime.Now;
-            sourceOfFunds.SourceOfFundID = Guid.NewGuid();
-            sourceOfFunds.DateCreated = dt;
-            sourceOfFunds.DateModified = dt;
-            sourceOfFunds.CreatedBy = "Admin";
-            db.SourceOfFunds.Add(sourceOfFunds);
-            db.SaveChanges();
-            return Json(db.SourceOfFunds.Where(y => y.SourceOfFundID == sourceOfFunds.SourceOfFundID).Select(x => new
+            if (ModelState.IsValid)
             {
-                sucess = true,
-                message = "Source Of Fund added successfully!!!",
-                data = new
+                DateTime dt = DateTime.Now;
+                sourceOfFunds.SourceOfFundID = Guid.NewGuid();
+                sourceOfFunds.DateCreated = dt;
+                sourceOfFunds.DateModified = dt;
+                sourceOfFunds.CreatedBy = "Admin";
+                db.SourceOfFunds.Add(sourceOfFunds);
+                db.SaveChanges();
+                var SourceOfFunds = db.SourceOfFunds.Where(y => sourceOfFunds.SourceOfFundID == sourceOfFunds.SourceOfFundID).Select(x => new
                 {
-                    x.SourceOfFundID,
-                    x.SourceOfFund,
-                    x.EnableSourceOfFund,
-                    x.CreatedBy,
-                    x.DateCreated,
-                    x.DateModified
-                }
-            }).FirstOrDefault(), JsonRequestBehavior.AllowGet);
+                    sucess = true,
+                    message = "Source Of Fund added successfully!!!",
+                    data = new
+                    {
+                        x.SourceOfFundID,
+                        x.SourceOfFund,
+                        x.EnableSourceOfFund,
+                        x.CreatedBy,
+                        DateCreated = x.DateCreated.Value.ToString(),
+                        DateModified = x.DateModified.Value.ToString()
+                    }
+                });
+                return Json(SourceOfFunds);
+            }
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
 
         // GET: SourceOfFunds/Details/5

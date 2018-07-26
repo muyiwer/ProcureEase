@@ -41,7 +41,7 @@ namespace Utilities.Test
         public async Task TestAddEmailToQueue_SuccessfullyWithAwait()
         {
             string RecipientEmail = "idauda@techspecialistlimited.com";
-            string BccEmail = "muyiweraro@gmail.com";
+            string BccEmail = "muyiweraro@gmail.com"; 
             string Subject = "UnitTest: NEW MAIL ADDED TO QUEUE";
             string Body = "this is the body of the email. some message here.";
 

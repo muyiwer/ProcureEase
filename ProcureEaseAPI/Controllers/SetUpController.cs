@@ -103,13 +103,13 @@ namespace ProcureEaseAPI.Controllers
         [HttpPost]
         [AllowAnonymous]
         //[ValidateAntiForgeryToken]
-        public ActionResult UpdateBasicDetails([Bind(Include = "OrganizationID,OrganizationNameInFull,OrganizationNameAbbreviation,OrganizationEmail,Address,Country,State,AboutOrganization,DateModified,CreatedBy,DateCreated,OrganizationLogoPath")]OrganizationSettings organizationSettings, List<TelephoneNumbers> telephoneNumbers)
+        public ActionResult UpdateBasicDetails(OrganizationSettings organizationSettings, List<TelephoneNumbers> telephoneNumbers)
         {
             if (ModelState.IsValid)
             {
                 DateTime dt = DateTime.Now;
                 organizationSettings.OrganizationID = Guid.NewGuid();
-               // organizationSettings.OrganizationLogoPath = new FileUploadHelper().UploadImageToAzureStorage(image);
+              //organizationSettings.OrganizationLogoPath = new FileUploadHelper().UploadImageToAzureStorage(image);
                 organizationSettings.DateCreated = dt;
                 organizationSettings.DateModified = dt;
                 organizationSettings.CreatedBy = "Admin";

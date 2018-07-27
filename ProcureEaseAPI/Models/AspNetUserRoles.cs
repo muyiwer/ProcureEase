@@ -14,7 +14,7 @@ namespace ProcureEaseAPI.Models
     
     public partial class AspNetUserRoles
     {
-        public string UserID { get; set; }
+        public string UserId { get; set; }
         public string RoleId { get; set; }
         public Nullable<System.DateTime> Date_Created { get; set; }
     

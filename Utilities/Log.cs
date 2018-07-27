@@ -15,7 +15,10 @@ namespace Utilities
             ADD_USER,
             INITIATE_PASSWORD_RESET,
             RESET_PASSWORD,
-            SIGN_UP
+            SIGN_UP,
+            EDIT_USER,
+            UPDATE_USER_PROFILE,
+            UPDATE_DEPARTMENT_HEAD
         };
     }
 }

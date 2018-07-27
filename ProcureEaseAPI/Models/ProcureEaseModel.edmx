@@ -167,11 +167,11 @@
             <PropertyRef Name="DepartmentID" />
           </Key>
           <Property Name="DepartmentID" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="DepartmentHeadUserID" Type="nvarchar" MaxLength="128" />
           <Property Name="DepartmentName" Type="varchar" MaxLength="100" />
           <Property Name="DateModified" Type="datetime" />
           <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
           <Property Name="DateCreated" Type="datetime" />
+          <Property Name="DepartmentHeadUserID" Type="uniqueidentifier" />
         </EntityType>
         <EntityType Name="Items">
           <Key>
@@ -280,9 +280,9 @@
         </EntityType>
         <EntityType Name="UserProfile">
           <Key>
-            <PropertyRef Name="UserId" />
+            <PropertyRef Name="UserID" />
           </Key>
-          <Property Name="UserId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="UserID" Type="uniqueidentifier" Nullable="false" />
           <Property Name="Id" Type="nvarchar" MaxLength="128" />
           <Property Name="DepartmentID" Type="uniqueidentifier" />
           <Property Name="UserEmail" Type="varchar" MaxLength="100" />
@@ -377,12 +377,12 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Departmen__Depar__46E78A0C">
-          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
+        <Association Name="FK__Departmen__Depar__534D60F1">
+          <End Role="UserProfile" Type="Self.UserProfile" Multiplicity="0..1" />
           <End Role="Department" Type="Self.Department" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
-              <PropertyRef Name="Id" />
+            <Principal Role="UserProfile">
+              <PropertyRef Name="UserID" />
             </Principal>
             <Dependent Role="Department">
               <PropertyRef Name="DepartmentHeadUserID" />
@@ -642,8 +642,8 @@
             <End Role="BudgetYear" EntitySet="BudgetYear" />
             <End Role="Adverts" EntitySet="Adverts" />
           </AssociationSet>
-          <AssociationSet Name="FK__Departmen__Depar__46E78A0C" Association="Self.FK__Departmen__Depar__46E78A0C">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+          <AssociationSet Name="FK__Departmen__Depar__534D60F1" Association="Self.FK__Departmen__Depar__534D60F1">
+            <End Role="UserProfile" EntitySet="UserProfile" />
             <End Role="Department" EntitySet="Department" />
           </AssociationSet>
           <AssociationSet Name="FK__Items__Advertise__47DBAE45" Association="Self.FK__Items__Advertise__47DBAE45">
@@ -883,7 +883,6 @@
           <NavigationProperty Name="AspNetUserClaims" Relationship="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserClaims" />
           <NavigationProperty Name="AspNetUserLogins" Relationship="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserLogins" />
           <NavigationProperty Name="AspNetUserRoles" Relationship="Self.FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserRoles" />
-          <NavigationProperty Name="Department" Relationship="Self.FK__Departmen__Depar__46E78A0C" FromRole="AspNetUsers" ToRole="Department" />
           <NavigationProperty Name="UserProfile" Relationship="Self.FK__UserProfile__Id__52593CB8" FromRole="AspNetUsers" ToRole="UserProfile" />
         </EntityType>
         <EntityType Name="BudgetYear">
@@ -903,14 +902,14 @@
             <PropertyRef Name="DepartmentID" />
           </Key>
           <Property Name="DepartmentID" Type="Guid" Nullable="false" />
-          <Property Name="DepartmentHeadUserID" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="DepartmentName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="DateModified" Type="DateTime" Precision="3" />
           <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="DateCreated" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="AspNetUsers" Relationship="Self.FK__Departmen__Depar__46E78A0C" FromRole="Department" ToRole="AspNetUsers" />
+          <Property Name="DepartmentHeadUserID" Type="Guid" />
+          <NavigationProperty Name="UserProfile" Relationship="Self.FK__Departmen__Depar__534D60F1" FromRole="Department" ToRole="UserProfile" />
           <NavigationProperty Name="Procurements" Relationship="Self.FK__Procureme__Depar__4BAC3F29" FromRole="Department" ToRole="Procurements" />
-          <NavigationProperty Name="UserProfile" Relationship="Self.FK__UserProfi__Depar__5165187F" FromRole="Department" ToRole="UserProfile" />
+          <NavigationProperty Name="UserProfile1" Relationship="Self.FK__UserProfi__Depar__5165187F" FromRole="Department" ToRole="UserProfile" />
         </EntityType>
         <EntityType Name="Items">
           <Key>
@@ -1037,9 +1036,9 @@
         </EntityType>
         <EntityType Name="UserProfile">
           <Key>
-            <PropertyRef Name="UserId" />
+            <PropertyRef Name="UserID" />
           </Key>
-          <Property Name="UserId" Type="Guid" Nullable="false" />
+          <Property Name="UserID" Type="Guid" Nullable="false" />
           <Property Name="Id" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="DepartmentID" Type="Guid" />
           <Property Name="UserEmail" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
@@ -1050,7 +1049,8 @@
           <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="DateCreated" Type="DateTime" Precision="3" />
           <NavigationProperty Name="AspNetUsers" Relationship="Self.FK__UserProfile__Id__52593CB8" FromRole="UserProfile" ToRole="AspNetUsers" />
-          <NavigationProperty Name="Department" Relationship="Self.FK__UserProfi__Depar__5165187F" FromRole="UserProfile" ToRole="Department" />
+          <NavigationProperty Name="Department" Relationship="Self.FK__Departmen__Depar__534D60F1" FromRole="UserProfile" ToRole="Department" />
+          <NavigationProperty Name="Department1" Relationship="Self.FK__UserProfi__Depar__5165187F" FromRole="UserProfile" ToRole="Department" />
         </EntityType>
         <Association Name="FK__AdvertCat__Adver__3D5E1FD2">
           <End Role="AdvertCategory" Type="Self.AdvertCategory" Multiplicity="0..1" />
@@ -1216,18 +1216,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Departmen__Depar__46E78A0C">
-          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
-          <End Role="Department" Type="Self.Department" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Department">
-              <PropertyRef Name="DepartmentHeadUserID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__UserProfile__Id__52593CB8">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
           <End Role="UserProfile" Type="Self.UserProfile" Multiplicity="*" />
@@ -1249,6 +1237,18 @@
             </Principal>
             <Dependent Role="Procurements">
               <PropertyRef Name="BudgetYearID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Departmen__Depar__534D60F1">
+          <End Role="UserProfile" Type="Self.UserProfile" Multiplicity="0..1" />
+          <End Role="Department" Type="Self.Department" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserProfile">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="Department">
+              <PropertyRef Name="DepartmentHeadUserID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1425,10 +1425,6 @@
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
           </AssociationSet>
-          <AssociationSet Name="FK__Departmen__Depar__46E78A0C" Association="Self.FK__Departmen__Depar__46E78A0C">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="Department" EntitySet="Department" />
-          </AssociationSet>
           <AssociationSet Name="FK__UserProfile__Id__52593CB8" Association="Self.FK__UserProfile__Id__52593CB8">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="UserProfile" EntitySet="UserProfile" />
@@ -1436,6 +1432,10 @@
           <AssociationSet Name="FK__Procureme__Budge__4AB81AF0" Association="Self.FK__Procureme__Budge__4AB81AF0">
             <End Role="BudgetYear" EntitySet="BudgetYear" />
             <End Role="Procurements" EntitySet="Procurements" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Departmen__Depar__534D60F1" Association="Self.FK__Departmen__Depar__534D60F1">
+            <End Role="UserProfile" EntitySet="UserProfile" />
+            <End Role="Department" EntitySet="Department" />
           </AssociationSet>
           <AssociationSet Name="FK__Procureme__Depar__4BAC3F29" Association="Self.FK__Procureme__Depar__4BAC3F29">
             <End Role="Department" EntitySet="Department" />
@@ -1647,11 +1647,11 @@
             <EntityTypeMapping TypeName="ProcureEaseModel.Department">
               <MappingFragment StoreEntitySet="Department">
                 <ScalarProperty Name="DepartmentID" ColumnName="DepartmentID" />
-                <ScalarProperty Name="DepartmentHeadUserID" ColumnName="DepartmentHeadUserID" />
                 <ScalarProperty Name="DepartmentName" ColumnName="DepartmentName" />
                 <ScalarProperty Name="DateModified" ColumnName="DateModified" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="DepartmentHeadUserID" ColumnName="DepartmentHeadUserID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1771,7 +1771,7 @@
           <EntitySetMapping Name="UserProfile">
             <EntityTypeMapping TypeName="ProcureEaseModel.UserProfile">
               <MappingFragment StoreEntitySet="UserProfile">
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="DepartmentID" ColumnName="DepartmentID" />
                 <ScalarProperty Name="UserEmail" ColumnName="UserEmail" />

@@ -62,14 +62,14 @@ namespace ProcureEaseAPI
             return PasswordToken;
         }
 
-        public async Task<IdentityResult> ResetPassword(ResetPasswordModel ResetPassword, string UserId)
+        public async Task<IdentityResult> ResetPassword(ResetPasswordModel ResetPassword, string UserID)
         {
-            var PasswordToken = await _userManager.ResetPasswordAsync(UserId, ResetPassword.ResetToken, ResetPassword.NewPassword);
+            var PasswordToken = await _userManager.ResetPasswordAsync(UserID, ResetPassword.ResetToken, ResetPassword.NewPassword);
 
             return PasswordToken;
         }
 
-        public void Dispose()
+    public void Dispose()
         {
             _ctx.Dispose();
             _userManager.Dispose();

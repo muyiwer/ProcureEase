@@ -92,10 +92,10 @@ namespace ProcureEaseAPI.App_Start
         {
         }
 
-        public override Task<ClaimsIdentity> CreateUserIdentityAsync(ApplicationUser user)
-        {
-            return user.GenerateUserIdentityAsync((ApplicationUserManager)UserManager);
-        }
+        //public override Task<ClaimsIdentity> CreateUserIDentityAsync(ApplicationUser user)
+        //{
+        //    return user.GenerateUserIDentityAsync((ApplicationUserManager)UserManager);
+        //}
 
         public static ApplicationSignInManager Create(IdentityFactoryOptions<ApplicationSignInManager> options, IOwinContext context)
         {

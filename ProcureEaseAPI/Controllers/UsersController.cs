@@ -33,7 +33,7 @@ namespace ProcureEaseAPI.Controllers
                     LogHelper.Log(Log.Event.ADD_USER, "User Email already Exist");
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Email already exist! Please check and try again");
                 }
-                UserProfile.UserId = Guid.NewGuid();
+                UserProfile.UserID = Guid.NewGuid();
                 db.UserProfile.Add(UserProfile);
                 db.SaveChanges();             
                 string RecipientEmail = UserProfile.UserEmail;
@@ -58,13 +58,13 @@ namespace ProcureEaseAPI.Controllers
                 {
                    User= new
                    {
-                       x.UserId,
+                       x.UserID,
                        FullName = x.FirstName + " " + x.LastName
                    },
                    Department = new
                    {
                        x.DepartmentID,
-                       x.Department.DepartmentName
+                       x.Department1.DepartmentName
                    }
                    
                 }
@@ -109,13 +109,13 @@ namespace ProcureEaseAPI.Controllers
                 {
                     User = new
                     {
-                        x.UserId,
+                        x.UserID,
                         FullName = x.FirstName + " " + x.LastName
                     },
                     Department = new
                     {
                         x.DepartmentID,
-                        x.Department.DepartmentName
+                        x.Department1.DepartmentName
                     }
 
                 }
@@ -152,13 +152,13 @@ namespace ProcureEaseAPI.Controllers
                 {
                     User = new
                     {
-                        x.UserId,
+                        x.UserID,
                         FullName = x.FirstName + " " + x.LastName
                     },
                     Department = new
                     {
                         x.DepartmentID,
-                        x.Department.DepartmentName
+                        x.Department1.DepartmentName
                     }
 
                 }
@@ -190,19 +190,19 @@ namespace ProcureEaseAPI.Controllers
                     Password = Password,
                     UserName = UserProfile.UserEmail
                 };
-                var CheckUserDepartmentName = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.Department.DepartmentName).FirstOrDefault();
+                var CheckUserDepartmentName = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.Department1.DepartmentName).FirstOrDefault();
                 var UserDepartmentName = CheckUserDepartmentName;
                 AuthRepository Repository = new AuthRepository();
                 ApplicationUser User =  await Repository.RegisterUser(UserModel,UserDepartmentName);
                 var Id = db.AspNetUsers.Where(x => x.Email == UserProfile.UserEmail).Select(x => x.Id).FirstOrDefault();
-                var CheckIfUserIsAddedByAdmin = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.UserId).FirstOrDefault();
+                var CheckIfUserIsAddedByAdmin = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.UserID).FirstOrDefault();
                 if (CheckIfUserIsAddedByAdmin == null)
                 {
                     LogHelper.Log(Log.Event.SIGN_UP, "UserEmail has not yet been added to UserProfile table");
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Admin has not yet sent Invitation Emmail to this Email!!");
                 }
                 var UserID = CheckIfUserIsAddedByAdmin;
-                UserProfile EditProfile = db.UserProfile.Where(x => x.UserId == UserID).FirstOrDefault();
+                UserProfile EditProfile = db.UserProfile.Where(x => x.UserID == UserID).FirstOrDefault();
                 EditProfile.Id = User.Id;
                 EditProfile.FirstName = UserProfile.FirstName;
                 EditProfile.LastName = UserProfile.LastName;           
@@ -220,13 +220,13 @@ namespace ProcureEaseAPI.Controllers
                 {
                     User = new
                     {
-                        x.UserId,
+                        x.UserID,
                         FullName = x.FirstName + " " + x.LastName
                     },
                     Department = new
                     {
                         x.DepartmentID,
-                        x.Department.DepartmentName
+                        x.Department1.DepartmentName
                     }
 
                 }

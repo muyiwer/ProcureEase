@@ -18,20 +18,20 @@ namespace ProcureEaseAPI.Models
         public Department()
         {
             this.Procurements = new HashSet<Procurements>();
-            this.UserProfile = new HashSet<UserProfile>();
+            this.UserProfile1 = new HashSet<UserProfile>();
         }
     
         public System.Guid DepartmentID { get; set; }
-        public string DepartmentHeadUserID { get; set; }
         public string DepartmentName { get; set; }
         public Nullable<System.DateTime> DateModified { get; set; }
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> DateCreated { get; set; }
+        public Nullable<System.Guid> DepartmentHeadUserID { get; set; }
     
-        public virtual AspNetUsers AspNetUsers { get; set; }
+        public virtual UserProfile UserProfile { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Procurements> Procurements { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserProfile> UserProfile { get; set; }
+        public virtual ICollection<UserProfile> UserProfile1 { get; set; }
     }
 }

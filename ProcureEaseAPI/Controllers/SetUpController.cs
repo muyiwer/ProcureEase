@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Utilities;
 
 namespace ProcureEaseAPI.Controllers
 {
@@ -108,6 +109,7 @@ namespace ProcureEaseAPI.Controllers
             {
                 DateTime dt = DateTime.Now;
                 organizationSettings.OrganizationID = Guid.NewGuid();
+               // organizationSettings.OrganizationLogoPath = new FileUploadHelper().UploadImageToAzureStorage(image);
                 organizationSettings.DateCreated = dt;
                 organizationSettings.DateModified = dt;
                 organizationSettings.CreatedBy = "Admin";
@@ -204,15 +206,15 @@ namespace ProcureEaseAPI.Controllers
 
                 var UserManagement = db.UserProfile.Select(x => new
                 {
-                    User = db.UserProfile.Where(y => y.UserId == x.UserId).Select(y => new
+                    User = db.UserProfile.Where(y => y.UserID == x.UserID).Select(y => new
                     {
-                        y.UserId,
+                        y.UserID,
                         FullName = x.FirstName + " " + x.LastName
                     }),
-                    Department = db.UserProfile.Where(y => y.UserId == x.UserId).Select(y => new
+                    Department = db.UserProfile.Where(y => y.UserID == x.UserID).Select(y => new
                     {
                         x.DepartmentID,
-                        y.Department.DepartmentName
+                        y.Department1.DepartmentName
                     })
                 });
 
@@ -239,7 +241,7 @@ namespace ProcureEaseAPI.Controllers
 
                 var Users = db.UserProfile.Select(x => new
                 {
-                    x.UserId,
+                    x.UserID,
                     FullName = x.FirstName + " " + x.LastName
                 });
 

@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using ProcureEaseAPI.Models;
 using Utilities;
 using System.Net;
 using System.Threading.Tasks;
 using static Utilities.EmailHelper;
-using Newtonsoft.Json;
-using System.Data.Entity;
+using System.Net.Http;
+using System.Web.Script.Serialization;
 
 namespace ProcureEaseAPI.Controllers
 {
@@ -17,8 +16,55 @@ namespace ProcureEaseAPI.Controllers
     {
         private ProcureEaseEntities db = new ProcureEaseEntities();
 
+        //POST: Users/Login
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> Login(string UserName, string Password)
+        {
+
+            /*This will depend totally on how you will get access to the identity provider and get your token, this is just a sample of how it would be done*/
+            /*Get Access Token Start*/
+            HttpClient httpClient = new HttpClient();
+            httpClient.BaseAddress = System.Web.HttpContext.Current.Request.Url;
+            var postData = new List<KeyValuePair<string, string>>();
+            postData.Add(new KeyValuePair<string, string>("UserName", UserName));
+            postData.Add(new KeyValuePair<string, string>("Password", Password));
+            postData.Add(new KeyValuePair<string, string>("grant_type", "password"));
+            HttpContent content = new FormUrlEncodedContent(postData);
+            HttpResponseMessage response = await httpClient.PostAsync("/token", content);
+            //  var error = response.EnsureSuccessStatusCode();
+            string AccessToken = await response.Content.ReadAsStringAsync();
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            Token token = serializer.Deserialize<Token>(AccessToken);
+ 
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                LogHelper.Log(Log.Event.LOGIN, "Invalid UserName or Password");
+                return Json(new
+                {
+                    success = false,
+                    message = "Invalid UserName or Password",
+                    data = new  {}
+                }, JsonRequestBehavior.AllowGet);
+            }           
+            return Json(new
+            {
+                success = true,
+                message = "Login Successfull!!!",
+                data = new { UserDetails = db.AspNetUsers.Where(x => x.UserName == UserName).Select(x => new
+                {
+                    x.Id,
+                   Email=  x.UserName,
+                }).FirstOrDefault(),
+                Token = token
+                }
+            }, JsonRequestBehavior.AllowGet);
+
+        }
+
         // POST: Users/Add
        [HttpPost]
+       [Authorize]
        public async Task<ActionResult> Add(UserProfile UserProfile)
         {
             try
@@ -96,7 +142,7 @@ namespace ProcureEaseAPI.Controllers
 
           // Users/InitiatePasswordReset
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize]
         public async Task<ActionResult> InitiatePasswordReset(string UserEmail)
         {
             try
@@ -160,7 +206,7 @@ namespace ProcureEaseAPI.Controllers
 
         // Users/ResetPassword
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize]
         public async Task<ActionResult> ResetPassword(ResetPasswordModel ResetPassword)
         {
             try
@@ -216,7 +262,7 @@ namespace ProcureEaseAPI.Controllers
 
         //POST: Users/SignUp
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize]
         public async Task<ActionResult> SignUp(UserProfile UserProfile, string Password)
         {
             try
@@ -311,6 +357,7 @@ namespace ProcureEaseAPI.Controllers
  
         //PUT: Users/EditUser
         [HttpPut]
+        [Authorize]
         public ActionResult EditUser(UserProfile UserProfile)
         {
             try
@@ -485,6 +532,7 @@ namespace ProcureEaseAPI.Controllers
 
         //PUT: Users/UpdateUserProfile
         [HttpPut]
+        [Authorize]
         public ActionResult UpdateUserProfile(UserProfile UserProfile)
         {
             try
@@ -542,6 +590,8 @@ namespace ProcureEaseAPI.Controllers
         }
 
         //PUT: Users/UpdateDepartmentHead
+        [Authorize]
+        [HttpPut]
         public ActionResult UpdateDepartmentHead(UserProfile UserProfile)
         {
             try
@@ -628,15 +678,8 @@ namespace ProcureEaseAPI.Controllers
             }
         }
 
-        //GET: Users/GetAllUsers
-        // [ActionName("ByDepartment")]
-        //[HttpGet]
-        //public ActionResult GetAllUsers()
-        //{
-        //    return GetAllUsers(Guid.Empty);
-        //}
-
         [HttpGet]
+        [Authorize]
         public ActionResult GetAllUsers(string id = "")
         {
             if (string.IsNullOrEmpty(id))
@@ -691,6 +734,7 @@ namespace ProcureEaseAPI.Controllers
 
       
         [HttpDelete]
+        [Authorize]
         public ActionResult Delete(UserProfile UserProfile)
         {
             try
@@ -707,8 +751,8 @@ namespace ProcureEaseAPI.Controllers
                         { }).FirstOrDefault()
                     }, JsonRequestBehavior.AllowGet);
                 }
-            var Id = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
-                if (Id == null)
+            var UserAspNetID = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
+                if (UserAspNetID == null)
                 {
                     var checkIfUserIsHeadOfDepartment = db.Department.Where(x => x.DepartmentHeadUserID == UserProfile.UserID).FirstOrDefault();
                     if (checkIfUserIsHeadOfDepartment != null)
@@ -737,20 +781,12 @@ namespace ProcureEaseAPI.Controllers
                     }, JsonRequestBehavior.AllowGet);
                 }
                 else
-                {
-                    var checkIfUserIsHeadOfDepartment = db.Department.Where(x => x.DepartmentHeadUserID == UserProfile.UserID).FirstOrDefault();
-                    if (checkIfUserIsHeadOfDepartment != null)
-                    {
-                        Department RemoveUserFromHeadOfDepartment = db.Department.SingleOrDefault(x => x.DepartmentHeadUserID == UserProfile.UserID);
-                        RemoveUserFromHeadOfDepartment.DepartmentHeadUserID = null;
-                        db.SaveChanges();
-
-                    }
+                {                  
                     UserProfile profile = db.UserProfile.SingleOrDefault(x => x.UserID == UserProfile.UserID);
                     db.UserProfile.Remove(profile);
-                    AspNetUserRoles role = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == Id);
+                    AspNetUserRoles role = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == UserAspNetID);
                     db.AspNetUserRoles.Remove(role);
-                    AspNetUsers users = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
+                    AspNetUsers users = db.AspNetUsers.SingleOrDefault(x => x.Id == UserAspNetID);
                     db.AspNetUsers.Remove(users);
                     db.SaveChanges();
                     return Json(new

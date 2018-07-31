@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using ProcureEaseAPI.Models;
 using System.Threading.Tasks;
+using Utilities;
 
 namespace ProcureEaseAPI.Controllers
 {
@@ -51,24 +52,30 @@ namespace ProcureEaseAPI.Controllers
         {
             if (ModelState.IsValid)
             {
+               DateTime dt = DateTime.Now;
+                Department department = new Department();
                 try
                 {
-                    UserProfile userProfile = new UserProfile();
-                    DateTime dt = DateTime.Now;
-                    Department department = new Department();
-                    department.DepartmentID = Guid.NewGuid();
+                    {
+                        department.DepartmentID = Guid.NewGuid();
                         department.DepartmentName = DepartmentName;
-                        department.DepartmentHeadUserID = userProfile.UserID;
                         department.DateCreated = dt;
                         department.DateModified = dt;
-                        department.CreatedBy = userProfile.UserName;
+                        department.CreatedBy = "MDA Administrator";
+                    };
                     db.Department.Add(department);
                     db.SaveChanges();
 
                 }
                 catch (Exception ex)
                 {
-                    return Json(ex.Message + ex.StackTrace, JsonRequestBehavior.AllowGet);
+                    LogHelper.Log(Log.Event.ADD_DEPARTMENT,ex.Message + ex.StackTrace);
+                    return Json(new
+                    {
+                        success = false,
+                        message =  ex.Message,
+                        data = new { }
+                    });
 
                 }
                 var Departments = db.Department.Select(x => new
@@ -96,7 +103,7 @@ namespace ProcureEaseAPI.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
 
         // PUT: Departments/Edit/5 http://localhost:85/Departments/Edit
-        [HttpPut]
+        [HttpPost]
         public ActionResult Edit([Bind(Include = "DepartmentID,DepartmentHeadUserID,DepartmentName,DateModified,CreatedBy,DateCreated")] Department department)
         {
             if (ModelState.IsValid)
@@ -104,11 +111,18 @@ namespace ProcureEaseAPI.Controllers
                 UserProfile userProfile = new UserProfile();
 
                 DateTime dt = DateTime.Now;
-                var currentDepartmentDetail = db.Department.FirstOrDefault(d => d.DepartmentID == userProfile.UserID);
+                var currentDepartmentDetail = db.Department.FirstOrDefault(d => d.DepartmentID == department.DepartmentID);
 
                 if (currentDepartmentDetail == null)
-                    return HttpNotFound();
-
+                {
+                    LogHelper.Log(Log.Event.EDIT_DEPARTMENT, "DepartmentID is not found");
+                    return Json(new
+                    {
+                        success = false,
+                        message = "DepartmentID is not found",
+                        data = new { }
+                    });
+                }
                 currentDepartmentDetail.DateModified = dt;
                 currentDepartmentDetail.DepartmentName = department.DepartmentName;
                 currentDepartmentDetail.DepartmentHeadUserID = department.DepartmentHeadUserID;
@@ -170,7 +184,13 @@ namespace ProcureEaseAPI.Controllers
                 };
                 return Json(AdminDashboard, JsonRequestBehavior.AllowGet);
             }
-            return HttpNotFound("User not found");
+            LogHelper.Log(Log.Event.DELETE_DEPARTMENT, "DepartmentID is not found");
+            return Json(new
+            {
+                success = false,
+                message = "DepartmentID is not found",
+                data = new { }
+            });
         }
 
         // GET: Departments/Edit/5 http://localhost:85/Departments/Edit

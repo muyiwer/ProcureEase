@@ -47,22 +47,21 @@ namespace ProcureEaseAPI.Controllers
         // POST: Add Departments http://localhost:85/Departments/AddDepartment
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult AddDepartment(UserProfile userProfile, string DepartmentName)
+        public ActionResult AddDepartment(string DepartmentName)
         {
             if (ModelState.IsValid)
             {
-                DateTime dt = DateTime.Now;
-                Department department = new Department();
                 try
                 {
-                    {
-                        department.DepartmentID = Guid.NewGuid();
+                    UserProfile userProfile = new UserProfile();
+                    DateTime dt = DateTime.Now;
+                    Department department = new Department();
+                    department.DepartmentID = Guid.NewGuid();
                         department.DepartmentName = DepartmentName;
                         department.DepartmentHeadUserID = userProfile.UserID;
                         department.DateCreated = dt;
                         department.DateModified = dt;
                         department.CreatedBy = userProfile.UserName;
-                    };
                     db.Department.Add(department);
                     db.SaveChanges();
 
@@ -102,13 +101,17 @@ namespace ProcureEaseAPI.Controllers
         {
             if (ModelState.IsValid)
             {
-                AspNetUsers aspNetUsers = new AspNetUsers();
-                DateTime dt = DateTime.Now;
-                department.DateCreated = dt;
-                department.DateModified = dt;
-                department.CreatedBy = aspNetUsers.UserName;
+                UserProfile userProfile = new UserProfile();
 
-                db.Entry(department).State = EntityState.Modified;
+                DateTime dt = DateTime.Now;
+                var currentDepartmentDetail = db.Department.FirstOrDefault(d => d.DepartmentID == userProfile.UserID);
+
+                if (currentDepartmentDetail == null)
+                    return HttpNotFound();
+
+                currentDepartmentDetail.DateModified = dt;
+                currentDepartmentDetail.DepartmentName = department.DepartmentName;
+                currentDepartmentDetail.DepartmentHeadUserID = department.DepartmentHeadUserID;
                 db.SaveChanges();
                 var DepartmentSetup = db.Department.Select(x => new
                 {
@@ -216,8 +219,28 @@ namespace ProcureEaseAPI.Controllers
             {
                 return HttpNotFound();
             }
-            return View(department);
+            var Departments = db.Department.Select(x => new
+            {
+                x.DepartmentID,
+                x.DepartmentName,
+                x.DepartmentHeadUserID,
+                x.CreatedBy,
+                DateCreated = x.DateCreated.Value.ToString(),
+                DateModified = x.DateModified.Value.ToString()
+            });
+            var AdminDashboard = new
+            {
+                success = true,
+                message = "Deleted Successfully",
+                data = new
+                {
+                    departments = Departments
+                }
+            };
+            return Json(AdminDashboard, JsonRequestBehavior.AllowGet);
         }
+
+
 
         // GET: Departments/Create
         public ActionResult Create()

@@ -47,7 +47,7 @@ namespace ProcureEaseAPI.Controllers
         // POST: Add Departments http://localhost:85/Departments/AddDepartment
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult AddDepartment(AspNetUsers aspNetUsers, string DepartmentName)
+        public ActionResult AddDepartment(UserProfile userProfile, string DepartmentName)
         {
             if (ModelState.IsValid)
             {
@@ -58,10 +58,10 @@ namespace ProcureEaseAPI.Controllers
                     {
                         department.DepartmentID = Guid.NewGuid();
                         department.DepartmentName = DepartmentName;
-                        department.DepartmentHeadUserID = aspNetUsers.Id;
+                        department.DepartmentHeadUserID = userProfile.UserID;
                         department.DateCreated = dt;
                         department.DateModified = dt;
-                        department.CreatedBy = aspNetUsers.UserName;
+                        department.CreatedBy = userProfile.UserName;
                     };
                     db.Department.Add(department);
                     db.SaveChanges();

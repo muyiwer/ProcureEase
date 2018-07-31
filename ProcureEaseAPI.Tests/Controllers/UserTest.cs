@@ -63,5 +63,56 @@ namespace ProcureEaseAPI.Tests.Controllers
             var result = testSignUp.SignUp(UserProfile, Password);
             Assert.IsNotNull(result);
         }
+
+        [TestMethod]
+        public void TestDelete()
+        {
+            UserProfile UserProfile = new UserProfile
+            {
+                UserID = new Guid("5C99B26F-CBA8-493E-ABD4-E049BB548DB5"),
+               
+            };
+            var testDelete = new UsersController();
+            var result = testDelete.Delete(UserProfile);
+            Assert.IsNotNull(result);
+        }
+
+        [TestMethod]
+        public void TestGetAllUsers()
+        {
+           
+            string id= "5C99B26F-CBA8-493E-ABD4-E049BB548DB5";
+            var GetAllUsers = new UsersController();
+            var result = GetAllUsers.GetAllUsers(id);
+            Assert.IsNotNull(result);
+        }
+
+        [TestMethod]
+        public void TestUpdateDepartmentHead()
+        {
+            UserProfile UserProfile = new UserProfile
+            {
+                UserID = new Guid("5C99B26F-CBA8-493E-ABD4-E049BB548DB5"),
+                DepartmentID = new Guid("86CAF117-37ED-4370-AC31-0D86EECAD8ED"),
+                LastName = "Aro"
+            };
+            var testUpdateDepartmentHead = new UsersController();
+            var result = testUpdateDepartmentHead.UpdateDepartmentHead(UserProfile);
+            Assert.IsNotNull(result);
+        }
+
+        [TestMethod]
+        public void TestUpdateUserProfile()
+        {
+            UserProfile UserProfile = new UserProfile
+            {
+                UserID = new Guid("5C99B26F-CBA8-493E-ABD4-E049BB548DB5"),
+                FirstName = "Muyiwa",
+                LastName = "Aro"
+            };
+            var testUpdateUserProfile = new UsersController();
+            var result = testUpdateUserProfile.UpdateUserProfile(UserProfile);
+            Assert.IsNotNull(result);
+        }
     }
 }

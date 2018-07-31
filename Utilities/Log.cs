@@ -18,7 +18,9 @@ namespace Utilities
             SIGN_UP,
             EDIT_USER,
             UPDATE_USER_PROFILE,
-            UPDATE_DEPARTMENT_HEAD
+            UPDATE_DEPARTMENT_HEAD,
+            DELETE_USER,
+            LOGIN
         };
     }
 }

@@ -6,6 +6,7 @@ using System;
 using ProcureEaseAPI.App_Start;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using ProcureEaseAPI.Provider;
 
 [assembly: OwinStartupAttribute(typeof(Startup))]
 namespace ProcureEaseAPI.App_Start
@@ -17,9 +18,9 @@ namespace ProcureEaseAPI.App_Start
             var OAuthOptions = new OAuthAuthorizationServerOptions
             {
                 AllowInsecureHttp = true,
-                TokenEndpointPath = new PathString("/Users/Login"),
+                TokenEndpointPath = new PathString("/token"),
                 AccessTokenExpireTimeSpan = TimeSpan.FromDays(2),
-                //  Provider = new SimpleAuthorizationServerProvider()
+                  Provider = new SimpleAuthorizationServerProvider()
 
             };
 
@@ -62,14 +63,12 @@ namespace ProcureEaseAPI.App_Start
                 role.Name = "Head of Department";
                 roleManager.Create(role);
             }
-
             if (!roleManager.RoleExists("Procurement Head"))
             {
                 var role = new IdentityRole();
                 role.Name = "Procurement Head";
                 roleManager.Create(role);
             }
-    }
-
+        }
     }
 }

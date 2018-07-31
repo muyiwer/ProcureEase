@@ -312,6 +312,7 @@
     <Compile Include="Models\TelephoneNumbers.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Token.cs" />
     <Compile Include="Models\UserAccountModel.cs" />
     <Compile Include="Models\UserProfile.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>

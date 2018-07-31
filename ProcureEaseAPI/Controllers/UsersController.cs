@@ -64,7 +64,6 @@ namespace ProcureEaseAPI.Controllers
 
         // POST: Users/Add
        [HttpPost]
-       [Authorize]
        public async Task<ActionResult> Add(UserProfile UserProfile)
         {
             try
@@ -261,7 +260,6 @@ namespace ProcureEaseAPI.Controllers
 
         //POST: Users/SignUp
         [HttpPost]
-        [Authorize]
         public async Task<ActionResult> SignUp(UserProfile UserProfile, string Password)
         {
             try

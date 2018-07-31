@@ -20,5 +20,14 @@ namespace ProcureEaseAPI.Tests.Controllers
             var result = testAddDepartment.AddDepartment(DepartmentName);
             Assert.IsNull(result);
         }
+
+        [TestMethod]
+        public void TestEditDepartment()
+        {
+            Guid DepartmentID = "Procurement";
+            var testAddDepartment = new DepartmentsController();
+            var result = testAddDepartment.AddDepartment(DepartmentName);
+            Assert.IsNull(result);
+        }
     }
 }

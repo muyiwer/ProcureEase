@@ -29,10 +29,10 @@ namespace ProcureEaseAPI.Controllers
             procurementMethod.ProcurementMethodID = Guid.NewGuid();
             procurementMethod.DateCreated = dt;
             procurementMethod.DateModified = dt;
-            procurementMethod.CreatedBy = "Admin";
+            procurementMethod.CreatedBy = "MDA Administrator";
             db.ProcurementMethod.Add(procurementMethod);
             db.SaveChanges();
-            var ProcurementMethod = db.ProcurementMethod.Where(y => procurementMethod.ProcurementMethodID == procurementMethod.ProcurementMethodID).Select(x => new
+            var ProcurementMethod = db.ProcurementMethod.Select(x => new
             {
                 sucess = true,
                 message = "Procurement Method added successfully!!!",
@@ -114,16 +114,38 @@ namespace ProcureEaseAPI.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "ProcurementMethodID,ProcurementMethod1,EnableProcurementMethod,DateModified,CreatedBy,DateCreated")] ProcurementMethod procurementMethod)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(procurementMethod).State = EntityState.Modified;
+                DateTime dt = DateTime.Now;
+                var currentProcurementMethod = db.ProcurementMethod.FirstOrDefault(p => p.ProcurementMethodID == p.ProcurementMethodID);
+
+                if (currentProcurementMethod == null)
+                    return HttpNotFound();
+
+                currentProcurementMethod.DateModified = dt;
+                currentProcurementMethod.EnableProcurementMethod = procurementMethod.EnableProcurementMethod;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+
+                var ProcurementMethod = db.ProcurementMethod.Select(x => new
+                {
+                    x.ProcurementMethodID,
+                    x.Name,
+                    x.EnableProcurementMethod
+                });
+                var AdminDashboard = new
+                {
+                    success = true,
+                    message = "Edited successfully",
+                    data = new
+                    {
+                        ProcurementMethod = ProcurementMethod
+                    }
+                };
+                return Json(AdminDashboard, JsonRequestBehavior.AllowGet);
             }
-            return View(procurementMethod);
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
 
         // GET: ProcurementMethods/Delete/5

@@ -1,8 +1,10 @@
 ﻿using ProcureEaseAPI.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Utilities;
@@ -101,67 +103,84 @@ namespace ProcureEaseAPI.Controllers
 
         //http://localhost:85/SetUp/UpdateBasicDetails
         [HttpPost]
-        [AllowAnonymous]
-        //[ValidateAntiForgeryToken]
-        public ActionResult UpdateBasicDetails(OrganizationSettings organizationSettings, List<TelephoneNumbers> telephoneNumbers)
+        public async Task<ActionResult> UpdateBasicDetails([Bind(Include = "OrganizationID,OrganizationNameInFull,OrganizationNameAbbreviation,OrganizationEmail,Address,Country,State,AboutOrganization,DateModified,CreatedBy,DateCreated")]OrganizationSettings organizationSettings, HttpPostedFileBase image, params string[] telephoneNumbers)
         {
             if (ModelState.IsValid)
             {
                 DateTime dt = DateTime.Now;
-                organizationSettings.OrganizationID = Guid.NewGuid();
-              //organizationSettings.OrganizationLogoPath = new FileUploadHelper().UploadImageToAzureStorage(image);
-                organizationSettings.DateCreated = dt;
-                organizationSettings.DateModified = dt;
-                organizationSettings.CreatedBy = "Admin";
-                db.OrganizationSettings.Add(organizationSettings);
+                var currentOrganizationDetails = db.OrganizationSettings.FirstOrDefault(o => o.OrganizationID == o.OrganizationID);
+
+                if (currentOrganizationDetails == null)
+                    return HttpNotFound();
+
+                currentOrganizationDetails.OrganizationNameInFull = organizationSettings.OrganizationNameInFull;
+                currentOrganizationDetails.OrganizationNameAbbreviation = organizationSettings.OrganizationNameAbbreviation;
+                currentOrganizationDetails.OrganizationEmail = organizationSettings.OrganizationEmail;
+                currentOrganizationDetails.Address = organizationSettings.Address;
+                currentOrganizationDetails.Country = organizationSettings.Country;
+                currentOrganizationDetails.State = organizationSettings.State;
+                currentOrganizationDetails.AboutOrganization = organizationSettings.AboutOrganization;
+                currentOrganizationDetails.DateModified = dt;
+                currentOrganizationDetails.CreatedBy = "MDA Administrator";
+                if (image != null)
+                {
+                    currentOrganizationDetails.OrganizationLogoPath = await new FileUploadHelper().UploadImageToAzureStorage(image) + "";
+                }
                 db.SaveChanges();
-                AddTelephone(organizationSettings, telephoneNumbers);
-                var list = telephoneNumbers.ToArray();
-                var BasicDetails = db.OrganizationSettings.Where(y => organizationSettings.OrganizationID == organizationSettings.OrganizationID).Select(x => new
+                if (telephoneNumbers != null && telephoneNumbers.Length > 0)
+                {
+                    AddTelephone(organizationSettings, telephoneNumbers);
+                }
+                var BasicDetails = db.OrganizationSettings.Select(x => new
+                {
+                    x.OrganizationID,
+                    x.OrganizationNameInFull,
+                    x.OrganizationNameAbbreviation,
+                    x.OrganizationEmail,
+                    x.State,
+                    x.Country,
+                    x.AboutOrganization,
+                    x.Address,
+                    x.OrganizationLogoPath,
+                    DateModified = x.DateModified.Value.ToString(),
+                    x.CreatedBy,
+                    TelephoneNumbers = db.TelephoneNumbers.Where(y => y.OrganizationID == x.OrganizationID).Select(y => new
+                    {
+                        y.TelephoneNumber
+                    })
+                });
+                var AdminDashboard = new
                 {
                     success = true,
-                    message = "Organization settings added successfully!!!",
+                    message = "Basic details added successfully!!!",
                     data = new
                     {
-                        x.OrganizationID,
-                        x.OrganizationNameInFull,
-                        x.OrganizationNameAbbreviation,
-                        x.OrganizationEmail,
-                        x.State,
-                        x.Country,
-                        x.AboutOrganization,
-                        x.Address,
-                        x.OrganizationLogoPath,
-                        DateCreated = x.DateCreated.Value.ToString(),
-                        DateModified = x.DateModified.Value.ToString(),
-                        x.CreatedBy,
-                        TelephoneNumbers = db.TelephoneNumbers.Where(y => y.OrganizationID == x.OrganizationID).Select(y => new
-                        {
-                            y.TelephoneNumber
-                        })
+                        BasicDetails = BasicDetails,
                     }
-                });
-                return Json(BasicDetails);
+                };
+                return Json(AdminDashboard, JsonRequestBehavior.AllowGet);
             }
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
-        public void AddTelephone(OrganizationSettings organizationSettings, List<TelephoneNumbers> telephoneNumbers)
+        public void AddTelephone(OrganizationSettings organizationSettings, params string[] telephoneNumbers)
         {
-            //var OrganizationName = db.OrganizationSettings.Where(y => y.OrganizationNameInFull == y.OrganizationNameInFull).Select(y => y.OrganizationID).SingleOrDefault();
-            //var organizationID = db.OrganizationSettings.Where(y => y.OrganizationID == OrganizationName).Select(y => y.OrganizationID).SingleOrDefault();
-            foreach (var Telephone in telephoneNumbers)
+            // TODO: Anita. check if this telephone number has already been added for this organization    
+            var TelephoneNumbersFromDB = db.TelephoneNumbers.Select(x => x.TelephoneNumber).ToList();
+            var DistinctTelephoneNumbers =  telephoneNumbers.Except(TelephoneNumbersFromDB);
+            foreach (var telephone in DistinctTelephoneNumbers)
             {
-                DateTime dt = DateTime.Now;
-                db.TelephoneNumbers.Add(new TelephoneNumbers
-                {
-                    TelephoneNumberID = Guid.NewGuid(),
-                    OrganizationID = organizationSettings.OrganizationID,
-                    TelephoneNumber = Telephone.TelephoneNumber,
-                    DateCreated = dt,
-                    DateModified = dt,
-                    CreatedBy = "Admin"
-                });
-                db.SaveChanges();
+                    DateTime dt = DateTime.Now;               
+                    db.TelephoneNumbers.Add(new TelephoneNumbers
+                    {
+                        TelephoneNumberID = Guid.NewGuid(),
+                        OrganizationID = organizationSettings.OrganizationID,
+                        TelephoneNumber = telephone,
+                        DateCreated = dt,
+                        DateModified = dt,
+                        CreatedBy = "Admin"
+                    });
+                    db.SaveChanges();
+               
             }
         }
         //http://localhost:85/SetUp/OrganizationSettings

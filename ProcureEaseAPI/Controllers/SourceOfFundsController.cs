@@ -23,16 +23,16 @@ namespace ProcureEaseAPI.Controllers
         //http://localhost:85/SourceOfFunds/AddSourceOfFund
         [AllowAnonymous]
         [HttpPost]
-        public ActionResult AddSourceOfFund(SourceOfFunds sourceOfFunds)
+        public ActionResult AddSourceOfFunds(SourceOfFunds sourceOfFunds)
         {
             DateTime dt = DateTime.Now;
             sourceOfFunds.SourceOfFundID = Guid.NewGuid();
             sourceOfFunds.DateCreated = dt;
             sourceOfFunds.DateModified = dt;
-            sourceOfFunds.CreatedBy = "Admin";
+            sourceOfFunds.CreatedBy = "MDA Administrator";
             db.SourceOfFunds.Add(sourceOfFunds);
             db.SaveChanges();
-            var SourceOfFunds = db.SourceOfFunds.Where(y => sourceOfFunds.SourceOfFundID == sourceOfFunds.SourceOfFundID).Select(x => new
+            var SourceOfFunds = db.SourceOfFunds.Select(x => new
             {
                 sucess = true,
                 message = "Source Of Fund added successfully!!!",
@@ -114,20 +114,42 @@ namespace ProcureEaseAPI.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "SourceOfFundID,SourceOfFund,EnableSourceOfFund,DateModified,CreatedBy,DateCreated")] SourceOfFunds sourceOfFunds)
         {
-            if (ModelState.IsValid)
-            {
-                db.Entry(sourceOfFunds).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                if (ModelState.IsValid)
+                {
+                    DateTime dt = DateTime.Now;
+                    var currentSourceOfFund = db.SourceOfFunds.FirstOrDefault(s => s.SourceOfFundID == s.SourceOfFundID);
+
+                    if (currentSourceOfFund == null)
+                    return HttpNotFound();
+
+                    currentSourceOfFund.DateModified = dt;
+                    currentSourceOfFund.EnableSourceOfFund = sourceOfFunds.EnableSourceOfFund;
+                    db.SaveChanges();
+                  
+                    var SourceOfFund = db.SourceOfFunds.Select(x => new
+                    {
+                        x.SourceOfFundID,
+                        x.SourceOfFund,
+                        x.EnableSourceOfFund
+                    });
+                    var AdminDashboard = new
+                    {
+                        success = true,
+                        message = "Edited successfully",
+                        data = new
+                        {
+                            SourceOfFund = SourceOfFund
+                        }
+                    };
+                    return Json(AdminDashboard, JsonRequestBehavior.AllowGet);
             }
-            return View(sourceOfFunds);
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
 
-        // GET: SourceOfFunds/Delete/5
-        public ActionResult Delete(Guid? id)
+            // GET: SourceOfFunds/Delete/5
+            public ActionResult Delete(Guid? id)
         {
             if (id == null)
             {

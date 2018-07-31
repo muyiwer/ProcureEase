@@ -29,10 +29,10 @@ namespace ProcureEaseAPI.Controllers
             projectCategory.ProjectCategoryID = Guid.NewGuid();
             projectCategory.DateCreated = dt;
             projectCategory.DateModified = dt;
-            projectCategory.CreatedBy = "Admin";
+            projectCategory.CreatedBy = "MDA Administrator";
             db.ProjectCategory.Add(projectCategory);
             db.SaveChanges();
-            var ProjectCategory = db.ProjectCategory.Where(y => projectCategory.ProjectCategoryID == projectCategory.ProjectCategoryID).Select(x => new
+            var ProjectCategory = db.ProjectCategory.Select(x => new
             {
                 x.ProjectCategoryID,
                 x.Name,
@@ -110,16 +110,38 @@ namespace ProcureEaseAPI.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "ProjectCategoryID,ProjectCategory1,EnableProjectCategory,DateModified,CreatedBy,DateCreated")] ProjectCategory projectCategory)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(projectCategory).State = EntityState.Modified;
+                DateTime dt = DateTime.Now;
+                var currentProjectCategory = db.ProjectCategory.FirstOrDefault(p => p.ProjectCategoryID == p.ProjectCategoryID);
+
+                if (currentProjectCategory == null)
+                    return HttpNotFound();
+
+                currentProjectCategory.DateModified = dt;
+                currentProjectCategory.EnableProjectCategory = projectCategory.EnableProjectCategory;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+
+                var ProjectCategory = db.ProjectCategory.Select(x => new
+                {
+                    x.ProjectCategoryID,
+                    x.Name,
+                    x.EnableProjectCategory
+                });
+                var AdminDashboard = new
+                {
+                    success = true,
+                    message = "Edited successfully",
+                    data = new
+                    {
+                        ProjectCategory = ProjectCategory
+                    }
+                };
+                return Json(AdminDashboard, JsonRequestBehavior.AllowGet);
             }
-            return View(projectCategory);
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
 
         // GET: ProjectCategories/Delete/5

@@ -50,8 +50,6 @@ namespace ProcureEaseAPI.Models
         public bool RememberMe { get; set; }
     }
 
-
-
     public class AddUserModel
     {
         [Required]

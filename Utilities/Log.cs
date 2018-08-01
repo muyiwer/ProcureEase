@@ -21,17 +21,10 @@ namespace Utilities
             UPDATE_DEPARTMENT_HEAD,
             DELETE_USER,
             LOGIN,
-            GET_ALL_SOURCEOFFUNDS,
-            GET_ALL_PROCUREMENTMETHOD,
-            GET_ALL_PROJECTCATEGORY,
-            UPDATE_BASICDETAILS,
-            GET_ORGANIZATIONSETTINGS,
-            ADD_SOURCEOFFUNDS,
-            UPDATE_SOURCEOFFUNDS,
-            ADD_PROJECTCATEGORY,
-            UPDATE_PROJECTCATEGORY,
-            ADD_PROCUREMENTMETHOD,
-            UPDATE_PROCUREMENTMETHOD
+            ADD_DEPARTMENT,
+            EDIT_DEPARTMENT,
+            DELETE_DEPARTMENT,
+            GET_DEPARTMENT
         };
     }
 }

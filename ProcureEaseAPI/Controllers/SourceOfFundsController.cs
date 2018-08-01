@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using ProcureEaseAPI.Models;
+using Utilities;
 
 namespace ProcureEaseAPI.Controllers
 {
@@ -20,40 +21,42 @@ namespace ProcureEaseAPI.Controllers
             return View(db.SourceOfFunds.ToList());
         }
 
-        //http://localhost:85/SourceOfFunds/AddSourceOfFund
-        [AllowAnonymous]
+        // POST: SourceOfFunds/AddSourceOfFunds
         [HttpPost]
         public ActionResult AddSourceOfFunds(SourceOfFunds sourceOfFunds)
         {
-            DateTime dt = DateTime.Now;
-            sourceOfFunds.SourceOfFundID = Guid.NewGuid();
-            sourceOfFunds.DateCreated = dt;
-            sourceOfFunds.DateModified = dt;
-            sourceOfFunds.CreatedBy = "MDA Administrator";
-            db.SourceOfFunds.Add(sourceOfFunds);
-            db.SaveChanges();
-            var SourceOfFunds = db.SourceOfFunds.Select(x => new
+            try
             {
-                sucess = true,
-                message = "Source Of Fund added successfully!!!",
-                data = new
+                DateTime dt = DateTime.Now;
+                sourceOfFunds.SourceOfFundID = Guid.NewGuid();
+                sourceOfFunds.DateCreated = dt;
+                sourceOfFunds.DateModified = dt;
+                sourceOfFunds.CreatedBy = "MDA Administrator";
+                db.SourceOfFunds.Add(sourceOfFunds);
+                db.SaveChanges();
+                return Json(new
                 {
-                    x.SourceOfFundID,
-                    x.SourceOfFund,
-                    x.EnableSourceOfFund,
-                    x.CreatedBy,
-                }
-            });
-            var AdminDashboard = new
+                    success = true,
+                    message = "Source Of Fund added successfully!!!",
+                    data = db.SourceOfFunds.Select(x => new
+                    {
+                        x.SourceOfFundID,
+                        x.SourceOfFund,
+                        x.EnableSourceOfFund,
+                        x.CreatedBy,
+                    })
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
             {
-                success = true,
-                message = "Source Of Fund added successfully!!!",
-                data = new
+                LogHelper.Log(Log.Event.ADD_SOURCEOFFUNDS, ex.Message);
+                return Json(new
                 {
-                    SourceOfFunds = SourceOfFunds
-                }
-            };
-            return Json(AdminDashboard, JsonRequestBehavior.AllowGet);
+                    success = false,
+                    message = "" + ex.Message,
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         // GET: SourceOfFunds/Details/5
@@ -110,42 +113,52 @@ namespace ProcureEaseAPI.Controllers
             return View(sourceOfFunds);
         }
 
-        // POST: SourceOfFunds/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: SourceOfFunds/Edit
         [HttpPost]
         public ActionResult Edit([Bind(Include = "SourceOfFundID,SourceOfFund,EnableSourceOfFund,DateModified,CreatedBy,DateCreated")] SourceOfFunds sourceOfFunds)
         {
-                if (ModelState.IsValid)
+            try
+            {
+
+                DateTime dt = DateTime.Now;
+                var currentSourceOfFund = db.SourceOfFunds.FirstOrDefault(s => s.SourceOfFundID == s.SourceOfFundID);
+
+                if (currentSourceOfFund == null)
                 {
-                    DateTime dt = DateTime.Now;
-                    var currentSourceOfFund = db.SourceOfFunds.FirstOrDefault(s => s.SourceOfFundID == s.SourceOfFundID);
+                    LogHelper.Log(Log.Event.UPDATE_SOURCEOFFUNDS, "SourceOfFundID not found");
+                    return Json(new
+                    {
+                        success = false,
+                        message = "SourceOfFundID not found",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
 
-                    if (currentSourceOfFund == null)
-                    return HttpNotFound();
-
-                    currentSourceOfFund.DateModified = dt;
-                    currentSourceOfFund.EnableSourceOfFund = sourceOfFunds.EnableSourceOfFund;
-                    db.SaveChanges();
-                  
-                    var SourceOfFund = db.SourceOfFunds.Select(x => new
+                currentSourceOfFund.DateModified = dt;
+                currentSourceOfFund.EnableSourceOfFund = sourceOfFunds.EnableSourceOfFund;
+                db.SaveChanges();
+                return Json(new
+                {
+                    success = true,
+                    message = "Edited successfully",
+                    data = db.SourceOfFunds.Select(x => new
                     {
                         x.SourceOfFundID,
                         x.SourceOfFund,
                         x.EnableSourceOfFund
-                    });
-                    var AdminDashboard = new
-                    {
-                        success = true,
-                        message = "Edited successfully",
-                        data = new
-                        {
-                            SourceOfFund = SourceOfFund
-                        }
-                    };
-                    return Json(AdminDashboard, JsonRequestBehavior.AllowGet);
+                    })
+                }, JsonRequestBehavior.AllowGet);
             }
-            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            catch (Exception ex)
+            {
+                LogHelper.Log(Log.Event.UPDATE_SOURCEOFFUNDS, ex.Message);
+                return Json(new
+                {
+                    success = false,
+                    message = "" + ex.Message,
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
 
             // GET: SourceOfFunds/Delete/5

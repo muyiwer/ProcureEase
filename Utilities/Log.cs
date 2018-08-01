@@ -20,7 +20,18 @@ namespace Utilities
             UPDATE_USER_PROFILE,
             UPDATE_DEPARTMENT_HEAD,
             DELETE_USER,
-            LOGIN
+            LOGIN,
+            GET_ALL_SOURCEOFFUNDS,
+            GET_ALL_PROCUREMENTMETHOD,
+            GET_ALL_PROJECTCATEGORY,
+            UPDATE_BASICDETAILS,
+            GET_ORGANIZATIONSETTINGS,
+            ADD_SOURCEOFFUNDS,
+            UPDATE_SOURCEOFFUNDS,
+            ADD_PROJECTCATEGORY,
+            UPDATE_PROJECTCATEGORY,
+            ADD_PROCUREMENTMETHOD,
+            UPDATE_PROCUREMENTMETHOD
         };
     }
 }

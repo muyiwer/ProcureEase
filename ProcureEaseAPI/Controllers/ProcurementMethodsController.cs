@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using ProcureEaseAPI.Models;
+using Utilities;
 
 namespace ProcureEaseAPI.Controllers
 {
@@ -20,40 +21,41 @@ namespace ProcureEaseAPI.Controllers
             return View(db.ProcurementMethod.ToList());
         }
 
-        //http://localhost:85/ProcurementMethods/AddProcurementMethod
-        [AllowAnonymous]
+        // POST: ProcurementMethod/AddProcurementMethod
         [HttpPost]
         public ActionResult AddProcurementMethod(ProcurementMethod procurementMethod)
         {
-            DateTime dt = DateTime.Now;
-            procurementMethod.ProcurementMethodID = Guid.NewGuid();
-            procurementMethod.DateCreated = dt;
-            procurementMethod.DateModified = dt;
-            procurementMethod.CreatedBy = "MDA Administrator";
-            db.ProcurementMethod.Add(procurementMethod);
-            db.SaveChanges();
-            var ProcurementMethod = db.ProcurementMethod.Select(x => new
+            try
             {
-                sucess = true,
-                message = "Procurement Method added successfully!!!",
-                data = new
+                DateTime dt = DateTime.Now;
+                procurementMethod.ProcurementMethodID = Guid.NewGuid();
+                procurementMethod.DateCreated = dt;
+                procurementMethod.DateModified = dt;
+                procurementMethod.CreatedBy = "MDA Administrator";
+                db.ProcurementMethod.Add(procurementMethod);
+                db.SaveChanges();
+                return Json(new
                 {
-                    x.ProcurementMethodID,
-                    x.Name,
-                    x.EnableProcurementMethod,
-                    x.CreatedBy,
-                }
-            });
-            var AdminDashboard = new
+                    success = true,
+                    message = "Procurement Method added successfully!!!",
+                    data = db.ProcurementMethod.Select(x => new
+                    {
+                        x.ProcurementMethodID,
+                        x.Name,
+                        x.EnableProcurementMethod,
+                    })
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
             {
-                success = true,
-                message = "Procurement Method added successfully!!!",
-                data = new
+                LogHelper.Log(Log.Event.ADD_PROCUREMENTMETHOD, ex.Message);
+                return Json(new
                 {
-                    ProcurementMethod = ProcurementMethod
-                }
-            };
-            return Json(AdminDashboard, JsonRequestBehavior.AllowGet);
+                    success = false,
+                    message = "" + ex.Message,
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         // GET: ProcurementMethods/Details/5
@@ -110,42 +112,51 @@ namespace ProcureEaseAPI.Controllers
             return View(procurementMethod);
         }
 
-        // POST: ProcurementMethods/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: ProcurementMethod/Edit
         [HttpPost]
         public ActionResult Edit([Bind(Include = "ProcurementMethodID,ProcurementMethod1,EnableProcurementMethod,DateModified,CreatedBy,DateCreated")] ProcurementMethod procurementMethod)
         {
-            if (ModelState.IsValid)
+            try
             {
+
                 DateTime dt = DateTime.Now;
                 var currentProcurementMethod = db.ProcurementMethod.FirstOrDefault(p => p.ProcurementMethodID == p.ProcurementMethodID);
 
-                if (currentProcurementMethod == null)
-                    return HttpNotFound();
+                if (currentProcurementMethod == null) { 
+                LogHelper.Log(Log.Event.UPDATE_PROCUREMENTMETHOD, "ProcurementMethodID not found");
+                return Json(new
+                {
+                    success = false,
+                    message = "ProcurementMethodID not found",
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+                }
 
                 currentProcurementMethod.DateModified = dt;
                 currentProcurementMethod.EnableProcurementMethod = procurementMethod.EnableProcurementMethod;
                 db.SaveChanges();
-
-                var ProcurementMethod = db.ProcurementMethod.Select(x => new
-                {
-                    x.ProcurementMethodID,
-                    x.Name,
-                    x.EnableProcurementMethod
-                });
-                var AdminDashboard = new
+                return Json(new
                 {
                     success = true,
-                    message = "Edited successfully",
-                    data = new
+                    message = "Editted successfully!!!",
+                    data = db.ProcurementMethod.Select(x => new
                     {
-                        ProcurementMethod = ProcurementMethod
-                    }
-                };
-                return Json(AdminDashboard, JsonRequestBehavior.AllowGet);
+                        x.ProcurementMethodID,
+                        x.Name,
+                        x.EnableProcurementMethod,
+                    })
+                }, JsonRequestBehavior.AllowGet);
             }
-            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            catch (Exception ex)
+            {
+                LogHelper.Log(Log.Event.UPDATE_PROCUREMENTMETHOD, ex.Message);
+                return Json(new
+                {
+                    success = false,
+                    message = "" + ex.Message,
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         // GET: ProcurementMethods/Delete/5

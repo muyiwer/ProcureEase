@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using ProcureEaseAPI.Models;
+using Utilities;
 
 namespace ProcureEaseAPI.Controllers
 {
@@ -20,35 +21,41 @@ namespace ProcureEaseAPI.Controllers
             return View(db.ProjectCategory.ToList());
         }
 
-        //http://localhost:85/ProjectCategories/AddProjectCategory
-        [AllowAnonymous]
+        // POST: ProjectCategories/AddProjectCategory
         [HttpPost]
         public ActionResult AddProjectCategory(ProjectCategory projectCategory)
         {
-            DateTime dt = DateTime.Now;
-            projectCategory.ProjectCategoryID = Guid.NewGuid();
-            projectCategory.DateCreated = dt;
-            projectCategory.DateModified = dt;
-            projectCategory.CreatedBy = "MDA Administrator";
-            db.ProjectCategory.Add(projectCategory);
-            db.SaveChanges();
-            var ProjectCategory = db.ProjectCategory.Select(x => new
+            try
             {
-                x.ProjectCategoryID,
-                x.Name,
-                x.EnableProjectCategory,
-                x.CreatedBy,
-            });
-            var AdminDashboard = new
-            {
-                success = true,
-                message = "Project Category added successfully!!!",
-                data = new
+                DateTime dt = DateTime.Now;
+                projectCategory.ProjectCategoryID = Guid.NewGuid();
+                projectCategory.DateCreated = dt;
+                projectCategory.DateModified = dt;
+                projectCategory.CreatedBy = "MDA Administrator";
+                db.ProjectCategory.Add(projectCategory);
+                db.SaveChanges();
+                return Json(new
                 {
-                    ProjectCategory = ProjectCategory
-                }
-            };
-            return Json(AdminDashboard, JsonRequestBehavior.AllowGet);
+                    success = true,
+                    message = "Project Category added successfully!!!",
+                    data = db.ProjectCategory.Select(x => new
+                    {
+                        x.ProjectCategoryID,
+                        x.Name,
+                        x.EnableProjectCategory,
+                    })
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(Log.Event.ADD_PROJECTCATEGORY, ex.Message);
+                return Json(new
+                {
+                    success = false,
+                    message = "" + ex.Message,
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
 
 
@@ -106,42 +113,50 @@ namespace ProcureEaseAPI.Controllers
             return View(projectCategory);
         }
 
-        // POST: ProjectCategories/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: ProjectCategories/Edit
         [HttpPost]
         public ActionResult Edit([Bind(Include = "ProjectCategoryID,ProjectCategory1,EnableProjectCategory,DateModified,CreatedBy,DateCreated")] ProjectCategory projectCategory)
         {
-            if (ModelState.IsValid)
+            try
             {
                 DateTime dt = DateTime.Now;
                 var currentProjectCategory = db.ProjectCategory.FirstOrDefault(p => p.ProjectCategoryID == p.ProjectCategoryID);
 
                 if (currentProjectCategory == null)
-                    return HttpNotFound();
-
+                {
+                    LogHelper.Log(Log.Event.UPDATE_PROJECTCATEGORY, "ProjectCategoryID not found");
+                    return Json(new
+                    {
+                        success = false,
+                        message = "ProjectCategoryID not found",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 currentProjectCategory.DateModified = dt;
                 currentProjectCategory.EnableProjectCategory = projectCategory.EnableProjectCategory;
                 db.SaveChanges();
-
-                var ProjectCategory = db.ProjectCategory.Select(x => new
-                {
-                    x.ProjectCategoryID,
-                    x.Name,
-                    x.EnableProjectCategory
-                });
-                var AdminDashboard = new
+                return Json(new
                 {
                     success = true,
                     message = "Edited successfully",
-                    data = new
+                    data = db.ProjectCategory.Select(x => new
                     {
-                        ProjectCategory = ProjectCategory
-                    }
-                };
-                return Json(AdminDashboard, JsonRequestBehavior.AllowGet);
+                        x.ProjectCategoryID,
+                        x.Name,
+                        x.EnableProjectCategory
+                    })
+                }, JsonRequestBehavior.AllowGet);
             }
-            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            catch (Exception ex)
+            {
+                LogHelper.Log(Log.Event.UPDATE_PROJECTCATEGORY, ex.Message);
+                return Json(new
+                {
+                    success = false,
+                    message = "" + ex.Message,
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         // GET: ProjectCategories/Delete/5

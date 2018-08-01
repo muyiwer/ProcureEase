@@ -20,10 +20,10 @@ namespace ProcureEaseAPI.Controllers
             return View();
         }
 
-        // GET: SourceOfFunds
+        // GET: SetUp/SourceOfFunds
         [AllowAnonymous]
         [HttpGet]
-        public ActionResult SourceOfFunds(SourceOfFunds sourceOfFunds)
+        public ActionResult SourceOfFunds()
         {
             try
             {
@@ -51,10 +51,9 @@ namespace ProcureEaseAPI.Controllers
             }
         }
 
-        // GET: ProcurementMethod
-        [AllowAnonymous]
+        // GET: SetUp/ProcurementMethod
         [HttpGet]
-        public ActionResult ProcurementMethod(ProcurementMethod procurementMethod)
+        public ActionResult ProcurementMethod()
         {
             try
             {
@@ -88,10 +87,9 @@ namespace ProcureEaseAPI.Controllers
             }
         }
 
-        // GET: ProjectCategory
-        [AllowAnonymous]
+        // GET: SetUp/ProjectCategory
         [HttpGet]
-        public ActionResult ProjectCategory(ProjectCategory projectCategory)
+        public ActionResult ProjectCategory()
         {
             try
             {

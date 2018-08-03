@@ -173,6 +173,14 @@
           <Property Name="DateCreated" Type="datetime" />
           <Property Name="DepartmentHeadUserID" Type="uniqueidentifier" />
         </EntityType>
+        <EntityType Name="ItemCode">
+          <Key>
+            <PropertyRef Name="ItemCodeID" />
+          </Key>
+          <Property Name="ItemCodeID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ItemCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="ItemName" Type="varchar" MaxLength="100" />
+        </EntityType>
         <EntityType Name="Items">
           <Key>
             <PropertyRef Name="ItemID" />
@@ -181,7 +189,6 @@
           <Property Name="ProcurementID" Type="uniqueidentifier" />
           <Property Name="ApprovedItemID" Type="uniqueidentifier" />
           <Property Name="AdvertisedItemID" Type="uniqueidentifier" />
-          <Property Name="ItemCode" Type="nvarchar" MaxLength="128" />
           <Property Name="ItemName" Type="varchar" MaxLength="150" />
           <Property Name="Description" Type="varchar(max)" />
           <Property Name="Quantity" Type="float" />
@@ -189,6 +196,7 @@
           <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
           <Property Name="DateCreated" Type="datetime" />
           <Property Name="DateModified" Type="datetime" />
+          <Property Name="ItemCodeID" Type="uniqueidentifier" />
         </EntityType>
         <EntityType Name="OrganizationSettings">
           <Key>
@@ -413,6 +421,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__Items__ItemCodeI__5CD6CB2B">
+          <End Role="ItemCode" Type="Self.ItemCode" Multiplicity="0..1" />
+          <End Role="Items" Type="Self.Items" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ItemCode">
+              <PropertyRef Name="ItemCodeID" />
+            </Principal>
+            <Dependent Role="Items">
+              <PropertyRef Name="ItemCodeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__Items__Procureme__49C3F6B7">
           <End Role="Procurements" Type="Self.Procurements" Multiplicity="0..1" />
           <End Role="Items" Type="Self.Items" Multiplicity="*" />
@@ -605,6 +625,7 @@
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BudgetYear" EntityType="Self.BudgetYear" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Department" EntityType="Self.Department" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ItemCode" EntityType="Self.ItemCode" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Items" EntityType="Self.Items" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OrganizationSettings" EntityType="Self.OrganizationSettings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProcurementMethod" EntityType="Self.ProcurementMethod" Schema="dbo" store:Type="Tables" />
@@ -652,6 +673,10 @@
           </AssociationSet>
           <AssociationSet Name="FK__Items__ApprovedI__48CFD27E" Association="Self.FK__Items__ApprovedI__48CFD27E">
             <End Role="ApprovedItems" EntitySet="ApprovedItems" />
+            <End Role="Items" EntitySet="Items" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Items__ItemCodeI__5CD6CB2B" Association="Self.FK__Items__ItemCodeI__5CD6CB2B">
+            <End Role="ItemCode" EntitySet="ItemCode" />
             <End Role="Items" EntitySet="Items" />
           </AssociationSet>
           <AssociationSet Name="FK__Items__Procureme__49C3F6B7" Association="Self.FK__Items__Procureme__49C3F6B7">
@@ -918,7 +943,6 @@
           <Property Name="ProcurementID" Type="Guid" />
           <Property Name="ApprovedItemID" Type="Guid" />
           <Property Name="AdvertisedItemID" Type="Guid" />
-          <Property Name="ItemCode" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="ItemName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Quantity" Type="Double" />
@@ -929,6 +953,8 @@
           <NavigationProperty Name="AdvertisedItems" Relationship="Self.FK__Items__Advertise__47DBAE45" FromRole="Items" ToRole="AdvertisedItems" />
           <NavigationProperty Name="ApprovedItems" Relationship="Self.FK__Items__ApprovedI__48CFD27E" FromRole="Items" ToRole="ApprovedItems" />
           <NavigationProperty Name="Procurements" Relationship="Self.FK__Items__Procureme__49C3F6B7" FromRole="Items" ToRole="Procurements" />
+          <Property Name="ItemCodeID" Type="Guid" />
+          <NavigationProperty Name="ItemCode" Relationship="ProcureEaseModel.FK__Items__ItemCodeI__5CD6CB2B" FromRole="Items" ToRole="ItemCode" />
         </EntityType>
         <EntityType Name="OrganizationSettings">
           <Key>
@@ -1468,7 +1494,33 @@
             <End Role="SourceOfFunds" EntitySet="SourceOfFunds" />
             <End Role="Procurements" EntitySet="Procurements" />
           </AssociationSet>
+          <EntitySet Name="ItemCode" EntityType="ProcureEaseModel.ItemCode" />
+          <AssociationSet Name="FK__Items__ItemCodeI__5CD6CB2B" Association="ProcureEaseModel.FK__Items__ItemCodeI__5CD6CB2B">
+            <End Role="ItemCode" EntitySet="ItemCode" />
+            <End Role="Items" EntitySet="Items" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="ItemCode">
+          <Key>
+            <PropertyRef Name="ItemCodeID" />
+          </Key>
+          <Property Name="ItemCodeID" Type="Guid" Nullable="false" />
+          <Property Name="ItemCode1" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ItemName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Items" Relationship="ProcureEaseModel.FK__Items__ItemCodeI__5CD6CB2B" FromRole="ItemCode" ToRole="Items" />
+        </EntityType>
+        <Association Name="FK__Items__ItemCodeI__5CD6CB2B">
+          <End Type="ProcureEaseModel.ItemCode" Role="ItemCode" Multiplicity="0..1" />
+          <End Type="ProcureEaseModel.Items" Role="Items" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ItemCode">
+              <PropertyRef Name="ItemCodeID" />
+            </Principal>
+            <Dependent Role="Items">
+              <PropertyRef Name="ItemCodeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1657,11 +1709,11 @@
           <EntitySetMapping Name="Items">
             <EntityTypeMapping TypeName="ProcureEaseModel.Items">
               <MappingFragment StoreEntitySet="Items">
+                <ScalarProperty Name="ItemCodeID" ColumnName="ItemCodeID" />
                 <ScalarProperty Name="ItemID" ColumnName="ItemID" />
                 <ScalarProperty Name="ProcurementID" ColumnName="ProcurementID" />
                 <ScalarProperty Name="ApprovedItemID" ColumnName="ApprovedItemID" />
                 <ScalarProperty Name="AdvertisedItemID" ColumnName="AdvertisedItemID" />
-                <ScalarProperty Name="ItemCode" ColumnName="ItemCode" />
                 <ScalarProperty Name="ItemName" ColumnName="ItemName" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Quantity" ColumnName="Quantity" />
@@ -1780,6 +1832,15 @@
                 <ScalarProperty Name="DateModified" ColumnName="DateModified" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ItemCode">
+            <EntityTypeMapping TypeName="ProcureEaseModel.ItemCode">
+              <MappingFragment StoreEntitySet="ItemCode">
+                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
+                <ScalarProperty Name="ItemCode1" ColumnName="ItemCode" />
+                <ScalarProperty Name="ItemCodeID" ColumnName="ItemCodeID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

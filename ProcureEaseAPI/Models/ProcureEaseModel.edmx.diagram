@@ -53,6 +53,8 @@
         <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Procu__4CA06362" ManuallyRouted="false" />
         <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Proje__4E88ABD4" ManuallyRouted="false" />
         <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Sourc__4F7CD00D" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="ProcureEaseModel.ItemCode" Width="1.5" PointX="0.75" PointY="3.875" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Items__ItemCodeI__5CD6CB2B" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

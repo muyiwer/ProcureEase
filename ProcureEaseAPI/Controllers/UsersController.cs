@@ -40,6 +40,7 @@ namespace ProcureEaseAPI.Controllers
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 LogHelper.Log(Log.Event.LOGIN, ResponseContent);
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 return Json(new
                 {
                     success = false,
@@ -56,6 +57,8 @@ namespace ProcureEaseAPI.Controllers
                     {
                        User.Id,
                        Email = User.UserName,
+                       DepartmentID = db.UserProfile.Where(x=>x.UserEmail == UserName).Select(x=>x.DepartmentID).FirstOrDefault(),
+                       Role = db.AspNetUserRoles.Where(x=>x.UserId == User.Id).Select(x=>x.AspNetRoles.Name).FirstOrDefault(),
                        token = token
                     }
                 }, JsonRequestBehavior.AllowGet);

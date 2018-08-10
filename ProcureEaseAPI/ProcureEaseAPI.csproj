@@ -218,7 +218,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\OrganizationSettingsController.cs" />
     <Compile Include="Controllers\ProcurementMethodsController.cs" />
-    <Compile Include="Controllers\ProcurmentsController.cs" />
+    <Compile Include="Controllers\ProcurementsController.cs" />
     <Compile Include="Controllers\ProjectCategoriesController.cs" />
     <Compile Include="Controllers\SetUpController.cs" />
     <Compile Include="Controllers\SourceOfFundsController.cs" />
@@ -272,6 +272,7 @@
     <Compile Include="Models\Department.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\DepartmentProject.cs" />
     <Compile Include="Models\IdentityModel.cs" />
     <Compile Include="Models\ItemCode.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
@@ -322,6 +323,8 @@
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\AuthorizeAttribute.cs" />
+    <Compile Include="Providers\DateTimeSettings.cs" />
     <Compile Include="Providers\SimpleAuthorizationServerProvider.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -398,6 +401,16 @@
     <Content Include="Views\Departments\Details.cshtml" />
     <Content Include="Views\Departments\Edit.cshtml" />
     <Content Include="Views\Departments\Index.cshtml" />
+    <Content Include="Views\OrganizationSettings\Create.cshtml" />
+    <Content Include="Views\OrganizationSettings\Delete.cshtml" />
+    <Content Include="Views\OrganizationSettings\Details.cshtml" />
+    <Content Include="Views\OrganizationSettings\Edit.cshtml" />
+    <Content Include="Views\OrganizationSettings\Index.cshtml" />
+    <Content Include="Views\ProcurementMethods\Create.cshtml" />
+    <Content Include="Views\ProcurementMethods\Delete.cshtml" />
+    <Content Include="Views\ProcurementMethods\Details.cshtml" />
+    <Content Include="Views\ProcurementMethods\Edit.cshtml" />
+    <Content Include="Views\ProcurementMethods\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

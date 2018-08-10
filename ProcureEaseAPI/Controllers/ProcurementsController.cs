@@ -118,6 +118,9 @@ namespace ProcureEaseAPI.Controllers
         {          
             try
             {
+                int ProcurementStatusID = 0;
+                int.TryParse(GetConfiguration("DraftProcurementStatusID"), out ProcurementStatusID);
+                DateTimeSettings DateTimeSettings = new DateTimeSettings();
                 var CheckIfDepartmentIsValid = db.Department.Where(x => x.DepartmentID == DepartmentID).Select(x => x.DepartmentName).FirstOrDefault();
                 if(CheckIfDepartmentIsValid == null)
                 {
@@ -144,41 +147,73 @@ namespace ProcureEaseAPI.Controllers
                 {
                     // process items
                     var items = project.Items;
-                    var UpdatedItem = items.Where(x => x.ItemID != Guid.Empty && x.Deleted == false);
-                    foreach (DepartmentItems item in UpdatedItem)
+                    if (items == null)
                     {
-                        // update items
-                        Items dbItem = db.Items.Find(item.ItemID);
-                        if (dbItem == null)
+                        // update project
+                        Procurements dbProcurement = db.Procurements.Find(project.ProcurementID);
+                        if (dbProcurement == null)
                         {
-                            LogHelper.Log(Log.Event.POST_DRAFT_NEEDS, "Item with ID: " + item.ItemID + " could not be found.");
+                            LogHelper.Log(Log.Event.SEND_PROCUREMENTS_NEEDS, "Project with ID: " + project.ProcurementID + " could not be found.");
                             Response.StatusCode = (int)HttpStatusCode.NotFound;
-                            return Error("Item with ID: " + item.ItemID + " could not be found.");
+                            return Error("Project with ID: " + project.ProcurementID + " could not be found.");
                         }
                         else
                         {
-                            dbItem.UnitPrice = item.UnitPrice;
-                            dbItem.Quantity = item.Quantity;
-                            dbItem.ItemCodeID = item.ItemCodeID;
-                            dbItem.ItemName = item.ItemName;
-                            db.Entry(dbItem).State = EntityState.Modified;
+                            dbProcurement.ProjectName = project.ProjectName;
+                            dbProcurement.ProjectCategoryID = project.ProjectCategoryID;
+                            dbProcurement.ProcurementMethodID = project.ProcurementMethodID;
+                            dbProcurement.DepartmentID = DepartmentID;
+                            dbProcurement.BudgetYearID = BudgetyearID;
+                            dbProcurement.DateModified = DateTimeSettings.CurrentDate();
+                            dbProcurement.ProcurementStatusID = ProcurementStatusID;
+                            db.Entry(dbProcurement).State = EntityState.Modified;
                         }
-                    }
-                    // update project
-                    Procurements dbProcurement = db.Procurements.Find(project.ProcurementID);
-                    if (dbProcurement == null)
-                    {
-                        LogHelper.Log(Log.Event.POST_DRAFT_NEEDS, "Project with ID: " + project.ProcurementID + " could not be found.");
-                        Response.StatusCode = (int)HttpStatusCode.NotFound;
-                        return Error("Project with ID: " + project.ProcurementID + " could not be found.");
                     }
                     else
                     {
-                        dbProcurement.ProjectName = project.ProjectName;
-                        dbProcurement.ProjectCategoryID = project.ProjectCategoryID;
-                        dbProcurement.ProcurementMethodID = project.ProcurementMethodID;
-                        db.Entry(dbProcurement).State = EntityState.Modified;
+                        var UpdatedItem = items.Where(x => x.ItemID != Guid.Empty && x.Deleted == false);
+                        foreach (DepartmentItems item in UpdatedItem)
+                        {
+                            // update items
+                            Items dbItem = db.Items.Find(item.ItemID);
+                            if (dbItem == null)
+                            {
+                                LogHelper.Log(Log.Event.SEND_PROCUREMENTS_NEEDS, "Item with ID: " + item.ItemID + " could not be found.");
+                                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                                return Error("Item with ID: " + item.ItemID + " could not be found.");
+                            }
+                            else
+                            {
+                                dbItem.UnitPrice = item.UnitPrice;
+                                dbItem.Quantity = item.Quantity;
+                                dbItem.ItemCodeID = item.ItemCodeID;
+                                dbItem.ItemName = item.ItemName;
+                                dbItem.Description = item.Description;
+                                dbItem.DateModified = DateTimeSettings.CurrentDate();
+                                db.Entry(dbItem).State = EntityState.Modified;
+                            }
+                            Procurements dbProcurement = db.Procurements.Find(project.ProcurementID);
+                            if (dbProcurement == null)
+                            {
+                                LogHelper.Log(Log.Event.SEND_PROCUREMENTS_NEEDS, "Project with ID: " + project.ProcurementID + " could not be found.");
+                                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                                return Error("Project with ID: " + project.ProcurementID + " could not be found.");
+                            }
+                            else
+                            {
+                                dbProcurement.ProjectName = project.ProjectName;
+                                dbProcurement.ProjectCategoryID = project.ProjectCategoryID;
+                                dbProcurement.ProcurementMethodID = project.ProcurementMethodID;
+                                dbProcurement.DepartmentID = DepartmentID;
+                                dbProcurement.BudgetYearID = BudgetyearID;
+                                dbProcurement.DateModified = DateTimeSettings.CurrentDate();
+                                dbProcurement.ProcurementStatusID = ProcurementStatusID;
+                                db.Entry(dbProcurement).State = EntityState.Modified;
+                            }
+                        }
+
                     }
+
                 }
 
                 #endregion

@@ -554,13 +554,41 @@ namespace ProcureEaseAPI.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-       
+        // GET: Procurements/SentProcurementSummary
+        [Providers.Authorize]
+        [HttpGet]
+        public ActionResult SentProcurementSummary()
+        {
+            
+                int ProcurementStatusID = 0;
+                int.TryParse(GetConfiguration("DraftProcurementStatusID"), out ProcurementStatusID);
+                var CheckIfAnyProjectCostIsNull = db.Items.Select(y => y.UnitPrice == null).ToList();
+                var ProjectCostStatus = CheckIfAnyProjectCostIsNull == null ? true : false;
+                return Json(new
+                {
+                    success = true,
+                    message = "Department procurement needs",
+                    data = new
+                    {
+                        Procurement = db.Department.Select(x => new
+                        {
+                            x.DepartmentName,
+                            BudgetYear = db.Procurements.Where(y => y.DepartmentID == x.DepartmentID && y.ProcurementStatusID == ProcurementStatusID).Select(y => y.BudgetYear.BudgetYear1.Value.Year).FirstOrDefault(),
+                            PendingProcurements = db.Procurements.Where(y => y.DepartmentID == x.DepartmentID && y.BudgetYear.BudgetYear1.Value.Year == y.BudgetYear.BudgetYear1.Value.Year && y.ProcurementStatusID == ProcurementStatusID).Count(),
+                            TotalCost = db.Items.Where(z => z.Procurements.DepartmentID == x.DepartmentID && z.Procurements.ProcurementStatus.ProcurementStatusID==ProcurementStatusID).Select(z => z.UnitPrice).Sum()
+                                             * db.Items.Where(z => z.Procurements.DepartmentID == x.DepartmentID && z.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(z => z.Quantity).Sum(),
+                            x.DepartmentID,            
+                        })
+                    }
+                }, JsonRequestBehavior.AllowGet);
+            }
+        
 
         private ActionResult DraftNeedsJson(Guid DepartmentID,int BudgetYear)
         {
             int ProcurementStatusID = 0;
             int.TryParse(GetConfiguration("DraftProcurementStatusID"), out ProcurementStatusID);
-            var CheckIfAnyProjectCostIsNull = db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYearID == DepartmentID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(y => y.UnitPrice == null).ToList();
+            var CheckIfAnyProjectCostIsNull = db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(y => y.UnitPrice == null).ToList();
             var ProjectCostStatus = CheckIfAnyProjectCostIsNull == null ? true : false;
             return Json(new
             {

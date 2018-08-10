@@ -26,5 +26,11 @@ namespace ProcureEaseAPI.Providers
             return dt;
         }
 
+        public int CurrentYear()
+        {
+            int dt = new int();
+            dt = DateTime.Now.Year;
+            return dt;
+        }
     }
 }

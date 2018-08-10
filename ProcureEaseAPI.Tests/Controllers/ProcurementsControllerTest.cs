@@ -91,37 +91,7 @@ namespace ProcureEaseAPI.Tests.Controllers
             Assert.IsTrue((result.Data + "").Contains("Drafted procurement"));
         }
 
-        [TestMethod]
-        public void TestSentProcurement()
-        {
-            string id = "3A380F88-6B8B-40AF-AA14-DF546CEC1AA6";
-            string id2 = "452BE391-2A89-4212-A5C8-B0A0BB37DFE3";
-            var testDraftNeeds = new ProcurementsController();
-            JsonResult result = (JsonResult)testDraftNeeds.SentProcurement(id, id2);
-            Console.WriteLine(result.Data);
-            Assert.IsTrue((result.Data + "").Contains("All sent procurement."));
-        }
-
-        [TestMethod]
-        public void TestSentProcurement_Invalid_Guid()
-        {
-            string id = "3A380F88-6B8B-40AF-AA14-DF546CE";
-            string id2 = "452BE391-2A89-4212-A5C8-B0A0B";
-            var testDraftNeeds = new ProcurementsController();
-            JsonResult result = (JsonResult)testDraftNeeds.SentProcurement(id, id2);
-            Console.WriteLine(result.Data);
-            Assert.IsNotNull((result.Data + "").Contains("Guid should contain 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)"));
-        }
-
-        [TestMethod]
-        public void TestSentProcurement_Null_ID()
-        {
-            string id = null;
-            string id2 = null;
-            var testDraftNeeds = new ProcurementsController();
-            JsonResult result = (JsonResult)testDraftNeeds.SentProcurement(id, id2);
-            Console.WriteLine(result.Data);
-            Assert.IsTrue((result.Data + "").Contains("DepartmentID or BudgetYearID is Null"));
-        }
+       
+   
     }
 }

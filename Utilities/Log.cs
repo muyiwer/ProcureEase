@@ -25,7 +25,8 @@ namespace Utilities
             POST_DRAFT_NEEDS,
             SEND_PROCUREMENTS_NEEDS,
             AUTO_COMPLETE_ITEMNAME,
-            SENT_PROCUREMENTS
+            SENT_PROCUREMENTS,
+            CONFIGURATION
         };
     }
 }

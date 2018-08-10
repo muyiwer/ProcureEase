@@ -2,6 +2,7 @@
 using ProcureEaseAPI.Providers;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -96,6 +97,19 @@ namespace ProcureEaseAPI.Controllers
             }
         }
 
+        private string GetConfiguration(string key)
+        {
+            try
+            {
+                return ConfigurationManager.AppSettings[key];
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(Log.Event.CONFIGURATION, ex.Message);
+                return "";
+            }
+        }
+
 
         //POST: Procurement/DraftNeeds
         [HttpPost]
@@ -118,7 +132,10 @@ namespace ProcureEaseAPI.Controllers
                     Response.StatusCode = (int)HttpStatusCode.NotFound;
                     return Error("BudgetYear is Null.");
                 }
+
+                #region ProcessNewProjects
                 ProcessNewProjects(Projects, DepartmentID,BudgetyearID);
+                #endregion
 
                 #region ProcessUpdatedProjects
                 // process updated projects
@@ -227,13 +244,16 @@ namespace ProcureEaseAPI.Controllers
                     });
                     }
                     // insert project
-                      db.Procurements.Add(new Procurements()
-                        {
-                            ProcurementID = ProcurementID,
-                            ProjectName = project.ProjectName,
-                           DateCreated = DateTimeSettings.CurrentDate(),
-                            ProjectCategoryID = project.ProjectCategoryID,
-                            ProcurementMethodID = project.ProcurementMethodID,
+                    int ProcurementStatusID = 0;
+                    int.TryParse(GetConfiguration("DraftProcurementStatusID"), out ProcurementStatusID);
+                    db.Procurements.Add(new Procurements()
+                    {
+                        ProcurementID = ProcurementID,
+                        ProjectName = project.ProjectName,
+                        DateCreated = DateTimeSettings.CurrentDate(),
+                        ProjectCategoryID = project.ProjectCategoryID,
+                        ProcurementMethodID = project.ProcurementMethodID,
+                        ProcurementStatusID = ProcurementStatusID,
                             DepartmentID = DepartmentID,
                             BudgetYearID = BudgetyearID
                             // TODO: ProcurementStatusID default value should be set from database
@@ -251,7 +271,6 @@ namespace ProcureEaseAPI.Controllers
                         ProcurementMethodID = project.ProcurementMethodID,
                         DepartmentID = DepartmentID,
                         BudgetYearID = BudgetyearID
-                        // TODO: ProcurementStatusID default value should be set from database
                     });
                 }
                
@@ -264,6 +283,8 @@ namespace ProcureEaseAPI.Controllers
             #region   // process new projects
             DateTimeSettings DateTimeSettings = new DateTimeSettings();
             var newProjects = Projects.Where(x => x.ProcurementID == Guid.Empty);
+            int ProcurementStatusID = 0;
+            int.TryParse(GetConfiguration("PendingProcurementStatusID"), out ProcurementStatusID);
             foreach (DepartmentProject project in newProjects)
             {
                 // process items in the projects
@@ -295,8 +316,8 @@ namespace ProcureEaseAPI.Controllers
                         ProjectCategoryID = project.ProjectCategoryID,
                         ProcurementMethodID = project.ProcurementMethodID,
                         DepartmentID = DepartmentID,
-                        BudgetYearID = BudgetyearID
-                        // TODO: ProcurementStatusID default value should be set from database
+                        BudgetYearID = BudgetyearID,
+                        ProcurementStatusID = ProcurementStatusID
                     });
 
                 }
@@ -311,8 +332,8 @@ namespace ProcureEaseAPI.Controllers
                         ProjectCategoryID = project.ProjectCategoryID,
                         ProcurementMethodID = project.ProcurementMethodID,
                         DepartmentID = DepartmentID,
-                        BudgetYearID = BudgetyearID
-                        // TODO: ProcurementStatusID default value should be set from database
+                        BudgetYearID = BudgetyearID,
+                        ProcurementStatusID = ProcurementStatusID
                     });
                 }
 
@@ -320,7 +341,7 @@ namespace ProcureEaseAPI.Controllers
             #endregion
         }
 
-        //POST: Procurements/DraftNeeds
+        //POST: Procurements/SendProcurementNeeds
         [HttpPost]
         [Providers.Authorize]
         public ActionResult SendProcurementNeeds(Guid DepartmentID, int BudgetYear, List<DepartmentProject> Projects)
@@ -470,45 +491,12 @@ namespace ProcureEaseAPI.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-
-        //GET: Procurements/SentProcurement
-        [HttpGet]
-        [Providers.Authorize]
-        public ActionResult SentProcurement(string id = "", string id2 = "")
-        {
-            switch (string.IsNullOrEmpty(id) && (string.IsNullOrEmpty(id2)))
-            {
-                case true:
-                    {
-                        LogHelper.Log(Log.Event.SENT_PROCUREMENTS, "DepartmentID or BudgetYearID is Null");
-                        Response.StatusCode = (int)HttpStatusCode.NotFound;
-                        return Error("DepartmentID or BudgetYearID is Null");
-                    }
-                default:
-                    {
-                        Guid guidID = new Guid();
-                        Guid guidID2 = new Guid();
-                        try
-                        {
-                            guidID = Guid.Parse(id);
-                            guidID2 = Guid.Parse(id2);
-                        }
-                        catch (FormatException ex)
-                        {
-                            Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                            LogHelper.Log(Log.Event.ALL_DRAFT_PROCUREMENT_NEEDS, "Guid format exeception");
-                            return Error(ex.Message);
-                        }
-                        var BudgetYear = db.BudgetYear.Where(x => x.BudgetYearID == guidID2).Select(x => x.BudgetYear1.Value.Year).FirstOrDefault();
-                        return SentProcurementJson(guidID, BudgetYear);
-
-                    }
-            }
-        }
+       
 
         private ActionResult DraftNeedsJson(Guid DepartmentID,int BudgetYear)
         {
-            var ProcurementStatusID = db.ProcurementStatus.Where(x => x.Status == "Draft").Select(x => x.ProcurementStatusID).FirstOrDefault();
+            int ProcurementStatusID = 0;
+            int.TryParse(GetConfiguration("DraftProcurementStatusID"), out ProcurementStatusID);
             var CheckIfAnyProjectCostIsNull = db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYearID == DepartmentID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(y => y.UnitPrice == null).ToList();
             var ProjectCostStatus = CheckIfAnyProjectCostIsNull == null ? true : false;
             return Json(new
@@ -563,7 +551,8 @@ namespace ProcureEaseAPI.Controllers
 
         private ActionResult SentProcurementJson(Guid DepartmentID, int BudgetYear)
         {
-            var ProcurementStatusID = db.ProcurementStatus.Where(x => x.Status == "Pending" && x.Status=="Approved").Select(x => x.ProcurementStatusID).FirstOrDefault();
+            int ProcurementStatusID = 0;
+            int.TryParse(GetConfiguration("DraftProcurementStatusID"), out ProcurementStatusID);
             var CheckIfAnyProjectCostIsNull = db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYearID == DepartmentID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(y => y.UnitPrice == null).ToList();
             var ProjectCostStatus = CheckIfAnyProjectCostIsNull == null ? true : false;           
             return Json(new

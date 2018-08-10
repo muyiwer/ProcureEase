@@ -348,6 +348,8 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
+                int ProcurementStatusID = 0;
+                int.TryParse(GetConfiguration("PendingProcurementStatusID"), out ProcurementStatusID);
                 DateTimeSettings DateTimeSettings = new DateTimeSettings();
                 var CheckIfDepartmentIsValid = db.Department.Where(x => x.DepartmentID == DepartmentID).Select(x => x.DepartmentName).FirstOrDefault();
                 if (CheckIfDepartmentIsValid == null)
@@ -364,7 +366,6 @@ namespace ProcureEaseAPI.Controllers
                     return Error("BudgetYear is Null.");
                 }
                ProcessNewSentProjects(Projects,DepartmentID,BudgetyearID);
-
                 #region ProcessUpdatedProjects
                 // process updated projects
                 var updatedProjects = Projects.Where(x => x.ProcurementID != Guid.Empty && x.Deleted == false);
@@ -410,6 +411,7 @@ namespace ProcureEaseAPI.Controllers
                         dbProcurement.DepartmentID = DepartmentID;
                         dbProcurement.BudgetYearID = BudgetyearID;
                         dbProcurement.DateModified = DateTimeSettings.CurrentDate();
+                        dbProcurement.ProcurementStatusID = ProcurementStatusID;
                         db.Entry(dbProcurement).State = EntityState.Modified;
                     }
                 }

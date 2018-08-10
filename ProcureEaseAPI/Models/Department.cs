@@ -17,8 +17,8 @@ namespace ProcureEaseAPI.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Department()
         {
-            this.Procurements = new HashSet<Procurements>();
             this.UserProfile1 = new HashSet<UserProfile>();
+            this.Procurements = new HashSet<Procurements>();
         }
     
         public System.Guid DepartmentID { get; set; }
@@ -30,8 +30,8 @@ namespace ProcureEaseAPI.Models
     
         public virtual UserProfile UserProfile { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Procurements> Procurements { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserProfile> UserProfile1 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Procurements> Procurements { get; set; }
     }
 }

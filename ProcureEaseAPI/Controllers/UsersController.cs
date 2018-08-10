@@ -40,6 +40,7 @@ namespace ProcureEaseAPI.Controllers
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 LogHelper.Log(Log.Event.LOGIN, ResponseContent);
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 return Json(new
                 {
                     success = false,
@@ -56,6 +57,8 @@ namespace ProcureEaseAPI.Controllers
                     {
                        User.Id,
                        Email = User.UserName,
+                       DepartmentID = db.UserProfile.Where(x=>x.UserEmail == UserName).Select(x=>x.DepartmentID).FirstOrDefault(),
+                       Role = db.AspNetUserRoles.Where(x=>x.UserId == User.Id).Select(x=>x.AspNetRoles.Name).FirstOrDefault(),
                        token = token
                     }
                 }, JsonRequestBehavior.AllowGet);
@@ -141,7 +144,7 @@ namespace ProcureEaseAPI.Controllers
 
           // Users/InitiatePasswordReset
         [HttpPost]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<ActionResult> InitiatePasswordReset(string UserEmail)
         {
             try
@@ -151,7 +154,6 @@ namespace ProcureEaseAPI.Controllers
                 if (user == null)
                 {
                     LogHelper.Log(Log.Event.INITIATE_PASSWORD_RESET, "Email does not exist");
-                //    return new HttpStatusCodeResult(HttpStatusCode.NotFound, "Email does not Exist! Please check and try again");
                     return Json(new
                     {
                         success = false,
@@ -160,12 +162,12 @@ namespace ProcureEaseAPI.Controllers
                         { }).FirstOrDefault()
                     }, JsonRequestBehavior.AllowGet);
                 }
-                var PasswordToken = await Repository.GeneratePasswordToken(user.Id);
+                var PasswordToken =  await Repository.GeneratePasswordToken(user.Id);
                 string RecipientEmail = UserEmail;
                 string Subject = "Password Reset";
-                string Body = new EmailTemplateHelper().GetTemplateContent("NMRC-Template");
+                string Body = new EmailTemplateHelper().GetTemplateContent("PasswordResetTemplate");
                 var url = System.Web.HttpContext.Current.Request.Url.Host;
-                string newTemplateContent = string.Format(Body,url + "/#/email/resetpassword/token" + PasswordToken);
+                string newTemplateContent = string.Format(Body,"http://"+ url + "/#/resetpassword/"+UserEmail +"/"+ PasswordToken);
                 Message message = new Message(RecipientEmail, Subject, newTemplateContent);
                 EmailHelper emailHelper = new EmailHelper();
                 await emailHelper.AddEmailToQueue(message);
@@ -176,7 +178,7 @@ namespace ProcureEaseAPI.Controllers
                 return Json(new
                 {
                     success = false,
-                    message = "" + ex.Message,
+                    message = "" + ex.Message+ex.StackTrace,
                     data = db.UserProfile.Select(x => new
                     { }).FirstOrDefault()
                 }, JsonRequestBehavior.AllowGet);
@@ -184,7 +186,7 @@ namespace ProcureEaseAPI.Controllers
             return Json(new
             {
                 success = true,
-                message = "Sign up successful.",
+                message = "Please check your email to reset password.",
                 data = db.UserProfile.Select(x => new
                 {
                     User = new
@@ -205,7 +207,7 @@ namespace ProcureEaseAPI.Controllers
 
         // Users/ResetPassword
         [HttpPost]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<ActionResult> ResetPassword(ResetPasswordModel ResetPassword)
         {
             try
@@ -215,7 +217,6 @@ namespace ProcureEaseAPI.Controllers
                 if (user == null)
                 {
                     LogHelper.Log(Log.Event.RESET_PASSWORD, "Email does not exist");
-                   // return new HttpStatusCodeResult(HttpStatusCode.NotFound, "Email does not Exist! Please check and try again");
                     return Json(new
                     {
                         success = false,
@@ -224,7 +225,7 @@ namespace ProcureEaseAPI.Controllers
                         { }).FirstOrDefault()
                     }, JsonRequestBehavior.AllowGet);
                 }
-                var result = await Repository.ResetPassword(ResetPassword, user.Id);
+                var result = await Repository.ResetPassword(ResetPassword.ResetToken,ResetPassword.NewPassword, user.Id);
             }
             catch (Exception ex)
             {
@@ -240,7 +241,7 @@ namespace ProcureEaseAPI.Controllers
             return Json(new
             {
                 success = true,
-                message = "Sign up successful.",
+                message = "Password reset successful.",
                 data = db.UserProfile.Select(x => new
                 {
                     User = new
@@ -261,7 +262,7 @@ namespace ProcureEaseAPI.Controllers
 
         //POST: Users/SignUp
         [HttpPost]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<ActionResult> SignUp(UserProfile UserProfile, string Password)
         {
             try
@@ -270,7 +271,6 @@ namespace ProcureEaseAPI.Controllers
                 if (CheckIfUserHasSignedUp != null)
                 {
                     LogHelper.Log(Log.Event.SIGN_UP, "Email already exists on AspNetUser table.");
-                  //  return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Email has already signed up! Please check and try again");
                     return Json(new
                     {
                         success = false,
@@ -306,7 +306,6 @@ namespace ProcureEaseAPI.Controllers
                 if (CheckIfUserIsAddedByAdmin == null)
                 {
                     LogHelper.Log(Log.Event.SIGN_UP, "Email does not exist on UserProfile table");
-                  // return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Admin has not send Invitation Email to this Email!!");
                     return Json(new
                     {
                         success = false,
@@ -391,7 +390,7 @@ namespace ProcureEaseAPI.Controllers
                     return Json(new
                     {
                         success = true,
-                        message = "",
+                        message = "Edited successfully.",
                         data = db.UserProfile.Select(x => new
                         {
                             x.UserID,
@@ -427,7 +426,7 @@ namespace ProcureEaseAPI.Controllers
                     return Json(new
                     {
                         success = true,
-                        message = "",
+                        message = "Edited Successfully.",
                         data = db.UserProfile.Select(x => new
                         {
                             x.UserID,
@@ -445,7 +444,7 @@ namespace ProcureEaseAPI.Controllers
                 return Json(new
                 {
                     success = false,
-                    message = "" + ex.Message,
+                    message = "" + ex.Message + ex.StackTrace,
                     data = db.UserProfile.Select(x => new
                     { }).FirstOrDefault()
                 }, JsonRequestBehavior.AllowGet);
@@ -575,7 +574,7 @@ namespace ProcureEaseAPI.Controllers
             return Json(new
             {
                 success = true,
-                message = "",
+                message = "Profile update successful.",
                 data = db.UserProfile.Select(x => new
                 {
                     x.UserID,
@@ -652,7 +651,7 @@ namespace ProcureEaseAPI.Controllers
                 return Json(new
                 {
                     success = true,
-                    message = "",
+                    message = "User added as department head successful.",
                     data = db.UserProfile.Select(x => new
                     {
                         x.UserID,
@@ -717,7 +716,7 @@ namespace ProcureEaseAPI.Controllers
                 return Json(new
                 {
                     success = true,
-                    message = "",
+                    message = "All Users",
                     data = db.UserProfile.Where(x => x.DepartmentID == guidID).Select(x => new
                     {
                         x.UserID,
@@ -767,7 +766,7 @@ namespace ProcureEaseAPI.Controllers
                     return Json(new
                     {
                         success = true,
-                        message = "",
+                        message = "User is deleted suessfully",
                         data = db.UserProfile.Select(x => new
                         {
                             x.UserID,
@@ -791,7 +790,7 @@ namespace ProcureEaseAPI.Controllers
                     return Json(new
                     {
                         success = true,
-                        message = "",
+                        message = "User is deleted suessfully",
                         data = db.UserProfile.Select(x => new
                         {
                             x.UserID,

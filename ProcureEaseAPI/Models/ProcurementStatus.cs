@@ -20,7 +20,7 @@ namespace ProcureEaseAPI.Models
             this.Procurements = new HashSet<Procurements>();
         }
     
-        public System.Guid ProcurementStatusID { get; set; }
+        public int ProcurementStatusID { get; set; }
         public string Status { get; set; }
         public string Description { get; set; }
         public Nullable<System.DateTime> DateModified { get; set; }

@@ -59,32 +59,20 @@ namespace ProcureEaseAPI.Tests.Controllers
         [TestMethod]
         public void TestSendProcurementNeeds()
         {
-            Guid DepartmentID = new Guid("5C99B26F-CBA8-493E-ABD4-E049BB548DB5");
+            Guid DepartmentID = new Guid("066AF5C4-3F41-419E-ADD5-77E8EC0E1E93");
             int BudgetYear = 2018;
-            var Items = new
-            {
-                ItemID = new Guid()
-            };
-            List<DepartmentProject> Projects = new List<DepartmentProject>
-            {
-               new DepartmentProject
-               {
-                   ProjectCategoryID = new Guid(),
-                   ProjectName = "",
-                   ProcurementMethodID = new Guid(),
-                   ProcurementID = new Guid(),
-                  
-               },
-               new DepartmentProject
-               {
-                   ProjectCategoryID = new Guid(),
-                   ProjectName = "",
-                   ProcurementMethodID = new Guid(),
-                   ProcurementID = new Guid(),
-                   
-               }
-
-            };
+            DepartmentItems Items = new DepartmentItems();
+            Items.Quantity = 2000;
+            Items.UnitPrice = 5000;
+            Items.ItemName = "Office stationaries";
+            Items.ItemCodeID = new Guid("93E6FFA5-E700-45B0-BDE7-6B3570DAB27B");
+            DepartmentProject project = new DepartmentProject();
+            project.ProcurementMethodID = new Guid("3D30C690-F37B-43D9-A17C-D47A4F5DA127");
+            project.ProjectName = "Procurement of Office stationary";
+            project.ProjectCategoryID = new Guid();
+            project.Items.Add(Items);
+            List<DepartmentProject> Projects = new List<DepartmentProject>();
+            Projects.Add(project);
             var testDraftNeeds = new ProcurementsController();
             JsonResult result = (JsonResult)testDraftNeeds.SendProcurementNeeds(DepartmentID, BudgetYear, Projects);
             Console.WriteLine(result.Data);

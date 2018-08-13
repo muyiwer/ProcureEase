@@ -561,7 +561,7 @@ namespace ProcureEaseAPI.Controllers
         {
             
                 int ProcurementStatusID = 0;
-                int.TryParse(GetConfiguration("DraftProcurementStatusID"), out ProcurementStatusID);
+                int.TryParse(GetConfiguration("PendingProcurementStatusID"), out ProcurementStatusID);
                 var CheckIfAnyProjectCostIsNull = db.Items.Select(y => y.UnitPrice == null).ToList();
                 var ProjectCostStatus = CheckIfAnyProjectCostIsNull == null ? true : false;
                 return Json(new
@@ -643,7 +643,7 @@ namespace ProcureEaseAPI.Controllers
         private ActionResult SentProcurementJson(Guid DepartmentID, int BudgetYear)
         {
             int ProcurementStatusID = 0;
-            int.TryParse(GetConfiguration("DraftProcurementStatusID"), out ProcurementStatusID);
+            int.TryParse(GetConfiguration("PendingProcurementStatusID"), out ProcurementStatusID);
             var CheckIfAnyProjectCostIsNull = db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYearID == DepartmentID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(y => y.UnitPrice == null).ToList();
             var ProjectCostStatus = CheckIfAnyProjectCostIsNull == null ? true : false;           
             return Json(new

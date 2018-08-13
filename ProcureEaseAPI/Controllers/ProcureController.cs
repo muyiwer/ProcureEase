@@ -72,11 +72,9 @@ namespace ProcureEaseAPI.Controllers
 
         private ActionResult SentProcurementJson(Guid DepartmentID, int BudgetYear)
         {
-            int ApprovedProcurementStatusID = 0;
-            int.TryParse(GetConfiguration("ApprovedProcurementStatusID"), out ApprovedProcurementStatusID);
-            int PendingProcurementStatusID = 0;
-            int.TryParse(GetConfiguration("PendingProcurementStatusID"), out PendingProcurementStatusID);
-            var CheckIfAnyProjectCostIsNull = db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYearID == DepartmentID && z.Procurements.ProcurementStatusID == ApprovedProcurementStatusID && z.Procurements.ProcurementStatusID == PendingProcurementStatusID).Select(y => y.UnitPrice == null).ToList();
+            int ProcurementStatusID = 0;
+            int.TryParse(GetConfiguration("PendingProcurementStatusID"), out ProcurementStatusID);
+            var CheckIfAnyProjectCostIsNull = db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYearID == DepartmentID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(y => y.UnitPrice == null).ToList();
             var ProjectCostStatus = CheckIfAnyProjectCostIsNull == null ? true : false;
             return Json(new
             {
@@ -85,7 +83,7 @@ namespace ProcureEaseAPI.Controllers
                 data = new
                 {
                     DepartmentName = db.Department.Where(x => x.DepartmentID == DepartmentID).Select(x => x.DepartmentName).FirstOrDefault(),
-                    Projects = db.Procurements.Where(x => x.DepartmentID == DepartmentID && x.BudgetYear.BudgetYear1.Value.Year == BudgetYear && x.ProcurementStatus.ProcurementStatusID == ApprovedProcurementStatusID && x.ProcurementStatus.ProcurementStatusID == PendingProcurementStatusID).Select(x => new
+                    Projects = db.Procurements.Where(x => x.DepartmentID == DepartmentID && x.BudgetYear.BudgetYear1.Value.Year == BudgetYear && x.ProcurementStatusID == ProcurementStatusID).Select(x => new
                     {
                         x.ProcurementID,
                         x.ProjectName,
@@ -93,10 +91,10 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementMethodID,
                         x.ProjectCategoryID,
                         x.ProcurementStatusID,
-                        TotalProjectCost = db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ApprovedProcurementStatusID && z.Procurements.ProcurementStatusID == PendingProcurementStatusID).Select(z => z.UnitPrice).Sum()
-                                    * db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ApprovedProcurementStatusID && z.Procurements.ProcurementStatusID == PendingProcurementStatusID).Select(z => z.Quantity).Sum(),
-                        ProjectTotalCostStatus = db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ApprovedProcurementStatusID && z.Procurements.ProcurementStatusID == PendingProcurementStatusID).Select(y => y.UnitPrice != null == true || false).FirstOrDefault(),
-                        Items = db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ApprovedProcurementStatusID && z.Procurements.ProcurementStatusID == PendingProcurementStatusID).Select(z => new
+                        TotalProjectCost = db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(z => z.UnitPrice).Sum()
+                                     * db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(z => z.Quantity).Sum(),
+                        ProjectTotalCostStatus = db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(y => y.UnitPrice != null == true || false).FirstOrDefault(),
+                        Items = db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(z => new
                         {
                             z.ItemID,
                             z.ItemName,
@@ -130,6 +128,7 @@ namespace ProcureEaseAPI.Controllers
                 }
             }, JsonRequestBehavior.AllowGet);
         }
+
 
     }
 }

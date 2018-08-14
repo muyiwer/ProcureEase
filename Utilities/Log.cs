@@ -20,7 +20,8 @@ namespace Utilities
             UPDATE_USER_PROFILE,
             UPDATE_DEPARTMENT_HEAD,
             DELETE_USER,
-            LOGIN
+            LOGIN,
+            CONFIGURATION
         };
     }
 }

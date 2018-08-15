@@ -79,7 +79,44 @@ namespace ProcureEaseAPI.Tests.Controllers
             Assert.IsTrue((result.Data + "").Contains("Drafted procurement"));
         }
 
-       
-   
+        [TestMethod]
+        public void TestProcurementNeedSummary()
+        {
+            var testProcurementNeedSummary = new ProcurementsController();
+            JsonResult result = (JsonResult)testProcurementNeedSummary.ProcurementNeedsSummary();
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("Procurement needs summary."));
+        }
+
+        [TestMethod]
+        public void TestGetProcurementNeeds()
+        {
+            string id = "3A380F88-6B8B-40AF-AA14-DF546CEC1AA6";
+            string id2 = "452BE391-2A89-4212-A5C8-B0A0BB37DFE3";
+            var testGetProcurementNeeds = new ProcurementsController();
+            JsonResult result = (JsonResult)testGetProcurementNeeds.ProcurementNeeds(id, id2);
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("All procurement needs."));
+        }
+
+        [TestMethod]
+        public void TestGetProcurementNeeds_Null_ID()
+        {
+            string id = "";
+            var testGetProcurementNeeds = new ProcurementsController();
+            JsonResult result = (JsonResult)testGetProcurementNeeds.ProcurementNeeds(id);
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("DepartmentID or BudgetYearID is Null"));
+        }
+
+        [TestMethod]
+        public void TestGetProcurementNeeds_Invalid_Guid()
+        {
+            string id = "3A380F88-6B8B-40AF-AA14";
+            var testGetProcurementNeeds = new ProcurementsController();
+            JsonResult result = (JsonResult)testGetProcurementNeeds.ProcurementNeeds(id);
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("Guid should contain 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)"));
+        }
     }
 }

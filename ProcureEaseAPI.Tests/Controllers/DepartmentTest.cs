@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace ProcureEaseAPI.Tests.Controllers
 {
     [TestClass]
-    class DepartmentTest
+    public class DepartmentTest
     {
         [TestMethod]
         public void TestAddDepartment()

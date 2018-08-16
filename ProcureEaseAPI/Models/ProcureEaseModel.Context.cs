@@ -40,6 +40,7 @@ namespace ProcureEaseAPI.Models
         public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
         public virtual DbSet<BudgetYear> BudgetYear { get; set; }
         public virtual DbSet<Department> Department { get; set; }
+        public virtual DbSet<ItemCode> ItemCode { get; set; }
         public virtual DbSet<Items> Items { get; set; }
         public virtual DbSet<OrganizationSettings> OrganizationSettings { get; set; }
         public virtual DbSet<ProcurementMethod> ProcurementMethod { get; set; }

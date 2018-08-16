@@ -239,6 +239,7 @@
     <Compile Include="Models\AdvertLotNumber.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\AdvertPreparation.cs" />
     <Compile Include="Models\Adverts.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
@@ -273,6 +274,9 @@
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\IdentityModel.cs" />
+    <Compile Include="Models\ItemCode.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Items.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
@@ -376,7 +380,9 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>

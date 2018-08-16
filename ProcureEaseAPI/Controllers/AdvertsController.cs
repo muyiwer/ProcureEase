@@ -73,7 +73,7 @@ namespace ProcureEaseAPI.Controllers
                 advertCategory.DateModified = dt;
                 db.AdvertCategory.Add(advertCategory);
                 db.SaveChanges();
-                return  SentAdvertCategoryJson(advertCategory);
+                return SentAdvertCategoryJson(advertCategory);
             }
             catch (Exception)
             {
@@ -109,10 +109,10 @@ namespace ProcureEaseAPI.Controllers
             AdvertCategory advertCategory = new AdvertCategory();
             try
             {
-                    advertCategory = db.AdvertCategory.Find(id);
-                    db.AdvertCategory.Remove(advertCategory);
-                    db.SaveChanges();
-                    return SentAdvertCategoryJson(advertCategory);
+                advertCategory = db.AdvertCategory.Find(id);
+                db.AdvertCategory.Remove(advertCategory);
+                db.SaveChanges();
+                return SentAdvertCategoryJson(advertCategory);
             }
             catch (Exception)
             {
@@ -121,20 +121,15 @@ namespace ProcureEaseAPI.Controllers
             }
         }
 
-        // GET: Adverts/Details/5
-        public ActionResult AddPlanToAdvert(Guid DepartmentID, Guid AdvertID, int BudgetYear, Guid ProcurementID, Guid ProcurementStatusID)
+        [HttpPost]
+        public ActionResult SentAdvertJson(int BudgetYear, Guid DepartmentID)
         {
             try
             {
-                Adverts adverts = new Adverts();
-                var departmentID = db.Department.Where(x => x.DepartmentID == DepartmentID).Select(x => x.DepartmentID).FirstOrDefault();
-                var advertID = db.Adverts.Where(x => x.AdvertID == AdvertID).Select(x => x.AdvertID).FirstOrDefault();
-                var procurementID = db.Procurements.Where(x => x.ProcurementID == ProcurementID).Select(x => x.ProcurementID).FirstOrDefault();
-                
-                adverts.AdvertID = Guid.NewGuid();
-                db.Adverts.Add(adverts);
-                db.SaveChanges();
-                //var BudgetyearID = db.BudgetYear.Where(x => x.BudgetYear1.Value.Year == BudgetYear).Select(x => x.BudgetYearID).FirstOrDefault();
+                int ProcurementStatusID = 0;
+                int.TryParse(GetConfiguration("AttestedProcurementStatusID"), out ProcurementStatusID);
+
+                //TODO:check if budget year and departmentID is equal to null
                 return Json(new
                 {
                     success = true,
@@ -142,6 +137,10 @@ namespace ProcureEaseAPI.Controllers
                     data = new
                     {
                         DepartmentName = db.Department.Where(x => x.DepartmentID == DepartmentID).Select(x => x.DepartmentName).FirstOrDefault(),
+                        BudgetYearID = db.BudgetYear.Where(x => x.BudgetYearID == x.BudgetYearID).Select(x => x.BudgetYearID).FirstOrDefault(),
+                        BudgetYear = db.BudgetYear.Where(x => x.BudgetYear1.Value.Year == BudgetYear).Select(x => x.BudgetYear1.Value.Year).FirstOrDefault(),
+                        TotalCost = db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == z.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(z => z.UnitPrice).Sum()
+                                         * db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == z.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(z => z.Quantity).Sum(),
                         Projects = db.Procurements.Where(x => x.DepartmentID == DepartmentID && x.BudgetYear.BudgetYear1.Value.Year == BudgetYear && x.ProcurementStatusID == ProcurementStatusID).Select(x => new
                         {
                             x.ProcurementID,
@@ -150,15 +149,15 @@ namespace ProcureEaseAPI.Controllers
                             x.ProcurementMethodID,
                             x.ProjectCategoryID,
                             x.ProcurementStatusID,
-                            TotalProjectCost = db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(z => z.UnitPrice).Sum()
-                                         * db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(z => z.Quantity).Sum(),
+                            TotalCost = db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == z.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(z => z.UnitPrice).Sum()
+                                         * db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == z.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(z => z.Quantity).Sum(),
                             ProjectTotalCostStatus = db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(y => y.UnitPrice != null == true || false).FirstOrDefault(),
                             Items = db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(z => new
                             {
                                 z.ItemID,
                                 z.ItemName,
-                              //  z.ItemCodeID,
-                               // ItemCode = z.ItemCode.ItemCode1,
+                                z.ItemCodeID,
+                                ItemCode = z.ItemCode.ItemCode1,
                                 z.Quantity,
                                 z.UnitPrice,
                                 EstimatedCost = z.UnitPrice * z.Quantity
@@ -179,10 +178,10 @@ namespace ProcureEaseAPI.Controllers
                             x.ProjectCategoryID,
                             x.Name
                         }),
-                        BudgetYear = db.BudgetYear.Select(x => new
+                        Advert = db.Adverts.Select(x => new
                         {
-                            x.BudgetYearID,
-                            BudgetYear = x.BudgetYear1.Value.Year
+                            x.AdvertID,
+                            x.Headline
                         })
                     }
                 }, JsonRequestBehavior.AllowGet);
@@ -194,6 +193,89 @@ namespace ProcureEaseAPI.Controllers
             }
         }
 
+        // Post: Adverts/AddAdvert
+        [HttpPost]
+        public ActionResult AddAdvert(int BudgetYear, string Headline, string DepartmentName)
+        {
+            try
+            {
+                var DepartmentID = db.Department.Where(x => x.DepartmentName == DepartmentName).Select(x => x.DepartmentID).FirstOrDefault();
+                Adverts adverts = new Adverts();
+                var BudgetYearId = db.BudgetYear.Where(x => x.BudgetYear1.Value.Year == BudgetYear).Select(x => x.BudgetYearID).FirstOrDefault();
+                int AdvertStatusID = 0;
+                int.TryParse(GetConfiguration("DraftProcurementStatusID"), out AdvertStatusID);
+
+                adverts.AdvertID = Guid.NewGuid();
+                adverts.BudgetYearID = BudgetYearId;
+                adverts.AdvertStatusID = AdvertStatusID;
+                adverts.Headline = Headline;
+
+                db.Adverts.Add(adverts);
+                db.SaveChanges();
+                return SentAdvertJson(BudgetYear, DepartmentID);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        // POST: Adverts/AddPlanToAdvert
+        [HttpPost]
+        public ActionResult AddPlanToAdvert(int BudgetYear, string DepartmentName, List<AdvertPreparation>Adverts)
+        {
+            try
+            {
+                var DepartmentID = db.Department.Where(x => x.DepartmentName == DepartmentName).Select(x => x.DepartmentID).FirstOrDefault();
+                int AttestedProcurementStatusID = 0;
+                int.TryParse(GetConfiguration("AttestedProcurementStatusID"), out AttestedProcurementStatusID);
+                foreach (AdvertPreparation Advertised in Adverts)
+                {
+                    if (Advertised.AdvertID == Guid.Empty && Advertised.ProcurementID == Guid.Empty)
+                    {
+
+                    }
+                    var checkIfProjectIsAttested = db.Procurements.Where(x => x.ProcurementID == Advertised.ProcurementID && x.ProcurementStatusID == AttestedProcurementStatusID).Select(x => x.ProcurementStatusID);
+                    if (checkIfProjectIsAttested == null)
+                    {
+
+                    }
+                    var checkIfProcurementIsAddedToAdvert = db.AdvertLotNumber.Where(x => x.ProcurementID == Advertised.ProcurementID).Select(x => x.ProcurementID).FirstOrDefault();
+                    if(checkIfProcurementIsAddedToAdvert==null)
+                    {
+
+                    }
+                    var c1 = 'A' + 0;
+                    c1++;
+                    var getProjectCategory = db.ProjectCategory.Where(x => x.ProjectCategoryID == Advertised.ProjectCategoryID).Select(x => x.Name).FirstOrDefault();
+                    var getAdvertCategoryID = db.AdvertCategory.Where(x => x.AdvertCategory1 == getProjectCategory).Select(x => x.AdvertCategoryID).FirstOrDefault();
+                    Adverts UpdateAdvert = db.Adverts.Find(Advertised.AdvertID);
+                    UpdateAdvert.Headline = Advertised.Headline;
+                    db.Entry(UpdateAdvert).State = EntityState.Modified;
+                    AdvertCategoryNumber advertCategoryNumber = new AdvertCategoryNumber();
+                    advertCategoryNumber.AdvertCategoryNumberID = Guid.NewGuid();
+                    advertCategoryNumber.ProjectCategoryID = Advertised.ProjectCategoryID;
+                    advertCategoryNumber.AdvertID = Advertised.AdvertID;
+                    advertCategoryNumber.CategoryLotCode = c1.ToString();
+                    advertCategoryNumber.AdvertCategoryID = Advertised.ProjectCategoryID;
+                    db.AdvertCategoryNumber.Add(advertCategoryNumber);
+                    AdvertLotNumber advertLotNumber = new AdvertLotNumber();
+                    advertLotNumber.AdvertID = Advertised.AdvertID;
+                    advertLotNumber.LotCode = c1.ToString();
+                    advertLotNumber.ProcurementID = Advertised.ProcurementID;
+                    db.AdvertLotNumber.Add(advertLotNumber); 
+                    db.SaveChanges();
+                }
+                return SentAdvertJson(BudgetYear, DepartmentID);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+           
+        }
 
         // GET: Adverts/Details/5
         public ActionResult Details(Guid? id)

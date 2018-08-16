@@ -21,7 +21,11 @@ namespace Utilities
             UPDATE_DEPARTMENT_HEAD,
             DELETE_USER,
             LOGIN,
-            CONFIGURATION
+            CONFIGURATION,
+            ADD_PROCUREMENT_PLAN_TO_ADVERT,
+            ADD_ADVERT_TO_DRAFT,
+            GET_ADVERT_DETAILS,
+            GET_ADVERT_Summary
         };
     }
 }

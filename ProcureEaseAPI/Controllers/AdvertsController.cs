@@ -199,16 +199,25 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
+                DateTime dt = DateTime.Now;
                 var DepartmentID = db.Department.Where(x => x.DepartmentName == DepartmentName).Select(x => x.DepartmentID).FirstOrDefault();
                 Adverts adverts = new Adverts();
                 var BudgetYearId = db.BudgetYear.Where(x => x.BudgetYear1.Value.Year == BudgetYear).Select(x => x.BudgetYearID).FirstOrDefault();
                 int AdvertStatusID = 0;
-                int.TryParse(GetConfiguration("DraftProcurementStatusID"), out AdvertStatusID);
-
+                int.TryParse(GetConfiguration("DraftAdvertStatusID"), out AdvertStatusID);
+                var checkIfBudgetYearExists = db.BudgetYear.Where(x => x.BudgetYearID == x.BudgetYearID).Select(x => x.BudgetYearID).FirstOrDefault();
+                if (checkIfBudgetYearExists == null)
+                {
+                    LogHelper.Log(Log.Event.ADD_ADVERT_TO_DRAFT, " Budget Year does not exist.");
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Error(" Budget Year does not exist.");
+                }
                 adverts.AdvertID = Guid.NewGuid();
                 adverts.BudgetYearID = BudgetYearId;
                 adverts.AdvertStatusID = AdvertStatusID;
                 adverts.Headline = Headline;
+                adverts.DateCreated = dt;
+                adverts.CreatedBy = "Employee";
 
                 db.Adverts.Add(adverts);
                 db.SaveChanges();
@@ -227,45 +236,70 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
+                DateTime dt = DateTime.Now;
                 var DepartmentID = db.Department.Where(x => x.DepartmentName == DepartmentName).Select(x => x.DepartmentID).FirstOrDefault();
                 int AttestedProcurementStatusID = 0;
                 int.TryParse(GetConfiguration("AttestedProcurementStatusID"), out AttestedProcurementStatusID);
                 foreach (AdvertPreparation Advertised in Adverts)
                 {
-                    if (Advertised.AdvertID == Guid.Empty && Advertised.ProcurementID == Guid.Empty)
+                    var departmentalAdvert = Advertised.Projects;
+                    if (Advertised.Headline == null)
                     {
-
+                        LogHelper.Log(Log.Event.ADD_PROCUREMENT_PLAN_TO_ADVERT, "Please input Headline.");
+                        Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                        return Error(" Please input Headline.");                      
                     }
-                    var checkIfProjectIsAttested = db.Procurements.Where(x => x.ProcurementID == Advertised.ProcurementID && x.ProcurementStatusID == AttestedProcurementStatusID).Select(x => x.ProcurementStatusID);
-                    if (checkIfProjectIsAttested == null)
-                    {
-
-                    }
-                    var checkIfProcurementIsAddedToAdvert = db.AdvertLotNumber.Where(x => x.ProcurementID == Advertised.ProcurementID).Select(x => x.ProcurementID).FirstOrDefault();
-                    if(checkIfProcurementIsAddedToAdvert==null)
-                    {
-
-                    }
-                    var c1 = 'A' + 0;
-                    c1++;
-                    var getProjectCategory = db.ProjectCategory.Where(x => x.ProjectCategoryID == Advertised.ProjectCategoryID).Select(x => x.Name).FirstOrDefault();
-                    var getAdvertCategoryID = db.AdvertCategory.Where(x => x.AdvertCategory1 == getProjectCategory).Select(x => x.AdvertCategoryID).FirstOrDefault();
                     Adverts UpdateAdvert = db.Adverts.Find(Advertised.AdvertID);
                     UpdateAdvert.Headline = Advertised.Headline;
+                    UpdateAdvert.DateModified = dt;
                     db.Entry(UpdateAdvert).State = EntityState.Modified;
-                    AdvertCategoryNumber advertCategoryNumber = new AdvertCategoryNumber();
-                    advertCategoryNumber.AdvertCategoryNumberID = Guid.NewGuid();
-                    advertCategoryNumber.ProjectCategoryID = Advertised.ProjectCategoryID;
-                    advertCategoryNumber.AdvertID = Advertised.AdvertID;
-                    advertCategoryNumber.CategoryLotCode = c1.ToString();
-                    advertCategoryNumber.AdvertCategoryID = Advertised.ProjectCategoryID;
-                    db.AdvertCategoryNumber.Add(advertCategoryNumber);
-                    AdvertLotNumber advertLotNumber = new AdvertLotNumber();
-                    advertLotNumber.AdvertID = Advertised.AdvertID;
-                    advertLotNumber.LotCode = c1.ToString();
-                    advertLotNumber.ProcurementID = Advertised.ProcurementID;
-                    db.AdvertLotNumber.Add(advertLotNumber); 
-                    db.SaveChanges();
+
+                    foreach (AdvertProject departmentAdvert in departmentalAdvert)
+                    {
+                        var getProjectCategory = db.ProjectCategory.Where(x => x.ProjectCategoryID == departmentAdvert.ProjectCategoryID).Select(x => x.Name).FirstOrDefault();
+                        var getAdvertCategoryID = db.AdvertCategory.Where(x => x.AdvertCategory1 == getProjectCategory).Select(x => x.AdvertCategoryID).FirstOrDefault();
+                        if (Advertised.AdvertID == Guid.Empty && departmentAdvert.ProcurementID == Guid.Empty)
+                        {
+                            LogHelper.Log(Log.Event.ADD_PROCUREMENT_PLAN_TO_ADVERT,  "Advert OR Procurement ID could not be found.");
+                            Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                            return Error("Advert OR Procurement ID could not be found.");
+                        }
+                        var checkIfProjectIsAttested = db.Procurements.Where(x => x.ProcurementID == departmentAdvert.ProcurementID && x.ProcurementStatusID == AttestedProcurementStatusID).Select(x => x.ProcurementStatusID);
+                        if (checkIfProjectIsAttested == null)
+                        {
+                            LogHelper.Log(Log.Event.ADD_PROCUREMENT_PLAN_TO_ADVERT, "Project has not been approved by Head of Procurement.");
+                            Response.StatusCode = (int)HttpStatusCode.NotFound;
+                            return Error("Project has not been approved by Head of Procurement.");
+                        }
+                        var checkIfProcurementAlreadyExistsOnAdvert = db.AdvertLotNumber.Where(x => x.AdvertLotNumberID == departmentAdvert.ProcurementID).Select(x => x.ProcurementID).FirstOrDefault();
+                        if (checkIfProcurementAlreadyExistsOnAdvert != null)
+                        {
+                            LogHelper.Log(Log.Event.ADD_PROCUREMENT_PLAN_TO_ADVERT, "Project with ID: " + departmentAdvert.ProcurementID +  "Already exist on Advert.");
+                            Response.StatusCode = (int)HttpStatusCode.NotFound;
+                            return Error("Project with ID: " + departmentAdvert.ProcurementID + "Already exist on Advert.");
+                        }
+
+                        AdvertLotNumber advertLotNumber = new AdvertLotNumber();
+                        advertLotNumber.AdvertLotNumberID = Guid.NewGuid();
+                        advertLotNumber.AdvertID = Advertised.AdvertID;
+                        advertLotNumber.ProcurementID = departmentAdvert.ProcurementID;
+                        advertLotNumber.DateCreated = dt;
+                        advertLotNumber.DateModified = dt;
+                        advertLotNumber.CreatedBy = "Employee";
+                        db.AdvertLotNumber.Add(advertLotNumber);
+
+                        AdvertCategoryNumber advertCategoryNumber = new AdvertCategoryNumber();
+                        advertCategoryNumber.AdvertCategoryNumberID = Guid.NewGuid();
+                        advertCategoryNumber.ProjectCategoryID = departmentAdvert.ProjectCategoryID;
+                        advertCategoryNumber.AdvertID = Advertised.AdvertID;
+                        advertCategoryNumber.AdvertCategoryID = getAdvertCategoryID;
+                        advertCategoryNumber.DateCreated = dt;
+                        advertCategoryNumber.DateModified = dt;
+                        advertCategoryNumber.CreatedBy = "Employee";
+                        db.AdvertCategoryNumber.Add(advertCategoryNumber);
+
+                        db.SaveChanges();
+                    }
                 }
                 return SentAdvertJson(BudgetYear, DepartmentID);
             }
@@ -277,19 +311,90 @@ namespace ProcureEaseAPI.Controllers
            
         }
 
-        // GET: Adverts/Details/5
-        public ActionResult Details(Guid? id)
+        // GET: Adverts/AdvertSummary
+        public ActionResult AdvertSummary()
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                Adverts adverts = new Adverts();
+                if (adverts == null)
+                {
+                    LogHelper.Log(Log.Event.GET_ADVERT_Summary, "Advert Details cannot be found");
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Error("Advert Details cannot be found");
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Procurement plan summary",
+                        data = db.Adverts.Select(x => new
+                        {
+                            x.AdvertID,
+                            x.Headline,
+                            x.BidOpeningDate,
+                            x.BidClosingDate,
+                            x.AdvertStatusID,
+                            AdvertStatus = db.AdvertStatus.Where(y => x.AdvertStatusID == y.AdvertStatusID).Select(y => y.AdvertStatusID)
+                        })
+                    }, JsonRequestBehavior.AllowGet);
+                }
             }
-            Adverts adverts = db.Adverts.Find(id);
-            if (adverts == null)
+            catch (Exception)
             {
-                return HttpNotFound();
+
+                throw;
             }
-            return View(adverts);
+        }
+
+        // GET: Adverts/AdvertDetails
+        public ActionResult AdvertDetails(Guid? id)
+        {
+            try
+            {
+                if (id == null)
+                {
+                    LogHelper.Log(Log.Event.GET_ADVERT_DETAILS, "AdvertID cannot be found");
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    return Error("AdvertID cannot be found");
+                }
+                Adverts adverts = db.Adverts.Find(id);
+                if (adverts == null)
+                {
+                    LogHelper.Log(Log.Event.GET_ADVERT_DETAILS, "Advert Details cannot be found");
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Error("Advert Details cannot be found");
+                }
+                return Json(new
+                {
+                    success = true,
+                    message = "Advert details",
+                    data = new
+                    {
+                        Adverts = db.Adverts.Where(x => x.AdvertID == id).Select(x => new
+                        {
+                            x.AdvertStatusID,
+                            x.Headline,
+                            DepartmentName = db.AdvertLotNumber.Where(y => y.AdvertID == x.AdvertID).Select(y => y.Procurements.Department.DepartmentName).FirstOrDefault(),
+                            BudgetYear = db.BudgetYear.Where(y => y.BudgetYearID == x.BudgetYearID).Select(y => y.BudgetYear1.Value.Year).FirstOrDefault(),
+                            AdvertCategory = db.AdvertLotNumber.Where(z => z.AdvertID == x.AdvertID).Select(z => new
+                            {
+                                z.ProcurementID,
+                                ProjectCategoryID = db.AdvertCategoryNumber.Where(a => a.AdvertID == x.AdvertID).Select(a => a.ProjectCategoryID).FirstOrDefault(),
+                                CategoryName = db.AdvertCategoryNumber.Where(a => a.AdvertID == x.AdvertID).Select(a => a.ProjectCategory.Name).FirstOrDefault(),
+                                CategoryLotCode = db.AdvertCategoryNumber.Where(a => a.AdvertID == x.AdvertID).Select(a => a.CategoryLotCode).FirstOrDefault(),
+                                z.Procurements.ProjectName
+                            })
+                        })
+                    }
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         // GET: Adverts/Create

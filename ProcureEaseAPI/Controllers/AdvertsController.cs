@@ -75,10 +75,15 @@ namespace ProcureEaseAPI.Controllers
                 db.SaveChanges();
                 return SentAdvertCategoryJson(advertCategory);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                LogHelper.Log(Log.Event.ADD_ADVERTCATEGORY, ex.Message);
+                return Json(new
+                {
+                    success = false,
+                    message = "" + ex.Message,
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
             }
         }
 

@@ -25,7 +25,8 @@ namespace Utilities
             ADD_PROCUREMENT_PLAN_TO_ADVERT,
             ADD_ADVERT_TO_DRAFT,
             GET_ADVERT_DETAILS,
-            GET_ADVERT_Summary
+            GET_ADVERT_Summary,
+            ADD_ADVERTCATEGORY
         };
     }
 }

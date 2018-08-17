@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace ProcureEaseAPI.Tests.Controllers
 {
-    class AdvertControllerTest
+    public class AdvertControllerTest
     {
+
     }
 }

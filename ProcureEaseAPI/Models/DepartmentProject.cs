@@ -15,6 +15,8 @@ namespace ProcureEaseAPI.Models
         public Guid DepartmentID { get; set; }
         public Guid BudgetYearID { get; set; }
         public bool Deleted { get; set; }
+        public bool Approved { get; set; }
+        public bool Attested { get; set; }
         public virtual ICollection<DepartmentItems> Items { get; set; }
     }
 

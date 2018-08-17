@@ -27,7 +27,8 @@ namespace Utilities
             AUTO_COMPLETE_ITEMNAME,
             SENT_PROCUREMENTS,
             CONFIGURATION,
-            PROCUREMENT_NEEDS_SUMMARY
+            PROCUREMENT_NEEDS_SUMMARY,
+            PROCUREMENT_PLAN_SUMMARY
         };
     }
 }

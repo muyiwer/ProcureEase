@@ -26,7 +26,18 @@ namespace Utilities
             ADD_ADVERT_TO_DRAFT,
             GET_ADVERT_DETAILS,
             GET_ADVERT_Summary,
-            ADD_ADVERTCATEGORY
+            ADD_ADVERTCATEGORY,
+            Update_ADVERT,
+            EDIT_ADVERTCATEGORY,
+            DELETE_ADVERTCATEGORY,
+            ADD_ADVERT,
+            ADD_PLAN_TO_ADVERT,
+            GET_ADDED_PLAN_ON_ADVERT,
+            ADVERT_SUMMARY,
+            ADVERT_DETAIL,
+            ADVERT_IN_DRAFT,
+            PUBLISHED_ADVERT,
+            GET_ADVERT
         };
     }
 }

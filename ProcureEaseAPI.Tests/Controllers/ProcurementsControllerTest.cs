@@ -166,23 +166,30 @@ namespace ProcureEaseAPI.Tests.Controllers
         [TestMethod]
         public void TestProcurementNeedsToPlan()
         {
-            Guid DepartmentID = new Guid("066AF5C4-3F41-419E-ADD5-77E8EC0E1E93");
+            Guid DepartmentID = new Guid("3A380F88-6B8B-40AF-AA14-DF546CEC1AA6");
             int BudgetYear = 2018;
-            DepartmentItems Items = new DepartmentItems();
-            Items.Quantity = 2000;
-            Items.UnitPrice = 5000;
-            Items.ItemName = "Office stationaries";
-            Items.ItemCodeID = new Guid("93E6FFA5-E700-45B0-BDE7-6B3570DAB27B");
-            Items.Deleted = false;
+            List<DepartmentItems> Items = new List<DepartmentItems>();
+            Items.Add(new DepartmentItems
+            {
+                ItemName = "API",
+                Quantity = 2000,
+                UnitPrice = 5000,
+                ItemCode = "IT0100",
+                ItemCodeID = new Guid("93e6ffa5-e700-45b0-bde7-6b3570dab27b"),
+                Deleted = false
+            });
             List<DepartmentProject> Projects = new List<DepartmentProject>();
-            Projects.Add(new DepartmentProject() {
-                ProcurementMethodID = new Guid("3D30C690-F37B-43D9-A17C-D47A4F5DA127"),
-                ProjectName = "Procurement of Office stationary",
-                ProjectCategoryID = new Guid("71CF7646-9D37-43FB-AC4D-23D34EA4D4D5"),
-                Deleted= false,
+            Projects.Add(new DepartmentProject
+            {
+                ProcurementMethodID = new Guid("40fdeeb4-e487-4639-acbd-09c85715970a"),
+                ProjectName = "Procurement of muyiwa",
+                ProjectCategoryID = new Guid("71cf7646-9d37-43fb-ac4d-23d34ea4d4d5"),
+                Deleted = false,
                 Approved = true,
-                Items = new List<DepartmentItems>() {Items}            
-        });
+                // Items = new List<DepartmentItems>(Items),
+
+            });
+
             var testProcurementNeedsToPlan = new ProcurementsController();
             JsonResult result = (JsonResult)testProcurementNeedsToPlan.ProcurementNeedsToPlan(DepartmentID, BudgetYear, Projects);
             Console.WriteLine(result.Data);

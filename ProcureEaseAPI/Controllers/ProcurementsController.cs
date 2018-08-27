@@ -114,7 +114,7 @@ namespace ProcureEaseAPI.Controllers
         //POST: Procurement/DraftNeeds
         [HttpPost]
         [Providers.Authorize]
-        public ActionResult DraftNeeds(Guid DepartmentID, int BudgetYear, List<DepartmentProject> Projects)
+        public ActionResult DraftNeeds(Guid DepartmentID, int BudgetYear, List<DepartmentProject> Projects)     
         {
             try
             {
@@ -1113,6 +1113,8 @@ namespace ProcureEaseAPI.Controllers
             int.TryParse(GetConfiguration("DraftProcurementStatusID"), out draftProcurementStatusID);
             int attestedProcurementStatusID = 0;
             int.TryParse(GetConfiguration("AttestedProcurementStatusID"), out attestedProcurementStatusID);
+            int approvedProcurementStatusID = 0;
+            int.TryParse(GetConfiguration("ApprovedProcurementStatusID"), out approvedProcurementStatusID);
             return Json(new
             {
                 success = true,
@@ -1132,7 +1134,7 @@ namespace ProcureEaseAPI.Controllers
                                      * db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID != draftProcurementStatusID && z.Procurements.ProcurementStatusID != attestedProcurementStatusID).Select(z => z.Quantity).Sum(),
                         ProjectTotalCostStatus = db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID != draftProcurementStatusID && z.Procurements.ProcurementStatusID != attestedProcurementStatusID).Select(y => y.UnitPrice != null == true || false).FirstOrDefault(),
                         Deleted = false,
-                        Approved = false,
+                        Approved = db.Procurements.Where(z=>z.ProcurementStatusID==x.ProcurementStatusID).Select(z=>z.ProcurementStatusID == approvedProcurementStatusID==true|false).FirstOrDefault(),
                         Items = db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID != draftProcurementStatusID && z.Procurements.ProcurementStatusID != attestedProcurementStatusID).Select(z => new
                         {
                             z.ItemID,

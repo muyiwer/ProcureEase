@@ -25,6 +25,8 @@ namespace ProcureEaseAPI.Models
     {
         public Guid ProcurementID { get; set; }
         public Guid ProjectCategoryID { get; set; }
+        public Guid AdvertLotNumberID { get; set; }
+        public Guid AdvertCategoryNumberID { get; set; }
         public virtual AdvertPreparation Adverts { get; set; }
     }
 
@@ -32,8 +34,6 @@ namespace ProcureEaseAPI.Models
     {
         public Guid ProcurementID { get; set; }
         public Guid ProjectCategoryID { get; set; }
-        public Guid AdvertLotNumberID { get; set; }
-        public Guid AdvertCategoryNumberID { get; set; }
         public string CategoryName { get; set; }
         public string CategoryLotCode { get; set; }
         public string ProjectName { get; set; }

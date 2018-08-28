@@ -234,8 +234,8 @@ namespace ProcureEaseAPI.Controllers
                             x.CollectionOfTenderDocument,
                             x.BidSubmission,
                             x.OtherImportantInformation,
-                            x.BidOpeningDate,
-                            x.BidClosingDate,
+                            BidOpeningDate = x.BidOpeningDate.Value.ToString(),
+                            BidClosingDate = x.BidClosingDate.Value.ToString(),
                             DepartmentName = db.AdvertLotNumber.Where(y => y.AdvertID == x.AdvertID).Select(y => y.Procurements.Department.DepartmentName).FirstOrDefault(),
                             BudgetYear = db.BudgetYear.Where(y => y.BudgetYearID == x.BudgetYearID).Select(y => y.BudgetYear1.Value.Year).FirstOrDefault(),
                             AdvertCategory = db.AdvertLotNumber.Where(z => z.AdvertID == x.AdvertID).Select(z => new

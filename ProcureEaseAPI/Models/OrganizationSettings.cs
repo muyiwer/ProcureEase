@@ -18,6 +18,8 @@ namespace ProcureEaseAPI.Models
         public OrganizationSettings()
         {
             this.TelephoneNumbers = new HashSet<TelephoneNumbers>();
+            this.Catalog = new HashSet<Catalog>();
+            this.UserProfile = new HashSet<UserProfile>();
         }
     
         public System.Guid OrganizationID { get; set; }
@@ -35,5 +37,9 @@ namespace ProcureEaseAPI.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TelephoneNumbers> TelephoneNumbers { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Catalog> Catalog { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserProfile> UserProfile { get; set; }
     }
 }

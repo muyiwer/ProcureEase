@@ -26,7 +26,6 @@
         <EntityTypeShape EntityType="ProcureEaseModel.ProjectCategory" Width="1.5" PointX="8.25" PointY="17.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.SourceOfFunds" Width="1.5" PointX="8.25" PointY="21.125" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.TelephoneNumbers" Width="1.5" PointX="13" PointY="11.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProcureEaseModel.UserProfile" Width="1.5" PointX="6" PointY="3.5" IsExpanded="true" />
         <AssociationConnector Association="ProcureEaseModel.FK__AdvertCat__Adver__3D5E1FD2" ManuallyRouted="false" />
         <AssociationConnector Association="ProcureEaseModel.FK__AdvertCat__Adver__3C69FB99" ManuallyRouted="false" />
         <AssociationConnector Association="ProcureEaseModel.FK__AdvertCat__Proje__3E52440B" ManuallyRouted="false" />
@@ -39,9 +38,6 @@
         <AssociationConnector Association="ProcureEaseModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserID" ManuallyRouted="false" />
         <AssociationConnector Association="ProcureEaseModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserID" ManuallyRouted="false" />
         <AssociationConnector Association="ProcureEaseModel.FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserID" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__UserProfile__Id__52593CB8" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__Departmen__Depar__534D60F1" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__UserProfi__Depar__5165187F" ManuallyRouted="false" />
         <AssociationConnector Association="ProcureEaseModel.FK__Telephone__Organ__5070F446" ManuallyRouted="false" />
         <EntityTypeShape EntityType="ProcureEaseModel.ItemCode" Width="1.5" PointX="0.75" PointY="3.875" />
         <AssociationConnector Association="ProcureEaseModel.FK__Items__ItemCodeI__5CD6CB2B" />
@@ -55,6 +51,15 @@
         <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Proje__4E88ABD4" />
         <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Sourc__4F7CD00D" />
         <AssociationConnector Association="ProcureEaseModel.FK_Procurements_ProcurementStatus" />
+        <EntityTypeShape EntityType="ProcureEaseModel.Catalog" Width="1.5" PointX="13" PointY="16.125" />
+        <EntityTypeShape EntityType="ProcureEaseModel.RequestForDemo" Width="1.5" PointX="10.75" PointY="0.75" />
+        <EntityTypeShape EntityType="ProcureEaseModel.UserProfile" Width="1.5" PointX="16" PointY="9.75" />
+        <AssociationConnector Association="ProcureEaseModel.FK__UserProfile__Id__52593CB8" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Catalog__Organiz__30C33EC3" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Catalog__Request__2FCF1A8A" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Departmen__Depar__534D60F1" />
+        <AssociationConnector Association="ProcureEaseModel.FK__UserProfi__Depar__5165187F" />
+        <AssociationConnector Association="ProcureEaseModel.FK_UserProfile_OrganizationSettings" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

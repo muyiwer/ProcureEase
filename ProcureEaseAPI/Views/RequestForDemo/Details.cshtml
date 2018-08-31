@@ -1,0 +1,74 @@
+﻿@model ProcureEaseAPI.Models.RequestForDemo
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>RequestForDemo</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.OrganizationFullName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OrganizationFullName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OrganizationShortName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OrganizationShortName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AdministratorEmail)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AdministratorEmail)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AdministratorFirstName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AdministratorFirstName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AdministratorLastName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AdministratorLastName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AdministratorPhoneNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AdministratorPhoneNumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateCreated)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateCreated)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.RequestID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

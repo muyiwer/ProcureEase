@@ -219,6 +219,7 @@
     <Compile Include="Controllers\OrganizationSettingsController.cs" />
     <Compile Include="Controllers\ProcurementMethodsController.cs" />
     <Compile Include="Controllers\ProjectCategoriesController.cs" />
+    <Compile Include="Controllers\RequestForDemoController.cs" />
     <Compile Include="Controllers\SetUpController.cs" />
     <Compile Include="Controllers\SourceOfFundsController.cs" />
     <Compile Include="Controllers\TelephoneNumbersController.cs" />
@@ -265,6 +266,9 @@
     <Compile Include="Models\BudgetYear.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Catalog.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\C__MigrationHistory.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
@@ -272,6 +276,9 @@
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\IdentityModel.cs" />
+    <Compile Include="Models\ItemCode.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Items.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
@@ -305,10 +312,15 @@
     <Compile Include="Models\ProjectCategory.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\RequestForDemo.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\SourceOfFunds.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\sysdiagrams.cs" />
+    <Compile Include="Models\sysdiagrams.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\TelephoneNumbers.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
@@ -394,6 +406,11 @@
     <Content Include="Views\Departments\Details.cshtml" />
     <Content Include="Views\Departments\Edit.cshtml" />
     <Content Include="Views\Departments\Index.cshtml" />
+    <Content Include="Views\RequestForDemo\Create.cshtml" />
+    <Content Include="Views\RequestForDemo\Delete.cshtml" />
+    <Content Include="Views\RequestForDemo\Details.cshtml" />
+    <Content Include="Views\RequestForDemo\Edit.cshtml" />
+    <Content Include="Views\RequestForDemo\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -26,7 +26,7 @@ namespace ProcureEaseAPI.Models
         public Nullable<System.Guid> DepartmentID { get; set; }
         public string ProjectName { get; set; }
         public Nullable<System.Guid> ProjectCategoryID { get; set; }
-        public Nullable<System.Guid> ProcurementStatusID { get; set; }
+        public Nullable<int> ProcurementStatusID { get; set; }
         public Nullable<System.Guid> ProcurementMethodID { get; set; }
         public Nullable<System.Guid> SourceOfFundID { get; set; }
         public Nullable<System.DateTime> DateModified { get; set; }
@@ -40,8 +40,8 @@ namespace ProcureEaseAPI.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Items> Items { get; set; }
         public virtual ProcurementMethod ProcurementMethod { get; set; }
-        public virtual ProcurementStatus ProcurementStatus { get; set; }
         public virtual ProjectCategory ProjectCategory { get; set; }
         public virtual SourceOfFunds SourceOfFunds { get; set; }
+        public virtual ProcurementStatus ProcurementStatus { get; set; }
     }
 }

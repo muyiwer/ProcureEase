@@ -17,7 +17,9 @@ namespace ProcureEaseAPI.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public OrganizationSettings()
         {
+            this.Catalog = new HashSet<Catalog>();
             this.TelephoneNumbers = new HashSet<TelephoneNumbers>();
+            this.UserProfile = new HashSet<UserProfile>();
         }
     
         public System.Guid OrganizationID { get; set; }
@@ -34,6 +36,10 @@ namespace ProcureEaseAPI.Models
         public string OrganizationLogoPath { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Catalog> Catalog { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TelephoneNumbers> TelephoneNumbers { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserProfile> UserProfile { get; set; }
     }
 }

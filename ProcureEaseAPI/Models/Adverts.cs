@@ -23,7 +23,6 @@ namespace ProcureEaseAPI.Models
     
         public System.Guid AdvertID { get; set; }
         public Nullable<System.Guid> BudgetYearID { get; set; }
-        public Nullable<System.Guid> AdvertStatusID { get; set; }
         public string Headline { get; set; }
         public string Introduction { get; set; }
         public string ScopeOfWork { get; set; }
@@ -36,6 +35,7 @@ namespace ProcureEaseAPI.Models
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> DateCreated { get; set; }
         public Nullable<System.DateTime> DateModified { get; set; }
+        public Nullable<int> AdvertStatusID { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AdvertCategoryNumber> AdvertCategoryNumber { get; set; }

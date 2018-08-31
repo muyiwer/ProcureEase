@@ -217,6 +217,7 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
+                AdvertCategory AdvertCategory = new AdvertCategory();
                 return Json(new
                 {
                     success = true,
@@ -241,9 +242,9 @@ namespace ProcureEaseAPI.Controllers
                             AdvertCategory = db.AdvertLotNumber.Where(z => z.AdvertID == x.AdvertID).Select(z => new
                             {
                                 z.ProcurementID,
-                                ProjectCategoryID = db.AdvertCategoryNumber.Where(a => a.AdvertID == x.AdvertID).Select(a => a.ProjectCategoryID).FirstOrDefault(),
-                                CategoryName = db.AdvertCategoryNumber.Where(a => a.AdvertID == x.AdvertID).Select(a => a.ProjectCategory.Name).FirstOrDefault(),
-                                CategoryLotCode = db.AdvertCategoryNumber.Where(a => a.AdvertID == x.AdvertID).Select(a => a.CategoryLotCode).FirstOrDefault(),
+                                ProjectCategoryID = db.Procurements.Where(a => a.ProcurementID == z.ProcurementID).Select(a => a.ProjectCategoryID).FirstOrDefault(),
+                                CategoryName = db.Procurements.Where(a => a.ProcurementID == z.ProcurementID).Select(a => a.ProjectCategory.Name).FirstOrDefault(),
+                                CategoryLotCode = db.AdvertCategoryNumber.Where(a => a.CategoryLotCode == z.LotCode).Select(a => a.CategoryLotCode).FirstOrDefault(),
                                 z.Procurements.ProjectName,
                                 Deleted = false
                             })

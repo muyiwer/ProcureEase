@@ -37,30 +37,6 @@ namespace ProcureEaseAPI.Tests.Controllers
             var result = (JsonResult)testGetAdvertDetails.AdvertDetails(id);
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("Advert details"));
-        }       
-
-        //[TestMethod]
-        //public void UpdateDepartmentTest()
-        //{
-        //    // Arrange  
-        //    var controller = new AdvertsController();
-        //        Adverts adverts = new Adverts
-        //    {
-        //            AdvertStatusID = 1,
-        //            Headline = "Test Update Advert",  
-        //            Introduction = "Test Advert",  
-        //    };
-        //    List<AdvertPreparation> Adverts = new List<AdvertPreparation>() {new Adverts(){
-        //        TelephoneNumber = "07065949501"
-        //    }
-
-        //    };
-        //    // Act  
-        //    ActionResult actionResult = controller.DraftAdvert(Adverts);
-        //    var contentResult = actionResult asNegotiatedContentResult < Adverts >;
-        //    Assert.IsNotNull(contentResult);
-        //    Assert.AreEqual(HttpStatusCode.Accepted, contentResult.ToString());
-        //    Assert.IsNotNull(contentResult.ToString());
-        //}
+        }
     }
 }

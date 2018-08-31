@@ -178,7 +178,9 @@ namespace ProcureEaseAPI.Tests.Controllers
                 ItemCodeID = new Guid("93e6ffa5-e700-45b0-bde7-6b3570dab27b"),
                 Deleted = false
             });
-            List<DepartmentProject> Projects = new List<DepartmentProject>();
+            List<DepartmentProject> Projects = new List<DepartmentProject>(new DepartmentProject[] {
+
+            });
             Projects.Add(new DepartmentProject
             {
                 ProcurementMethodID = new Guid("40fdeeb4-e487-4639-acbd-09c85715970a"),

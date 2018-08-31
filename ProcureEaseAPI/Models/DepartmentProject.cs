@@ -20,17 +20,20 @@ namespace ProcureEaseAPI.Models
         public virtual ICollection<DepartmentItems> Items { get; set; }
     }
 
-    public class DepartmentItems
-    {
-        public Guid ItemID { get; set; }
-        public string ItemName { get; set; }
-        public string Description { get; set; }
-        public string ItemCode { get; set; }
-        public Guid ItemCodeID { get; set; }
-        public double Quantity { get; set; }
-        public double UnitPrice { get; set; }
-        public Guid ProcurementID { get; set; }
-        public bool Deleted { get; set; }
-        public virtual DepartmentProject Projects { get; set; }
-    }
+        public class DepartmentItems
+        {
+
+            public Guid ItemID { get; set; }
+            public string ItemName { get; set; }
+            public string Description { get; set; }
+            public string ItemCode { get; set; }
+            public Guid ItemCodeID { get; set; }
+            public double Quantity { get; set; }
+            public double UnitPrice { get; set; }
+            public Guid ProcurementID { get; set; }
+            public bool Deleted { get; set; }
+            public virtual DepartmentProject Projects { get; set; }
+        }
+    
+
 }

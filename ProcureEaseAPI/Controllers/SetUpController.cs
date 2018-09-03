@@ -155,34 +155,29 @@ namespace ProcureEaseAPI.Controllers
                 {
                     AddTelephone(organizationSettings, telephoneNumbers);
                 }
-                var BasicDetails = db.OrganizationSettings.Select(x => new
-                {
-                    x.OrganizationID,
-                    x.OrganizationNameInFull,
-                    x.OrganizationNameAbbreviation,
-                    x.OrganizationEmail,
-                    x.State,
-                    x.Country,
-                    x.AboutOrganization,
-                    x.Address,
-                    x.OrganizationLogoPath,
-                    DateModified = x.DateModified.Value.ToString(),
-                    x.CreatedBy,
-                    TelephoneNumbers = db.TelephoneNumbers.Where(y => y.OrganizationID == x.OrganizationID).Select(y => new
-                    {
-                        y.TelephoneNumber
-                    })
-                });
-                var AdminDashboard = new
+                return Json ( new
                 {
                     success = true,
                     message = "Basic details added successfully!!!",
-                    data = new
+                    data = db.OrganizationSettings.Select(x => new
                     {
-                        BasicDetails = BasicDetails,
-                    }
-                };
-                return Json(AdminDashboard, JsonRequestBehavior.AllowGet);
+                        x.OrganizationID,
+                        x.OrganizationNameInFull,
+                        x.OrganizationNameAbbreviation,
+                        x.OrganizationEmail,
+                        x.State,
+                        x.Country,
+                        x.AboutOrganization,
+                        x.Address,
+                        x.OrganizationLogoPath,
+                        DateModified = x.DateModified.Value.ToString(),
+                        x.CreatedBy,
+                        TelephoneNumbers = db.TelephoneNumbers.Where(y => y.OrganizationID == x.OrganizationID).Select(y => new
+                        {
+                            y.TelephoneNumber
+                        })
+                    })
+                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {

@@ -21,8 +21,10 @@ namespace ProcureEaseAPI.Models
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> DateCreated { get; set; }
         public Nullable<System.DateTime> DateModified { get; set; }
+        public Nullable<System.Guid> TenantID { get; set; }
     
         public virtual Adverts Adverts { get; set; }
+        public virtual Catalog Catalog { get; set; }
         public virtual Procurements Procurements { get; set; }
     }
 }

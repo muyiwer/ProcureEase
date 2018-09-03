@@ -20,7 +20,15 @@ namespace Utilities
             UPDATE_USER_PROFILE,
             UPDATE_DEPARTMENT_HEAD,
             DELETE_USER,
-            LOGIN
+            LOGIN,
+            ALL_DRAFT_PROCUREMENT_NEEDS,
+            POST_DRAFT_NEEDS,
+            SEND_PROCUREMENTS_NEEDS,
+            AUTO_COMPLETE_ITEMNAME,
+            SENT_PROCUREMENTS,
+            CONFIGURATION,
+            PROCUREMENT_NEEDS_SUMMARY,
+            PROCUREMENT_PLAN_SUMMARY
         };
     }
 }

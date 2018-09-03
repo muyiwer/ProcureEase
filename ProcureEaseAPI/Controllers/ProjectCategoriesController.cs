@@ -36,7 +36,6 @@ namespace ProcureEaseAPI.Controllers
             {
                 x.ProjectCategoryID,
                 x.Name,
-                x.EnableProjectCategory,
                 x.CreatedBy,
             });
             var AdminDashboard = new

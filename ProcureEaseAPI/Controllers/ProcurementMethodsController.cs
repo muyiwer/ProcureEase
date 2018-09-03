@@ -40,7 +40,6 @@ namespace ProcureEaseAPI.Controllers
                 {
                     x.ProcurementMethodID,
                     x.Name,
-                    x.EnableProcurementMethod,
                     x.CreatedBy,
                 }
             });

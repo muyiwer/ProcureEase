@@ -40,7 +40,6 @@ namespace ProcureEaseAPI.Controllers
                 {
                     x.SourceOfFundID,
                     x.SourceOfFund,
-                    x.EnableSourceOfFund,
                     x.CreatedBy,
                 }
             });

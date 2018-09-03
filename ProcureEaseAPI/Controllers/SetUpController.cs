@@ -28,7 +28,6 @@ namespace ProcureEaseAPI.Controllers
                 {
                     x.SourceOfFundID,
                     x.SourceOfFund,
-                    x.EnableSourceOfFund
                 });
                 var AdminDashboard = new
                 {
@@ -55,7 +54,6 @@ namespace ProcureEaseAPI.Controllers
                 {
                     x.ProcurementMethodID,
                     x.Name,
-                    x.EnableProcurementMethod,
                 });
                 var AdminDashboard = new
                 {
@@ -81,8 +79,7 @@ namespace ProcureEaseAPI.Controllers
                 var ProjectCategory = db.ProjectCategory.Select(x => new
                 {
                     x.ProjectCategoryID,
-                    x.Name,
-                    x.EnableProjectCategory,
+                    x.Name
                 });
                 var AdminDashboard = new
                 {
@@ -220,21 +217,18 @@ namespace ProcureEaseAPI.Controllers
                 {
                     x.SourceOfFundID,
                     x.SourceOfFund,
-                    x.EnableSourceOfFund,
                 });
 
                 var ProcurementMethod = db.ProcurementMethod.Select(x => new
                 {
                     x.ProcurementMethodID,
                     x.Name,
-                    x.EnableProcurementMethod,
                 });
 
                 var ProjectCategory = db.ProjectCategory.Select(x => new
                 {
                     x.ProjectCategoryID,
                     x.Name,
-                    x.EnableProjectCategory,
                 });
 
                 var Users = db.UserProfile.Select(x => new

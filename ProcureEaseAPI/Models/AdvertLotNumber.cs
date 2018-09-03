@@ -24,7 +24,6 @@ namespace ProcureEaseAPI.Models
         public Nullable<System.Guid> TenantID { get; set; }
     
         public virtual Adverts Adverts { get; set; }
-        public virtual Catalog Catalog { get; set; }
         public virtual Procurements Procurements { get; set; }
         public virtual Catalog Catalog { get; set; }
     }

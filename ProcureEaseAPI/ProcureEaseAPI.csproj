@@ -326,7 +326,7 @@
     <Compile Include="Models\SourceOfFunds.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\SourceOFFundsOrganisationSettings.cs">
+    <Compile Include="Models\SourceOfFundsOrganisationSettings.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\sysdiagrams.cs">

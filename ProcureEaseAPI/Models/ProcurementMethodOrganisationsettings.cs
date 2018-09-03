@@ -21,8 +21,8 @@ namespace ProcureEaseAPI.Models
         public Nullable<System.DateTime> DateCreated { get; set; }
         public Nullable<System.DateTime> DateModified { get; set; }
     
-        public virtual Catalog Catalog { get; set; }
         public virtual OrganizationSettings OrganizationSettings { get; set; }
         public virtual ProcurementMethod ProcurementMethod { get; set; }
+        public virtual Catalog Catalog { get; set; }
     }
 }

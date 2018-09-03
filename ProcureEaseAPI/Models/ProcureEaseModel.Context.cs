@@ -39,7 +39,6 @@ namespace ProcureEaseAPI.Models
         public virtual DbSet<AspNetUserRoles> AspNetUserRoles { get; set; }
         public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
         public virtual DbSet<BudgetYear> BudgetYear { get; set; }
-        public virtual DbSet<Catalog> Catalog { get; set; }
         public virtual DbSet<ItemCode> ItemCode { get; set; }
         public virtual DbSet<Items> Items { get; set; }
         public virtual DbSet<OrganizationSettings> OrganizationSettings { get; set; }
@@ -54,7 +53,8 @@ namespace ProcureEaseAPI.Models
         public virtual DbSet<ProcurementMethod> ProcurementMethod { get; set; }
         public virtual DbSet<ProcurementMethodOrganisationsettings> ProcurementMethodOrganisationsettings { get; set; }
         public virtual DbSet<ProjectCategoryOrganisationSettings> ProjectCategoryOrganisationSettings { get; set; }
-        public virtual DbSet<SourceOFFundsOrganisationSettings> SourceOFFundsOrganisationSettings { get; set; }
         public virtual DbSet<Department> Department { get; set; }
+        public virtual DbSet<Catalog> Catalog { get; set; }
+        public virtual DbSet<SourceOfFundsOrganisationSettings> SourceOfFundsOrganisationSettings { get; set; }
     }
 }

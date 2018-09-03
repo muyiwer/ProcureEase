@@ -79,33 +79,9 @@ namespace ProcureEaseAPI.Controllers
             {
                 var url = System.Web.HttpContext.Current.Request.Url.Host;
                var tenantId = catalog.GetTenantID(url);
-
+                var organizationId = catalog.GetOrganizationID(url);
                 UserProfile.TenantID = tenantId;
-                if (UserProfile.OrganizationID != null)
-                {
-                    Guid guidID = new Guid();
-                    var OrganizationID = Convert.ToString(UserProfile.OrganizationID);
-                    try
-                    {
-                        guidID = Guid.Parse(OrganizationID);
-                    }
-                    catch (FormatException ex)
-                    {
-                        LogHelper.Log(Log.Event.ADD_USER, "Invalid GUID format");
-                        Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                        return Error(ex.Message);
-                    }                 
-                }
-                else
-                {
-                    LogHelper.Log(Log.Event.ADD_USER, "OrganizationID is null.");
-                    return Json(new
-                    {
-                        success = false,
-                        message = "OrganizationID is null.",
-                        data = new { }
-                    }, JsonRequestBehavior.AllowGet);
-                }
+                UserProfile.OrganizationID= organizationId;
                 if (UserProfile.UserEmail == null)
                 {
                     LogHelper.Log(Log.Event.ADD_USER, "User email is null");
@@ -139,6 +115,25 @@ namespace ProcureEaseAPI.Controllers
                 Message message = new Message( RecipientEmail,Subject, newTemplateContent);
                 EmailHelper emailHelper = new EmailHelper();
                 await emailHelper.AddEmailToQueue(message);
+                return Json(new
+                {
+                    success = true,
+                    message = "User added successfully.",
+                    data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        User = new
+                        {
+                            x.UserID,
+                            FullName = x.FirstName + " " + x.LastName
+                        },
+                        Department = new
+                        {
+                            x.DepartmentID,
+                            x.Department1.DepartmentName
+                        }
+
+                    }),
+                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -153,25 +148,7 @@ namespace ProcureEaseAPI.Controllers
                     { }
                 }, JsonRequestBehavior.AllowGet);
             }
-            return Json(new
-            {
-                success = true,
-                message = "User added successfully.",
-                data = db.UserProfile.Where(x=>x.OrganizationID==UserProfile.OrganizationID).Select(x => new
-                {
-                    User = new
-                    {
-                        x.UserID,
-                        FullName = x.FirstName + " " + x.LastName
-                    },
-                    Department = new
-                    {
-                        x.DepartmentID,
-                        x.Department1.DepartmentName
-                    }
-
-                }),
-            }, JsonRequestBehavior.AllowGet);
+          
         }
 
           // Users/InitiatePasswordReset

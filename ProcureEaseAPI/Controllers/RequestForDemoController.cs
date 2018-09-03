@@ -7,6 +7,9 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using ProcureEaseAPI.Models;
+using Utilities;
+using static Utilities.EmailHelper;
+using System.Threading.Tasks;
 
 namespace ProcureEaseAPI.Controllers
 {
@@ -17,7 +20,30 @@ namespace ProcureEaseAPI.Controllers
         // GET: RequestForDemo
         public ActionResult Index()
         {
-            return View(db.RequestForDemo.ToList());
+            try
+            {
+                return Json(new
+                {
+                    success = true,
+                    message = "Ok",
+                    data = db.RequestForDemo.Select(x => new
+                    {
+                        x.RequestID,
+                        x.OrganizationFullName,
+                        x.OrganizationShortName,
+                        x.AdministratorEmail,
+                        x.AdministratorFirstName,
+                        x.AdministratorLastName,
+                        x.AdministratorPhoneNumber,
+                        DateCreated = x.DateCreated.Value.ToString()
+                    }), 
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         // GET: RequestForDemo/Details/5
@@ -41,22 +67,56 @@ namespace ProcureEaseAPI.Controllers
             return View();
         }
 
-        // POST: RequestForDemo/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: RequestForDemo/Add
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "RequestID,OrganizationFullName,OrganizationShortName,AdministratorEmail,AdministratorFirstName,AdministratorLastName,AdministratorPhoneNumber,DateCreated")] RequestForDemo requestForDemo)
+        public async Task<ActionResult> Add(RequestForDemo requestForDemo)
         {
-            if (ModelState.IsValid)
+            try
             {
+                DateTime dt = DateTime.Now;
                 requestForDemo.RequestID = Guid.NewGuid();
+                requestForDemo.DateCreated = dt;
                 db.RequestForDemo.Add(requestForDemo);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
 
-            return View(requestForDemo);
+                OrganizationSettings organizationSettings = new OrganizationSettings();
+                organizationSettings.OrganizationID = Guid.NewGuid();
+                organizationSettings.OrganizationNameInFull = requestForDemo.OrganizationFullName;
+                organizationSettings.OrganizationNameAbbreviation = requestForDemo.OrganizationShortName;
+                organizationSettings.DateCreated = dt;
+                db.OrganizationSettings.Add(organizationSettings);
+
+                db.SaveChanges();
+
+                var RecipientEmail = requestForDemo.AdministratorEmail;
+                string Subject = "Request For Demo";
+                string Body = new EmailTemplateHelper().GetTemplateContent("RequestForDemoTemplate");
+                string newTemplateContent = string.Format(Body,requestForDemo.AdministratorEmail);
+              //  newTemplateContent = newTemplateContent.Replace("[RecipientEmail]", RecipientEmail.Trim());
+                Message message = new Message(RecipientEmail, Subject, newTemplateContent);
+                EmailHelper emailHelper = new EmailHelper();
+                await emailHelper.AddEmailToQueue(message);
+                return Json(new
+                {
+                    success = true,
+                    message = "Request Sent Successfully",
+                    data = db.RequestForDemo.Where(x=> x.RequestID == x.RequestID).Select(x => new
+                    {
+                        x.RequestID,
+                        x.OrganizationFullName,
+                        x.OrganizationShortName,
+                        x.AdministratorEmail,
+                        x.AdministratorFirstName,
+                        x.AdministratorLastName,
+                        x.AdministratorPhoneNumber,
+                        DateCreated = x.DateCreated.Value.ToString()
+                    })
+                });
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         // GET: RequestForDemo/Edit/5

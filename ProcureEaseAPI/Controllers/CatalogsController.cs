@@ -28,6 +28,13 @@ namespace ProcureEaseAPI.Controllers
             return getTenantId;
         }
 
+        public Guid GetOrganizationID(string url)
+        {
+            var getOrganizationID = db.Catalog.Where(x => x.SubDomain == url).Select(x => x.OrganizationSettings.OrganizationID).FirstOrDefault();
+
+            return getOrganizationID;
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

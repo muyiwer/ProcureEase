@@ -214,6 +214,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="AuthRepository.cs" />
+    <Compile Include="Controllers\CatalogsController.cs" />
     <Compile Include="Controllers\DepartmentsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\OrganizationSettingsController.cs" />
@@ -304,6 +305,9 @@
     <Compile Include="Models\ProcurementMethod.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ProcurementMethodOrganisationsettings.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Procurements.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
@@ -313,13 +317,21 @@
     <Compile Include="Models\ProjectCategory.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ProjectCategoryOrganisationSettings.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\RequestForDemo.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SourceOfFunds.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\sysdiagrams.cs" />
+    <Compile Include="Models\SourceOFFundsOrganisationSettings.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\sysdiagrams.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\TelephoneNumbers.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
@@ -417,6 +429,11 @@
     <Content Include="Views\ProcurementMethods\Details.cshtml" />
     <Content Include="Views\ProcurementMethods\Edit.cshtml" />
     <Content Include="Views\ProcurementMethods\Index.cshtml" />
+    <Content Include="Views\Catalogs\Create.cshtml" />
+    <Content Include="Views\Catalogs\Delete.cshtml" />
+    <Content Include="Views\Catalogs\Details.cshtml" />
+    <Content Include="Views\Catalogs\Edit.cshtml" />
+    <Content Include="Views\Catalogs\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

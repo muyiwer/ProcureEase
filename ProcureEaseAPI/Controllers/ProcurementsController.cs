@@ -22,20 +22,22 @@ namespace ProcureEaseAPI.Controllers
         // GET: Procurments/DraftNeedsSummary
         [Providers.Authorize]
         [HttpGet]
-        public ActionResult DraftNeedsSummary(string id = "")
+        public ActionResult DraftNeedsSummary(string id = "", string id2="")
         {
-            if (string.IsNullOrEmpty(id))
+            if (string.IsNullOrEmpty(id) && string.IsNullOrEmpty(id2))
             {
-                LogHelper.Log(Log.Event.ALL_DRAFT_PROCUREMENT_NEEDS, "DepartmentID is Null");
+                LogHelper.Log(Log.Event.ALL_DRAFT_PROCUREMENT_NEEDS, "DepartmentID or OrganizationID is Null");
                 Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return Error("DepartmentID is Null");
+                return Error("DepartmentID or OrganizationID is Null");
             }
             else
             {
                 Guid guidID = new Guid();
+                Guid guidID2 = new Guid();
                 try
                 {
                     guidID = Guid.Parse(id);
+                    guidID2 = Guid.Parse(id2);
                 }
                 catch (FormatException ex)
                 {
@@ -596,10 +598,10 @@ namespace ProcureEaseAPI.Controllers
                             x.ProcurementMethodID,
                             x.Name
                         }),
-                        ProjectCategory = db.ProjectCategory.Where(x => x.EnableProjectCategory == true).Select(x => new
+                        ProjectCategory = db.ProjectCategoryOrganisationSettings.Where(x => x.EnableProjectCategory == true).Select(x => new
                         {
                             x.ProjectCategoryID,
-                            x.Name
+                            x.ProjectCategory.Name
                         }),
                         BudgetYear = db.BudgetYear.Select(x => new
                         {
@@ -704,10 +706,10 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementMethodID,
                         x.Name
                     }),
-                    ProjectCategory = db.ProjectCategory.Where(x => x.EnableProjectCategory == true).Select(x => new
+                    ProjectCategory = db.ProjectCategoryOrganisationSettings.Where(x => x.EnableProjectCategory == true).Select(x => new
                     {
                         x.ProjectCategoryID,
-                        x.Name
+                        x.ProjectCategory.Name
                     }),
                 }
             }, JsonRequestBehavior.AllowGet);
@@ -758,10 +760,10 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementMethodID,
                         x.Name
                     }),
-                    ProjectCategory = db.ProjectCategory.Where(x=>x.EnableProjectCategory == true).Select(x => new
+                    ProjectCategory = db.ProjectCategoryOrganisationSettings.Where(x => x.EnableProjectCategory == true).Select(x => new
                     {
                         x.ProjectCategoryID,
-                        x.Name
+                        x.ProjectCategory.Name
                     }),
                     BudgetYear = db.BudgetYear.Select(x => new
                     {
@@ -1250,10 +1252,10 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementMethodID,
                         x.Name
                     }),
-                    ProjectCategory = db.ProjectCategory.Where(x=>x.EnableProjectCategory==true).Select(x => new
+                    ProjectCategory = db.ProjectCategoryOrganisationSettings.Where(x => x.EnableProjectCategory == true).Select(x => new
                     {
                         x.ProjectCategoryID,
-                        x.Name
+                        x.ProjectCategory.Name
                     }),
                     BudgetYear = db.BudgetYear.Select(x => new
                     {
@@ -1317,10 +1319,10 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementMethodID,
                         x.Name
                     }),
-                    ProjectCategory = db.ProjectCategory.Where(x => x.EnableProjectCategory == true).Select(x => new
+                    ProjectCategory = db.ProjectCategoryOrganisationSettings.Where(x => x.EnableProjectCategory == true).Select(x => new
                     {
                         x.ProjectCategoryID,
-                        x.Name
+                        x.ProjectCategory.Name
                     }),
                     BudgetYear = db.BudgetYear.Select(x => new
                     {
@@ -1486,7 +1488,7 @@ namespace ProcureEaseAPI.Controllers
                                          * db.Items.Where(a => a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.Quantity).Sum(),
                         ProjectSummary = db.Procurements.Select(x => new
                         {
-                            x.Department.DepartmentName,
+                            x.Department,
                             BudgetYear = (int?)x.BudgetYear.BudgetYear1.Value.Year,
                             TotalProject = db.Procurements.Where(a => a.DepartmentID == x.DepartmentID && a.BudgetYear.BudgetYear1.Value.Year == x.BudgetYear.BudgetYear1.Value.Year && a.ProcurementStatusID == ProcurementStatusID).Count(),
                             ProjectTotalCost = db.Items.Where(a => a.Procurements.DepartmentID == x.DepartmentID && a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.UnitPrice).Sum()

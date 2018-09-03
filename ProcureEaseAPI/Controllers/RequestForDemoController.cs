@@ -67,56 +67,23 @@ namespace ProcureEaseAPI.Controllers
             return View();
         }
 
-        // POST: RequestForDemo/Add
+        // POST: RequestForDemo/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public async Task<ActionResult> Add(RequestForDemo requestForDemo)
+        [ValidateAntiForgeryToken]
+        public ActionResult Create([Bind(Include = "RequestID,OrganizationFullName,OrganizationShortName,AdministratorEmail,AdministratorFirstName,AdministratorLastName,AdministratorPhoneNumber,DateCreated,TenantID")] RequestForDemo requestForDemo)
         {
-            try
+            if (ModelState.IsValid)
             {
-                DateTime dt = DateTime.Now;
                 requestForDemo.RequestID = Guid.NewGuid();
-                requestForDemo.DateCreated = dt;
                 db.RequestForDemo.Add(requestForDemo);
-
-                OrganizationSettings organizationSettings = new OrganizationSettings();
-                organizationSettings.OrganizationID = Guid.NewGuid();
-                organizationSettings.OrganizationNameInFull = requestForDemo.OrganizationFullName;
-                organizationSettings.OrganizationNameAbbreviation = requestForDemo.OrganizationShortName;
-                organizationSettings.DateCreated = dt;
-                db.OrganizationSettings.Add(organizationSettings);
-
                 db.SaveChanges();
-
-                var RecipientEmail = requestForDemo.AdministratorEmail;
-                string Subject = "Request For Demo";
-                string Body = new EmailTemplateHelper().GetTemplateContent("RequestForDemoTemplate");
-                string newTemplateContent = string.Format(Body,requestForDemo.AdministratorEmail);
-              //  newTemplateContent = newTemplateContent.Replace("[RecipientEmail]", RecipientEmail.Trim());
-                Message message = new Message(RecipientEmail, Subject, newTemplateContent);
-                EmailHelper emailHelper = new EmailHelper();
-                await emailHelper.AddEmailToQueue(message);
-                return Json(new
-                {
-                    success = true,
-                    message = "Request Sent Successfully",
-                    data = db.RequestForDemo.Where(x=> x.RequestID == x.RequestID).Select(x => new
-                    {
-                        x.RequestID,
-                        x.OrganizationFullName,
-                        x.OrganizationShortName,
-                        x.AdministratorEmail,
-                        x.AdministratorFirstName,
-                        x.AdministratorLastName,
-                        x.AdministratorPhoneNumber,
-                        DateCreated = x.DateCreated.Value.ToString()
-                    })
-                });
+                return RedirectToAction("Index");
             }
-            catch (Exception)
-            {
 
-                throw;
-            }
+            ViewBag.TenantID = new SelectList(db.Catalog, "TenantID", "SubDomain", requestForDemo.TenantID);
+            return View(requestForDemo);
         }
 
         // GET: RequestForDemo/Edit/5

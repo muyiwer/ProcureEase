@@ -30,12 +30,12 @@ namespace ProcureEaseAPI.Models
         public Nullable<System.Guid> TenantID { get; set; }
         public Nullable<System.Guid> OrganisationID { get; set; }
     
-        public virtual Catalog Catalog { get; set; }
         public virtual UserProfile UserProfile { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserProfile> UserProfile1 { get; set; }
         public virtual OrganizationSettings OrganizationSettings { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Procurements> Procurements { get; set; }
+        public virtual Catalog Catalog { get; set; }
     }
 }

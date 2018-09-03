@@ -26,21 +26,23 @@ namespace ProcureEaseAPI.Models
             this.ApprovedItems = new HashSet<ApprovedItems>();
             this.AspNetUsers = new HashSet<AspNetUsers>();
             this.BudgetYear = new HashSet<BudgetYear>();
+            this.Department = new HashSet<Department>();
             this.ItemCode = new HashSet<ItemCode>();
             this.Items = new HashSet<Items>();
             this.OrganizationSettings1 = new HashSet<OrganizationSettings>();
+            this.ProjectCategoryOrganisationSettings = new HashSet<ProjectCategoryOrganisationSettings>();
             this.ProcurementMethod = new HashSet<ProcurementMethod>();
-            this.ProcurementMethodOrganizationSettings = new HashSet<ProcurementMethodOrganizationSettings>();
+            this.ProcurementMethod1 = new HashSet<ProcurementMethod>();
+            this.ProcurementMethodOrganisationsettings = new HashSet<ProcurementMethodOrganisationsettings>();
             this.Procurements = new HashSet<Procurements>();
             this.ProcurementStatus = new HashSet<ProcurementStatus>();
             this.ProjectCategory = new HashSet<ProjectCategory>();
-            this.ProjectCategoryOrganizationSettings = new HashSet<ProjectCategoryOrganizationSettings>();
+            this.ProjectCategory1 = new HashSet<ProjectCategory>();
             this.RequestForDemo1 = new HashSet<RequestForDemo>();
             this.SourceOfFunds = new HashSet<SourceOfFunds>();
-            this.SourceOfFundsOrganizationSettings = new HashSet<SourceOfFundsOrganizationSettings>();
             this.TelephoneNumbers = new HashSet<TelephoneNumbers>();
             this.UserProfile = new HashSet<UserProfile>();
-            this.Department = new HashSet<Department>();
+            this.SourceOfFundsOrganisationSettings = new HashSet<SourceOfFundsOrganisationSettings>();
         }
     
         public System.Guid TenantID { get; set; }
@@ -71,15 +73,21 @@ namespace ProcureEaseAPI.Models
         public virtual OrganizationSettings OrganizationSettings { get; set; }
         public virtual RequestForDemo RequestForDemo { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Department> Department { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ItemCode> ItemCode { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Items> Items { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrganizationSettings> OrganizationSettings1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProjectCategoryOrganisationSettings> ProjectCategoryOrganisationSettings { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProcurementMethod> ProcurementMethod { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ProcurementMethodOrganizationSettings> ProcurementMethodOrganizationSettings { get; set; }
+        public virtual ICollection<ProcurementMethod> ProcurementMethod1 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProcurementMethodOrganisationsettings> ProcurementMethodOrganisationsettings { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Procurements> Procurements { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -87,18 +95,16 @@ namespace ProcureEaseAPI.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProjectCategory> ProjectCategory { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ProjectCategoryOrganizationSettings> ProjectCategoryOrganizationSettings { get; set; }
+        public virtual ICollection<ProjectCategory> ProjectCategory1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RequestForDemo> RequestForDemo1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SourceOfFunds> SourceOfFunds { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SourceOfFundsOrganizationSettings> SourceOfFundsOrganizationSettings { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TelephoneNumbers> TelephoneNumbers { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserProfile> UserProfile { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Department> Department { get; set; }
+        public virtual ICollection<SourceOfFundsOrganisationSettings> SourceOfFundsOrganisationSettings { get; set; }
     }
 }

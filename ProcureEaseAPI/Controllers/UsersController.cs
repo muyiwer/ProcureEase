@@ -76,6 +76,8 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
+                var url = System.Web.HttpContext.Current.Request.Url.Host;
+                GetTenantID(url);
                 if (UserProfile.OrganizationID != null)
                 {
                     Guid guidID = new Guid();
@@ -129,8 +131,7 @@ namespace ProcureEaseAPI.Controllers
                 db.SaveChanges();             
                 string RecipientEmail = UserProfile.UserEmail;
                 string Subject = "ProcureEase SignUp Invitation";
-                string Body = new EmailTemplateHelper().GetTemplateContent("SignUpTemplate");
-                var url = System.Web.HttpContext.Current.Request.Url.Host;
+                string Body = new EmailTemplateHelper().GetTemplateContent("SignUpTemplate");              
                 string newTemplateContent = string.Format(Body," " + "http://" + url + "/#/signup/" + UserProfile.UserEmail);
                 Message message = new Message( RecipientEmail,Subject, newTemplateContent);
                 EmailHelper emailHelper = new EmailHelper();

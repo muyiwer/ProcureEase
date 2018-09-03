@@ -26,5 +26,6 @@ namespace ProcureEaseAPI.Models
         public virtual Adverts Adverts { get; set; }
         public virtual Catalog Catalog { get; set; }
         public virtual Procurements Procurements { get; set; }
+        public virtual Catalog Catalog { get; set; }
     }
 }

@@ -21,10 +21,11 @@ namespace ProcureEaseAPI.Controllers
             return View(catalog.ToList());
         }
 
-        public ActionResult GetTenantID(string url)
+        public Guid GetTenantID(string url)
         {
             var getTenantId = db.Catalog.Where(x => x.SubDomain == url).Select(x => x.TenantID).FirstOrDefault();
-            return Json(getTenantId, JsonRequestBehavior.AllowGet);
+            
+            return getTenantId;
         }
 
         protected override void Dispose(bool disposing)

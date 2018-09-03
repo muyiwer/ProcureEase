@@ -10,12 +10,13 @@ using static Utilities.EmailHelper;
 using System.Net.Http;
 using System.Web.Script.Serialization;
 using ProcureEaseAPI.Providers;
-
+using ProcureEaseAPI.Controllers;
 namespace ProcureEaseAPI.Controllers
 {
     public class UsersController : Controller
     {
         private ProcureEaseEntities db = new ProcureEaseEntities();
+        private CatalogsController catalog = new CatalogsController();
 
         //POST: Users/Login
         [HttpPost]
@@ -77,7 +78,9 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 var url = System.Web.HttpContext.Current.Request.Url.Host;
-                GetTenantID(url);
+               var tenantId = catalog.GetTenantID(url);
+
+                UserProfile.TenantID = tenantId;
                 if (UserProfile.OrganizationID != null)
                 {
                     Guid guidID = new Guid();

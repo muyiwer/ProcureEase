@@ -77,7 +77,7 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 var url = System.Web.HttpContext.Current.Request.Url.Host;
-                GetTenantID(url);
+                //GetTenantID(url);
                 if (UserProfile.OrganizationID != null)
                 {
                     Guid guidID = new Guid();

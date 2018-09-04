@@ -1,0 +1,106 @@
+﻿@model ProcureEaseAPI.Models.OrganizationSettings
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>OrganizationSettings</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.OrganizationNameInFull)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OrganizationNameInFull)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OrganizationNameAbbreviation)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OrganizationNameAbbreviation)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OrganizationEmail)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OrganizationEmail)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Address)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Address)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Country)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Country)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.State)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.State)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AboutOrganization)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AboutOrganization)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateModified)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateModified)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreatedBy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreatedBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateCreated)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateCreated)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OrganizationLogoPath)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OrganizationLogoPath)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.OrganizationID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

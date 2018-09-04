@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.10
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcureEaseAPI", "ProcureEaseAPI\ProcureEaseAPI.csproj", "{05D6D2EF-2418-416D-9024-EF3E4385B487}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EF52ED7B-A909-48AA-B884-B3E35B662499} = {EF52ED7B-A909-48AA-B884-B3E35B662499}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcureEaseAPI.Tests", "ProcureEaseAPI.Tests\ProcureEaseAPI.Tests.csproj", "{811EC627-1F60-4FC5-9212-F400096CEBC2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities.Test", "Utilities.Test\Utilities.Test.csproj", "{B267F2D5-DA26-4944-AD42-BE8399D800D0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EF52ED7B-A909-48AA-B884-B3E35B662499} = {EF52ED7B-A909-48AA-B884-B3E35B662499}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcureEaseAPI.WebJobs", "ProcureEaseAPI.WebJobs\ProcureEaseAPI.WebJobs.csproj", "{E4038824-E6BF-4B15-8506-3F84073099E7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcureEaseAPI.WebJobs.Tests", "ProcureEaseAPI.WebJobs.Tests\ProcureEaseAPI.WebJobs.Tests.csproj", "{D296C0B5-D36D-4539-B7FA-796A58638CC4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E4038824-E6BF-4B15-8506-3F84073099E7} = {E4038824-E6BF-4B15-8506-3F84073099E7}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities", "Utilities\Utilities.csproj", "{EF52ED7B-A909-48AA-B884-B3E35B662499}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{05D6D2EF-2418-416D-9024-EF3E4385B487}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05D6D2EF-2418-416D-9024-EF3E4385B487}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05D6D2EF-2418-416D-9024-EF3E4385B487}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05D6D2EF-2418-416D-9024-EF3E4385B487}.Release|Any CPU.Build.0 = Release|Any CPU
+		{811EC627-1F60-4FC5-9212-F400096CEBC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{811EC627-1F60-4FC5-9212-F400096CEBC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{811EC627-1F60-4FC5-9212-F400096CEBC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{811EC627-1F60-4FC5-9212-F400096CEBC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B267F2D5-DA26-4944-AD42-BE8399D800D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B267F2D5-DA26-4944-AD42-BE8399D800D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B267F2D5-DA26-4944-AD42-BE8399D800D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B267F2D5-DA26-4944-AD42-BE8399D800D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4038824-E6BF-4B15-8506-3F84073099E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4038824-E6BF-4B15-8506-3F84073099E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4038824-E6BF-4B15-8506-3F84073099E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4038824-E6BF-4B15-8506-3F84073099E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D296C0B5-D36D-4539-B7FA-796A58638CC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D296C0B5-D36D-4539-B7FA-796A58638CC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D296C0B5-D36D-4539-B7FA-796A58638CC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D296C0B5-D36D-4539-B7FA-796A58638CC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF52ED7B-A909-48AA-B884-B3E35B662499}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF52ED7B-A909-48AA-B884-B3E35B662499}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF52ED7B-A909-48AA-B884-B3E35B662499}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF52ED7B-A909-48AA-B884-B3E35B662499}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

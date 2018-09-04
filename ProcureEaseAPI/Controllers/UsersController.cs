@@ -77,9 +77,8 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                var url = System.Web.HttpContext.Current.Request.Url.Host;
-               var tenantId = catalog.GetTenantID(url);
-                var organizationId = catalog.GetOrganizationID(url);
+               var tenantId = catalog.GetTenantID();
+                var organizationId = catalog.GetOrganizationID();
                 UserProfile.TenantID = tenantId;
                 UserProfile.OrganizationID= organizationId;
                 if (UserProfile.UserEmail == null)
@@ -110,7 +109,8 @@ namespace ProcureEaseAPI.Controllers
                 db.SaveChanges();             
                 string RecipientEmail = UserProfile.UserEmail;
                 string Subject = "ProcureEase SignUp Invitation";
-                string Body = new EmailTemplateHelper().GetTemplateContent("SignUpTemplate");              
+                string Body = new EmailTemplateHelper().GetTemplateContent("SignUpTemplate");
+                var url = System.Web.HttpContext.Current.Request.Url.Host;
                 string newTemplateContent = string.Format(Body," " + "http://" + url + "/#/signup/" + UserProfile.UserEmail);
                 Message message = new Message( RecipientEmail,Subject, newTemplateContent);
                 EmailHelper emailHelper = new EmailHelper();
@@ -158,6 +158,7 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
+                var tenantId = catalog.GetTenantID();
                 AuthRepository Repository = new AuthRepository();
                 ApplicationUser user = await Repository.FindEmail(UserEmail);
                 if (user == null)
@@ -180,6 +181,25 @@ namespace ProcureEaseAPI.Controllers
                 Message message = new Message(RecipientEmail, Subject, newTemplateContent);
                 EmailHelper emailHelper = new EmailHelper();
                 await emailHelper.AddEmailToQueue(message);
+                return Json(new
+                {
+                    success = true,
+                    message = "Please check your email to reset password.",
+                    data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        User = new
+                        {
+                            x.UserID,
+                            FullName = x.FirstName + " " + x.LastName
+                        },
+                        Department = new
+                        {
+                            x.DepartmentID,
+                            x.Department1.DepartmentName
+                        }
+
+                    }),
+                }, JsonRequestBehavior.AllowGet);
             }
             catch(Exception ex)
             {
@@ -191,27 +211,7 @@ namespace ProcureEaseAPI.Controllers
                     data =new
                     { }
                 }, JsonRequestBehavior.AllowGet);
-            }
-            var getUserOrganizationID = db.UserProfile.Where(x => x.UserEmail == UserEmail).Select(x => x.OrganizationID).FirstOrDefault();
-            return Json(new
-            {
-                success = true,
-                message = "Please check your email to reset password.",
-                data = db.UserProfile.Where(x=>x.OrganizationID==getUserOrganizationID).Select(x => new
-                {
-                    User = new
-                    {
-                        x.UserID,
-                        FullName = x.FirstName + " " + x.LastName
-                    },
-                    Department = new
-                    {
-                        x.DepartmentID,
-                        x.Department1.DepartmentName
-                    }
-
-                }),
-            }, JsonRequestBehavior.AllowGet);
+            } 
 
         }
 
@@ -222,6 +222,7 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
+                var tenantId = catalog.GetTenantID();
                 AuthRepository Repository = new AuthRepository();
                 ApplicationUser user = await Repository.FindEmail(ResetPassword.UserEmail);
                 if (user == null)
@@ -236,6 +237,25 @@ namespace ProcureEaseAPI.Controllers
                     }, JsonRequestBehavior.AllowGet);
                 }
                 var result = await Repository.ResetPassword(ResetPassword.ResetToken,ResetPassword.NewPassword, user.Id);
+                return Json(new
+                {
+                    success = true,
+                    message = "Password reset successful.",
+                    data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        User = new
+                        {
+                            x.UserID,
+                            FullName = x.FirstName + " " + x.LastName
+                        },
+                        Department = new
+                        {
+                            x.DepartmentID,
+                            x.Department1.DepartmentName
+                        }
+
+                    }),
+                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -247,27 +267,7 @@ namespace ProcureEaseAPI.Controllers
                     data =  new
                     { }
                 }, JsonRequestBehavior.AllowGet);
-            }
-            var getUserOrganizationID = db.UserProfile.Where(x => x.UserEmail == ResetPassword.UserEmail).Select(x => x.OrganizationID).FirstOrDefault();
-            return Json(new
-            {
-                success = true,
-                message = "Password reset successful.",
-                data = db.UserProfile.Where(x => x.OrganizationID == getUserOrganizationID).Select(x => new
-                {
-                    User = new
-                    {
-                        x.UserID,
-                        FullName = x.FirstName + " " + x.LastName
-                    },
-                    Department = new
-                    {
-                        x.DepartmentID,
-                        x.Department1.DepartmentName
-                    }
-
-                }),
-            }, JsonRequestBehavior.AllowGet);
+            }                    
 
         }
 
@@ -278,6 +278,8 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
+                var tenantId = catalog.GetTenantID();
+                var organizationId = catalog.GetOrganizationID();
                 if (UserProfile.OrganizationID != null)
                 {
                     Guid guidID = new Guid();

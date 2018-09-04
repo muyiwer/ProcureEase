@@ -35,7 +35,16 @@ namespace Utilities
             ADD_PROJECTCATEGORY,
             UPDATE_PROJECTCATEGORY,
             ADD_PROCUREMENTMETHOD,
-            UPDATE_PROCUREMENTMETHOD
+            UPDATE_PROCUREMENTMETHOD,
+            ALL_DRAFT_PROCUREMENT_NEEDS,
+            POST_DRAFT_NEEDS,
+            SEND_PROCUREMENTS_NEEDS,
+            AUTO_COMPLETE_ITEMNAME,
+            SENT_PROCUREMENTS,
+            CONFIGURATION,
+            PROCUREMENT_NEEDS_SUMMARY,
+            PROCUREMENT_PLAN_SUMMARY
         };
     }
+
 }

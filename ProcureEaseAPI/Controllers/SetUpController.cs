@@ -33,9 +33,10 @@ namespace ProcureEaseAPI.Controllers
                     message = "All source of funds",
                     data = db.SourceOfFunds.Select(x => new
                     {
+                        TenantID = db.SourceOfFunds.Where(y => y.TenantID == x.TenantID).Select(y => y.TenantID),
                         x.SourceOfFundID,
                         x.SourceOfFund,
-                       // x.EnableSourceOfFund
+                        Enabled = db.SourceOfFundsOrganisationSettings.Where(y => y.SourceOfFundID == y.SourceOfFundID).Select(y => y.EnableSourceOfFund)
                     })
                 }, JsonRequestBehavior.AllowGet);
             }

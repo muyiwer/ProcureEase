@@ -52,7 +52,7 @@ namespace ProcureEaseAPI.Controllers
                 db.SaveChanges();
 
                 requestForDemo = db.RequestForDemo.Find(requestForDemo.RequestID);
-                requestForDemo.TenantID = catalog.TenantID;
+                //requestForDemo.TenantID = catalog.TenantID;
                 db.Entry(requestForDemo).State = EntityState.Modified;
 
                 organizationSettings = db.OrganizationSettings.Find(organizationSettings.OrganizationID);

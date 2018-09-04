@@ -57,7 +57,6 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                var url = System.Web.HttpContext.Current.Request.Url.Host;
                 DateTime dt = DateTime.Now;
                 requestForDemo.RequestID = Guid.NewGuid();
                 requestForDemo.DateCreated = dt;
@@ -73,7 +72,6 @@ namespace ProcureEaseAPI.Controllers
                     message = "Request Sent Successfully",
                     data = db.RequestForDemo.Where(x => x.RequestID == requestForDemo.RequestID).Select(x => new
                     {
-                        x.TenantID,
                         x.RequestID,
                         x.OrganizationFullName,
                         x.OrganizationShortName,
@@ -101,7 +99,7 @@ namespace ProcureEaseAPI.Controllers
             var RecipientEmail = requestForDemo.AdministratorEmail;
             string Subject = "Request For Demo";
             string Body = new EmailTemplateHelper().GetTemplateContent("RequestForDemoTemplate_User");
-            string newTemplateContent = string.Format(Body, requestForDemo.AdministratorEmail);
+            string newTemplateContent = string.Format(Body, "annieajeks@gmail.com");
             //newTemplateContent = newTemplateContent.Replace("[RecipientEmail]", RecipientEmail.Trim());
             Message message = new Message(RecipientEmail, Subject, newTemplateContent);
             EmailHelper emailHelper = new EmailHelper();

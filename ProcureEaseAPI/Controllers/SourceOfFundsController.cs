@@ -39,7 +39,7 @@ namespace ProcureEaseAPI.Controllers
                 SourceOfFundsOrganisationSettings sourceOfFundsOrganisationSettings = new SourceOfFundsOrganisationSettings();
                 sourceOfFundsOrganisationSettings.SourceOfFundID = sourceOfFunds.SourceOfFundID;
                 sourceOfFundsOrganisationSettings.TenantID = catalog.GetTenantID();
-                sourceOfFundsOrganisationSettings.OrganisationID = catalog.GetOrganizationID();
+                //sourceOfFundsOrganisationSettings.OrganisationID = catalog.GetOrganizationID();
                 sourceOfFundsOrganisationSettings.EnableSourceOfFund = sourceOfFundsOrganisationSettings.EnableSourceOfFund;
                 sourceOfFundsOrganisationSettings.DateCreated = dt;
                 sourceOfFundsOrganisationSettings.DateModified = dt;

@@ -43,7 +43,6 @@ namespace ProcureEaseAPI.Tests.Controllers
 
             var testRequestForDemo = new HomeController();
             JsonResult result = (JsonResult)await testRequestForDemo.RequestForDemo(requestForDemo);
-            result = (JsonResult)await testRequestForDemo.RequestForDemo(requestForDemo);
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("Request Sent Successfully"));
         }

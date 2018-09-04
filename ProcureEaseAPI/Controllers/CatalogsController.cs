@@ -22,19 +22,45 @@ namespace ProcureEaseAPI.Controllers
             return View(catalog.ToList());
         }
 
-        public Guid GetTenantID()
+        public Guid? GetTenantID()
         {
-            var url = System.Web.HttpContext.Current.Request.Url.Host;
-            var getTenantId = db.Catalog.Where(x => x.SubDomain == url).Select(x => x.TenantID).FirstOrDefault();            
-            return getTenantId;
+            string url = System.Web.HttpContext.Current.Request.Url.Host; // expecting format nitda.procureease.ng
+            string[] hostUrlParts = url.Split('.');// extract sub domain from URL
+            string subDomain = hostUrlParts[0];
+            List<Catalog> records = db.Catalog.Where(x => x.SubDomain == subDomain).ToList();
+            if (records == null || records.Count == 0)
+            {
+                return null;
+            }
+            else
+            {
+                return records.Select(x => x.TenantID).First();
+            }
         }
 
-        public Guid GetOrganizationID()
+        public Guid? GetOrganizationID()
         {
-           
-            var url = System.Web.HttpContext.Current.Request.Url.Host;
-            var getOrganizationID = db.Catalog.Where(x => x.SubDomain == url).Select(x => x.OrganizationSettings.OrganizationID).FirstOrDefault();
-            return getOrganizationID;
+
+            string url = System.Web.HttpContext.Current.Request.Url.Host; // expecting format nitda.procureease.ng
+            string[] hostUrlParts = url.Split('.');// extract sub domain from URL
+            string subDomain = hostUrlParts[0];
+            List<Catalog> records = db.Catalog.Where(x => x.SubDomain == subDomain).ToList();
+            if (records == null || records.Count == 0)
+            {
+                return null;
+            }
+            else
+            {
+                return records.Select(x => x.OrganizationID).First();
+            }
+        }
+
+        public ActionResult Add(Catalog catalog)
+        {
+            catalog.TenantID = Guid.NewGuid();
+            db.Catalog.Add(catalog);
+            db.SaveChanges();
+            return Json(catalog, JsonRequestBehavior.AllowGet);
         }
 
         protected override void Dispose(bool disposing)

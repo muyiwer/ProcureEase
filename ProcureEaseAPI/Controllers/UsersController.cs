@@ -279,32 +279,7 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 var tenantId = catalog.GetTenantID();
-                var organizationId = catalog.GetOrganizationID();
-                if (UserProfile.OrganizationID != null)
-                {
-                    Guid guidID = new Guid();
-                    var OrganizationID = Convert.ToString(UserProfile.OrganizationID);
-                    try
-                    {
-                        guidID = Guid.Parse(OrganizationID);
-                    }
-                    catch (FormatException ex)
-                    {
-                        LogHelper.Log(Log.Event.SIGN_UP, "Invalid GUID format(OrganizationID)");
-                        Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                        return Error(ex.Message);
-                    }
-                }
-                else
-                {
-                    LogHelper.Log(Log.Event.SIGN_UP, "OrganizationID is null.");
-                    return Json(new
-                    {
-                        success = false,
-                        message = "OrganizationID is null.",
-                        data = new { }
-                    }, JsonRequestBehavior.AllowGet);
-                }
+                var organizationId = catalog.GetOrganizationID();                
                 var CheckIfUserHasSignedUp = db.AspNetUsers.Where(x => x.UserName == UserProfile.UserEmail).Select(x => x.UserName).FirstOrDefault();
                 if (CheckIfUserHasSignedUp != null)
                 {
@@ -358,7 +333,27 @@ namespace ProcureEaseAPI.Controllers
                 EditProfile.FirstName = UserProfile.FirstName;
                 EditProfile.LastName = UserProfile.LastName;           
                 db.SaveChanges();
-            }catch(Exception ex)
+                return Json(new
+                {
+                    success = true,
+                    message = "Sign up successful.",
+                    data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        User = new
+                        {
+                            x.UserID,
+                            FullName = x.FirstName + " " + x.LastName
+                        },
+                        Department = new
+                        {
+                            x.DepartmentID,
+                            x.Department1.DepartmentName
+                        }
+
+                    }),
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch(Exception ex)
             {
                 LogHelper.Log(Log.Event.SIGN_UP, ex.Message);
                 return Json(new
@@ -369,26 +364,7 @@ namespace ProcureEaseAPI.Controllers
                     { }
                 }, JsonRequestBehavior.AllowGet);
             }
-            var getUserOrganizationID = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.OrganizationID).FirstOrDefault();
-            return Json(new
-            {
-                success = true,
-                message = "Sign up successful.",
-                data = db.UserProfile.Where(x => x.OrganizationID == UserProfile.OrganizationID).Select(x => new
-                {
-                    User = new
-                    {
-                        x.UserID,
-                        FullName = x.FirstName + " " + x.LastName
-                    },
-                    Department = new
-                    {
-                        x.DepartmentID,
-                        x.Department1.DepartmentName
-                    }
-
-                }),
-            }, JsonRequestBehavior.AllowGet);
+           
         }
 
  
@@ -399,31 +375,7 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                if (UserProfile.OrganizationID != null)
-                {
-                    Guid guidID = new Guid();
-                    var OrganizationID = Convert.ToString(UserProfile.OrganizationID);
-                    try
-                    {
-                        guidID = Guid.Parse(OrganizationID);
-                    }
-                    catch (FormatException ex)
-                    {
-                        LogHelper.Log(Log.Event.EDIT_USER, "Invalid GUID format(OrganizationID)");
-                        Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                        return Error(ex.Message);
-                    }
-                }
-                else
-                {
-                    LogHelper.Log(Log.Event.EDIT_USER, "OrganizationID is null.");
-                    return Json(new
-                    {
-                        success = false,
-                        message = "OrganizationID is null.",
-                        data = new { }
-                    }, JsonRequestBehavior.AllowGet);
-                }
+                var tenantId = catalog.GetTenantID();
                 if (UserProfile.DepartmentID == null)
                 {
                     LogHelper.Log(Log.Event.EDIT_USER, "Department ID is null");
@@ -450,14 +402,12 @@ namespace ProcureEaseAPI.Controllers
                 var Id= db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
                 if (Id == null)
                 {
-                    EditUserWithoutID(UserProfile);
-
-                    var getUserOrganizationID = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.OrganizationID).FirstOrDefault();
+                    EditUserWithoutID(UserProfile);              
                     return Json(new
                     {
                         success = true,
                         message = "Edited successfully.",
-                        data = db.UserProfile.Where(x => x.OrganizationID == UserProfile.OrganizationID).Select(x => new
+                        data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
                         {
                             x.UserID,
                             FullName = x.FirstName + " " + x.LastName,
@@ -493,7 +443,7 @@ namespace ProcureEaseAPI.Controllers
                     {
                         success = true,
                         message = "Edited Successfully.",
-                        data = db.UserProfile.Where(x => x.OrganizationID == UserProfile.OrganizationID).Select(x => new
+                        data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
                         {
                             x.UserID,
                             FullName = x.FirstName + " " + x.LastName,
@@ -601,32 +551,7 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                Guid guidID = new Guid();
-                if (UserProfile.OrganizationID != null)
-                {                    
-                    var OrganizationID = Convert.ToString(UserProfile.OrganizationID);
-                    try
-                    {
-                        guidID = Guid.Parse(OrganizationID);
-                    }
-                    catch (FormatException ex)
-                    {
-                        LogHelper.Log(Log.Event.UPDATE_USER_PROFILE, "Invalid GUID format(OrganizationID)");
-                        Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                        return Error(ex.Message);
-                    }
-                }
-                else
-                {
-                    LogHelper.Log(Log.Event.UPDATE_USER_PROFILE, "OrganizationID is null.");
-                    return Json(new
-                    {
-                        success = false,
-                        message = "OrganizationID is null.",
-                        data = new { }
-                    }, JsonRequestBehavior.AllowGet);
-                }
-
+                var tenantId = catalog.GetTenantID();
                 var Id = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
                 if(Id == null)
                 {
@@ -655,7 +580,7 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = true,
                     message = "Profile update successful.",
-                    data = db.UserProfile.Where(x => x.OrganizationID == guidID).Select(x => new
+                    data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
                     {
                         x.UserID,
                         FullName = x.FirstName + " " + x.LastName,
@@ -688,6 +613,7 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
+                var tenantId = catalog.GetTenantID();
                 if (UserProfile.UserID == null)
                 {
                     LogHelper.Log(Log.Event.UPDATE_DEPARTMENT_HEAD, "UserID is Null");
@@ -742,37 +668,12 @@ namespace ProcureEaseAPI.Controllers
                         db.SaveChanges();
                     
                 }
-                Guid guidID = new Guid();
-                if (UserProfile.OrganizationID != null)
-                {
-                    var OrganizationID = Convert.ToString(UserProfile.OrganizationID);
-                    try
-                    {
-                        guidID = Guid.Parse(OrganizationID);
-                    }
-                    catch (FormatException ex)
-                    {
-                        LogHelper.Log(Log.Event.UPDATE_USER_PROFILE, "Invalid GUID format(OrganizationID)");
-                        Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                        return Error(ex.Message);
-                    }
-                }
-                else
-                {
-                    LogHelper.Log(Log.Event.UPDATE_USER_PROFILE, "OrganizationID is null.");
-                    return Json(new
-                    {
-                        success = false,
-                        message = "OrganizationID is null.",
-                        data = new { }
-                    }, JsonRequestBehavior.AllowGet);
-                }
-
+               
                 return Json(new
                 {
                     success = true,
                     message = "User added as department head successful.",
-                    data = db.UserProfile.Where(x => x.OrganizationID == guidID).Select(x => new
+                    data = db.UserProfile.Where(x => x.TenantID== tenantId).Select(x => new
                     {
                         x.UserID,
                         FullName = x.FirstName + " " + x.LastName,
@@ -798,30 +699,16 @@ namespace ProcureEaseAPI.Controllers
 
         [HttpGet]
         [Providers.Authorize]
-        public ActionResult GetAllUsers(string id = "", string id2="")
+        public ActionResult GetAllUsers(string id = "")
         {
-            Guid guidID2 = new Guid();
-            try
-            {
-                guidID2 = Guid.Parse(id2);
-            }
-            catch (FormatException ex)
-            {
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = new
-                    { }
-                }, JsonRequestBehavior.AllowGet);
-            }
+            var tenantId = catalog.GetTenantID();
             if (string.IsNullOrEmpty(id))
             {
                 return Json(new
                 {
                     success = true,
                     message = "",
-                    data = db.UserProfile.Where(x => x.OrganizationID == guidID2).Select(x => new
+                    data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
                     {
                         x.UserID,
                         FullName = x.FirstName + " " + x.LastName,
@@ -852,7 +739,7 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = true,
                     message = "All Users",
-                    data = db.UserProfile.Where(x => x.DepartmentID == guidID &&  x.OrganizationID == guidID2).Select(x => new
+                    data = db.UserProfile.Where(x => x.DepartmentID == guidID &&  x.TenantID == tenantId).Select(x => new
                     {
                         x.UserID,
                         FullName = x.FirstName + " " + x.LastName,
@@ -865,23 +752,17 @@ namespace ProcureEaseAPI.Controllers
             }
         }
 
-        [HttpGet]
-        public ActionResult GetUrl()
-        {
-            var url = System.Web.HttpContext.Current.Request.Url.Host;
-            return Json(url, JsonRequestBehavior.AllowGet);
-        }
-      
         [HttpDelete]
         [Providers.Authorize]
         public ActionResult Delete(UserProfile UserProfile)
         {
             try
             { 
+             var tenantId = catalog.GetTenantID();
             if(UserProfile.UserID==null)
             {
                 LogHelper.Log(Log.Event.DELETE_USER, "UserID is Null");
-                    // return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     return Json(new
                     {
                         success = false,
@@ -902,24 +783,12 @@ namespace ProcureEaseAPI.Controllers
                     }
                     UserProfile profile = db.UserProfile.SingleOrDefault(x => x.UserID == UserProfile.UserID);
                     db.UserProfile.Remove(profile);
-                    db.SaveChanges();
-                    Guid guidID = new Guid();
-                    var OrganizationID = Convert.ToString(UserProfile.OrganizationID);
-                    try
-                    {
-                        guidID = Guid.Parse(OrganizationID);
-                    }
-                    catch (FormatException ex)
-                    {
-                        Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                        return Error(ex.Message);
-                    }
-
+                    db.SaveChanges();                   
                     return Json(new
                     {
                         success = true,
                         message = "User is deleted suessfully",
-                        data = db.UserProfile.Where(x => x.OrganizationID == guidID).Select(x => new
+                        data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
                         {
                             x.UserID,
                             FullName = x.FirstName + " " + x.LastName,
@@ -938,24 +807,12 @@ namespace ProcureEaseAPI.Controllers
                     db.AspNetUserRoles.Remove(role);
                     AspNetUsers users = db.AspNetUsers.SingleOrDefault(x => x.Id == UserAspNetID);
                     db.AspNetUsers.Remove(users);
-                    db.SaveChanges();
-                    Guid guidID = new Guid();
-                    var OrganizationID = Convert.ToString(UserProfile.OrganizationID);
-                    try
-                    {
-                        guidID = Guid.Parse(OrganizationID);
-                    }
-                    catch (FormatException ex)
-                    {
-                        Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                        return Error(ex.Message);
-                    }
-
+                    db.SaveChanges();                   
                     return Json(new
                     {
                         success = true,
                         message = "User is deleted suessfully",
-                        data = db.UserProfile.Where(x => x.OrganizationID == guidID).Select(x => new
+                        data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
                         {
                             x.UserID,
                             FullName = x.FirstName + " " + x.LastName,

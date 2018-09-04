@@ -24,7 +24,6 @@
         <EntityTypeShape EntityType="ProcureEaseModel.OrganizationSettings" Width="1.5" PointX="0.75" PointY="37.875" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.ProcurementStatus" Width="1.5" PointX="5.25" PointY="60.5" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.ProjectCategory" Width="1.5" PointX="5.25" PointY="64" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProcureEaseModel.RequestForDemo" Width="1.5" PointX="5.25" PointY="67.875" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.SourceOfFunds" Width="1.5" PointX="5.25" PointY="71.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.sysdiagrams" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.TelephoneNumbers" Width="1.5" PointX="10.25" PointY="33" IsExpanded="true" />
@@ -76,7 +75,6 @@
         <AssociationConnector Association="ProcureEaseModel.FK_AspNetUsers_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_BudgetYear_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK__Catalog__Organiz__571DF1D5" />
-        <AssociationConnector Association="ProcureEaseModel.FK__Catalog__Request__5812160E" />
         <AssociationConnector Association="ProcureEaseModel.FK_Department_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_ItemCode_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_Items_Catalog" />
@@ -89,7 +87,6 @@
         <AssociationConnector Association="ProcureEaseModel.FK_ProcurementStatus_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_ProjectCategory_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_ProjectCategory_Catalog1" />
-        <AssociationConnector Association="ProcureEaseModel.FK_RequestForDemo_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_SourceOfFunds_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_TelephoneNumbers_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_UserProfile_Catalog" />
@@ -97,6 +94,8 @@
         <AssociationConnector Association="ProcureEaseModel.FK_SourceOFFundsOrganisationSettings_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_SourceOFFundsOrganisationSettings_OrganizationSettings" />
         <AssociationConnector Association="ProcureEaseModel.FK_SourceOFFundsOrganisationSettings_SourceOfFunds" />
+        <EntityTypeShape EntityType="ProcureEaseModel.RequestForDemo" Width="1.5" PointX="8.25" PointY="54.875" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Catalog__Request__5812160E" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

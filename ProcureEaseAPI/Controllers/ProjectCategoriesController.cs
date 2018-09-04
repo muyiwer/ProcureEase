@@ -42,7 +42,7 @@ namespace ProcureEaseAPI.Controllers
                     {
                         x.ProjectCategoryID,
                         x.Name,
-                        x.EnableProjectCategory,
+                       // x.EnableProjectCategory,
                     })
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -133,7 +133,7 @@ namespace ProcureEaseAPI.Controllers
                     }, JsonRequestBehavior.AllowGet);
                 }
                 currentProjectCategory.DateModified = dt;
-                currentProjectCategory.EnableProjectCategory = projectCategory.EnableProjectCategory;
+               // currentProjectCategory.EnableProjectCategory = projectCategory.EnableProjectCategory;
                 db.SaveChanges();
                 return Json(new
                 {
@@ -143,7 +143,7 @@ namespace ProcureEaseAPI.Controllers
                     {
                         x.ProjectCategoryID,
                         x.Name,
-                        x.EnableProjectCategory
+                      //  x.EnableProjectCategory
                     })
                 }, JsonRequestBehavior.AllowGet);
             }

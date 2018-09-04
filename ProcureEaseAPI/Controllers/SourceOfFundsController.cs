@@ -42,7 +42,6 @@ namespace ProcureEaseAPI.Controllers
                     {
                         x.SourceOfFundID,
                         x.SourceOfFund,
-                        x.EnableSourceOfFund,
                         x.CreatedBy,
                     })
                 }, JsonRequestBehavior.AllowGet);
@@ -135,7 +134,7 @@ namespace ProcureEaseAPI.Controllers
                 }
 
                 currentSourceOfFund.DateModified = dt;
-                currentSourceOfFund.EnableSourceOfFund = sourceOfFunds.EnableSourceOfFund;
+                //currentSourceOfFund.EnableSourceOfFund = sourceOfFunds.EnableSourceOfFund;
                 db.SaveChanges();
                 return Json(new
                 {
@@ -145,7 +144,6 @@ namespace ProcureEaseAPI.Controllers
                     {
                         x.SourceOfFundID,
                         x.SourceOfFund,
-                        x.EnableSourceOfFund
                     })
                 }, JsonRequestBehavior.AllowGet);
             }

@@ -17,9 +17,38 @@ namespace ProcureEaseAPI.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.Title = "Home Page";
+            try
+            {
+                return Json(new
+                {
+                    success = true,
+                    message = "Ok",
+                    data = db.RequestForDemo.Select(x => new
+                    {
+                        x.RequestID,
+                        x.OrganizationFullName,
+                        x.OrganizationShortName,
+                        x.AdministratorEmail,
+                        x.AdministratorFirstName,
+                        x.AdministratorLastName,
+                        x.AdministratorPhoneNumber,
+                        DateCreated = x.DateCreated.Value.ToString()
+                    })
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(Log.Event.REQUESTFORDEMO, ex.Message);
+                return Json(new
+                {
+                    success = false,
+                    message = "" + ex.Message,
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
+            //ViewBag.Title = "Home Page";
 
-            return View();
+            //return View();
         }
 
         // POST: Home/RequestForDemo
@@ -33,47 +62,18 @@ namespace ProcureEaseAPI.Controllers
                 requestForDemo.RequestID = Guid.NewGuid();
                 requestForDemo.DateCreated = dt;
                 db.RequestForDemo.Add(requestForDemo);
-
-                OrganizationSettings organizationSettings = new OrganizationSettings();
-                organizationSettings.OrganizationID = Guid.NewGuid();
-                organizationSettings.OrganizationNameInFull = requestForDemo.OrganizationFullName;
-                organizationSettings.OrganizationNameAbbreviation = requestForDemo.OrganizationShortName;
-                organizationSettings.DateCreated = dt;
-                db.OrganizationSettings.Add(organizationSettings);
-
-                Catalog catalog = new Catalog();
-                catalog.TenantID = Guid.NewGuid();
-                catalog.RequestID = requestForDemo.RequestID;
-                catalog.SubDomain = url;
-                catalog.OrganizationID = organizationSettings.OrganizationID;
-                catalog.DateCreated = dt;
-                catalog.DateModified = dt;
-                db.Catalog.Add(catalog);
                 db.SaveChanges();
 
-                requestForDemo = db.RequestForDemo.Find(requestForDemo.RequestID);
-                requestForDemo.TenantID = catalog.TenantID;
-                db.Entry(requestForDemo).State = EntityState.Modified;
+                await SendMailToTechspecialist(requestForDemo);
+                await SendMailToUser(requestForDemo);
 
-                organizationSettings = db.OrganizationSettings.Find(organizationSettings.OrganizationID);
-                organizationSettings.TenantID = catalog.TenantID;
-                db.Entry(organizationSettings).State = EntityState.Modified;
-                db.SaveChanges();
-
-                var RecipientEmail = requestForDemo.AdministratorEmail;
-                string Subject = "Request For Demo";
-                string Body = new EmailTemplateHelper().GetTemplateContent("RequestForDemoTemplate");
-                string newTemplateContent = string.Format(Body, requestForDemo.AdministratorEmail);
-                //newTemplateContent = newTemplateContent.Replace("[RecipientEmail]", RecipientEmail.Trim());
-                Message message = new Message(RecipientEmail, Subject, newTemplateContent);
-                EmailHelper emailHelper = new EmailHelper();
-                await emailHelper.AddEmailToQueue(message);
                 return Json(new
                 {
                     success = true,
                     message = "Request Sent Successfully",
                     data = db.RequestForDemo.Where(x => x.RequestID == requestForDemo.RequestID).Select(x => new
                     {
+                        x.TenantID,
                         x.RequestID,
                         x.OrganizationFullName,
                         x.OrganizationShortName,
@@ -85,11 +85,38 @@ namespace ProcureEaseAPI.Controllers
                     })
                 });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                LogHelper.Log(Log.Event.REQUESTFORDEMO, ex.Message);
+                return Json(new
+                {
+                    success = false,
+                    message = "" + ex.Message,
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
             }
+        }
+        public async Task SendMailToTechspecialist(RequestForDemo requestForDemo)
+        {
+            var RecipientEmail = requestForDemo.AdministratorEmail;
+            string Subject = "Request For Demo";
+            string Body = new EmailTemplateHelper().GetTemplateContent("RequestForDemoTemplate_User");
+            string newTemplateContent = string.Format(Body, requestForDemo.AdministratorEmail);
+            //newTemplateContent = newTemplateContent.Replace("[RecipientEmail]", RecipientEmail.Trim());
+            Message message = new Message(RecipientEmail, Subject, newTemplateContent);
+            EmailHelper emailHelper = new EmailHelper();
+            await emailHelper.AddEmailToQueue(message);
+        }
+        public async Task SendMailToUser(RequestForDemo requestForDemo)
+        {
+            var RecipientEmail = requestForDemo.AdministratorEmail;
+            string Subject = "Request For Demo";
+            string Body = new EmailTemplateHelper().GetTemplateContent("RequestForDemoTemplate_Techspecialist");
+            string newTemplateContent = string.Format(Body, requestForDemo.AdministratorEmail);
+            //newTemplateContent = newTemplateContent.Replace("[RecipientEmail]", RecipientEmail.Trim());
+            Message message = new Message(RecipientEmail, Subject, newTemplateContent);
+            EmailHelper emailHelper = new EmailHelper();
+            await emailHelper.AddEmailToQueue(message);
         }
     }
 }

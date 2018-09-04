@@ -43,7 +43,8 @@ namespace Utilities
             SENT_PROCUREMENTS,
             CONFIGURATION,
             PROCUREMENT_NEEDS_SUMMARY,
-            PROCUREMENT_PLAN_SUMMARY
+            PROCUREMENT_PLAN_SUMMARY,
+            GET_ORGANIZATION_ID
         };
     }
 

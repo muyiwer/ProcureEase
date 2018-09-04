@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using ProcureEaseAPI.Models;
+using Utilities;
 
 namespace ProcureEaseAPI.Controllers
 {
@@ -21,17 +22,18 @@ namespace ProcureEaseAPI.Controllers
             return View(catalog.ToList());
         }
 
-        public Guid GetTenantID(string url)
+        public Guid GetTenantID()
         {
-            var getTenantId = db.Catalog.Where(x => x.SubDomain == url).Select(x => x.TenantID).FirstOrDefault();
-            
+            var url = System.Web.HttpContext.Current.Request.Url.Host;
+            var getTenantId = db.Catalog.Where(x => x.SubDomain == url).Select(x => x.TenantID).FirstOrDefault();            
             return getTenantId;
         }
 
-        public Guid GetOrganizationID(string url)
+        public Guid GetOrganizationID()
         {
+           
+            var url = System.Web.HttpContext.Current.Request.Url.Host;
             var getOrganizationID = db.Catalog.Where(x => x.SubDomain == url).Select(x => x.OrganizationSettings.OrganizationID).FirstOrDefault();
-
             return getOrganizationID;
         }
 

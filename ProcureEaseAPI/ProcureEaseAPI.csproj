@@ -221,7 +221,6 @@
     <Compile Include="Controllers\ProcureController.cs" />
     <Compile Include="Controllers\ProcurementMethodsController.cs" />
     <Compile Include="Controllers\ProcurementsController.cs" />
-    <Compile Include="Controllers\ProcurmentsController.cs" />
     <Compile Include="Controllers\ProjectCategoriesController.cs" />
     <Compile Include="Controllers\SetUpController.cs" />
     <Compile Include="Controllers\SourceOfFundsController.cs" />

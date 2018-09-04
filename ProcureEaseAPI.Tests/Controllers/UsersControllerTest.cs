@@ -4,6 +4,7 @@ using ProcureEaseAPI.Controllers;
 using ProcureEaseAPI.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,9 +15,9 @@ using System.Web.Routing;
 namespace ProcureEaseAPI.Tests.Controllers
 {
     [TestClass]
-   public  class UsersControllerTest
+   public class UsersControllerTest
     {
-        string LOCAL_SERVER = "http://localhost:82/";
+      public  string LOCAL_SERVER = "http://nitda.procureease.ng/";
 
         [TestMethod]
         public async Task TestLogin_WithInvalidLoginDetails()
@@ -43,17 +44,70 @@ namespace ProcureEaseAPI.Tests.Controllers
         }
 
         [TestMethod]
+        public virtual void TestGetTenantID_Successfully()
+        {
+            var controller = new CatalogsController();
+            MockController(controller, LOCAL_SERVER);
+
+            var host = controller.Request.Url.Host;
+            Console.WriteLine(host);
+            var result = controller.GetTenantID();
+            Console.WriteLine(result);
+
+            string url = System.Web.HttpContext.Current.Request.Url.Host; // expecting format nitda.procureease.ng
+            string[] hostUrlParts = url.Split('.');// extract sub domain from URL
+            string subDomain = hostUrlParts[0];
+            Console.WriteLine(subDomain);
+
+            Assert.IsNotNull(result);
+        }
+
+        [TestMethod]
+        public virtual void TestGetTenantID_TenantIDNotFound()
+        {
+            string LOCAL_SERVER2 = "http://ncc.procureease.ng/";
+
+            var controller = new CatalogsController();
+            MockController(controller, LOCAL_SERVER2);
+
+            var host = controller.Request.Url.Host;
+            Console.WriteLine(host);
+            var result = controller.GetTenantID();
+            Console.WriteLine(result);
+
+            string url = System.Web.HttpContext.Current.Request.Url.Host; // expecting format nitda.procureease.ng
+            string[] hostUrlParts = url.Split('.');// extract sub domain from URL
+            string subDomain = hostUrlParts[0];
+            Console.WriteLine(subDomain);
+
+            Assert.IsNull(result);
+        }
+
+        private void MockController(CatalogsController controller, string server)
+        {
+            var context = new Mock<HttpContextBase>();
+            var session = new Mock<HttpSessionStateBase>();
+            context.Setup(x => x.Request.Url).Returns(new Uri(server, UriKind.Absolute));
+            context.Setup(x => x.Session).Returns(session.Object);
+            var requestContext = new RequestContext(context.Object, new RouteData());
+            controller.ControllerContext = new ControllerContext(requestContext, controller);
+            HttpContext.Current = new HttpContext(new HttpRequest("", server, ""), new HttpResponse(new StringWriter()));
+        }
+
+        [TestMethod]
         public async Task TestAddUser_Unsuccessfully_UserEmailAlreadyExists()
         {
+            Mock<HttpRequest> httpRequest = new Mock<HttpRequest>();
+            httpRequest.Setup(x => x.Url).Returns(new Uri(LOCAL_SERVER));
             UserProfile UserProfile = new UserProfile
             {
-                UserEmail = "muyiweraro@gmail.com"
+                UserEmail = "oaro@techspecialistlimited.com",
             };
             var testAddUser = new UsersController();
             JsonResult result = (JsonResult)await testAddUser.Add(UserProfile); // first call to add email
             result = (JsonResult)await testAddUser.Add(UserProfile); // second call to attempt to add email again and force duplicate insertion attempt
             Console.WriteLine(result.Data);
-            Assert.IsTrue((result.Data + "").Contains("Email already exists"));
+            Assert.IsTrue((result.Data + "").Contains("Email already exists! Please check and try again."));
         }
 
         [TestMethod]
@@ -190,8 +244,8 @@ namespace ProcureEaseAPI.Tests.Controllers
             UserProfile UserProfile = new UserProfile
             {
                 UserEmail = "muyiweraro@gmail.com",
-                DepartmentID =new Guid("86CAF117-37ED-4370-AC31-0D86EECAD8ED"),//for procurement dept only
-                UserID = new Guid("140EC11C-BEFD-4DB3-AEE6-0C45339D3F05") 
+                DepartmentID =new Guid("0B6A0615-F453-4E8C-AF68-B799117A8B1A"),//for procurement dept only
+                UserID = new Guid("472BAD81-FF85-4BE6-9238-BC8306493CB9") 
             };
             var testEditUser = new UsersController();
             var result = (JsonResult)testEditUser.EditUser(UserProfile);
@@ -205,8 +259,8 @@ namespace ProcureEaseAPI.Tests.Controllers
             UserProfile UserProfile = new UserProfile
             {
                 UserEmail = "muyiweraro@gmail.com",
-                DepartmentID = new Guid("200A6BAE-F4B7-4D34-AEEB-D780B0E6B8EA"),//procurement dept not to be included
-                UserID = new Guid("140EC11C-BEFD-4DB3-AEE6-0C45339D3F05")
+                DepartmentID = new Guid("0B6A0615-F453-4E8C-AF68-B799117A8B1A"),//procurement dept not to be included
+                UserID = new Guid("472BAD81-FF85-4BE6-9238-BC8306493CB9")
             };
             var testEditUser = new UsersController();
             var result = (JsonResult)testEditUser.EditUser(UserProfile);
@@ -219,17 +273,17 @@ namespace ProcureEaseAPI.Tests.Controllers
         {
             UserProfile UserProfile = new UserProfile
             {
-                UserID = new Guid("5C99B26F-CBA8-493E-ABD4-E049BB548DB5"),              
+                UserID = new Guid("472BAD81-FF85-4BE6-9238-BC8306493CB9"),              
             };
             var testDelete = new UsersController();
             var result = (JsonResult)testDelete.Delete(UserProfile);
-            Assert.IsTrue((result.Data + "").Contains("User is deleted suessfully"));
+            Assert.IsTrue((result.Data + "").Contains("User is deleted successfully"));
         }
 
         [TestMethod]
         public void TestGetAllUsers()
         {          
-            string id= "5C99B26F-CBA8-493E-ABD4-E049BB548DB5";
+            string id= "0B6A0615-F453-4E8C-AF68-B799117A8B1A";
             var GetAllUsers = new UsersController();
             var result = (JsonResult)GetAllUsers.GetAllUsers(id);
             Console.WriteLine(result.Data);
@@ -251,8 +305,8 @@ namespace ProcureEaseAPI.Tests.Controllers
         {
             UserProfile UserProfile = new UserProfile
             {
-                UserID = new Guid("5C99B26F-CBA8-493E-ABD4-E049BB548DB5"),
-                DepartmentID = new Guid("86CAF117-37ED-4370-AC31-0D86EECAD8ED"),
+                UserID = new Guid("472BAD81-FF85-4BE6-9238-BC8306493CB9"),
+                DepartmentID = new Guid("0B6A0615-F453-4E8C-AF68-B799117A8B1A"),
             };
             var testUpdateDepartmentHead = new UsersController();
             var result = (JsonResult)testUpdateDepartmentHead.UpdateDepartmentHead(UserProfile);
@@ -265,8 +319,8 @@ namespace ProcureEaseAPI.Tests.Controllers
         {
             UserProfile UserProfile = new UserProfile
             {
-                UserID = new Guid("5C99B26F-CBA8-493E-ABD4-E049BB548DB5"),
-                UserEmail = "oaro@techspecialistlimited.com",
+                UserID = new Guid("472BAD81-FF85-4BE6-9238-BC8306493CB9"),
+                UserEmail = "muyiweraro@gmail.com",
                 FirstName = "Muyiwa",
                 LastName = "Aro"
             };
@@ -282,7 +336,7 @@ namespace ProcureEaseAPI.Tests.Controllers
             UserProfile UserProfile = new UserProfile
             {
                 UserID = new Guid("5C99B26F-CBA8-493E-ABD4-E049BB548DB5"),
-                UserEmail = "oaro@techspecialistlimited.com",
+                UserEmail = "muyiweraro@gmail.com",
                 FirstName = "Muyiwa",
                 LastName = "Aro"
             };

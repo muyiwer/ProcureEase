@@ -38,7 +38,6 @@ namespace ProcureEaseAPI.Models
             this.ProcurementStatus = new HashSet<ProcurementStatus>();
             this.ProjectCategory = new HashSet<ProjectCategory>();
             this.ProjectCategory1 = new HashSet<ProjectCategory>();
-            this.RequestForDemo1 = new HashSet<RequestForDemo>();
             this.SourceOfFunds = new HashSet<SourceOfFunds>();
             this.TelephoneNumbers = new HashSet<TelephoneNumbers>();
             this.UserProfile = new HashSet<UserProfile>();
@@ -71,7 +70,6 @@ namespace ProcureEaseAPI.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BudgetYear> BudgetYear { get; set; }
         public virtual OrganizationSettings OrganizationSettings { get; set; }
-        public virtual RequestForDemo RequestForDemo { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Department> Department { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -97,8 +95,6 @@ namespace ProcureEaseAPI.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProjectCategory> ProjectCategory1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RequestForDemo> RequestForDemo1 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SourceOfFunds> SourceOfFunds { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TelephoneNumbers> TelephoneNumbers { get; set; }
@@ -106,5 +102,6 @@ namespace ProcureEaseAPI.Models
         public virtual ICollection<UserProfile> UserProfile { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SourceOfFundsOrganisationSettings> SourceOfFundsOrganisationSettings { get; set; }
+        public virtual RequestForDemo RequestForDemo { get; set; }
     }
 }

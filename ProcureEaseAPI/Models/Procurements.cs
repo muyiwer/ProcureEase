@@ -26,22 +26,24 @@ namespace ProcureEaseAPI.Models
         public Nullable<System.Guid> DepartmentID { get; set; }
         public string ProjectName { get; set; }
         public Nullable<System.Guid> ProjectCategoryID { get; set; }
-        public Nullable<System.Guid> ProcurementStatusID { get; set; }
+        public Nullable<int> ProcurementStatusID { get; set; }
         public Nullable<System.Guid> ProcurementMethodID { get; set; }
         public Nullable<System.Guid> SourceOfFundID { get; set; }
         public Nullable<System.DateTime> DateModified { get; set; }
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> DateCreated { get; set; }
+        public Nullable<System.Guid> TenantID { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AdvertLotNumber> AdvertLotNumber { get; set; }
         public virtual BudgetYear BudgetYear { get; set; }
-        public virtual Department Department { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Items> Items { get; set; }
-        public virtual ProcurementMethod ProcurementMethod { get; set; }
-        public virtual ProcurementStatus ProcurementStatus { get; set; }
         public virtual ProjectCategory ProjectCategory { get; set; }
         public virtual SourceOfFunds SourceOfFunds { get; set; }
+        public virtual ProcurementStatus ProcurementStatus { get; set; }
+        public virtual ProcurementMethod ProcurementMethod { get; set; }
+        public virtual Department Department { get; set; }
+        public virtual Catalog Catalog { get; set; }
     }
 }

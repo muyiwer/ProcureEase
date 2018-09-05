@@ -231,11 +231,119 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\AdvertCategory.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AdvertCategoryNumber.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AdvertisedItems.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AdvertLotNumber.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\AdvertPreparation.cs" />
+    <Compile Include="Models\Adverts.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AdvertStatus.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ApprovedItems.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AspNetRoles.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AspNetUserClaims.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AspNetUserLogins.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AspNetUserRoles.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AspNetUsers.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BudgetYear.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Catalog.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\C__MigrationHistory.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Department.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\DepartmentProject.cs" />
     <Compile Include="Models\IdentityModel.cs" />
+    <Compile Include="Models\ItemCode.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Items.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\OrganizationSettings.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProcureEaseModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ProcureEaseModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProcureEaseModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProcureEaseModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ProcureEaseModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProcurementMethod.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProcurementMethodOrganizationSettings.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Procurements.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProcurementStatus.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProjectCategory.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProjectCategoryOrganizationSettings.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\RequestForDemo.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SourceOfFunds.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SourceOfFundsOrganizationSettings.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\sysdiagrams.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TelephoneNumbers.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Token.cs" />
     <Compile Include="Models\UserAccountModel.cs" />
+    <Compile Include="Models\UserProfile.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\AuthorizeAttribute.cs" />
     <Compile Include="Providers\DateTimeSettings.cs" />
@@ -249,6 +357,16 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="Models\ProcureEaseModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ProcureEaseModel.Context.cs</LastGenOutput>
+      <DependentUpon>ProcureEaseModel.edmx</DependentUpon>
+    </Content>
+    <Content Include="Models\ProcureEaseModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ProcureEaseModel.cs</LastGenOutput>
+      <DependentUpon>ProcureEaseModel.edmx</DependentUpon>
+    </Content>
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Areas\HelpPage\Views\Web.config" />
@@ -273,6 +391,10 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <EntityDeploy Include="Models\ProcureEaseModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>ProcureEaseModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />

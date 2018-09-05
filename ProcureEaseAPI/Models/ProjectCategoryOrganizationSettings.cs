@@ -17,7 +17,7 @@ namespace ProcureEaseAPI.Models
         public System.Guid ProjectCategoryID { get; set; }
         public Nullable<System.Guid> TenantID { get; set; }
         public Nullable<System.Guid> OrganizationID { get; set; }
-        public Nullable<bool> EnableProcurementCategory { get; set; }
+        public Nullable<bool> EnableProjectCategory { get; set; }
         public Nullable<System.DateTime> DateCreated { get; set; }
         public Nullable<System.DateTime> DateModified { get; set; }
     

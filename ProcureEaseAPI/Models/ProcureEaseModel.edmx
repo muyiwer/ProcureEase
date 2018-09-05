@@ -309,7 +309,7 @@
           <Property Name="ProjectCategoryID" Type="uniqueidentifier" Nullable="false" />
           <Property Name="TenantID" Type="uniqueidentifier" />
           <Property Name="OrganizationID" Type="uniqueidentifier" />
-          <Property Name="EnableProcurementCategory" Type="bit" />
+          <Property Name="EnableProjectCategory" Type="bit" />
           <Property Name="DateCreated" Type="datetime" />
           <Property Name="DateModified" Type="datetime" />
         </EntityType>
@@ -2802,7 +2802,7 @@
           <Property Name="ProjectCategoryID" Type="Guid" Nullable="false" />
           <Property Name="TenantID" Type="Guid" />
           <Property Name="OrganizationID" Type="Guid" />
-          <Property Name="EnableProcurementCategory" Type="Boolean" />
+          <Property Name="EnableProjectCategory" Type="Boolean" />
           <Property Name="DateCreated" Type="DateTime" Precision="3" />
           <Property Name="DateModified" Type="DateTime" Precision="3" />
           <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_ProjectCategoryOrganizationSettings_Catalog" FromRole="ProjectCategoryOrganizationSettings" ToRole="Catalog" />
@@ -3253,7 +3253,7 @@
               <MappingFragment StoreEntitySet="ProjectCategoryOrganizationSettings">
                 <ScalarProperty Name="DateModified" ColumnName="DateModified" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="EnableProcurementCategory" ColumnName="EnableProcurementCategory" />
+                <ScalarProperty Name="EnableProjectCategory" ColumnName="EnableProjectCategory" />
                 <ScalarProperty Name="OrganizationID" ColumnName="OrganizationID" />
                 <ScalarProperty Name="TenantID" ColumnName="TenantID" />
                 <ScalarProperty Name="ProjectCategoryID" ColumnName="ProjectCategoryID" />
@@ -3373,7 +3373,7 @@
         <AssociationConnector Association="ProcureEaseModel.FK_ProjectCategoryOrganizationSettings_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_ProjectCategoryOrganizationSettings_OrganizationSettings" />
         <AssociationConnector Association="ProcureEaseModel.FK_ProjectCategoryOrganizationSettings_ProjectCategory" />
-      </Diagram>
+        </Diagram>
     </Diagrams>
   </Designer>
 </edmx:Edmx>

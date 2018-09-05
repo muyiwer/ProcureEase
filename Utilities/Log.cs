@@ -53,7 +53,14 @@ namespace Utilities
             GET_ADVERT_Summary,
             ADVERT_SUMMARY,
             GET_ADVERT,
-            ADD_ADVERT
+            ADD_ADVERT,
+            GET_DEPARTMENT,
+            ADD_DEPARTMENT,
+            ADD_PROCUREMENTMETHOD,
+            UPDATE_PROCUREMENTMETHOD,
+            ADD_PROJECTCATEGORY,
+            UPDATE_PROJECTCATEGORY,
+            EDIT_DEPARTMENT,
         };
     }
 }

@@ -16,28 +16,27 @@ namespace ProcureEaseAPI.Controllers
     public class ProcurementsController : Controller
     {
         private ProcureEaseEntities db = new ProcureEaseEntities();
-
+        private CatalogsController catalog = new CatalogsController();
 
         #region Prepare procurement needs(Department Heads)
         // GET: Procurments/DraftNeedsSummary
         [Providers.Authorize]
         [HttpGet]
-        public ActionResult DraftNeedsSummary(string id = "", string id2="")
+        public ActionResult DraftNeedsSummary(string id = "")
         {
-            if (string.IsNullOrEmpty(id) && string.IsNullOrEmpty(id2))
+            Guid? tenantId = catalog.GetTenantID();
+            if (string.IsNullOrEmpty(id))
             {
-                LogHelper.Log(Log.Event.ALL_DRAFT_PROCUREMENT_NEEDS, "DepartmentID or OrganizationID is Null");
+                LogHelper.Log(Log.Event.ALL_DRAFT_PROCUREMENT_NEEDS, "DepartmentID");
                 Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return Error("DepartmentID or OrganizationID is Null");
             }
             else
             {
                 Guid guidID = new Guid();
-                Guid guidID2 = new Guid();
                 try
                 {
                     guidID = Guid.Parse(id);
-                    guidID2 = Guid.Parse(id2);
                 }
                 catch (FormatException ex)
                 {
@@ -50,13 +49,13 @@ namespace ProcureEaseAPI.Controllers
                     message = "Drafted procurement Summary",
                     data = new
                     {
-                        DepartmentName = db.Procurements.Where(x => x.DepartmentID == guidID).Select(x => x.Department.DepartmentName).FirstOrDefault(),
+                        DepartmentName = db.Procurements.Where(x => x.DepartmentID == guidID && x.TenantID==tenantId).Select(x => x.Department.DepartmentName).FirstOrDefault(),
                         Procurement = db.BudgetYear.Select(x => new
                         {
                             BudgetYear = x.BudgetYear1.Value.Year,
-                            TotalNumberOfProjects = db.Procurements.Where(y => y.DepartmentID == guidID && y.BudgetYearID == x.BudgetYearID).Count(),
-                            EstimatedCost = db.Items.Where(z => z.Procurements.DepartmentID == guidID && z.Procurements.BudgetYearID == x.BudgetYearID).Select(z => z.UnitPrice).Sum()
-                                             * db.Items.Where(z => z.Procurements.DepartmentID == guidID && z.Procurements.BudgetYearID == x.BudgetYearID).Select(z => z.Quantity).Sum(),
+                            TotalNumberOfProjects = db.Procurements.Where(y => y.DepartmentID == guidID && y.BudgetYearID == x.BudgetYearID && y.TenantID == tenantId).Count(),
+                            EstimatedCost = db.Items.Where(z => z.Procurements.DepartmentID == guidID && z.Procurements.BudgetYearID == x.BudgetYearID && z.TenantID == x.TenantID).Select(z => z.UnitPrice).Sum()
+                                             * db.Items.Where(z => z.Procurements.DepartmentID == guidID && z.Procurements.BudgetYearID == x.BudgetYearID && z.TenantID == x.TenantID).Select(z => z.Quantity).Sum(),
                             DepartmentID = guidID,
                             x.BudgetYearID
                         })
@@ -93,6 +92,7 @@ namespace ProcureEaseAPI.Controllers
                             LogHelper.Log(Log.Event.ALL_DRAFT_PROCUREMENT_NEEDS, "Guid format exeception");
                             return Error(ex.Message);
                         }
+                         Guid? tenantId = catalog.GetTenantID();
                         var BudgetYear = db.BudgetYear.Where(x => x.BudgetYearID == guidID2).Select(x => x.BudgetYear1.Value.Year).FirstOrDefault();
                         Response.StatusCode = (int)HttpStatusCode.OK;
                         return DraftNeedsJson(guidID, BudgetYear);

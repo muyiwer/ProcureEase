@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -17,38 +18,18 @@ namespace ProcureEaseAPI.Controllers
 
         public ActionResult Index()
         {
-            try
-            {
-                return Json(new
-                {
-                    success = true,
-                    message = "Ok",
-                    data = db.RequestForDemo.Select(x => new
-                    {
-                        x.RequestID,
-                        x.OrganizationFullName,
-                        x.OrganizationShortName,
-                        x.AdministratorEmail,
-                        x.AdministratorFirstName,
-                        x.AdministratorLastName,
-                        x.AdministratorPhoneNumber,
-                        DateCreated = x.DateCreated.Value.ToString()
-                    })
-                }, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log(Log.Event.REQUESTFORDEMO, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = new { }
-                }, JsonRequestBehavior.AllowGet);
-            }
-            //ViewBag.Title = "Home Page";
+            ViewBag.Title = "Home Page";
+            return View();
+        }
 
-            //return View();
+        private ActionResult Error(string message)
+        {
+            return Json(new
+            {
+                success = false,
+                message = message,
+                data = new { }
+            }, JsonRequestBehavior.AllowGet);
         }
 
         // POST: Home/RequestForDemo
@@ -57,6 +38,34 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
+                var OrganizationFullName = db.RequestForDemo.Where(x => x.OrganizationFullName == requestForDemo.OrganizationFullName).Select(x => x.OrganizationFullName).FirstOrDefault();
+                if(OrganizationFullName != null)
+                {
+                    LogHelper.Log(Log.Event.REQUESTFORDEMO, "Duplicate insertion attempt, OrganizationFullName already exist");
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Error("Duplicate insertion attempt, Organization Full Name already exist");
+                }
+                var OrganizationShortName = db.RequestForDemo.Where(x => x.OrganizationShortName == requestForDemo.OrganizationShortName).Select(x => x.OrganizationShortName).FirstOrDefault();
+                if (OrganizationShortName != null)
+                {
+                    LogHelper.Log(Log.Event.REQUESTFORDEMO, "Duplicate insertion attempted, OrganizationShortName already exist");
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Error("Duplicate insertion attempt, Organization Short Name already exist");
+                }
+                var AdministratorEmail = db.RequestForDemo.Where(x => x.AdministratorEmail == requestForDemo.AdministratorEmail).Select(x => x.AdministratorEmail).FirstOrDefault();
+                if (AdministratorEmail != null)
+                {
+                    LogHelper.Log(Log.Event.REQUESTFORDEMO, "Duplicate insertion attempted, AdministratorEmail already exist");
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Error("Duplicate insertion attempt, Administrator Email already exist");
+                }
+                var AdministratorPhoneNumber = db.RequestForDemo.Where(x => x.AdministratorPhoneNumber == requestForDemo.AdministratorPhoneNumber).Select(x => x.AdministratorPhoneNumber).FirstOrDefault();
+                if (AdministratorPhoneNumber != null)
+                {
+                    LogHelper.Log(Log.Event.REQUESTFORDEMO, "Duplicate insertion attempted, AdministratorPhoneNumber already exist");
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Error("Duplicate insertion attempt, Administrator PhoneNumber already exist");
+                }
                 DateTime dt = DateTime.Now;
                 requestForDemo.RequestID = Guid.NewGuid();
                 requestForDemo.DateCreated = dt;
@@ -86,6 +95,7 @@ namespace ProcureEaseAPI.Controllers
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.REQUESTFORDEMO, ex.Message);
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 return Json(new
                 {
                     success = false,

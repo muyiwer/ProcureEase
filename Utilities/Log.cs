@@ -21,23 +21,15 @@ namespace Utilities
             UPDATE_DEPARTMENT_HEAD,
             DELETE_USER,
             LOGIN,
+            ALL_DRAFT_PROCUREMENT_NEEDS,
+            POST_DRAFT_NEEDS,
+            SEND_PROCUREMENTS_NEEDS,
+            AUTO_COMPLETE_ITEMNAME,
+            SENT_PROCUREMENTS,
             CONFIGURATION,
-            ADD_PROCUREMENT_PLAN_TO_ADVERT,
-            ADD_ADVERT_TO_DRAFT,
-            GET_ADVERT_DETAILS,
-            GET_ADVERT_Summary,
-            ADD_ADVERTCATEGORY,
-            Update_ADVERT,
-            EDIT_ADVERTCATEGORY,
-            DELETE_ADVERTCATEGORY,
-            ADD_ADVERT,
-            ADD_PLAN_TO_ADVERT,
-            GET_ADDED_PLAN_ON_ADVERT,
-            ADVERT_SUMMARY,
-            ADVERT_DETAIL,
-            ADVERT_IN_DRAFT,
-            PUBLISHED_ADVERT,
-            GET_ADVERT
+            PROCUREMENT_NEEDS_SUMMARY,
+            PROCUREMENT_PLAN_SUMMARY,
+            GET_ORGANIZATION_ID
         };
     }
 }

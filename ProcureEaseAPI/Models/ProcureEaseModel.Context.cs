@@ -49,12 +49,12 @@ namespace ProcureEaseAPI.Models
         public virtual DbSet<TelephoneNumbers> TelephoneNumbers { get; set; }
         public virtual DbSet<UserProfile> UserProfile { get; set; }
         public virtual DbSet<Procurements> Procurements { get; set; }
-        public virtual DbSet<ProcurementMethod> ProcurementMethod { get; set; }
-        public virtual DbSet<ProcurementMethodOrganisationsettings> ProcurementMethodOrganisationsettings { get; set; }
-        public virtual DbSet<ProjectCategoryOrganisationSettings> ProjectCategoryOrganisationSettings { get; set; }
         public virtual DbSet<Department> Department { get; set; }
         public virtual DbSet<Catalog> Catalog { get; set; }
-        public virtual DbSet<SourceOfFundsOrganisationSettings> SourceOfFundsOrganisationSettings { get; set; }
         public virtual DbSet<RequestForDemo> RequestForDemo { get; set; }
+        public virtual DbSet<ProcurementMethodOrganizationSettings> ProcurementMethodOrganizationSettings { get; set; }
+        public virtual DbSet<SourceOfFundsOrganizationSettings> SourceOfFundsOrganizationSettings { get; set; }
+        public virtual DbSet<ProcurementMethod> ProcurementMethod { get; set; }
+        public virtual DbSet<ProjectCategoryOrganizationSettings> ProjectCategoryOrganizationSettings { get; set; }
     }
 }

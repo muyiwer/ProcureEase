@@ -41,8 +41,7 @@ namespace ProcureEaseAPI.Controllers
                     data = db.ProcurementMethod.Select(x => new
                     {
                         x.ProcurementMethodID,
-                        x.Name,
-                        x.EnableProcurementMethod,
+                        x.Name
                     })
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -121,6 +120,7 @@ namespace ProcureEaseAPI.Controllers
 
                 DateTime dt = DateTime.Now;
                 var currentProcurementMethod = db.ProcurementMethod.FirstOrDefault(p => p.ProcurementMethodID == p.ProcurementMethodID);
+                var currentProcurementMethodOrganizationSettings = db.ProcurementMethodOrganizationSettings.FirstOrDefault(p => p.ProcurementMethodID == p.ProcurementMethodID);
 
                 if (currentProcurementMethod == null) { 
                 LogHelper.Log(Log.Event.UPDATE_PROCUREMENTMETHOD, "ProcurementMethodID not found");
@@ -133,7 +133,9 @@ namespace ProcureEaseAPI.Controllers
                 }
 
                 currentProcurementMethod.DateModified = dt;
-                currentProcurementMethod.EnableProcurementMethod = procurementMethod.EnableProcurementMethod;
+
+                currentProcurementMethodOrganizationSettings.EnableProcurementMethod = currentProcurementMethodOrganizationSettings.EnableProcurementMethod;
+                currentProcurementMethodOrganizationSettings.DateModified = dt;
                 db.SaveChanges();
                 return Json(new
                 {
@@ -143,7 +145,7 @@ namespace ProcureEaseAPI.Controllers
                     {
                         x.ProcurementMethodID,
                         x.Name,
-                        x.EnableProcurementMethod,
+                        Enabled = db.ProcurementMethodOrganizationSettings.Where(y => y.ProcurementMethodID == y.ProcurementMethodID).Select(y => y.EnableProcurementMethod)  
                     })
                 }, JsonRequestBehavior.AllowGet);
             }

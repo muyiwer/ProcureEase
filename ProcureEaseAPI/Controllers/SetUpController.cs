@@ -36,7 +36,7 @@ namespace ProcureEaseAPI.Controllers
                         TenantID = db.SourceOfFunds.Where(y => y.TenantID == x.TenantID).Select(y => y.TenantID),
                         x.SourceOfFundID,
                         x.SourceOfFund,
-                        Enabled = db.SourceOfFundsOrganisationSettings.Where(y => y.SourceOfFundID == y.SourceOfFundID).Select(y => y.EnableSourceOfFund)
+                        Enabled = db.SourceOfFundsOrganizationSettings.Where(y => y.SourceOfFunID == y.SourceOfFunID).Select(y => y.EnableSourceOFFund)
                     })
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -58,20 +58,20 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                var ProcurementMethod = db.ProcurementMethod.Select(x => new
+                var ProcurementMethod = db.ProcurementMethodOrganizationSettings.Select(x => new
                 {
                     x.ProcurementMethodID,
-                    x.Name,
+                    x.ProcurementMethod.Name,
                     x.EnableProcurementMethod,
                 });
                 return Json(new
                 {
                     success = true,
                     message = "All Procurement Method",
-                    data = db.ProcurementMethod.Select(x => new
+                    data = db.ProcurementMethodOrganizationSettings.Select(x => new
                     {
                         x.ProcurementMethodID,
-                        x.Name,
+                        x.ProcurementMethod,
                         x.EnableProcurementMethod,
                     })
                 }, JsonRequestBehavior.AllowGet);
@@ -274,10 +274,10 @@ namespace ProcureEaseAPI.Controllers
                    // x.EnableSourceOfFund,
                 });
 
-                var ProcurementMethod = db.ProcurementMethod.Select(x => new
+                var ProcurementMethod = db.ProcurementMethodOrganizationSettings.Select(x => new
                 {
                     x.ProcurementMethodID,
-                    x.Name,
+                    x.ProcurementMethod,
                     x.EnableProcurementMethod,
                 });
 

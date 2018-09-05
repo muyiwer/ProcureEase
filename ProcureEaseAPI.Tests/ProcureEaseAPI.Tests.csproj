@@ -108,11 +108,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\AdvertControllerTest.cs" />
     <Compile Include="Controllers\Mocker.cs" />
     <Compile Include="Controllers\ProcurementsControllerTest.cs" />
-    <Compile Include="Controllers\RequestForDemoControllerTest.cs" />
-    <Compile Include="Controllers\SentProcurementTest.cs" />
-    <Compile Include="Controllers\SetUpControllerTest.cs" />
     <Compile Include="Controllers\UsersControllerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitTest1.cs" />

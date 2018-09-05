@@ -37,7 +37,23 @@ namespace Utilities
             UPDATE_BASICDETAILS,
             GET_ORGANIZATIONSETTINGS,
             UPDATE_SOURCEOFFUNDS,
-            ADD_SOURCEOFFUNDS
+            ADD_SOURCEOFFUNDS,
+            GET_ADVERT_DETAILS,
+            ADVERT_DETAIL,
+            Update_ADVERT,
+            ADVERT_IN_DRAFT,
+            PUBLISHED_ADVERT,
+            ADD_ADVERTCATEGORY,
+            EDIT_ADVERTCATEGORY,
+            DELETE_ADVERTCATEGORY,
+            GET_ADDED_PLAN_ON_ADVERT,
+            ADD_ADVERT_TO_DRAFT,
+            ADD_PROCUREMENT_PLAN_TO_ADVERT,
+            ADD_PLAN_TO_ADVERT,
+            GET_ADVERT_Summary,
+            ADVERT_SUMMARY,
+            GET_ADVERT,
+            ADD_ADVERT
         };
     }
 }

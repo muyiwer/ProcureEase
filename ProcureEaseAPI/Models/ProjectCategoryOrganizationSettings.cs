@@ -14,7 +14,7 @@ namespace ProcureEaseAPI.Models
     
     public partial class ProjectCategoryOrganizationSettings
     {
-        public System.Guid ProjectCategory { get; set; }
+        public System.Guid ProjectCategoryID { get; set; }
         public Nullable<System.Guid> TenantID { get; set; }
         public Nullable<System.Guid> OrganizationID { get; set; }
         public Nullable<bool> EnableProcurementCategory { get; set; }
@@ -23,6 +23,6 @@ namespace ProcureEaseAPI.Models
     
         public virtual Catalog Catalog { get; set; }
         public virtual OrganizationSettings OrganizationSettings { get; set; }
-        public virtual ProjectCategory ProjectCategory1 { get; set; }
+        public virtual ProjectCategory ProjectCategory { get; set; }
     }
 }

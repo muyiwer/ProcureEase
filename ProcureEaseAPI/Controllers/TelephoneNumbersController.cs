@@ -109,18 +109,33 @@ namespace ProcureEaseAPI.Controllers
             {
                 return HttpNotFound();
             }
+
             return View(telephoneNumbers);
         }
 
         // POST: TelephoneNumbers/Delete/5
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(Guid id)
         {
             TelephoneNumbers telephoneNumbers = db.TelephoneNumbers.Find(id);
             db.TelephoneNumbers.Remove(telephoneNumbers);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            var TelephoneNumbers = db.TelephoneNumbers.Select(x => new
+            {
+                x.TelephoneNumberID,
+                x.TelephoneNumber,
+                x.OrganizationID,
+            });
+            var AdminDashboard = new
+            {
+                success = true,
+                message = "Deleted Successfully",
+                data = new
+                {
+                    TelephoneNumbers = TelephoneNumbers
+                }
+            };
+            return Json(AdminDashboard, JsonRequestBehavior.AllowGet);
         }
 
         protected override void Dispose(bool disposing)

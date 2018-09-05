@@ -20,7 +20,24 @@ namespace Utilities
             UPDATE_USER_PROFILE,
             UPDATE_DEPARTMENT_HEAD,
             DELETE_USER,
-            LOGIN
+            LOGIN,
+            ALL_DRAFT_PROCUREMENT_NEEDS,
+            POST_DRAFT_NEEDS,
+            SEND_PROCUREMENTS_NEEDS,
+            AUTO_COMPLETE_ITEMNAME,
+            SENT_PROCUREMENTS,
+            CONFIGURATION,
+            PROCUREMENT_NEEDS_SUMMARY,
+            PROCUREMENT_PLAN_SUMMARY,
+            GET_ORGANIZATION_ID,
+            REQUESTFORDEMO,
+            GET_ALL_SOURCEOFFUNDS,
+            GET_ALL_PROCUREMENTMETHOD,
+            GET_ALL_PROJECTCATEGORY,
+            UPDATE_BASICDETAILS,
+            GET_ORGANIZATIONSETTINGS,
+            UPDATE_SOURCEOFFUNDS,
+            ADD_SOURCEOFFUNDS
         };
     }
 }

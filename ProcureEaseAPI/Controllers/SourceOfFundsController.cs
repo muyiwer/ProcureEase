@@ -36,7 +36,7 @@ namespace ProcureEaseAPI.Controllers
                 sourceOfFunds.CreatedBy = "MDA Administrator";
                 db.SourceOfFunds.Add(sourceOfFunds);
 
-                SourceOfFundsOrganisationSettings sourceOfFundsOrganisationSettings = new SourceOfFundsOrganisationSettings();
+                SourceOfFundsOrganizationSettings sourceOfFundsOrganisationSettings = new SourceOfFundsOrganizationSettings();
                 sourceOfFundsOrganisationSettings.SourceOfFundID = sourceOfFunds.SourceOfFundID;
                 sourceOfFundsOrganisationSettings.TenantID = catalog.GetTenantID();
                 //sourceOfFundsOrganisationSettings.OrganisationID = catalog.GetOrganizationID();

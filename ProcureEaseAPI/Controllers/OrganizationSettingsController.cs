@@ -22,7 +22,7 @@ namespace ProcureEaseAPI.Controllers
             return View(db.OrganizationSettings.ToList());
         }
 
-        //http://localhost:8/OrganizationSettings/UpdateBasicDetails
+        //Post: OrganizationSettings/AddBasicDetails
         [HttpPost]
         [AllowAnonymous]
         public ActionResult AddBasicDetails([Bind(Include = "OrganizationID,OrganizationNameInFull,OrganizationNameAbbreviation,OrganizationEmail,Address,Country,State,AboutOrganization,DateModified,CreatedBy,DateCreated")]OrganizationSettings organizationSettings)

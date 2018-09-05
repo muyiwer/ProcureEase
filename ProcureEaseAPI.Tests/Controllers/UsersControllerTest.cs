@@ -83,22 +83,11 @@ namespace ProcureEaseAPI.Tests.Controllers
         //    Assert.IsNull(result);
         //}
 
-        private void MockController(UsersController controller, string server)
-        {
-            var context = new Mock<HttpContextBase>();
-            var session = new Mock<HttpSessionStateBase>();
-            context.Setup(x => x.Request.Url).Returns(new Uri(server, UriKind.Absolute));
-            context.Setup(x => x.Session).Returns(session.Object);
-            var requestContext = new RequestContext(context.Object, new RouteData());
-            controller.ControllerContext = new ControllerContext(requestContext, controller);
-            HttpContext.Current = new HttpContext(new HttpRequest("", server, ""), new HttpResponse(new StringWriter()));
-        }
-
         [TestMethod]
         public async Task TestAddUser_Unsuccessfully_UserEmailAlreadyExists()
         {
             var testAddUser = new UsersController();
-            MockController(testAddUser, LOCAL_SERVER);
+            Mocker.MockControllerContext(testAddUser, LOCAL_SERVER);
             UserProfile UserProfile = new UserProfile
             {
                 UserEmail = "oaro@techspecialistlimited.com",
@@ -114,7 +103,7 @@ namespace ProcureEaseAPI.Tests.Controllers
         public async Task TestAddUser_Unsuccessfully_InvalidDepartmentID()
         {
             var testAddUser = new UsersController();
-            MockController(testAddUser, LOCAL_SERVER);
+            Mocker.MockControllerContext(testAddUser, LOCAL_SERVER);
             UserProfile UserProfile = new UserProfile
             {
                 UserEmail = "email-" + new Random().Next() + "@gmail.com",
@@ -137,7 +126,7 @@ namespace ProcureEaseAPI.Tests.Controllers
 
 
             var usersController = new UsersController();
-            MockController(usersController, LOCAL_SERVER);
+            Mocker.MockControllerContext(usersController, LOCAL_SERVER);
             JsonResult result = (JsonResult)await usersController.Add(UserProfile); // first call to add email
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("User added successfully"));
@@ -148,7 +137,7 @@ namespace ProcureEaseAPI.Tests.Controllers
         {
             string UserEmail = "email-" + new Random().Next() + "@gmail.com";
             var testInitiatePasswordReset = new UsersController();
-            MockController(testInitiatePasswordReset, LOCAL_SERVER);
+            Mocker.MockControllerContext(testInitiatePasswordReset, LOCAL_SERVER);
             JsonResult result = (JsonResult)await testInitiatePasswordReset.InitiatePasswordReset(UserEmail); // first call to add email
             result = (JsonResult)await testInitiatePasswordReset.InitiatePasswordReset(UserEmail); // second call to attempt to add email again and force duplicate insertion attempt
             Console.WriteLine(result.Data);
@@ -160,7 +149,7 @@ namespace ProcureEaseAPI.Tests.Controllers
         {
             string UserEmail = "muyiweraro@gmail.com";           
             var testInitiatePasswordReset = new UsersController();
-            MockController(testInitiatePasswordReset, LOCAL_SERVER);
+            Mocker.MockControllerContext(testInitiatePasswordReset, LOCAL_SERVER);
             var result = (JsonResult)await testInitiatePasswordReset.InitiatePasswordReset(UserEmail);
            Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("Please check your email to reset password."));
@@ -176,7 +165,7 @@ namespace ProcureEaseAPI.Tests.Controllers
                 ResetToken = "",
             };
             var testAddUser = new UsersController();
-            MockController(testAddUser, LOCAL_SERVER);
+            Mocker.MockControllerContext(testAddUser, LOCAL_SERVER);
             var result = (JsonResult) await testAddUser.ResetPassword(ResetPassword);
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("Please check your email to reset password."));
@@ -194,7 +183,7 @@ namespace ProcureEaseAPI.Tests.Controllers
             };
             string Password = "Muyiwer87";
             var testSignUp = new UsersController();
-            MockController(testSignUp, LOCAL_SERVER);
+            Mocker.MockControllerContext(testSignUp, LOCAL_SERVER);
             var result = (JsonResult)await testSignUp.SignUp(UserProfile, Password);
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("User not yet added by admin."));
@@ -212,7 +201,7 @@ namespace ProcureEaseAPI.Tests.Controllers
             };
             string Password = "Muyiwer87";
             var testSignUp = new UsersController();
-            MockController(testSignUp, LOCAL_SERVER);
+            Mocker.MockControllerContext(testSignUp, LOCAL_SERVER);
             var result = (JsonResult)await testSignUp.SignUp(UserProfile, Password);
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("Email has already signed up! Please use a different email address."));
@@ -229,7 +218,7 @@ namespace ProcureEaseAPI.Tests.Controllers
             };
             string Password = "Muyiwer87";
             var testSignUp = new UsersController();
-            MockController(testSignUp, LOCAL_SERVER);
+            Mocker.MockControllerContext(testSignUp, LOCAL_SERVER);
             var result = (JsonResult)await testSignUp.SignUp(UserProfile, Password);
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("Sign up successful."));
@@ -245,7 +234,7 @@ namespace ProcureEaseAPI.Tests.Controllers
                 UserID = new Guid("472BAD81-FF85-4BE6-9238-BC8306493CB9") 
             };
             var testEditUser = new UsersController();
-            MockController(testEditUser, LOCAL_SERVER);
+            Mocker.MockControllerContext(testEditUser, LOCAL_SERVER);
             var result = (JsonResult)testEditUser.EditUser(UserProfile);
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("Edited Successfully."));
@@ -261,7 +250,7 @@ namespace ProcureEaseAPI.Tests.Controllers
                 UserID = new Guid("472BAD81-FF85-4BE6-9238-BC8306493CB9")
             };
             var testEditUser = new UsersController();
-            MockController(testEditUser, LOCAL_SERVER);
+            Mocker.MockControllerContext(testEditUser, LOCAL_SERVER);
             var result = (JsonResult)testEditUser.EditUser(UserProfile);
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("Edited Successfully."));
@@ -275,7 +264,7 @@ namespace ProcureEaseAPI.Tests.Controllers
                 UserID = new Guid("6F9B517C-4F97-44BA-AB90-81046E1398FD"),              
             };
             var testDelete = new UsersController();
-            MockController(testDelete, LOCAL_SERVER);
+            Mocker.MockControllerContext(testDelete, LOCAL_SERVER);
             var result = (JsonResult)testDelete.Delete(UserProfile);
             Assert.IsTrue((result.Data + "").Contains("User is deleted successfully"));
         }
@@ -285,7 +274,7 @@ namespace ProcureEaseAPI.Tests.Controllers
         {          
             string id= "0B6A0615-F453-4E8C-AF68-B799117A8B1A";
             var GetAllUsers = new UsersController();
-            MockController(GetAllUsers, LOCAL_SERVER);
+            Mocker.MockControllerContext(GetAllUsers, LOCAL_SERVER);
             var result = (JsonResult)GetAllUsers.GetAllUsers(id);
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("All Users"));
@@ -296,7 +285,7 @@ namespace ProcureEaseAPI.Tests.Controllers
         {
             string id = "5C99B26F-CBA8-493E-ABD4";
             var GetAllUsers = new UsersController();
-            MockController(GetAllUsers, LOCAL_SERVER);
+            Mocker.MockControllerContext(GetAllUsers, LOCAL_SERVER);
             var result = (JsonResult)GetAllUsers.GetAllUsers(id);
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("Guid should contain 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)"));
@@ -311,7 +300,7 @@ namespace ProcureEaseAPI.Tests.Controllers
                 DepartmentID = new Guid("0B6A0615-F453-4E8C-AF68-B799117A8B1A"),
             };
             var testUpdateDepartmentHead = new UsersController();
-            MockController(testUpdateDepartmentHead, LOCAL_SERVER);
+            Mocker.MockControllerContext(testUpdateDepartmentHead, LOCAL_SERVER);
             var result = (JsonResult)testUpdateDepartmentHead.UpdateDepartmentHead(UserProfile);
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("User added as department head successful."));
@@ -328,7 +317,7 @@ namespace ProcureEaseAPI.Tests.Controllers
                 LastName = "Aro"
             };
             var testUpdateUserProfile = new UsersController();
-            MockController(testUpdateUserProfile, LOCAL_SERVER);
+            Mocker.MockControllerContext(testUpdateUserProfile, LOCAL_SERVER);
             var result = (JsonResult)testUpdateUserProfile.UpdateUserProfile(UserProfile);
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("Profile update successful."));
@@ -345,7 +334,7 @@ namespace ProcureEaseAPI.Tests.Controllers
                 LastName = "Aro"
             };
             var testUpdateUserProfile = new UsersController();
-            MockController(testUpdateUserProfile, LOCAL_SERVER);
+            Mocker.MockControllerContext(testUpdateUserProfile, LOCAL_SERVER);
             var result = (JsonResult)testUpdateUserProfile.UpdateUserProfile(UserProfile);
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("Not yet signed up"));

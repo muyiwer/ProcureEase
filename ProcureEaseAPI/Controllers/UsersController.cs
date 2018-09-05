@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using static Utilities.EmailHelper;
 using System.Net.Http;
 using System.Web.Script.Serialization;
+using ProcureEaseAPI.Providers;
 
 namespace ProcureEaseAPI.Controllers
 {
@@ -21,7 +22,7 @@ namespace ProcureEaseAPI.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> Login(string UserName, string Password)
         {
-
+            DateTimeSettings DateTimeSettings = new DateTimeSettings();
             /*This will depend totally on how you will get access to the identity provider and get your token, this is just a sample of how it would be done*/
             /*Get Access Token Start*/
             HttpClient httpClient = new HttpClient();
@@ -40,6 +41,7 @@ namespace ProcureEaseAPI.Controllers
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 LogHelper.Log(Log.Event.LOGIN, ResponseContent);
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 return Json(new
                 {
                     success = false,
@@ -56,6 +58,9 @@ namespace ProcureEaseAPI.Controllers
                     {
                        User.Id,
                        Email = User.UserName,
+                       DepartmentID = db.UserProfile.Where(x=>x.UserEmail == UserName).Select(x=>x.DepartmentID).FirstOrDefault(),
+                       Role = db.AspNetUserRoles.Where(x=>x.UserId == User.Id).Select(x=>x.AspNetRoles.Name).FirstOrDefault(),
+                       BudgetYear = DateTimeSettings.CurrentYear(),
                        token = token
                     }
                 }, JsonRequestBehavior.AllowGet);
@@ -64,7 +69,7 @@ namespace ProcureEaseAPI.Controllers
 
         // POST: Users/Add
        [HttpPost]
-       [Authorize]
+       [Providers.Authorize]
        public async Task<ActionResult> Add(UserProfile UserProfile)
         {
             try
@@ -352,7 +357,7 @@ namespace ProcureEaseAPI.Controllers
  
         //PUT: Users/EditUser
         [HttpPut]
-        [Authorize]
+        [Providers.Authorize]
         public ActionResult EditUser(UserProfile UserProfile)
         {
             try
@@ -527,7 +532,7 @@ namespace ProcureEaseAPI.Controllers
 
         //PUT: Users/UpdateUserProfile
         [HttpPut]
-        [Authorize]
+        [Providers.Authorize]
         public ActionResult UpdateUserProfile(UserProfile UserProfile)
         {
             try
@@ -585,7 +590,7 @@ namespace ProcureEaseAPI.Controllers
         }
 
         //PUT: Users/UpdateDepartmentHead
-        [Authorize]
+        [Providers.Authorize]
         [HttpPut]
         public ActionResult UpdateDepartmentHead(UserProfile UserProfile)
         {
@@ -674,7 +679,7 @@ namespace ProcureEaseAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Providers.Authorize]
         public ActionResult GetAllUsers(string id = "")
         {
             if (string.IsNullOrEmpty(id))
@@ -729,7 +734,7 @@ namespace ProcureEaseAPI.Controllers
 
       
         [HttpDelete]
-        [Authorize]
+        [Providers.Authorize]
         public ActionResult Delete(UserProfile UserProfile)
         {
             try

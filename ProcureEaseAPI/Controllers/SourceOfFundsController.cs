@@ -28,6 +28,9 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
+                var tenantID = catalog.GetTenantID();
+                var GetOrganizationID = catalog.GetOrganizationID();
+                var OrganizationID = GetOrganizationID.Value;
                 DateTime dt = DateTime.Now;
                 sourceOfFunds.SourceOfFundID = Guid.NewGuid();
                 sourceOfFunds.TenantID = catalog.GetTenantID();
@@ -39,7 +42,7 @@ namespace ProcureEaseAPI.Controllers
                 SourceOfFundsOrganisationSettings sourceOfFundsOrganisationSettings = new SourceOfFundsOrganisationSettings();
                 sourceOfFundsOrganisationSettings.SourceOfFundID = sourceOfFunds.SourceOfFundID;
                 sourceOfFundsOrganisationSettings.TenantID = catalog.GetTenantID();
-                //sourceOfFundsOrganisationSettings.OrganisationID = catalog.GetOrganizationID();
+                sourceOfFundsOrganisationSettings.OrganisationID = OrganizationID;
                 sourceOfFundsOrganisationSettings.EnableSourceOfFund = sourceOfFundsOrganisationSettings.EnableSourceOfFund;
                 sourceOfFundsOrganisationSettings.DateCreated = dt;
                 sourceOfFundsOrganisationSettings.DateModified = dt;
@@ -52,7 +55,7 @@ namespace ProcureEaseAPI.Controllers
                     message = "Source Of Fund added successfully!!!",
                     data = db.SourceOfFunds.Select(x => new
                     {
-                        TenantID = db.SourceOfFunds.Where(y => y.TenantID == x.TenantID).Select(y => x.TenantID),
+                        TenantID = db.SourceOfFunds.Where(y => y.TenantID == tenantID).Select(y => x.TenantID),
                         x.SourceOfFundID,
                         x.SourceOfFund,
                         Enabled = db.SourceOfFundsOrganisationSettings.Where(y => y.SourceOfFundID == y.SourceOfFundID).Select(y => y.EnableSourceOfFund)
@@ -131,10 +134,10 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-
+                var tenantID = catalog.GetTenantID();
                 DateTime dt = DateTime.Now;
                 var currentSourceOfFund = db.SourceOfFunds.FirstOrDefault(s => s.SourceOfFundID == s.SourceOfFundID);
-                var sourceOfFundOrganizationSettings = db.SourceOfFundsOrganisationSettings.FirstOrDefault(s => s.SourceOfFundID == s.SourceOfFundID);
+                var CurrentSourceOfFundOrganizationSettings = db.SourceOfFundsOrganisationSettings.FirstOrDefault(s => s.SourceOfFundID == s.SourceOfFundID);
 
                 if (currentSourceOfFund == null)
                 {
@@ -149,8 +152,8 @@ namespace ProcureEaseAPI.Controllers
 
                 currentSourceOfFund.DateModified = dt;
 
-                sourceOfFundOrganizationSettings.EnableSourceOfFund = sourceOfFundOrganizationSettings.EnableSourceOfFund;
-                sourceOfFundOrganizationSettings.DateModified = dt;
+                CurrentSourceOfFundOrganizationSettings.EnableSourceOfFund = CurrentSourceOfFundOrganizationSettings.EnableSourceOfFund;
+                CurrentSourceOfFundOrganizationSettings.DateModified = dt;
 
                 db.SaveChanges();
 
@@ -160,7 +163,7 @@ namespace ProcureEaseAPI.Controllers
                     message = "Edited successfully",
                     data = db.SourceOfFunds.Select(x => new
                     {
-                        TenantID = db.SourceOfFunds.Where(y => y.TenantID == x.TenantID).Select(y => x.TenantID),
+                        TenantID = db.SourceOfFunds.Where(y => y.TenantID == tenantID).Select(y => x.TenantID),
                         x.SourceOfFundID,
                         x.SourceOfFund,
                         Enabled = db.SourceOfFundsOrganisationSettings.Where(y => y.SourceOfFundID == y.SourceOfFundID).Select(y => y.EnableSourceOfFund)

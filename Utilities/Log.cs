@@ -29,7 +29,15 @@ namespace Utilities
             CONFIGURATION,
             PROCUREMENT_NEEDS_SUMMARY,
             PROCUREMENT_PLAN_SUMMARY,
-            GET_ORGANIZATION_ID
+            GET_ORGANIZATION_ID,
+            REQUESTFORDEMO,
+            GET_ALL_SOURCEOFFUNDS,
+            GET_ALL_PROCUREMENTMETHOD,
+            GET_ALL_PROJECTCATEGORY,
+            UPDATE_BASICDETAILS,
+            GET_ORGANIZATIONSETTINGS,
+            UPDATE_SOURCEOFFUNDS,
+            ADD_SOURCEOFFUNDS
         };
     }
 }

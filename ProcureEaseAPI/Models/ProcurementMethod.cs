@@ -33,5 +33,6 @@ namespace ProcureEaseAPI.Models
         public virtual ProcurementMethodOrganisationsettings ProcurementMethodOrganisationsettings { get; set; }
         public virtual Catalog Catalog { get; set; }
         public virtual Catalog Catalog1 { get; set; }
+        public virtual ProcurementMethodOrganizationSettings ProcurementMethodOrganizationSettings { get; set; }
     }
 }

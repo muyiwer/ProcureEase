@@ -35,5 +35,6 @@ namespace ProcureEaseAPI.Models
         public virtual ProjectCategoryOrganisationSettings ProjectCategoryOrganisationSettings { get; set; }
         public virtual Catalog Catalog { get; set; }
         public virtual Catalog Catalog1 { get; set; }
+        public virtual ProjectCategoryOrganizationSettings ProjectCategoryOrganizationSettings { get; set; }
     }
 }

@@ -56,5 +56,8 @@ namespace ProcureEaseAPI.Models
         public virtual DbSet<Catalog> Catalog { get; set; }
         public virtual DbSet<SourceOfFundsOrganisationSettings> SourceOfFundsOrganisationSettings { get; set; }
         public virtual DbSet<RequestForDemo> RequestForDemo { get; set; }
+        public virtual DbSet<ProcurementMethodOrganizationSettings> ProcurementMethodOrganizationSettings { get; set; }
+        public virtual DbSet<ProjectCategoryOrganizationSettings> ProjectCategoryOrganizationSettings { get; set; }
+        public virtual DbSet<SourceOfFundsOrganizationSettings> SourceOfFundsOrganizationSettings { get; set; }
     }
 }

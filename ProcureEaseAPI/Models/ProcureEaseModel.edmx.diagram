@@ -96,6 +96,18 @@
         <AssociationConnector Association="ProcureEaseModel.FK_SourceOFFundsOrganisationSettings_SourceOfFunds" />
         <EntityTypeShape EntityType="ProcureEaseModel.RequestForDemo" Width="1.5" PointX="8.25" PointY="54.875" />
         <AssociationConnector Association="ProcureEaseModel.FK__Catalog__Request__5812160E" />
+        <EntityTypeShape EntityType="ProcureEaseModel.ProcurementMethodOrganizationSettings" Width="1.5" PointX="15.75" PointY="44.375" />
+        <EntityTypeShape EntityType="ProcureEaseModel.ProjectCategoryOrganizationSettings" Width="1.5" PointX="12.75" PointY="51.25" />
+        <EntityTypeShape EntityType="ProcureEaseModel.SourceOfFundsOrganizationSettings" Width="1.5" PointX="15.75" PointY="54.875" />
+        <AssociationConnector Association="ProcureEaseModel.FK_ProcurementMethodOrganizationSettings_Catalog" />
+        <AssociationConnector Association="ProcureEaseModel.FK_ProjectCategoryOrganizationSettings_Catalog" />
+        <AssociationConnector Association="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_Catalog" />
+        <AssociationConnector Association="ProcureEaseModel.FK_ProcurementMethodOrganizationSettings_OrganizationSettings" />
+        <AssociationConnector Association="ProcureEaseModel.FK_ProjectCategoryOrganizationSettings_OrganizationSettings" />
+        <AssociationConnector Association="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_OrganizationSettings" />
+        <AssociationConnector Association="ProcureEaseModel.FK_ProcurementMethodOrganizationSettings_ProcurementMethod" />
+        <AssociationConnector Association="ProcureEaseModel.FK_ProjectCategoryOrganizationSettings_ProjectCategory" />
+        <AssociationConnector Association="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_SourceOfFunds" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

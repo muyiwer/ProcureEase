@@ -17,38 +17,10 @@ namespace ProcureEaseAPI.Controllers
 
         public ActionResult Index()
         {
-            try
-            {
-                return Json(new
-                {
-                    success = true,
-                    message = "Ok",
-                    data = db.RequestForDemo.Select(x => new
-                    {
-                        x.RequestID,
-                        x.OrganizationFullName,
-                        x.OrganizationShortName,
-                        x.AdministratorEmail,
-                        x.AdministratorFirstName,
-                        x.AdministratorLastName,
-                        x.AdministratorPhoneNumber,
-                        DateCreated = x.DateCreated.Value.ToString()
-                    })
-                }, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log(Log.Event.REQUESTFORDEMO, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = new { }
-                }, JsonRequestBehavior.AllowGet);
-            }
-            //ViewBag.Title = "Home Page";
 
-            //return View();
+            ViewBag.Title = "Home Page";
+
+            return View();
         }
 
         // POST: Home/RequestForDemo

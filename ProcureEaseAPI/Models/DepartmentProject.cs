@@ -14,6 +14,7 @@ namespace ProcureEaseAPI.Models
         public Guid ProcurementStatusID { get; set; }
         public Guid DepartmentID { get; set; }
         public Guid BudgetYearID { get; set; }
+        public Guid TenantID { get; set; }
         public bool Deleted { get; set; }
         public bool Approved { get; set; }
         public bool Attested { get; set; }
@@ -31,6 +32,7 @@ namespace ProcureEaseAPI.Models
             public double Quantity { get; set; }
             public double UnitPrice { get; set; }
             public Guid ProcurementID { get; set; }
+            public Guid TenantID { get; set; }
             public bool Deleted { get; set; }
             public virtual DepartmentProject Projects { get; set; }
         }

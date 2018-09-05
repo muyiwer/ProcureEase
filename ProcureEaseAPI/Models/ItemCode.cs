@@ -23,8 +23,10 @@ namespace ProcureEaseAPI.Models
         public System.Guid ItemCodeID { get; set; }
         public string ItemCode1 { get; set; }
         public string ItemName { get; set; }
+        public Nullable<System.Guid> TenantID { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Items> Items { get; set; }
+        public virtual Catalog Catalog { get; set; }
     }
 }

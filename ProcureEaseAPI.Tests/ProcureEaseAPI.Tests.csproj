@@ -109,6 +109,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\ProcurementsControllerTest.cs" />
+    <Compile Include="Controllers\RequestForDemoControllerTest.cs" />
     <Compile Include="Controllers\SentProcurementTest.cs" />
     <Compile Include="Controllers\SetUpControllerTest.cs" />
     <Compile Include="Controllers\UsersControllerTest.cs" />

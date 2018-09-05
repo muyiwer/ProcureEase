@@ -21,7 +21,6 @@ namespace ProcureEaseAPI.Models
         }
     
         public System.Guid UserID { get; set; }
-        public Nullable<System.Guid> OrganizationID { get; set; }
         public string Id { get; set; }
         public Nullable<System.Guid> DepartmentID { get; set; }
         public string UserEmail { get; set; }
@@ -31,11 +30,14 @@ namespace ProcureEaseAPI.Models
         public Nullable<System.DateTime> DateModified { get; set; }
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> DateCreated { get; set; }
+        public Nullable<System.Guid> OrganizationID { get; set; }
+        public Nullable<System.Guid> TenantID { get; set; }
     
         public virtual AspNetUsers AspNetUsers { get; set; }
+        public virtual OrganizationSettings OrganizationSettings { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Department> Department { get; set; }
         public virtual Department Department1 { get; set; }
-        public virtual OrganizationSettings OrganizationSettings { get; set; }
+        public virtual Catalog Catalog { get; set; }
     }
 }

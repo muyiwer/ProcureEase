@@ -28,7 +28,6 @@ namespace ProcureEaseAPI.Models
         public string AdministratorLastName { get; set; }
         public string AdministratorPhoneNumber { get; set; }
         public Nullable<System.DateTime> DateCreated { get; set; }
-        public Nullable<System.DateTime> DateModified { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Catalog> Catalog { get; set; }

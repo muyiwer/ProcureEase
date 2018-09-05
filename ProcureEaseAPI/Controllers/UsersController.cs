@@ -61,6 +61,7 @@ namespace ProcureEaseAPI.Controllers
                        DepartmentID = db.UserProfile.Where(x=>x.UserEmail == UserName).Select(x=>x.DepartmentID).FirstOrDefault(),
                        Role = db.AspNetUserRoles.Where(x=>x.UserId == User.Id).Select(x=>x.AspNetRoles.Name).FirstOrDefault(),
                        BudgetYear = DateTimeSettings.CurrentYear(),
+                       OrganizationName= db.OrganizationSettings.Select(x=>x.OrganizationNameAbbreviation).FirstOrDefault(),
                        token = token
                     }
                 }, JsonRequestBehavior.AllowGet);

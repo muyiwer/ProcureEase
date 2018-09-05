@@ -21,6 +21,7 @@ namespace ProcureEaseAPI.Models
         }
     
         public System.Guid UserID { get; set; }
+        public Nullable<System.Guid> OrganizationID { get; set; }
         public string Id { get; set; }
         public Nullable<System.Guid> DepartmentID { get; set; }
         public string UserEmail { get; set; }
@@ -35,5 +36,6 @@ namespace ProcureEaseAPI.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Department> Department { get; set; }
         public virtual Department Department1 { get; set; }
+        public virtual OrganizationSettings OrganizationSettings { get; set; }
     }
 }

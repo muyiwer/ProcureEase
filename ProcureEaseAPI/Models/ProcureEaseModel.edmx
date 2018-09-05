@@ -162,6 +162,15 @@
           <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
           <Property Name="DateCreated" Type="datetime" />
         </EntityType>
+        <EntityType Name="Catalog">
+          <Key>
+            <PropertyRef Name="CatalogItemID" />
+          </Key>
+          <Property Name="CatalogItemID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="RequestID" Type="uniqueidentifier" />
+          <Property Name="SubDomain" Type="varchar" MaxLength="10" />
+          <Property Name="OrganizationID" Type="uniqueidentifier" />
+        </EntityType>
         <EntityType Name="Department">
           <Key>
             <PropertyRef Name="DepartmentID" />
@@ -264,6 +273,20 @@
           <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
           <Property Name="DateCreated" Type="datetime" />
         </EntityType>
+        <EntityType Name="RequestForDemo">
+          <Key>
+            <PropertyRef Name="RequestID" />
+          </Key>
+          <Property Name="RequestID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="OrganizationFullName" Type="varchar" MaxLength="150" />
+          <Property Name="OrganizationShortName" Type="varchar" MaxLength="10" />
+          <Property Name="AdministratorEmail" Type="nvarchar" MaxLength="50" />
+          <Property Name="AdministratorFirstName" Type="varchar" MaxLength="50" />
+          <Property Name="AdministratorLastName" Type="varchar" MaxLength="50" />
+          <Property Name="AdministratorPhoneNumber" Type="varchar" MaxLength="50" />
+          <Property Name="DateCreated" Type="datetime2" Precision="7" />
+          <Property Name="DateModified" Type="datetime2" Precision="7" />
+        </EntityType>
         <EntityType Name="SourceOfFunds">
           <Key>
             <PropertyRef Name="SourceOfFundID" />
@@ -291,6 +314,7 @@
             <PropertyRef Name="UserID" />
           </Key>
           <Property Name="UserID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="OrganizationID" Type="uniqueidentifier" />
           <Property Name="Id" Type="nvarchar" MaxLength="128" />
           <Property Name="DepartmentID" Type="uniqueidentifier" />
           <Property Name="UserEmail" Type="varchar" MaxLength="100" />
@@ -382,6 +406,30 @@
             </Principal>
             <Dependent Role="Adverts">
               <PropertyRef Name="BudgetYearID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Catalog__Organiz__30C33EC3">
+          <End Role="OrganizationSettings" Type="Self.OrganizationSettings" Multiplicity="0..1" />
+          <End Role="Catalog" Type="Self.Catalog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OrganizationSettings">
+              <PropertyRef Name="OrganizationID" />
+            </Principal>
+            <Dependent Role="Catalog">
+              <PropertyRef Name="OrganizationID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Catalog__Request__2FCF1A8A">
+          <End Role="RequestForDemo" Type="Self.RequestForDemo" Multiplicity="0..1" />
+          <End Role="Catalog" Type="Self.Catalog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RequestForDemo">
+              <PropertyRef Name="RequestID" />
+            </Principal>
+            <Dependent Role="Catalog">
+              <PropertyRef Name="RequestID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -609,6 +657,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_UserProfile_OrganizationSettings">
+          <End Role="OrganizationSettings" Type="Self.OrganizationSettings" Multiplicity="0..1" />
+          <End Role="UserProfile" Type="Self.UserProfile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OrganizationSettings">
+              <PropertyRef Name="OrganizationID" />
+            </Principal>
+            <Dependent Role="UserProfile">
+              <PropertyRef Name="OrganizationID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="ProcureEaseModelStoreContainer">
           <EntitySet Name="__MigrationHistory" EntityType="Self.__MigrationHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AdvertCategory" EntityType="Self.AdvertCategory" Schema="dbo" store:Type="Tables" />
@@ -624,6 +684,7 @@
           <EntitySet Name="AspNetUserRoles" EntityType="Self.AspNetUserRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BudgetYear" EntityType="Self.BudgetYear" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Catalog" EntityType="Self.Catalog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Department" EntityType="Self.Department" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ItemCode" EntityType="Self.ItemCode" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Items" EntityType="Self.Items" Schema="dbo" store:Type="Tables" />
@@ -632,6 +693,7 @@
           <EntitySet Name="Procurements" EntityType="Self.Procurements" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProcurementStatus" EntityType="Self.ProcurementStatus" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProjectCategory" EntityType="Self.ProjectCategory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RequestForDemo" EntityType="Self.RequestForDemo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SourceOfFunds" EntityType="Self.SourceOfFunds" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TelephoneNumbers" EntityType="Self.TelephoneNumbers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserProfile" EntityType="Self.UserProfile" Schema="dbo" store:Type="Tables" />
@@ -662,6 +724,14 @@
           <AssociationSet Name="FK__Adverts__BudgetY__4222D4EF" Association="Self.FK__Adverts__BudgetY__4222D4EF">
             <End Role="BudgetYear" EntitySet="BudgetYear" />
             <End Role="Adverts" EntitySet="Adverts" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Catalog__Organiz__30C33EC3" Association="Self.FK__Catalog__Organiz__30C33EC3">
+            <End Role="OrganizationSettings" EntitySet="OrganizationSettings" />
+            <End Role="Catalog" EntitySet="Catalog" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Catalog__Request__2FCF1A8A" Association="Self.FK__Catalog__Request__2FCF1A8A">
+            <End Role="RequestForDemo" EntitySet="RequestForDemo" />
+            <End Role="Catalog" EntitySet="Catalog" />
           </AssociationSet>
           <AssociationSet Name="FK__Departmen__Depar__534D60F1" Association="Self.FK__Departmen__Depar__534D60F1">
             <End Role="UserProfile" EntitySet="UserProfile" />
@@ -734,6 +804,10 @@
           <AssociationSet Name="FK_Procurements_ProcurementStatus" Association="Self.FK_Procurements_ProcurementStatus">
             <End Role="ProcurementStatus" EntitySet="ProcurementStatus" />
             <End Role="Procurements" EntitySet="Procurements" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserProfile_OrganizationSettings" Association="Self.FK_UserProfile_OrganizationSettings">
+            <End Role="OrganizationSettings" EntitySet="OrganizationSettings" />
+            <End Role="UserProfile" EntitySet="UserProfile" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -907,7 +981,7 @@
           <NavigationProperty Name="AspNetUserClaims" Relationship="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserClaims" />
           <NavigationProperty Name="AspNetUserLogins" Relationship="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserLogins" />
           <NavigationProperty Name="AspNetUserRoles" Relationship="Self.FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserRoles" />
-          <NavigationProperty Name="UserProfile" Relationship="Self.FK__UserProfile__Id__52593CB8" FromRole="AspNetUsers" ToRole="UserProfile" />
+          <NavigationProperty Name="UserProfile" Relationship="ProcureEaseModel.FK__UserProfile__Id__52593CB8" FromRole="AspNetUsers" ToRole="UserProfile" />
         </EntityType>
         <EntityType Name="BudgetYear">
           <Key>
@@ -931,9 +1005,9 @@
           <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="DateCreated" Type="DateTime" Precision="3" />
           <Property Name="DepartmentHeadUserID" Type="Guid" />
-          <NavigationProperty Name="UserProfile" Relationship="Self.FK__Departmen__Depar__534D60F1" FromRole="Department" ToRole="UserProfile" />
-          <NavigationProperty Name="UserProfile1" Relationship="Self.FK__UserProfi__Depar__5165187F" FromRole="Department" ToRole="UserProfile" />
           <NavigationProperty Name="Procurements" Relationship="ProcureEaseModel.FK__Procureme__Depar__4BAC3F29" FromRole="Department" ToRole="Procurements" />
+          <NavigationProperty Name="UserProfile" Relationship="ProcureEaseModel.FK__Departmen__Depar__534D60F1" FromRole="Department" ToRole="UserProfile" />
+          <NavigationProperty Name="UserProfile1" Relationship="ProcureEaseModel.FK__UserProfi__Depar__5165187F" FromRole="Department" ToRole="UserProfile" />
         </EntityType>
         <EntityType Name="Items">
           <Key>
@@ -973,6 +1047,8 @@
           <Property Name="DateCreated" Type="DateTime" Precision="3" />
           <Property Name="OrganizationLogoPath" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="TelephoneNumbers" Relationship="Self.FK__Telephone__Organ__5070F446" FromRole="OrganizationSettings" ToRole="TelephoneNumbers" />
+          <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK__Catalog__Organiz__30C33EC3" FromRole="OrganizationSettings" ToRole="Catalog" />
+          <NavigationProperty Name="UserProfile" Relationship="ProcureEaseModel.FK_UserProfile_OrganizationSettings" FromRole="OrganizationSettings" ToRole="UserProfile" />
         </EntityType>
         <EntityType Name="ProcurementMethod">
           <Key>
@@ -1022,24 +1098,6 @@
           <Property Name="DateCreated" Type="DateTime" Precision="3" />
           <Property Name="OrganizationID" Type="Guid" />
           <NavigationProperty Name="OrganizationSettings" Relationship="Self.FK__Telephone__Organ__5070F446" FromRole="TelephoneNumbers" ToRole="OrganizationSettings" />
-        </EntityType>
-        <EntityType Name="UserProfile">
-          <Key>
-            <PropertyRef Name="UserID" />
-          </Key>
-          <Property Name="UserID" Type="Guid" Nullable="false" />
-          <Property Name="Id" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="DepartmentID" Type="Guid" />
-          <Property Name="UserEmail" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="FirstName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="LastName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="DateModified" Type="DateTime" Precision="3" />
-          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="DateCreated" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="AspNetUsers" Relationship="Self.FK__UserProfile__Id__52593CB8" FromRole="UserProfile" ToRole="AspNetUsers" />
-          <NavigationProperty Name="Department" Relationship="Self.FK__Departmen__Depar__534D60F1" FromRole="UserProfile" ToRole="Department" />
-          <NavigationProperty Name="Department1" Relationship="Self.FK__UserProfi__Depar__5165187F" FromRole="UserProfile" ToRole="Department" />
         </EntityType>
         <Association Name="FK__AdvertCat__Adver__3D5E1FD2">
           <End Role="AdvertCategory" Type="Self.AdvertCategory" Multiplicity="0..1" />
@@ -1193,42 +1251,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__UserProfile__Id__52593CB8">
-          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
-          <End Role="UserProfile" Type="Self.UserProfile" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="UserProfile">
-              <PropertyRef Name="Id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Departmen__Depar__534D60F1">
-          <End Role="UserProfile" Type="Self.UserProfile" Multiplicity="0..1" />
-          <End Role="Department" Type="Self.Department" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="UserProfile">
-              <PropertyRef Name="UserID" />
-            </Principal>
-            <Dependent Role="Department">
-              <PropertyRef Name="DepartmentHeadUserID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__UserProfi__Depar__5165187F">
-          <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
-          <End Role="UserProfile" Type="Self.UserProfile" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Department">
-              <PropertyRef Name="DepartmentID" />
-            </Principal>
-            <Dependent Role="UserProfile">
-              <PropertyRef Name="DepartmentID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__Telephone__Organ__5070F446">
           <End Role="OrganizationSettings" Type="Self.OrganizationSettings" Multiplicity="0..1" />
           <End Role="TelephoneNumbers" Type="Self.TelephoneNumbers" Multiplicity="*" />
@@ -1263,7 +1285,6 @@
           <EntitySet Name="ProjectCategory" EntityType="Self.ProjectCategory" />
           <EntitySet Name="SourceOfFunds" EntityType="Self.SourceOfFunds" />
           <EntitySet Name="TelephoneNumbers" EntityType="Self.TelephoneNumbers" />
-          <EntitySet Name="UserProfile" EntityType="Self.UserProfile" />
           <AssociationSet Name="FK__AdvertCat__Adver__3D5E1FD2" Association="Self.FK__AdvertCat__Adver__3D5E1FD2">
             <End Role="AdvertCategory" EntitySet="AdvertCategory" />
             <End Role="AdvertCategoryNumber" EntitySet="AdvertCategoryNumber" />
@@ -1312,18 +1333,6 @@
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
           </AssociationSet>
-          <AssociationSet Name="FK__UserProfile__Id__52593CB8" Association="Self.FK__UserProfile__Id__52593CB8">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="UserProfile" EntitySet="UserProfile" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Departmen__Depar__534D60F1" Association="Self.FK__Departmen__Depar__534D60F1">
-            <End Role="UserProfile" EntitySet="UserProfile" />
-            <End Role="Department" EntitySet="Department" />
-          </AssociationSet>
-          <AssociationSet Name="FK__UserProfi__Depar__5165187F" Association="Self.FK__UserProfi__Depar__5165187F">
-            <End Role="Department" EntitySet="Department" />
-            <End Role="UserProfile" EntitySet="UserProfile" />
-          </AssociationSet>
           <AssociationSet Name="FK__Telephone__Organ__5070F446" Association="Self.FK__Telephone__Organ__5070F446">
             <End Role="OrganizationSettings" EntitySet="OrganizationSettings" />
             <End Role="TelephoneNumbers" EntitySet="TelephoneNumbers" />
@@ -1366,6 +1375,33 @@
           <AssociationSet Name="FK_Procurements_ProcurementStatus" Association="ProcureEaseModel.FK_Procurements_ProcurementStatus">
             <End Role="ProcurementStatus" EntitySet="ProcurementStatus" />
             <End Role="Procurements" EntitySet="Procurements" />
+          </AssociationSet>
+          <EntitySet Name="Catalog" EntityType="ProcureEaseModel.Catalog" />
+          <EntitySet Name="RequestForDemo" EntityType="ProcureEaseModel.RequestForDemo" />
+          <EntitySet Name="UserProfile" EntityType="ProcureEaseModel.UserProfile" />
+          <AssociationSet Name="FK__UserProfile__Id__52593CB8" Association="ProcureEaseModel.FK__UserProfile__Id__52593CB8">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="UserProfile" EntitySet="UserProfile" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Catalog__Organiz__30C33EC3" Association="ProcureEaseModel.FK__Catalog__Organiz__30C33EC3">
+            <End Role="OrganizationSettings" EntitySet="OrganizationSettings" />
+            <End Role="Catalog" EntitySet="Catalog" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Catalog__Request__2FCF1A8A" Association="ProcureEaseModel.FK__Catalog__Request__2FCF1A8A">
+            <End Role="RequestForDemo" EntitySet="RequestForDemo" />
+            <End Role="Catalog" EntitySet="Catalog" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Departmen__Depar__534D60F1" Association="ProcureEaseModel.FK__Departmen__Depar__534D60F1">
+            <End Role="UserProfile" EntitySet="UserProfile" />
+            <End Role="Department" EntitySet="Department" />
+          </AssociationSet>
+          <AssociationSet Name="FK__UserProfi__Depar__5165187F" Association="ProcureEaseModel.FK__UserProfi__Depar__5165187F">
+            <End Role="Department" EntitySet="Department" />
+            <End Role="UserProfile" EntitySet="UserProfile" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserProfile_OrganizationSettings" Association="ProcureEaseModel.FK_UserProfile_OrganizationSettings">
+            <End Role="OrganizationSettings" EntitySet="OrganizationSettings" />
+            <End Role="UserProfile" EntitySet="UserProfile" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="ItemCode">
@@ -1518,6 +1554,124 @@
             </Principal>
             <Dependent Role="Procurements">
               <PropertyRef Name="ProcurementStatusID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Catalog">
+          <Key>
+            <PropertyRef Name="CatalogItemID" />
+          </Key>
+          <Property Name="CatalogItemID" Type="Guid" Nullable="false" />
+          <Property Name="RequestID" Type="Guid" />
+          <Property Name="SubDomain" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="OrganizationID" Type="Guid" />
+          <NavigationProperty Name="OrganizationSettings" Relationship="ProcureEaseModel.FK__Catalog__Organiz__30C33EC3" FromRole="Catalog" ToRole="OrganizationSettings" />
+          <NavigationProperty Name="RequestForDemo" Relationship="ProcureEaseModel.FK__Catalog__Request__2FCF1A8A" FromRole="Catalog" ToRole="RequestForDemo" />
+        </EntityType>
+        <EntityType Name="RequestForDemo">
+          <Key>
+            <PropertyRef Name="RequestID" />
+          </Key>
+          <Property Name="RequestID" Type="Guid" Nullable="false" />
+          <Property Name="OrganizationFullName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="OrganizationShortName" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="AdministratorEmail" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AdministratorFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="AdministratorLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="AdministratorPhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DateCreated" Type="DateTime" Precision="7" />
+          <Property Name="DateModified" Type="DateTime" Precision="7" />
+          <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK__Catalog__Request__2FCF1A8A" FromRole="RequestForDemo" ToRole="Catalog" />
+        </EntityType>
+        <EntityType Name="UserProfile">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="Guid" Nullable="false" />
+          <Property Name="OrganizationID" Type="Guid" />
+          <Property Name="Id" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="DepartmentID" Type="Guid" />
+          <Property Name="UserEmail" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="FirstName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="LastName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DateModified" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="AspNetUsers" Relationship="ProcureEaseModel.FK__UserProfile__Id__52593CB8" FromRole="UserProfile" ToRole="AspNetUsers" />
+          <NavigationProperty Name="Department" Relationship="ProcureEaseModel.FK__Departmen__Depar__534D60F1" FromRole="UserProfile" ToRole="Department" />
+          <NavigationProperty Name="Department1" Relationship="ProcureEaseModel.FK__UserProfi__Depar__5165187F" FromRole="UserProfile" ToRole="Department" />
+          <NavigationProperty Name="OrganizationSettings" Relationship="ProcureEaseModel.FK_UserProfile_OrganizationSettings" FromRole="UserProfile" ToRole="OrganizationSettings" />
+        </EntityType>
+        <Association Name="FK__UserProfile__Id__52593CB8">
+          <End Type="ProcureEaseModel.AspNetUsers" Role="AspNetUsers" Multiplicity="0..1" />
+          <End Type="ProcureEaseModel.UserProfile" Role="UserProfile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserProfile">
+              <PropertyRef Name="Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Catalog__Organiz__30C33EC3">
+          <End Type="ProcureEaseModel.OrganizationSettings" Role="OrganizationSettings" Multiplicity="0..1" />
+          <End Type="ProcureEaseModel.Catalog" Role="Catalog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OrganizationSettings">
+              <PropertyRef Name="OrganizationID" />
+            </Principal>
+            <Dependent Role="Catalog">
+              <PropertyRef Name="OrganizationID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Catalog__Request__2FCF1A8A">
+          <End Type="ProcureEaseModel.RequestForDemo" Role="RequestForDemo" Multiplicity="0..1" />
+          <End Type="ProcureEaseModel.Catalog" Role="Catalog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RequestForDemo">
+              <PropertyRef Name="RequestID" />
+            </Principal>
+            <Dependent Role="Catalog">
+              <PropertyRef Name="RequestID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Departmen__Depar__534D60F1">
+          <End Type="ProcureEaseModel.UserProfile" Role="UserProfile" Multiplicity="0..1" />
+          <End Type="ProcureEaseModel.Department" Role="Department" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserProfile">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="Department">
+              <PropertyRef Name="DepartmentHeadUserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__UserProfi__Depar__5165187F">
+          <End Type="ProcureEaseModel.Department" Role="Department" Multiplicity="0..1" />
+          <End Type="ProcureEaseModel.UserProfile" Role="UserProfile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="DepartmentID" />
+            </Principal>
+            <Dependent Role="UserProfile">
+              <PropertyRef Name="DepartmentID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserProfile_OrganizationSettings">
+          <End Type="ProcureEaseModel.OrganizationSettings" Role="OrganizationSettings" Multiplicity="0..1" />
+          <End Type="ProcureEaseModel.UserProfile" Role="UserProfile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OrganizationSettings">
+              <PropertyRef Name="OrganizationID" />
+            </Principal>
+            <Dependent Role="UserProfile">
+              <PropertyRef Name="OrganizationID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1790,22 +1944,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="UserProfile">
-            <EntityTypeMapping TypeName="ProcureEaseModel.UserProfile">
-              <MappingFragment StoreEntitySet="UserProfile">
-                <ScalarProperty Name="UserID" ColumnName="UserID" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="DepartmentID" ColumnName="DepartmentID" />
-                <ScalarProperty Name="UserEmail" ColumnName="UserEmail" />
-                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
-                <ScalarProperty Name="LastName" ColumnName="LastName" />
-                <ScalarProperty Name="UserName" ColumnName="UserName" />
-                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="ItemCode">
             <EntityTypeMapping TypeName="ProcureEaseModel.ItemCode">
               <MappingFragment StoreEntitySet="ItemCode">
@@ -1841,6 +1979,48 @@
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="ProcurementStatusID" ColumnName="ProcurementStatusID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Catalog">
+            <EntityTypeMapping TypeName="ProcureEaseModel.Catalog">
+              <MappingFragment StoreEntitySet="Catalog">
+                <ScalarProperty Name="OrganizationID" ColumnName="OrganizationID" />
+                <ScalarProperty Name="SubDomain" ColumnName="SubDomain" />
+                <ScalarProperty Name="RequestID" ColumnName="RequestID" />
+                <ScalarProperty Name="CatalogItemID" ColumnName="CatalogItemID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RequestForDemo">
+            <EntityTypeMapping TypeName="ProcureEaseModel.RequestForDemo">
+              <MappingFragment StoreEntitySet="RequestForDemo">
+                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="AdministratorPhoneNumber" ColumnName="AdministratorPhoneNumber" />
+                <ScalarProperty Name="AdministratorLastName" ColumnName="AdministratorLastName" />
+                <ScalarProperty Name="AdministratorFirstName" ColumnName="AdministratorFirstName" />
+                <ScalarProperty Name="AdministratorEmail" ColumnName="AdministratorEmail" />
+                <ScalarProperty Name="OrganizationShortName" ColumnName="OrganizationShortName" />
+                <ScalarProperty Name="OrganizationFullName" ColumnName="OrganizationFullName" />
+                <ScalarProperty Name="RequestID" ColumnName="RequestID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserProfile">
+            <EntityTypeMapping TypeName="ProcureEaseModel.UserProfile">
+              <MappingFragment StoreEntitySet="UserProfile">
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="UserEmail" ColumnName="UserEmail" />
+                <ScalarProperty Name="DepartmentID" ColumnName="DepartmentID" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="OrganizationID" ColumnName="OrganizationID" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

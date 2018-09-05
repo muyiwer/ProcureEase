@@ -62,6 +62,13 @@ namespace ProcureEaseAPI.Controllers
             db.SaveChanges();
             return Json(catalog, JsonRequestBehavior.AllowGet);
         }
+        public ActionResult AddOrganization(OrganizationSettings catalog)
+        {
+            catalog.OrganizationID = Guid.NewGuid();
+            db.OrganizationSettings.Add(catalog);
+            db.SaveChanges();
+            return Json(catalog, JsonRequestBehavior.AllowGet);
+        }
 
         protected override void Dispose(bool disposing)
         {

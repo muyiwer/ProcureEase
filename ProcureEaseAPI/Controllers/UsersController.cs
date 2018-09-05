@@ -91,6 +91,16 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
+                if (UserProfile.DepartmentID == new Guid())
+                {
+                    LogHelper.Log(Log.Event.ADD_USER, "DepartmentID is null");
+                    return Json(new
+                    {
+                        success = false,
+                        message = "DepartmentID is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 var CheckIfEmailExist = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.UserEmail).FirstOrDefault();
                 if(CheckIfEmailExist != null)
                 {
@@ -292,14 +302,15 @@ namespace ProcureEaseAPI.Controllers
                         { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                if (UserProfile.UserEmail == null)
+                var CheckIfUserHasBeenAddedByAdmin = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.UserEmail).FirstOrDefault();
+                if (UserProfile.UserEmail == null || CheckIfUserHasBeenAddedByAdmin == null)
                 {
-                    LogHelper.Log(Log.Event.SIGN_UP, "Email can not be null");
+                    LogHelper.Log(Log.Event.SIGN_UP, "Email is null or UserEmail does not exist UserProfile table.");
                    // return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Please Input your email");
                     return Json(new
                     {
                         success = false,
-                        message = "Please input your email",
+                        message = "User not yet added by admin.",
                         data =  new
                         { }
                     }, JsonRequestBehavior.AllowGet);
@@ -316,17 +327,6 @@ namespace ProcureEaseAPI.Controllers
                 ApplicationUser User =  await Repository.RegisterUser(UserModel,UserDepartmentName);
                 var Id = db.AspNetUsers.Where(x => x.Email == UserProfile.UserEmail).Select(x => x.Id).FirstOrDefault();
                 var CheckIfUserIsAddedByAdmin = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.UserID).FirstOrDefault();
-                if (CheckIfUserIsAddedByAdmin == null)
-                {
-                    LogHelper.Log(Log.Event.SIGN_UP, "Email does not exist on UserProfile table");
-                    return Json(new
-                    {
-                        success = false,
-                        message = "Admin has not sent an invitation to this email.",
-                        data = new
-                        { }
-                    }, JsonRequestBehavior.AllowGet);
-                }
                 var UserID = CheckIfUserIsAddedByAdmin;
                 UserProfile EditProfile = db.UserProfile.Where(x => x.UserID == UserID).FirstOrDefault();
                 EditProfile.Id = User.Id;
@@ -771,7 +771,7 @@ namespace ProcureEaseAPI.Controllers
                         {}
                     }, JsonRequestBehavior.AllowGet);
                 }
-            var UserAspNetID = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
+                var UserAspNetID = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
                 if (UserAspNetID == null)
                 {
                     var checkIfUserIsHeadOfDepartment = db.Department.Where(x => x.DepartmentHeadUserID == UserProfile.UserID).FirstOrDefault();
@@ -787,7 +787,7 @@ namespace ProcureEaseAPI.Controllers
                     return Json(new
                     {
                         success = true,
-                        message = "User is deleted suessfully",
+                        message = "User is deleted successfully",
                         data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
                         {
                             x.UserID,

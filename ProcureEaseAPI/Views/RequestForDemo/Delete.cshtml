@@ -1,0 +1,80 @@
+﻿@model ProcureEaseAPI.Models.RequestForDemo
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>RequestForDemo</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.OrganizationFullName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OrganizationFullName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OrganizationShortName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OrganizationShortName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AdministratorEmail)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AdministratorEmail)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AdministratorFirstName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AdministratorFirstName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AdministratorLastName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AdministratorLastName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AdministratorPhoneNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AdministratorPhoneNumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateCreated)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateCreated)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

@@ -4,19 +4,20 @@ using ProcureEaseAPI.Controllers;
 using ProcureEaseAPI.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Routing;
+using System.Web.Routing; 
 
 namespace ProcureEaseAPI.Tests.Controllers
 {
     [TestClass]
-   public  class UsersControllerTest
+   public class UsersControllerTest
     {
-        string LOCAL_SERVER = "http://localhost:82/";
+      public  string LOCAL_SERVER = "http://nitda.procureease.ng/";
 
         [TestMethod]
         public async Task TestLogin_WithInvalidLoginDetails()
@@ -43,17 +44,70 @@ namespace ProcureEaseAPI.Tests.Controllers
         }
 
         [TestMethod]
+        public virtual void TestGetTenantID_Successfully()
+        {
+            var controller = new CatalogsController();
+            MockController(controller, LOCAL_SERVER);
+
+            var host = controller.Request.Url.Host;
+            Console.WriteLine(host);
+            var result = controller.GetTenantID();
+            Console.WriteLine(result);
+
+            string url = System.Web.HttpContext.Current.Request.Url.Host; // expecting format nitda.procureease.ng
+            string[] hostUrlParts = url.Split('.');// extract sub domain from URL
+            string subDomain = hostUrlParts[0];
+            Console.WriteLine(subDomain);
+
+            Assert.IsNotNull(result);
+        }
+
+        [TestMethod]
+        public virtual void TestGetTenantID_TenantIDNotFound()
+        {
+            string LOCAL_SERVER2 = "http://ncc.procureease.ng/";
+
+            var controller = new CatalogsController();
+            MockController(controller, LOCAL_SERVER2);
+
+            var host = controller.Request.Url.Host;
+            Console.WriteLine(host);
+            var result = controller.GetTenantID();
+            Console.WriteLine(result);
+
+            string url = System.Web.HttpContext.Current.Request.Url.Host; // expecting format nitda.procureease.ng
+            string[] hostUrlParts = url.Split('.');// extract sub domain from URL
+            string subDomain = hostUrlParts[0];
+            Console.WriteLine(subDomain);
+
+            Assert.IsNull(result);
+        }
+
+        private void MockController(CatalogsController controller, string server)
+        {
+            var context = new Mock<HttpContextBase>();
+            var session = new Mock<HttpSessionStateBase>();
+            context.Setup(x => x.Request.Url).Returns(new Uri(server, UriKind.Absolute));
+            context.Setup(x => x.Session).Returns(session.Object);
+            var requestContext = new RequestContext(context.Object, new RouteData());
+            controller.ControllerContext = new ControllerContext(requestContext, controller);
+            HttpContext.Current = new HttpContext(new HttpRequest("", server, ""), new HttpResponse(new StringWriter()));
+        }
+
+        [TestMethod]
         public async Task TestAddUser_Unsuccessfully_UserEmailAlreadyExists()
         {
+            Mock<HttpRequest> httpRequest = new Mock<HttpRequest>();
+            httpRequest.Setup(x => x.Url).Returns(new Uri(LOCAL_SERVER));
             UserProfile UserProfile = new UserProfile
             {
-                UserEmail = "muyiweraro@gmail.com"
+                UserEmail = "oaro@techspecialistlimited.com",
             };
             var testAddUser = new UsersController();
             JsonResult result = (JsonResult)await testAddUser.Add(UserProfile); // first call to add email
             result = (JsonResult)await testAddUser.Add(UserProfile); // second call to attempt to add email again and force duplicate insertion attempt
             Console.WriteLine(result.Data);
-            Assert.IsTrue((result.Data + "").Contains("Email already exists"));
+            Assert.IsTrue((result.Data + "").Contains("Email already exists! Please check and try again."));
         }
 
         [TestMethod]
@@ -99,31 +153,44 @@ namespace ProcureEaseAPI.Tests.Controllers
         }
 
         [TestMethod]
-        public void TestInitiatePasswordReset()
+        public async Task TestInitiatePasswordReset_Unsuccessfully_InvalidEmail()
         {
-            string UserEmail = "muyiweraro@gmail.com";           
-            var testAddUser = new UsersController();
-            var result = testAddUser.InitiatePasswordReset(UserEmail);
-            Assert.IsNotNull(result);
+            string UserEmail = "email-" + new Random().Next() + "@gmail.com";
+            var testInitiatePasswordReset = new UsersController();
+            JsonResult result = (JsonResult)await testInitiatePasswordReset.InitiatePasswordReset(UserEmail); // first call to add email
+            result = (JsonResult)await testInitiatePasswordReset.InitiatePasswordReset(UserEmail); // second call to attempt to add email again and force duplicate insertion attempt
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("Email does not exist"));
         }
 
-        //[TestMethod]
-        //public void TestPasswordReset()
-        //{
-        //    ResetPasswordModel ResetPassword = new ResetPasswordModel
-        //    {
-        //        UserEmail = "muyiweraro@gmail.com",
-        //        NewPassword ="",
-        //        ResetToken ="",
-        //    };
-        //    var testAddUser = new UsersController();
-        //    var result = testAddUser.ResetPassword(ResetPassword);
-        //    Assert.IsNotNull(result);
-
-        //}
+        [TestMethod]
+        public async Task TestInitiatePasswordReset_Successfull_Email()
+        {
+            string UserEmail = "muyiweraro@gmail.com";           
+            var testInitiatePasswordReset = new UsersController();
+            var result = (JsonResult)await testInitiatePasswordReset.InitiatePasswordReset(UserEmail);
+           Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("Please check your email to reset password."));
+        }
 
         [TestMethod]
-        public void TestSignUp()
+        public async Task TestPasswordReset()
+        {
+            ResetPasswordModel ResetPassword = new ResetPasswordModel
+            {
+                UserEmail = "muyiweraro@gmail.com",
+                NewPassword = "",
+                ResetToken = "",
+            };
+            var testAddUser = new UsersController();
+            var result = (JsonResult) await testAddUser.ResetPassword(ResetPassword);
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("Please check your email to reset password."));
+
+        }
+
+        [TestMethod]
+        public async Task TestSignUp_Unsuccessfully_InvalidEmail()
         {
             UserProfile UserProfile = new UserProfile
             {
@@ -133,8 +200,72 @@ namespace ProcureEaseAPI.Tests.Controllers
             };
             string Password = "Muyiwer87";
             var testSignUp = new UsersController();
-            var result = testSignUp.SignUp(UserProfile, Password);
-            Assert.IsNotNull(result);
+            var result = (JsonResult)await testSignUp.SignUp(UserProfile, Password);
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("Email does not exist on UserProfile table."));
+        }
+
+
+        [TestMethod]
+        public async Task TestSignUp_Unsuccessfully_AlreadySignedUp()
+        {
+            UserProfile UserProfile = new UserProfile
+            {
+                UserEmail = "muyiweraro@gmail.com",
+                FirstName = "Muyiwa",
+                LastName = "Aro"
+            };
+            string Password = "Muyiwer87";
+            var testSignUp = new UsersController();
+            var result = (JsonResult)await testSignUp.SignUp(UserProfile, Password);
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("Email has already signed up! Please use a different email address."));
+        }
+
+        [TestMethod]
+        public async Task TestSignUp_Successful_Valid_Email()
+        {
+            UserProfile UserProfile = new UserProfile
+            {
+                UserEmail = "muyiweraro@gmail.com",
+                FirstName = "Muyiwa",
+                LastName = "Aro"
+            };
+            string Password = "Muyiwer87";
+            var testSignUp = new UsersController();
+            var result = (JsonResult)await testSignUp.SignUp(UserProfile, Password);
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("Sign up successful."));
+        }
+
+        [TestMethod]
+        public void TestEditUser_successfully_EditToProcurementOfficerRole()
+        {
+            UserProfile UserProfile = new UserProfile
+            {
+                UserEmail = "muyiweraro@gmail.com",
+                DepartmentID =new Guid("0B6A0615-F453-4E8C-AF68-B799117A8B1A"),//for procurement dept only
+                UserID = new Guid("472BAD81-FF85-4BE6-9238-BC8306493CB9") 
+            };
+            var testEditUser = new UsersController();
+            var result = (JsonResult)testEditUser.EditUser(UserProfile);
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("Edited Successfully."));
+        }
+
+        [TestMethod]
+        public void TestEditUser_successfully_EditToEmployeeRole()
+        {
+            UserProfile UserProfile = new UserProfile
+            {
+                UserEmail = "muyiweraro@gmail.com",
+                DepartmentID = new Guid("0B6A0615-F453-4E8C-AF68-B799117A8B1A"),//procurement dept not to be included
+                UserID = new Guid("472BAD81-FF85-4BE6-9238-BC8306493CB9")
+            };
+            var testEditUser = new UsersController();
+            var result = (JsonResult)testEditUser.EditUser(UserProfile);
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("Edited Successfully."));
         }
 
         [TestMethod]
@@ -142,22 +273,31 @@ namespace ProcureEaseAPI.Tests.Controllers
         {
             UserProfile UserProfile = new UserProfile
             {
-                UserID = new Guid("5C99B26F-CBA8-493E-ABD4-E049BB548DB5"),
-               
+                UserID = new Guid("472BAD81-FF85-4BE6-9238-BC8306493CB9"),              
             };
             var testDelete = new UsersController();
-            var result = testDelete.Delete(UserProfile);
-            Assert.IsNotNull(result);
+            var result = (JsonResult)testDelete.Delete(UserProfile);
+            Assert.IsTrue((result.Data + "").Contains("User is deleted successfully"));
         }
 
         [TestMethod]
         public void TestGetAllUsers()
-        {
-           
-            string id= "5C99B26F-CBA8-493E-ABD4-E049BB548DB5";
+        {          
+            string id= "0B6A0615-F453-4E8C-AF68-B799117A8B1A";
             var GetAllUsers = new UsersController();
-            var result = GetAllUsers.GetAllUsers(id);
-            Assert.IsNotNull(result);
+            var result = (JsonResult)GetAllUsers.GetAllUsers(id);
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("All Users"));
+        }
+
+        [TestMethod]
+        public void TestGetAllUsers_Unsuccessfull_Invalid_Guid()
+        {
+            string id = "5C99B26F-CBA8-493E-ABD4";
+            var GetAllUsers = new UsersController();
+            var result = (JsonResult)GetAllUsers.GetAllUsers(id);
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("Guid should contain 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)"));
         }
 
         [TestMethod]
@@ -165,13 +305,13 @@ namespace ProcureEaseAPI.Tests.Controllers
         {
             UserProfile UserProfile = new UserProfile
             {
-                UserID = new Guid("5C99B26F-CBA8-493E-ABD4-E049BB548DB5"),
-                DepartmentID = new Guid("86CAF117-37ED-4370-AC31-0D86EECAD8ED"),
-                LastName = "Aro"
+                UserID = new Guid("472BAD81-FF85-4BE6-9238-BC8306493CB9"),
+                DepartmentID = new Guid("0B6A0615-F453-4E8C-AF68-B799117A8B1A"),
             };
             var testUpdateDepartmentHead = new UsersController();
-            var result = testUpdateDepartmentHead.UpdateDepartmentHead(UserProfile);
-            Assert.IsNotNull(result);
+            var result = (JsonResult)testUpdateDepartmentHead.UpdateDepartmentHead(UserProfile);
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("User added as department head successful."));
         }
 
         [TestMethod]
@@ -179,13 +319,31 @@ namespace ProcureEaseAPI.Tests.Controllers
         {
             UserProfile UserProfile = new UserProfile
             {
-                UserID = new Guid("5C99B26F-CBA8-493E-ABD4-E049BB548DB5"),
+                UserID = new Guid("472BAD81-FF85-4BE6-9238-BC8306493CB9"),
+                UserEmail = "muyiweraro@gmail.com",
                 FirstName = "Muyiwa",
                 LastName = "Aro"
             };
             var testUpdateUserProfile = new UsersController();
-            var result = testUpdateUserProfile.UpdateUserProfile(UserProfile);
-            Assert.IsNotNull(result);
+            var result = (JsonResult)testUpdateUserProfile.UpdateUserProfile(UserProfile);
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("Profile update successful."));
+        }
+
+        [TestMethod]
+        public void TestUpdateUserProfile_Unsuccessful_Id()
+        {
+            UserProfile UserProfile = new UserProfile
+            {
+                UserID = new Guid("5C99B26F-CBA8-493E-ABD4-E049BB548DB5"),
+                UserEmail = "muyiweraro@gmail.com",
+                FirstName = "Muyiwa",
+                LastName = "Aro"
+            };
+            var testUpdateUserProfile = new UsersController();
+            var result = (JsonResult)testUpdateUserProfile.UpdateUserProfile(UserProfile);
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("Not yet signed up"));
         }
     }
 }

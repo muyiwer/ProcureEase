@@ -9,19 +9,21 @@ using System.Threading.Tasks;
 using static Utilities.EmailHelper;
 using System.Net.Http;
 using System.Web.Script.Serialization;
-
+using ProcureEaseAPI.Providers;
+using ProcureEaseAPI.Controllers;
 namespace ProcureEaseAPI.Controllers
 {
     public class UsersController : Controller
     {
         private ProcureEaseEntities db = new ProcureEaseEntities();
+        private CatalogsController catalog = new CatalogsController();
 
         //POST: Users/Login
         [HttpPost]
         [AllowAnonymous]
         public async Task<ActionResult> Login(string UserName, string Password)
         {
-
+            DateTimeSettings DateTimeSettings = new DateTimeSettings();
             /*This will depend totally on how you will get access to the identity provider and get your token, this is just a sample of how it would be done*/
             /*Get Access Token Start*/
             HttpClient httpClient = new HttpClient();
@@ -40,6 +42,7 @@ namespace ProcureEaseAPI.Controllers
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 LogHelper.Log(Log.Event.LOGIN, ResponseContent);
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 return Json(new
                 {
                     success = false,
@@ -56,7 +59,12 @@ namespace ProcureEaseAPI.Controllers
                     {
                        User.Id,
                        Email = User.UserName,
-                       token = token
+                       DepartmentID = db.UserProfile.Where(x=>x.UserEmail == UserName).Select(x=>x.DepartmentID).FirstOrDefault(),
+                       Role = db.AspNetUserRoles.Where(x=>x.UserId == User.Id).Select(x=>x.AspNetRoles.Name).FirstOrDefault(),
+                       BudgetYear = DateTimeSettings.CurrentYear(),
+                       OrganizationName= db.UserProfile.Where(x=>x.UserEmail == UserName).Select(x=>x.OrganizationSettings.OrganizationNameAbbreviation).FirstOrDefault(),
+                        OrganizationID = db.UserProfile.Where(x => x.UserEmail == UserName).Select(x => x.OrganizationID).FirstOrDefault(),
+                        token = token
                     }
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -64,20 +72,23 @@ namespace ProcureEaseAPI.Controllers
 
         // POST: Users/Add
        [HttpPost]
-       [Authorize]
+     //  [Providers.Authorize]
        public async Task<ActionResult> Add(UserProfile UserProfile)
         {
             try
-            {                 
-                if(UserProfile.UserEmail == null)
+            {
+               var tenantId = catalog.GetTenantID();
+                var organizationId = catalog.GetOrganizationID();
+                UserProfile.TenantID = tenantId;
+                UserProfile.OrganizationID= organizationId;
+                if (UserProfile.UserEmail == null)
                 {
                     LogHelper.Log(Log.Event.ADD_USER, "User email is null");
                     return Json(new
                     {
                         success = false,
                         message = "Please input user email",
-                        data = db.UserProfile.Select(x => new
-                        { }).FirstOrDefault()
+                        data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
                 var CheckIfEmailExist = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.UserEmail).FirstOrDefault();
@@ -89,8 +100,8 @@ namespace ProcureEaseAPI.Controllers
                     {
                         success = false,
                         message = "Email already exists! Please check and try again.",
-                        data = db.UserProfile.Select(x => new
-                        { }).FirstOrDefault()
+                        data = new
+                        { }
                     }, JsonRequestBehavior.AllowGet);
                 }
                 UserProfile.UserID = Guid.NewGuid();
@@ -104,6 +115,25 @@ namespace ProcureEaseAPI.Controllers
                 Message message = new Message( RecipientEmail,Subject, newTemplateContent);
                 EmailHelper emailHelper = new EmailHelper();
                 await emailHelper.AddEmailToQueue(message);
+                return Json(new
+                {
+                    success = true,
+                    message = "User added successfully.",
+                    data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        User = new
+                        {
+                            x.UserID,
+                            FullName = x.FirstName + " " + x.LastName
+                        },
+                        Department = new
+                        {
+                            x.DepartmentID,
+                            x.Department1.DepartmentName
+                        }
+
+                    }),
+                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -114,61 +144,62 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = false,
                     message = "" +ex.Message,
-                    data = db.UserProfile.Select(x => new
-                    { }).FirstOrDefault()
+                    data =new
+                    { }
                 }, JsonRequestBehavior.AllowGet);
             }
-            return Json(new
-            {
-                success = true,
-                message = "User added successfully.",
-                data = db.UserProfile.Select(x => new
-                {
-                    User = new
-                    {
-                        x.UserID,
-                        FullName = x.FirstName + " " + x.LastName
-                    },
-                    Department = new
-                    {
-                        x.DepartmentID,
-                        x.Department1.DepartmentName
-                    }
-
-                }),
-            }, JsonRequestBehavior.AllowGet);
+          
         }
 
           // Users/InitiatePasswordReset
         [HttpPost]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<ActionResult> InitiatePasswordReset(string UserEmail)
         {
             try
             {
+                var tenantId = catalog.GetTenantID();
                 AuthRepository Repository = new AuthRepository();
                 ApplicationUser user = await Repository.FindEmail(UserEmail);
                 if (user == null)
                 {
                     LogHelper.Log(Log.Event.INITIATE_PASSWORD_RESET, "Email does not exist");
-                //    return new HttpStatusCodeResult(HttpStatusCode.NotFound, "Email does not Exist! Please check and try again");
                     return Json(new
                     {
                         success = false,
                         message = "Email does not exist! Please check and try again.",
-                        data = db.UserProfile.Select(x => new
-                        { }).FirstOrDefault()
+                        data = new
+                        { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                var PasswordToken = await Repository.GeneratePasswordToken(user.Id);
+                var PasswordToken =  await Repository.GeneratePasswordToken(user.Id);
                 string RecipientEmail = UserEmail;
                 string Subject = "Password Reset";
-                string Body = new EmailTemplateHelper().GetTemplateContent("NMRC-Template");
+                string Body = new EmailTemplateHelper().GetTemplateContent("PasswordResetTemplate");
                 var url = System.Web.HttpContext.Current.Request.Url.Host;
-                string newTemplateContent = string.Format(Body,url + "/#/email/resetpassword/token" + PasswordToken);
+                string newTemplateContent = string.Format(Body,"http://"+ url + "/#/resetpassword/"+UserEmail +"/"+ PasswordToken);
                 Message message = new Message(RecipientEmail, Subject, newTemplateContent);
                 EmailHelper emailHelper = new EmailHelper();
                 await emailHelper.AddEmailToQueue(message);
+                return Json(new
+                {
+                    success = true,
+                    message = "Please check your email to reset password.",
+                    data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        User = new
+                        {
+                            x.UserID,
+                            FullName = x.FirstName + " " + x.LastName
+                        },
+                        Department = new
+                        {
+                            x.DepartmentID,
+                            x.Department1.DepartmentName
+                        }
+
+                    }),
+                }, JsonRequestBehavior.AllowGet);
             }
             catch(Exception ex)
             {
@@ -176,55 +207,55 @@ namespace ProcureEaseAPI.Controllers
                 return Json(new
                 {
                     success = false,
-                    message = "" + ex.Message,
-                    data = db.UserProfile.Select(x => new
-                    { }).FirstOrDefault()
+                    message = "" + ex.Message+ex.StackTrace,
+                    data =new
+                    { }
                 }, JsonRequestBehavior.AllowGet);
-            }
-            return Json(new
-            {
-                success = true,
-                message = "Sign up successful.",
-                data = db.UserProfile.Select(x => new
-                {
-                    User = new
-                    {
-                        x.UserID,
-                        FullName = x.FirstName + " " + x.LastName
-                    },
-                    Department = new
-                    {
-                        x.DepartmentID,
-                        x.Department1.DepartmentName
-                    }
-
-                }),
-            }, JsonRequestBehavior.AllowGet);
+            } 
 
         }
 
         // Users/ResetPassword
         [HttpPost]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<ActionResult> ResetPassword(ResetPasswordModel ResetPassword)
         {
             try
             {
+                var tenantId = catalog.GetTenantID();
                 AuthRepository Repository = new AuthRepository();
                 ApplicationUser user = await Repository.FindEmail(ResetPassword.UserEmail);
                 if (user == null)
                 {
                     LogHelper.Log(Log.Event.RESET_PASSWORD, "Email does not exist");
-                   // return new HttpStatusCodeResult(HttpStatusCode.NotFound, "Email does not Exist! Please check and try again");
                     return Json(new
                     {
                         success = false,
                         message = "Email does not exist! Please check and try again.",
-                        data = db.UserProfile.Select(x => new
-                        { }).FirstOrDefault()
+                        data = new
+                        { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                var result = await Repository.ResetPassword(ResetPassword, user.Id);
+                var result = await Repository.ResetPassword(ResetPassword.ResetToken,ResetPassword.NewPassword, user.Id);
+                return Json(new
+                {
+                    success = true,
+                    message = "Password reset successful.",
+                    data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        User = new
+                        {
+                            x.UserID,
+                            FullName = x.FirstName + " " + x.LastName
+                        },
+                        Department = new
+                        {
+                            x.DepartmentID,
+                            x.Department1.DepartmentName
+                        }
+
+                    }),
+                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -233,50 +264,32 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = false,
                     message = "" + ex.Message,
-                    data = db.UserProfile.Select(x => new
-                    { }).FirstOrDefault()
+                    data =  new
+                    { }
                 }, JsonRequestBehavior.AllowGet);
-            }
-            return Json(new
-            {
-                success = true,
-                message = "Sign up successful.",
-                data = db.UserProfile.Select(x => new
-                {
-                    User = new
-                    {
-                        x.UserID,
-                        FullName = x.FirstName + " " + x.LastName
-                    },
-                    Department = new
-                    {
-                        x.DepartmentID,
-                        x.Department1.DepartmentName
-                    }
-
-                }),
-            }, JsonRequestBehavior.AllowGet);
+            }                    
 
         }
 
         //POST: Users/SignUp
         [HttpPost]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<ActionResult> SignUp(UserProfile UserProfile, string Password)
         {
             try
             {
+                var tenantId = catalog.GetTenantID();
+                var organizationId = catalog.GetOrganizationID();                
                 var CheckIfUserHasSignedUp = db.AspNetUsers.Where(x => x.UserName == UserProfile.UserEmail).Select(x => x.UserName).FirstOrDefault();
                 if (CheckIfUserHasSignedUp != null)
                 {
                     LogHelper.Log(Log.Event.SIGN_UP, "Email already exists on AspNetUser table.");
-                  //  return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Email has already signed up! Please check and try again");
                     return Json(new
                     {
                         success = false,
                         message = "Email has already signed up! Please use a different email address.",
-                        data = db.UserProfile.Select(x => new
-                        { }).FirstOrDefault()
+                        data =new
+                        { }
                     }, JsonRequestBehavior.AllowGet);
                 }
                 if (UserProfile.UserEmail == null)
@@ -287,8 +300,8 @@ namespace ProcureEaseAPI.Controllers
                     {
                         success = false,
                         message = "Please input your email",
-                        data = db.UserProfile.Select(x => new
-                        { }).FirstOrDefault()
+                        data =  new
+                        { }
                     }, JsonRequestBehavior.AllowGet);
                 }
                 AddUserModel UserModel = new AddUserModel
@@ -306,13 +319,12 @@ namespace ProcureEaseAPI.Controllers
                 if (CheckIfUserIsAddedByAdmin == null)
                 {
                     LogHelper.Log(Log.Event.SIGN_UP, "Email does not exist on UserProfile table");
-                  // return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Admin has not send Invitation Email to this Email!!");
                     return Json(new
                     {
                         success = false,
                         message = "Admin has not sent an invitation to this email.",
-                        data = db.UserProfile.Select(x => new
-                        { }).FirstOrDefault()
+                        data = new
+                        { }
                     }, JsonRequestBehavior.AllowGet);
                 }
                 var UserID = CheckIfUserIsAddedByAdmin;
@@ -321,46 +333,49 @@ namespace ProcureEaseAPI.Controllers
                 EditProfile.FirstName = UserProfile.FirstName;
                 EditProfile.LastName = UserProfile.LastName;           
                 db.SaveChanges();
-            }catch(Exception ex)
+                return Json(new
+                {
+                    success = true,
+                    message = "Sign up successful.",
+                    data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        User = new
+                        {
+                            x.UserID,
+                            FullName = x.FirstName + " " + x.LastName
+                        },
+                        Department = new
+                        {
+                            x.DepartmentID,
+                            x.Department1.DepartmentName
+                        }
+
+                    }),
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch(Exception ex)
             {
                 LogHelper.Log(Log.Event.SIGN_UP, ex.Message);
                 return Json(new
                 {
                     success = false,
                     message = "" + ex.Message,
-                    data = db.UserProfile.Select(x => new
-                    { }).FirstOrDefault()
+                    data = new
+                    { }
                 }, JsonRequestBehavior.AllowGet);
             }
-            return Json(new
-            {
-                success = true,
-                message = "Sign up successful.",
-                data = db.UserProfile.Select(x => new
-                {
-                    User = new
-                    {
-                        x.UserID,
-                        FullName = x.FirstName + " " + x.LastName
-                    },
-                    Department = new
-                    {
-                        x.DepartmentID,
-                        x.Department1.DepartmentName
-                    }
-
-                }),
-            }, JsonRequestBehavior.AllowGet);
+           
         }
 
  
         //PUT: Users/EditUser
         [HttpPut]
-        [Authorize]
+        [Providers.Authorize]
         public ActionResult EditUser(UserProfile UserProfile)
         {
             try
-            {               
+            {
+                var tenantId = catalog.GetTenantID();
                 if (UserProfile.DepartmentID == null)
                 {
                     LogHelper.Log(Log.Event.EDIT_USER, "Department ID is null");
@@ -368,8 +383,8 @@ namespace ProcureEaseAPI.Controllers
                     {
                         success = false,
                         message = "No Department is Selected",
-                        data = db.UserProfile.Select(x => new
-                        { }).FirstOrDefault()
+                        data =  new
+                        { }
                     }, JsonRequestBehavior.AllowGet);
                 }
                 if (UserProfile.UserID == null)
@@ -379,20 +394,20 @@ namespace ProcureEaseAPI.Controllers
                     {
                         success = false,
                         message = "UserID is Null",
-                        data = db.UserProfile.Select(x => new
-                        { }).FirstOrDefault()
+                        data =  new
+                        { }
                     }, JsonRequestBehavior.AllowGet);
                 }
 
                 var Id= db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
                 if (Id == null)
                 {
-                    EditUserWithoutID(UserProfile);
+                    EditUserWithoutID(UserProfile);              
                     return Json(new
                     {
                         success = true,
-                        message = "",
-                        data = db.UserProfile.Select(x => new
+                        message = "Edited successfully.",
+                        data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
                         {
                             x.UserID,
                             FullName = x.FirstName + " " + x.LastName,
@@ -427,8 +442,8 @@ namespace ProcureEaseAPI.Controllers
                     return Json(new
                     {
                         success = true,
-                        message = "",
-                        data = db.UserProfile.Select(x => new
+                        message = "Edited Successfully.",
+                        data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
                         {
                             x.UserID,
                             FullName = x.FirstName + " " + x.LastName,
@@ -445,7 +460,7 @@ namespace ProcureEaseAPI.Controllers
                 return Json(new
                 {
                     success = false,
-                    message = "" + ex.Message,
+                    message = "" + ex.Message + ex.StackTrace,
                     data = db.UserProfile.Select(x => new
                     { }).FirstOrDefault()
                 }, JsonRequestBehavior.AllowGet);
@@ -531,11 +546,12 @@ namespace ProcureEaseAPI.Controllers
 
         //PUT: Users/UpdateUserProfile
         [HttpPut]
-        [Authorize]
+        [Providers.Authorize]
         public ActionResult UpdateUserProfile(UserProfile UserProfile)
         {
             try
             {
+                var tenantId = catalog.GetTenantID();
                 var Id = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
                 if(Id == null)
                 {
@@ -544,8 +560,8 @@ namespace ProcureEaseAPI.Controllers
                     {
                         success = false,
                         message = "Not yet signed up",
-                        data = db.UserProfile.Select(x => new
-                        { }).FirstOrDefault()
+                        data = new
+                        { }
                     }, JsonRequestBehavior.AllowGet);
                 }
                 if(UserProfile.UserID == null)
@@ -560,6 +576,20 @@ namespace ProcureEaseAPI.Controllers
                 AspNetUsers EditUser = db.AspNetUsers.Where(x => x.Id == Id).FirstOrDefault();
                 EditUser.UserName = UserProfile.UserEmail;
                 db.SaveChanges();
+                return Json(new
+                {
+                    success = true,
+                    message = "Profile update successful.",
+                    data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        x.UserID,
+                        FullName = x.FirstName + " " + x.LastName,
+                        x.Department1.DepartmentName,
+                        x.DepartmentID,
+                        x.UserEmail,
+                        DepartmentHeadUserID = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
+                    })
+                }, JsonRequestBehavior.AllowGet);
             }
             catch(Exception ex)
             {
@@ -568,33 +598,22 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = false,
                     message = "" + ex.Message,
-                    data = db.UserProfile.Select(x => new
-                    { }).FirstOrDefault()
+                    data =  new
+                    { }
                 }, JsonRequestBehavior.AllowGet);
             }
-            return Json(new
-            {
-                success = true,
-                message = "",
-                data = db.UserProfile.Select(x => new
-                {
-                    x.UserID,
-                    FullName = x.FirstName + " " + x.LastName,
-                    x.Department1.DepartmentName,
-                    x.DepartmentID,
-                    x.UserEmail,
-                    DepartmentHeadUserID = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
-                })
-            }, JsonRequestBehavior.AllowGet);
+
+          
         }
 
         //PUT: Users/UpdateDepartmentHead
-        [Authorize]
+        [Providers.Authorize]
         [HttpPut]
         public ActionResult UpdateDepartmentHead(UserProfile UserProfile)
         {
             try
             {
+                var tenantId = catalog.GetTenantID();
                 if (UserProfile.UserID == null)
                 {
                     LogHelper.Log(Log.Event.UPDATE_DEPARTMENT_HEAD, "UserID is Null");
@@ -602,8 +621,8 @@ namespace ProcureEaseAPI.Controllers
                     {
                         success = false,
                         message = "Input UserID",
-                        data = db.UserProfile.Select(x => new
-                        { }).FirstOrDefault()
+                        data = new
+                        { }
                     }, JsonRequestBehavior.AllowGet);
                 }
                 var CheckDepartmentHead = db.Department.Where(x => x.DepartmentHeadUserID == UserProfile.UserID).Select(x => x.DepartmentHeadUserID).FirstOrDefault();
@@ -649,11 +668,12 @@ namespace ProcureEaseAPI.Controllers
                         db.SaveChanges();
                     
                 }
+               
                 return Json(new
                 {
                     success = true,
-                    message = "",
-                    data = db.UserProfile.Select(x => new
+                    message = "User added as department head successful.",
+                    data = db.UserProfile.Where(x => x.TenantID== tenantId).Select(x => new
                     {
                         x.UserID,
                         FullName = x.FirstName + " " + x.LastName,
@@ -678,16 +698,17 @@ namespace ProcureEaseAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Providers.Authorize]
         public ActionResult GetAllUsers(string id = "")
         {
+            var tenantId = catalog.GetTenantID();
             if (string.IsNullOrEmpty(id))
             {
                 return Json(new
                 {
                     success = true,
                     message = "",
-                    data = db.UserProfile.Select(x => new
+                    data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
                     {
                         x.UserID,
                         FullName = x.FirstName + " " + x.LastName,
@@ -710,15 +731,15 @@ namespace ProcureEaseAPI.Controllers
                     {
                         success = false,
                         message = "" + ex.Message,
-                        data = db.UserProfile.Select(x => new
-                        { })
+                        data =new
+                        { }
                     }, JsonRequestBehavior.AllowGet);
                 }
                 return Json(new
                 {
                     success = true,
-                    message = "",
-                    data = db.UserProfile.Where(x => x.DepartmentID == guidID).Select(x => new
+                    message = "All Users",
+                    data = db.UserProfile.Where(x => x.DepartmentID == guidID &&  x.TenantID == tenantId).Select(x => new
                     {
                         x.UserID,
                         FullName = x.FirstName + " " + x.LastName,
@@ -731,23 +752,23 @@ namespace ProcureEaseAPI.Controllers
             }
         }
 
-      
         [HttpDelete]
-        [Authorize]
+        [Providers.Authorize]
         public ActionResult Delete(UserProfile UserProfile)
         {
             try
             { 
+             var tenantId = catalog.GetTenantID();
             if(UserProfile.UserID==null)
             {
                 LogHelper.Log(Log.Event.DELETE_USER, "UserID is Null");
-                    // return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     return Json(new
                     {
                         success = false,
                         message = "UserID is Null",
-                        data = db.UserProfile.Select(x => new
-                        { }).FirstOrDefault()
+                        data = new
+                        {}
                     }, JsonRequestBehavior.AllowGet);
                 }
             var UserAspNetID = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
@@ -759,16 +780,15 @@ namespace ProcureEaseAPI.Controllers
                         Department RemoveUserFromHeadOfDepartment = db.Department.SingleOrDefault(x => x.DepartmentHeadUserID == UserProfile.UserID);
                         RemoveUserFromHeadOfDepartment.DepartmentHeadUserID = null;
                         db.SaveChanges();
-
                     }
                     UserProfile profile = db.UserProfile.SingleOrDefault(x => x.UserID == UserProfile.UserID);
                     db.UserProfile.Remove(profile);
-                    db.SaveChanges();
+                    db.SaveChanges();                   
                     return Json(new
                     {
                         success = true,
-                        message = "",
-                        data = db.UserProfile.Select(x => new
+                        message = "User is deleted suessfully",
+                        data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
                         {
                             x.UserID,
                             FullName = x.FirstName + " " + x.LastName,
@@ -787,12 +807,12 @@ namespace ProcureEaseAPI.Controllers
                     db.AspNetUserRoles.Remove(role);
                     AspNetUsers users = db.AspNetUsers.SingleOrDefault(x => x.Id == UserAspNetID);
                     db.AspNetUsers.Remove(users);
-                    db.SaveChanges();
+                    db.SaveChanges();                   
                     return Json(new
                     {
                         success = true,
-                        message = "",
-                        data = db.UserProfile.Select(x => new
+                        message = "User is deleted suessfully",
+                        data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
                         {
                             x.UserID,
                             FullName = x.FirstName + " " + x.LastName,
@@ -816,5 +836,16 @@ namespace ProcureEaseAPI.Controllers
             }
             
         }
+
+        private ActionResult Error(string message)
+        {
+            return Json(new
+            {
+                success = false,
+                message = message,
+                data = new { }
+            }, JsonRequestBehavior.AllowGet);
+        }
+
     }
 }

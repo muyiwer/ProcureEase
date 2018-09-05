@@ -36,6 +36,7 @@ namespace ProcureEaseAPI.Models
         public Nullable<System.DateTime> DateCreated { get; set; }
         public Nullable<System.DateTime> DateModified { get; set; }
         public Nullable<int> AdvertStatusID { get; set; }
+        public Nullable<System.Guid> TenantID { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AdvertCategoryNumber> AdvertCategoryNumber { get; set; }
@@ -43,5 +44,6 @@ namespace ProcureEaseAPI.Models
         public virtual ICollection<AdvertLotNumber> AdvertLotNumber { get; set; }
         public virtual AdvertStatus AdvertStatus { get; set; }
         public virtual BudgetYear BudgetYear { get; set; }
+        public virtual Catalog Catalog { get; set; }
     }
 }

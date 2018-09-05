@@ -39,14 +39,19 @@ namespace ProcureEaseAPI.Controllers
                     }), 
                 }, JsonRequestBehavior.AllowGet);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                LogHelper.Log(Log.Event.REQUESTFORDEMO, ex.Message);
+                return Json(new
+                {
+                    success = false,
+                    message = "" + ex.Message,
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
             }
         }
 
-        // GET: RequestForDemo/Details/5
+        // GET: RequestForDemoes/Details/5
         public ActionResult Details(Guid? id)
         {
             if (id == null)
@@ -61,18 +66,18 @@ namespace ProcureEaseAPI.Controllers
             return View(requestForDemo);
         }
 
-        // GET: RequestForDemo/Create
+        // GET: RequestForDemoes/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: RequestForDemo/Create
+        // POST: RequestForDemoes/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "RequestID,OrganizationFullName,OrganizationShortName,AdministratorEmail,AdministratorFirstName,AdministratorLastName,AdministratorPhoneNumber,DateCreated,TenantID")] RequestForDemo requestForDemo)
+        public ActionResult Create([Bind(Include = "RequestID,OrganizationFullName,OrganizationShortName,AdministratorEmail,AdministratorFirstName,AdministratorLastName,AdministratorPhoneNumber,DateCreated")] RequestForDemo requestForDemo)
         {
             if (ModelState.IsValid)
             {
@@ -82,11 +87,10 @@ namespace ProcureEaseAPI.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.TenantID = new SelectList(db.Catalog, "TenantID", "SubDomain", requestForDemo.TenantID);
             return View(requestForDemo);
         }
 
-        // GET: RequestForDemo/Edit/5
+        // GET: RequestForDemoes/Edit/5
         public ActionResult Edit(Guid? id)
         {
             if (id == null)
@@ -101,7 +105,7 @@ namespace ProcureEaseAPI.Controllers
             return View(requestForDemo);
         }
 
-        // POST: RequestForDemo/Edit/5
+        // POST: RequestForDemoes/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -117,7 +121,7 @@ namespace ProcureEaseAPI.Controllers
             return View(requestForDemo);
         }
 
-        // GET: RequestForDemo/Delete/5
+        // GET: RequestForDemoes/Delete/5
         public ActionResult Delete(Guid? id)
         {
             if (id == null)
@@ -132,7 +136,7 @@ namespace ProcureEaseAPI.Controllers
             return View(requestForDemo);
         }
 
-        // POST: RequestForDemo/Delete/5
+        // POST: RequestForDemoes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(Guid id)
@@ -153,3 +157,4 @@ namespace ProcureEaseAPI.Controllers
         }
     }
 }
+

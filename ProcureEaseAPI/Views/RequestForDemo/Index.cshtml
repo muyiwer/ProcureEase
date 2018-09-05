@@ -1,0 +1,69 @@
+﻿@model IEnumerable<ProcureEaseAPI.Models.RequestForDemo>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.OrganizationFullName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.OrganizationShortName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AdministratorEmail)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AdministratorFirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AdministratorLastName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AdministratorPhoneNumber)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DateCreated)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.OrganizationFullName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.OrganizationShortName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AdministratorEmail)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AdministratorFirstName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AdministratorLastName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AdministratorPhoneNumber)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DateCreated)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.RequestID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.RequestID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.RequestID })
+        </td>
+    </tr>
+}
+
+</table>

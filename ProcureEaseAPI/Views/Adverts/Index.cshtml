@@ -1,0 +1,111 @@
+﻿@model IEnumerable<ProcureEaseAPI.Models.Adverts>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Headline)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Introduction)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ScopeOfWork)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EligibiltyRequirement)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CollectionOfTenderDocument)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.BidSubmission)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.OtherImportantInformation)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.BidOpeningDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.BidClosingDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreatedBy)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DateCreated)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DateModified)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AdvertStatus.Status)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.BudgetYear.CreatedBy)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Headline)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Introduction)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ScopeOfWork)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.EligibiltyRequirement)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CollectionOfTenderDocument)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.BidSubmission)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.OtherImportantInformation)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.BidOpeningDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.BidClosingDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CreatedBy)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DateCreated)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DateModified)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AdvertStatus.Status)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.BudgetYear.CreatedBy)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.AdvertID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.AdvertID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.AdvertID })
+        </td>
+    </tr>
+}
+
+</table>

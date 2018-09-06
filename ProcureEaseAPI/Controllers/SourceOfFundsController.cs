@@ -28,6 +28,7 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
+                var tenantID = catalog.GetTenantID();
                 DateTime dt = DateTime.Now;
                 sourceOfFunds.SourceOfFundID = Guid.NewGuid();
                 sourceOfFunds.TenantID = catalog.GetTenantID();
@@ -40,7 +41,7 @@ namespace ProcureEaseAPI.Controllers
                 sourceOfFundsOrganisationSettings.SourceOfFundID = sourceOfFunds.SourceOfFundID;
                 sourceOfFundsOrganisationSettings.TenantID = catalog.GetTenantID();
                 sourceOfFundsOrganisationSettings.OrganizationID = catalog.GetOrganizationID();
-                sourceOfFundsOrganisationSettings.EnableSourceOFFund = sourceOfFundsOrganisationSettings.EnableSourceOFFund;
+                sourceOfFundsOrganisationSettings.EnableSourceOFFund = false;//False
                 sourceOfFundsOrganisationSettings.DateCreated = dt;
                 sourceOfFundsOrganisationSettings.DateModified = dt;
                 db.SourceOfFundsOrganizationSettings.Add(sourceOfFundsOrganisationSettings);
@@ -50,12 +51,11 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = true,
                     message = "Source Of Fund added successfully!!!",
-                    data = db.SourceOfFunds.Select(x => new
+                    data = db.SourceOfFundsOrganizationSettings.Where(x => x.TenantID == tenantID).Select(x => new
                     {
-                        TenantID = db.SourceOfFunds.Where(y => y.TenantID == x.TenantID).Select(y => x.TenantID),
                         x.SourceOfFundID,
-                        x.SourceOfFund,
-                        Enabled = db.SourceOfFundsOrganizationSettings.Where(y => y.SourceOfFundID == y.SourceOfFundID).Select(y => y.EnableSourceOFFund)
+                        x.SourceOfFunds.SourceOfFund,                        
+                        x.EnableSourceOFFund
                     })
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -127,11 +127,11 @@ namespace ProcureEaseAPI.Controllers
 
         // POST: SourceOfFunds/Edit
         [HttpPost]
-        public ActionResult Edit([Bind(Include = "SourceOfFundID,SourceOfFund,EnableSourceOfFund,DateModified,CreatedBy,DateCreated")] SourceOfFunds sourceOfFunds)
+        public ActionResult Edit(SourceOfFundsOrganizationSettings SourceOfFundsOrganizationSettings)
         {
             try
             {
-
+                var tenantID = catalog.GetTenantID();
                 DateTime dt = DateTime.Now;
                 var currentSourceOfFund = db.SourceOfFunds.FirstOrDefault(s => s.SourceOfFundID == s.SourceOfFundID);
                 var sourceOfFundOrganizationSettings = db.SourceOfFundsOrganizationSettings.FirstOrDefault(s => s.SourceOfFundID == s.SourceOfFundID);
@@ -158,12 +158,12 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = true,
                     message = "Edited successfully",
-                    data = db.SourceOfFunds.Select(x => new
+                    data = db.SourceOfFundsOrganizationSettings.Where(x => x.TenantID == tenantID).Select(x => new
                     {
-                        TenantID = db.SourceOfFunds.Where(y => y.TenantID == x.TenantID).Select(y => x.TenantID),
+                        TenantID = db.SourceOfFunds.Where(y => y.TenantID == x.TenantID).Select(y => x.TenantID).FirstOrDefault(),
                         x.SourceOfFundID,
-                        x.SourceOfFund,
-                        Enabled = db.SourceOfFundsOrganizationSettings.Where(y => y.SourceOfFundID == y.SourceOfFundID).Select(y => y.EnableSourceOFFund)
+                        x.SourceOfFunds.SourceOfFund,
+                        Enabled = db.SourceOfFundsOrganizationSettings.Where(y => y.EnableSourceOFFund == true).Select(y => y.EnableSourceOFFund).FirstOrDefault()
                     })
                 }, JsonRequestBehavior.AllowGet);
             }

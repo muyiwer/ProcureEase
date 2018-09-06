@@ -122,7 +122,7 @@ namespace ProcureEaseAPI.Controllers
                 var tenantID = catalog.GetTenantID();
                 DateTime dt = DateTime.Now;
                 var currentOrganizationDetails = db.OrganizationSettings.FirstOrDefault(o => o.OrganizationID == o.OrganizationID);
-
+                var Organization = db.OrganizationSettings.Where(x => x.TenantID == tenantID).Select(x => x.OrganizationNameInFull).FirstOrDefault();
                 if (currentOrganizationDetails == null && tenantID == null)
                 {
                     LogHelper.Log(Log.Event.UPDATE_BASICDETAILS, "OrgasnizationID not found");
@@ -153,7 +153,7 @@ namespace ProcureEaseAPI.Controllers
                 currentOrganizationDetails.State = organizationSettings.State;
                 currentOrganizationDetails.AboutOrganization = organizationSettings.AboutOrganization;
                 currentOrganizationDetails.DateModified = dt;
-                currentOrganizationDetails.CreatedBy = "MDA Administrator";
+                currentOrganizationDetails.CreatedBy = Organization;
                 if (image != null)
                 {
                     currentOrganizationDetails.OrganizationLogoPath = await new FileUploadHelper().UploadImageToAzureStorage(image) + "";

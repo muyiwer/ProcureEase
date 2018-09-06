@@ -38,10 +38,10 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = true,
                     message = "Procurement Method added successfully!!!",
-                    data = db.ProcurementMethod.Select(x => new
+                    data = db.ProcurementMethodOrganizationSettings.Select(x => new
                     {
                         x.ProcurementMethodID,
-                        x.Name,
+                        x.ProcurementMethod.Name,
                         x.EnableProcurementMethod,
                     })
                 }, JsonRequestBehavior.AllowGet);
@@ -121,6 +121,7 @@ namespace ProcureEaseAPI.Controllers
 
                 DateTime dt = DateTime.Now;
                 var currentProcurementMethod = db.ProcurementMethod.FirstOrDefault(p => p.ProcurementMethodID == p.ProcurementMethodID);
+                var currentProcurementMethodOrganizationSettings = db.ProcurementMethodOrganizationSettings.FirstOrDefault(p => p.ProcurementMethodID == p.ProcurementMethodID);
 
                 if (currentProcurementMethod == null) { 
                 LogHelper.Log(Log.Event.UPDATE_PROCUREMENTMETHOD, "ProcurementMethodID not found");
@@ -133,16 +134,18 @@ namespace ProcureEaseAPI.Controllers
                 }
 
                 currentProcurementMethod.DateModified = dt;
-                currentProcurementMethod.EnableProcurementMethod = procurementMethod.EnableProcurementMethod;
+
+                currentProcurementMethodOrganizationSettings.EnableProcurementMethod = currentProcurementMethodOrganizationSettings.EnableProcurementMethod;
+                currentProcurementMethodOrganizationSettings.DateModified = dt;
                 db.SaveChanges();
                 return Json(new
                 {
                     success = true,
                     message = "Editted successfully!!!",
-                    data = db.ProcurementMethod.Select(x => new
+                    data = db.ProcurementMethodOrganizationSettings.Select(x => new
                     {
                         x.ProcurementMethodID,
-                        x.Name,
+                        x.ProcurementMethod.Name,
                         x.EnableProcurementMethod,
                     })
                 }, JsonRequestBehavior.AllowGet);

@@ -30,6 +30,7 @@ namespace ProcureEaseAPI.Controllers
             List<Catalog> records = db.Catalog.Where(x => x.SubDomain == subDomain).ToList();
             if (records == null || records.Count == 0)
             {
+                CheckForNullTenantID(records);
                 return null;
             }
             else
@@ -47,6 +48,7 @@ namespace ProcureEaseAPI.Controllers
             List<Catalog> records = db.Catalog.Where(x => x.SubDomain == subDomain).ToList();
             if (records == null || records.Count == 0)
             {
+                CheckForNullTenantID(records);
                 return null;
             }
             else
@@ -54,6 +56,21 @@ namespace ProcureEaseAPI.Controllers
                 return records.Select(x => x.OrganizationID).First();
             }
         }
+
+        public ActionResult CheckForNullTenantID(List<Catalog> records)
+        {
+            if(records == null)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "TenantId is null",
+                    data = new { }   
+                }, JsonRequestBehavior.AllowGet);
+            }
+            return null;
+        }
+
 
         [HttpPost]
         public ActionResult Add(Catalog catalog)

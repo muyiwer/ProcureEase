@@ -484,10 +484,10 @@ namespace ProcureEaseAPI.Controllers
                                 CategoryLotCode = db.AdvertCategoryNumber.Where(a => a.AdvertID == x.AdvertID).Select(a => a.CategoryLotCode).FirstOrDefault(),
                                 z.Procurements.ProjectName
                             }),
-                            ProjectCategory = db.ProjectCategory.Where(z => z.EnableProjectCategory == true).Select(z => new
+                            ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(z => z.EnableProjectCategory == true).Select(z => new
                             {
                                 z.ProjectCategoryID,
-                                z.Name
+                                z.ProjectCategory.Name
                             })
                         })
                     }

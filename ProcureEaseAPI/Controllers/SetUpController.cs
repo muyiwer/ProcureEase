@@ -37,7 +37,7 @@ namespace ProcureEaseAPI.Controllers
                         TenantID = db.SourceOfFunds.Where(y => y.TenantID == x.TenantID).Select(y => y.TenantID),
                         x.SourceOfFundID,
                         x.SourceOfFund,
-                        Enabled = db.SourceOfFundsOrganizationSettings.Where(y => y.SourceOfFunds == y.SourceOfFunds).Select(y => y.EnableSourceOFFund)
+                        Enabled = db.SourceOfFundsOrganizationSettings.Where(y => y.SourceOfFundID == y.SourceOfFundID).Select(y => y.EnableSourceOFFund)
                     })
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -123,13 +123,23 @@ namespace ProcureEaseAPI.Controllers
                 DateTime dt = DateTime.Now;
                 var currentOrganizationDetails = db.OrganizationSettings.FirstOrDefault(o => o.OrganizationID == o.OrganizationID);
 
-                if (currentOrganizationDetails == null)
+                if (currentOrganizationDetails == null && tenantID == null)
                 {
                     LogHelper.Log(Log.Event.UPDATE_BASICDETAILS, "OrgasnizationID not found");
                     return Json(new
                     {
                         success = false,
                         message = "OrgasnizationID not found",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                if (tenantID == null)
+                {
+                    LogHelper.Log(Log.Event.UPDATE_BASICDETAILS, "TenantID is null");
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantID is null",
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
@@ -194,7 +204,7 @@ namespace ProcureEaseAPI.Controllers
         {
             // TODO: Anita. check if this telephone number has already been added for this organization
             var tenantID = catalog.GetTenantID();
-            var TelephoneNumbersFromDB = db.TelephoneNumbers.Where(x => x.TenantID == tenantID).Select(x => x.TelephoneNumber).ToList();
+            var TelephoneNumbersFromDB = db.TelephoneNumbers.Select(x => x.TelephoneNumber).ToList();
             var DistinctTelephoneNumbers = telephoneNumbers.Except(TelephoneNumbersFromDB);
             foreach (var telephone in DistinctTelephoneNumbers)
             {

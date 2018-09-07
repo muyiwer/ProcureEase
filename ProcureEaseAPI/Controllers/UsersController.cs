@@ -78,9 +78,26 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                var tenantId = catalog.GetTenantID();
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 var organizationId = catalog.GetOrganizationID();
+                if (organizationId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "OrganizationId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 UserProfile.TenantID = tenantId;
-                UserProfile.OrganizationID= organizationId;
                 if (UserProfile.UserEmail == null)
                 {
                     LogHelper.Log(Log.Event.ADD_USER, "User email is null");
@@ -168,7 +185,7 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                var tenantId = catalog.GetTenantID();
+                var SubDomain = catalog.GetSubDomain();
                 AuthRepository Repository = new AuthRepository();
                 ApplicationUser user = await Repository.FindEmail(UserEmail);
                 if (user == null)
@@ -195,7 +212,7 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = true,
                     message = "Please check your email to reset password.",
-                    data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
+                    data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                     {
                         User = new
                         {
@@ -232,7 +249,7 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                var tenantId = catalog.GetTenantID();
+                var SubDomain = catalog.GetSubDomain();
                 AuthRepository Repository = new AuthRepository();
                 ApplicationUser user = await Repository.FindEmail(ResetPassword.UserEmail);
                 if (user == null)
@@ -251,7 +268,7 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = true,
                     message = "Password reset successful.",
-                    data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
+                    data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                     {
                         User = new
                         {
@@ -288,7 +305,7 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                var tenantId = catalog.GetTenantID();
+                var SubDomain = catalog.GetSubDomain();
                 var organizationId = catalog.GetOrganizationID();                
                 var CheckIfUserHasSignedUp = db.AspNetUsers.Where(x => x.UserName == UserProfile.UserEmail).Select(x => x.UserName).FirstOrDefault();
                 if (CheckIfUserHasSignedUp != null)
@@ -337,7 +354,7 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = true,
                     message = "Sign up successful.",
-                    data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
+                    data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                     {
                         User = new
                         {
@@ -375,7 +392,7 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                var tenantId = catalog.GetTenantID();
+                var SubDomain = catalog.GetSubDomain();
                 if (UserProfile.DepartmentID == null)
                 {
                     LogHelper.Log(Log.Event.EDIT_USER, "Department ID is null");
@@ -407,7 +424,7 @@ namespace ProcureEaseAPI.Controllers
                     {
                         success = true,
                         message = "Edited successfully.",
-                        data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
+                        data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                         {
                             x.UserID,
                             FullName = x.FirstName + " " + x.LastName,
@@ -443,7 +460,7 @@ namespace ProcureEaseAPI.Controllers
                     {
                         success = true,
                         message = "Edited Successfully.",
-                        data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
+                        data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                         {
                             x.UserID,
                             FullName = x.FirstName + " " + x.LastName,
@@ -551,7 +568,7 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                var tenantId = catalog.GetTenantID();
+                var SubDomain = catalog.GetSubDomain();
                 var Id = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
                 if(Id == null)
                 {
@@ -580,7 +597,7 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = true,
                     message = "Profile update successful.",
-                    data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
+                    data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                     {
                         x.UserID,
                         FullName = x.FirstName + " " + x.LastName,
@@ -613,7 +630,7 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                var tenantId = catalog.GetTenantID();
+                var SubDomain = catalog.GetSubDomain();
                 if (UserProfile.UserID == null)
                 {
                     LogHelper.Log(Log.Event.UPDATE_DEPARTMENT_HEAD, "UserID is Null");
@@ -673,7 +690,7 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = true,
                     message = "User added as department head successful.",
-                    data = db.UserProfile.Where(x => x.TenantID== tenantId).Select(x => new
+                    data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                     {
                         x.UserID,
                         FullName = x.FirstName + " " + x.LastName,
@@ -698,17 +715,17 @@ namespace ProcureEaseAPI.Controllers
         }
 
         [HttpGet]
-        [Providers.Authorize]
+      //  [Providers.Authorize]
         public ActionResult GetAllUsers(string id = "")
         {
-            var tenantId = catalog.GetTenantID();
+            var SubDomain = catalog.GetSubDomain();
             if (string.IsNullOrEmpty(id))
             {
                 return Json(new
                 {
                     success = true,
                     message = "",
-                    data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
+                    data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                     {
                         x.UserID,
                         FullName = x.FirstName + " " + x.LastName,
@@ -739,7 +756,7 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = true,
                     message = "All Users",
-                    data = db.UserProfile.Where(x => x.DepartmentID == guidID &&  x.TenantID == tenantId).Select(x => new
+                    data = db.UserProfile.Where(x => x.DepartmentID == guidID &&  x.Catalog.SubDomain == SubDomain).Select(x => new
                     {
                         x.UserID,
                         FullName = x.FirstName + " " + x.LastName,
@@ -757,9 +774,9 @@ namespace ProcureEaseAPI.Controllers
         public ActionResult Delete(UserProfile UserProfile)
         {
             try
-            { 
-             var tenantId = catalog.GetTenantID();
-            if(UserProfile.UserID==null)
+            {
+                var SubDomain = catalog.GetSubDomain();
+                if (UserProfile.UserID==null)
             {
                 LogHelper.Log(Log.Event.DELETE_USER, "UserID is Null");
                 Response.StatusCode = (int)HttpStatusCode.BadRequest;
@@ -788,7 +805,7 @@ namespace ProcureEaseAPI.Controllers
                     {
                         success = true,
                         message = "User is deleted successfully",
-                        data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
+                        data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                         {
                             x.UserID,
                             FullName = x.FirstName + " " + x.LastName,
@@ -812,7 +829,7 @@ namespace ProcureEaseAPI.Controllers
                     {
                         success = true,
                         message = "User is deleted suessfully",
-                        data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
+                        data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                         {
                             x.UserID,
                             FullName = x.FirstName + " " + x.LastName,

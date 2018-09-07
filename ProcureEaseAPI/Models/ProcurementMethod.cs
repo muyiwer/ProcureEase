@@ -30,8 +30,8 @@ namespace ProcureEaseAPI.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Procurements> Procurements { get; set; }
-        public virtual ProcurementMethodOrganisationsettings ProcurementMethodOrganisationsettings { get; set; }
         public virtual Catalog Catalog { get; set; }
         public virtual Catalog Catalog1 { get; set; }
+        public virtual ProcurementMethodOrganizationsettings ProcurementMethodOrganizationsettings { get; set; }
     }
 }

@@ -2,7 +2,7 @@
 
 $(document).ready(function () {
     $("button").click(function () {
-        $.post('http://localhost:82/Catalogs/Add',
+        $.post('http://localhost:82/Catalogs/GetSubDomain',
             {
                 headers: {
                     "contentType": "application/json"

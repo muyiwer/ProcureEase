@@ -19,11 +19,11 @@ namespace ProcureEaseAPI.Models
         {
             this.TelephoneNumbers = new HashSet<TelephoneNumbers>();
             this.UserProfile = new HashSet<UserProfile>();
-            this.ProjectCategoryOrganisationSettings = new HashSet<ProjectCategoryOrganisationSettings>();
-            this.ProcurementMethodOrganisationsettings = new HashSet<ProcurementMethodOrganisationsettings>();
             this.Department = new HashSet<Department>();
             this.Catalog = new HashSet<Catalog>();
-            this.SourceOfFundsOrganisationSettings = new HashSet<SourceOfFundsOrganisationSettings>();
+            this.ProjectCategoryOrganizationSettings = new HashSet<ProjectCategoryOrganizationSettings>();
+            this.ProcurementMethodOrganizationsettings = new HashSet<ProcurementMethodOrganizationsettings>();
+            this.SourceOfFundsOrganizationSettings = new HashSet<SourceOfFundsOrganizationSettings>();
         }
     
         public System.Guid OrganizationID { get; set; }
@@ -45,15 +45,15 @@ namespace ProcureEaseAPI.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserProfile> UserProfile { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ProjectCategoryOrganisationSettings> ProjectCategoryOrganisationSettings { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ProcurementMethodOrganisationsettings> ProcurementMethodOrganisationsettings { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Department> Department { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Catalog> Catalog { get; set; }
         public virtual Catalog Catalog1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SourceOfFundsOrganisationSettings> SourceOfFundsOrganisationSettings { get; set; }
+        public virtual ICollection<ProjectCategoryOrganizationSettings> ProjectCategoryOrganizationSettings { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProcurementMethodOrganizationsettings> ProcurementMethodOrganizationsettings { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SourceOfFundsOrganizationSettings> SourceOfFundsOrganizationSettings { get; set; }
     }
 }

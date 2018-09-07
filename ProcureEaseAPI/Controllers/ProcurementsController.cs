@@ -25,6 +25,15 @@ namespace ProcureEaseAPI.Controllers
         public ActionResult DraftNeedsSummary(string id = "")
         {
             Guid? tenantId = catalog.GetTenantID();
+            if (tenantId == null)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "TenantId is null",
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
             if (string.IsNullOrEmpty(id))
             {
                 LogHelper.Log(Log.Event.ALL_DRAFT_PROCUREMENT_NEEDS, "DepartmentID");
@@ -93,6 +102,15 @@ namespace ProcureEaseAPI.Controllers
                             return Error(ex.Message);
                         }
                          Guid? tenantId = catalog.GetTenantID();
+                        if (tenantId == null)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "TenantId is null",
+                                data = new { }
+                            }, JsonRequestBehavior.AllowGet);
+                        }
                         var BudgetYear = db.BudgetYear.Where(x => x.BudgetYearID == guidID2).Select(x => x.BudgetYear1.Value.Year).FirstOrDefault();
                         Response.StatusCode = (int)HttpStatusCode.OK;
                         return DraftNeedsJson(guidID, BudgetYear,tenantId);
@@ -123,6 +141,15 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 Guid? tenantId = catalog.GetTenantID();
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 int ProcurementStatusID = 0;
                 int.TryParse(GetConfiguration("DraftProcurementStatusID"), out ProcurementStatusID);
                 DateTimeSettings DateTimeSettings = new DateTimeSettings();
@@ -228,16 +255,6 @@ namespace ProcureEaseAPI.Controllers
 
                 #region ProcessDeletedProjects
                 var deletedProjects = Projects.Where(x => x.Deleted == true);
-                foreach (DepartmentProject projects in Projects)
-                {
-                    var items = projects.Items;
-                    var DeletedItem = items.Where(x => x.ItemID != Guid.Empty && x.Deleted == true);
-                    foreach (DepartmentItems Items in DeletedItem)
-                    {
-                        db.Items.RemoveRange(db.Items.Where(c => c.ProcurementID == projects.ProcurementID));
-                    }
-                }
-
                 foreach (DepartmentProject project in deletedProjects)
                 {
                     db.Items.RemoveRange(db.Items.Where(c => c.ProcurementID == project.ProcurementID));
@@ -317,6 +334,8 @@ namespace ProcureEaseAPI.Controllers
                 } else
                 {
                     // insert project
+                    int ProcurementStatusID = 0;
+                    int.TryParse(GetConfiguration("DraftProcurementStatusID"), out ProcurementStatusID);
                     db.Procurements.Add(new Procurements()
                     {
                         ProcurementID = ProcurementID,
@@ -326,7 +345,8 @@ namespace ProcureEaseAPI.Controllers
                         ProcurementMethodID = project.ProcurementMethodID,
                         DepartmentID = DepartmentID,
                         BudgetYearID = BudgetyearID,
-                        TenantID = tenantId
+                        TenantID = tenantId,
+                        ProcurementStatusID = ProcurementStatusID
                     });
                 }
 
@@ -408,6 +428,15 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 Guid? tenantId = catalog.GetTenantID();
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 int ProcurementStatusID = 0;
                 int.TryParse(GetConfiguration("PendingProcurementStatusID"), out ProcurementStatusID);
                 DateTimeSettings DateTimeSettings = new DateTimeSettings();
@@ -544,6 +573,15 @@ namespace ProcureEaseAPI.Controllers
         public ActionResult SentProcurement(string id = "")
         {
             Guid? tenantId = catalog.GetTenantID();
+            if (tenantId == null)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "TenantId is null",
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
             if (string.IsNullOrEmpty(id))
             {
                 LogHelper.Log(Log.Event.ALL_DRAFT_PROCUREMENT_NEEDS, "DepartmentID is Null");
@@ -608,12 +646,12 @@ namespace ProcureEaseAPI.Controllers
                             x.ProcurementStatusID,
                             x.Status
                         }),
-                        ProcureMentMethod = db.ProcurementMethodOrganisationsettings.Where(x => x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
+                        ProcureMentMethod = db.ProcurementMethodOrganizationsettings.Where(x => x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
                         {
                             x.ProcurementMethodID,
                             x.ProcurementMethod.Name
                         }),
-                        ProjectCategory = db.ProjectCategoryOrganisationSettings.Where(x => x.TenantID == tenantId && x.EnableProjectCategory == true).Select(x => new
+                        ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(x => x.TenantID == tenantId && x.EnableProjectCategory == true).Select(x => new
                         {
                             x.ProjectCategoryID,
                             x.ProjectCategory.Name
@@ -634,6 +672,15 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 Guid? tenantId = catalog.GetTenantID();
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 var RequestedItemName = db.ItemCode.Where(y => y.ItemName.StartsWith(ItemName) && y.TenantID == tenantId).Select(y => new {
                     y.ItemName,
                     ItemCode = y.ItemCode1
@@ -712,17 +759,17 @@ namespace ProcureEaseAPI.Controllers
                             EstimatedCost = z.UnitPrice * z.Quantity
                         })
                     }),
-                    ProcureMentStatus = db.ProcurementStatus.Where(x=>x.TenantID == tenantId).Select(x => new
+                    ProcureMentStatus = db.ProcurementStatus.Select(x => new
                     {
                         x.ProcurementStatusID,
                         x.Status
                     }),
-                    ProcureMentMethod = db.ProcurementMethodOrganisationsettings.Where(x => x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
+                    ProcureMentMethod = db.ProcurementMethodOrganizationsettings.Where(x => x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
                     {
                         x.ProcurementMethodID,
                         x.ProcurementMethod.Name
                     }),
-                    ProjectCategory = db.ProjectCategoryOrganisationSettings.Where(x => x.TenantID == tenantId && x.EnableProjectCategory == true).Select(x => new
+                    ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(x => x.TenantID == tenantId && x.EnableProjectCategory == true).Select(x => new
                     {
                         x.ProjectCategoryID,
                         x.ProjectCategory.Name
@@ -766,17 +813,17 @@ namespace ProcureEaseAPI.Controllers
                             EstimatedCost = z.UnitPrice * z.Quantity
                         })
                     }),
-                    ProcureMentStatus = db.ProcurementStatus.Where(x=>x.TenantID==tenantId).Select(x => new
+                    ProcureMentStatus = db.ProcurementStatus.Select(x => new
                     {
                         x.ProcurementStatusID,
                         x.Status
                     }),
-                    ProcureMentMethod = db.ProcurementMethodOrganisationsettings.Where(x=> x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
+                    ProcureMentMethod = db.ProcurementMethodOrganizationsettings.Where(x=> x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
                     {
                         x.ProcurementMethodID,
                         x.ProcurementMethod.Name
                     }),
-                    ProjectCategory = db.ProjectCategoryOrganisationSettings.Where(x => x.TenantID == tenantId && x.EnableProjectCategory == true).Select(x => new
+                    ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(x => x.TenantID == tenantId && x.EnableProjectCategory == true).Select(x => new
                     {
                         x.ProjectCategoryID,
                         x.ProjectCategory.Name
@@ -804,6 +851,15 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 Guid? tenantId = catalog.GetTenantID();
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 int ProcurementStatusID = 0;
                 int.TryParse(GetConfiguration("PendingProcurementStatusID"), out ProcurementStatusID);
                 var DepartmentName = db.Procurements.Where(x=> x.TenantID == tenantId).Select(x => x.DepartmentID).Distinct();
@@ -841,6 +897,15 @@ namespace ProcureEaseAPI.Controllers
         public ActionResult ProcurementNeeds(string id = "", string id2 = "")
         {
             Guid? tenantId = catalog.GetTenantID();
+            if (tenantId == null)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "TenantId is null",
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
             switch (string.IsNullOrEmpty(id) && (string.IsNullOrEmpty(id2)))
             {
                 case true:
@@ -878,6 +943,15 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 Guid? tenantId = catalog.GetTenantID();
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 int ProcurementStatusID = 0;
                 int.TryParse(GetConfiguration("PendingProcurementStatusID"), out ProcurementStatusID);
                 DateTimeSettings DateTimeSettings = new DateTimeSettings();
@@ -1199,6 +1273,15 @@ namespace ProcureEaseAPI.Controllers
         public ActionResult ProcurementPlan(string id = "", string id2 = "")
         {
             Guid? tenantId = catalog.GetTenantID();
+            if (tenantId == null)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "TenantId is null",
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
             switch (string.IsNullOrEmpty(id) && (string.IsNullOrEmpty(id2)))
             {
                 case true:
@@ -1275,12 +1358,12 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementStatusID,
                         x.Status
                     }),
-                    ProcureMentMethod = db.ProcurementMethodOrganisationsettings.Where(x=> x.TenantID == tenantId && x.EnableProcurementMethod==true).Select(x => new
+                    ProcureMentMethod = db.ProcurementMethodOrganizationsettings.Where(x=> x.TenantID == tenantId && x.EnableProcurementMethod==true).Select(x => new
                     {
                         x.ProcurementMethodID,
                         x.ProcurementMethod.Name
                     }),
-                    ProjectCategory = db.ProjectCategoryOrganisationSettings.Where(x => x.TenantID == tenantId && x.EnableProjectCategory == true).Select(x => new
+                    ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(x => x.TenantID == tenantId && x.EnableProjectCategory == true).Select(x => new
                     {
                         x.ProjectCategoryID,
                         x.ProjectCategory.Name
@@ -1297,6 +1380,15 @@ namespace ProcureEaseAPI.Controllers
         private ActionResult AllProcurementNeedsJson()
         {
             Guid? tenantId = catalog.GetTenantID();
+            if (tenantId == null)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "TenantId is null",
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
             int draftProcurementStatusID = 0;
             int.TryParse(GetConfiguration("DraftProcurementStatusID"), out draftProcurementStatusID);
             int attestedProcurementStatusID = 0;
@@ -1343,12 +1435,12 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementStatusID,
                         x.Status
                     }),
-                    ProcureMentMethod = db.ProcurementMethodOrganisationsettings.Where(x => x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
+                    ProcureMentMethod = db.ProcurementMethodOrganizationsettings.Where(x => x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
                     {
                         x.ProcurementMethodID,
                         x.ProcurementMethod.Name
                     }),
-                    ProjectCategory = db.ProjectCategoryOrganisationSettings.Where(x => x.TenantID == tenantId && x.EnableProjectCategory == true).Select(x => new
+                    ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(x => x.TenantID == tenantId && x.EnableProjectCategory == true).Select(x => new
                     {
                         x.ProjectCategoryID,
                         x.ProjectCategory.Name
@@ -1402,7 +1494,7 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementStatusID,
                         x.Status
                     }),
-                    ProcureMentMethod = db.ProcurementMethodOrganisationsettings.Where(x => x.TenantID == tenantId).Select(x => new
+                    ProcureMentMethod = db.ProcurementMethodOrganizationsettings.Where(x => x.TenantID == tenantId).Select(x => new
                     {
                         x.ProcurementMethodID,
                         x.ProcurementMethod.Name
@@ -1429,6 +1521,15 @@ namespace ProcureEaseAPI.Controllers
         private ActionResult AllProcurementPlanJson()
         {
             Guid? tenantId = catalog.GetTenantID();
+            if (tenantId == null)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "TenantId is null",
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
             int approvedProcurementStatusID = 0;
             int.TryParse(GetConfiguration("ApprovedProcurementStatusID"), out approvedProcurementStatusID);
             return Json(new
@@ -1468,7 +1569,7 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementStatusID,
                         x.Status
                     }),
-                    ProcureMentMethod = db.ProcurementMethodOrganisationsettings.Where(x => x.TenantID == tenantId).Select(x => new
+                    ProcureMentMethod = db.ProcurementMethodOrganizationsettings.Where(x => x.TenantID == tenantId).Select(x => new
                     {
                         x.ProcurementMethodID,
                         x.ProcurementMethod.Name
@@ -1507,6 +1608,15 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 Guid? tenantId = catalog.GetTenantID();
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 int ProcurementStatusID = 0;
                 int.TryParse(GetConfiguration("ApprovedProcurementStatusID"), out ProcurementStatusID);
                 return Json(new
@@ -1546,6 +1656,15 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 Guid? tenantId = catalog.GetTenantID();
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 int ProcurementStatusID = 0;
                 int.TryParse(GetConfiguration("ApprovedProcurementStatusID"), out ProcurementStatusID);
                 DateTimeSettings DateTimeSettings = new DateTimeSettings();
@@ -1817,6 +1936,15 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 Guid? tenantId = catalog.GetTenantID();
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 int ProcurementStatusID = 0;
                 int.TryParse(GetConfiguration("ApprovedProcurementStatusID"), out ProcurementStatusID);
                 DateTimeSettings DateTimeSettings = new DateTimeSettings();

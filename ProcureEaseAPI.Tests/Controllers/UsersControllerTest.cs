@@ -17,7 +17,7 @@ namespace ProcureEaseAPI.Tests.Controllers
     [TestClass]
    public class UsersControllerTest
     {
-      public  string LOCAL_SERVER = "http://localhost.procureease.ng/";
+      public  string LOCAL_SERVER = "http://localhosts.procureease.ng.com";
 
         [TestMethod]
         public async Task TestLogin_WithInvalidLoginDetails()
@@ -43,45 +43,45 @@ namespace ProcureEaseAPI.Tests.Controllers
             }
         }
 
-        //[TestMethod]
-        //public virtual void TestGetTenantID_Successfully()
-        //{
-        //    var controller = new CatalogsController();
-        //    MockController(controller, LOCAL_SERVER);
+        [TestMethod]
+        public virtual void TestGetTenantID_Successfully()
+        {
+            var controller = new CatalogsController();
+            Mocker.MockControllerContext(controller, LOCAL_SERVER);
 
-        //    var host = controller.Request.Url.Host;
-        //    Console.WriteLine(host);
-        //    var result = controller.GetTenantID();
-        //    Console.WriteLine(result);
+            var host = controller.Request.Url.Host;
+              Console.WriteLine(host);
+             var result = controller.GetTenantID();
+              Console.WriteLine(result);
 
-        //    string url = System.Web.HttpContext.Current.Request.Url.Host; // expecting format nitda.procureease.ng
-        //    string[] hostUrlParts = url.Split('.');// extract sub domain from URL
-        //    string subDomain = hostUrlParts[0];
-        //    Console.WriteLine(subDomain);
+            //string url = System.Web.HttpContext.Current.Request.Url.Host; // expecting format nitda.procureease.ng
+            string[] hostUrlParts = host.Split('.');// extract sub domain from URL
+            string subDomain = hostUrlParts[0];
+            Console.WriteLine(subDomain);
 
-        //    Assert.IsNotNull(result);
-        //}
+            Assert.IsNotNull(result);
+        }
 
-        //[TestMethod]
-        //public virtual void TestGetTenantID_TenantIDNotFound()
-        //{
-        //    string LOCAL_SERVER2 = "http://ncc.procureease.ng/";
+        [TestMethod]
+        public virtual void TestGetTenantID_TenantIDNotFound()
+        {
+            string LOCAL_SERVER2 = "http://ncc.procureease.ng/";
 
-        //    var controller = new CatalogsController();
-        //    MockController(controller, LOCAL_SERVER2);
+            var controller = new CatalogsController();
+            Mocker.MockControllerContext(controller, LOCAL_SERVER2);
 
-        //    var host = controller.Request.Url.Host;
-        //    Console.WriteLine(host);
-        //    var result = controller.GetTenantID();
-        //    Console.WriteLine(result);
+            var host = controller.Request.Url.Host;
+            Console.WriteLine(host);
+            var result = controller.GetTenantID();
+            Console.WriteLine(result);
 
-        //    string url = System.Web.HttpContext.Current.Request.Url.Host; // expecting format nitda.procureease.ng
-        //    string[] hostUrlParts = url.Split('.');// extract sub domain from URL
-        //    string subDomain = hostUrlParts[0];
-        //    Console.WriteLine(subDomain);
+            string url = System.Web.HttpContext.Current.Request.Url.Host; // expecting format nitda.procureease.ng
+            string[] hostUrlParts = url.Split('.');// extract sub domain from URL
+            string subDomain = hostUrlParts[0];
+            Console.WriteLine(subDomain);
 
-        //    Assert.IsNull(result);
-        //}
+            Assert.IsNull(result);
+        }
 
         [TestMethod]
         public async Task TestAddUser_Unsuccessfully_UserEmailAlreadyExists()

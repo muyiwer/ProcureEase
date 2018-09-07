@@ -40,7 +40,7 @@ namespace ProcureEaseAPI.Controllers
                 db.SourceOfFunds.Add(sourceOfFunds);
 
                 SourceOfFundsOrganizationSettings sourceOfFundsOrganisationSettings = new SourceOfFundsOrganizationSettings();
-                sourceOfFundsOrganisationSettings.SourceOfFundID = sourceOfFunds.SourceOfFundID;
+                sourceOfFundsOrganisationSettings.SourceOfFunID = sourceOfFunds.SourceOfFundID;
                 sourceOfFundsOrganisationSettings.TenantID = catalog.GetTenantID();
                 sourceOfFundsOrganisationSettings.OrganizationID = OrganizationID;
                 sourceOfFundsOrganisationSettings.EnableSourceOFFund = sourceOfFundsOrganisationSettings.EnableSourceOFFund;
@@ -58,7 +58,7 @@ namespace ProcureEaseAPI.Controllers
                         TenantID = db.SourceOfFunds.Where(y => y.TenantID == tenantID).Select(y => x.TenantID),
                         x.SourceOfFundID,
                         x.SourceOfFund,
-                        Enabled = db.SourceOfFundsOrganizationSettings.Where(y => y.SourceOfFundID == y.SourceOfFundID).Select(y => y.EnableSourceOFFund)
+                        Enabled = db.SourceOfFundsOrganizationSettings.Where(y => y.SourceOfFunID == y.SourceOfFunID).Select(y => y.EnableSourceOFFund)
                     })
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -137,7 +137,7 @@ namespace ProcureEaseAPI.Controllers
                 var tenantID = catalog.GetTenantID();
                 DateTime dt = DateTime.Now;
                 var currentSourceOfFund = db.SourceOfFunds.FirstOrDefault(s => s.SourceOfFundID == s.SourceOfFundID);
-                var CurrentSourceOfFundOrganizationSettings = db.SourceOfFundsOrganizationSettings.FirstOrDefault(s => s.SourceOfFundID == s.SourceOfFundID);
+                var CurrentSourceOfFundOrganizationSettings = db.SourceOfFundsOrganizationSettings.FirstOrDefault(s => s.SourceOfFunID == s.SourceOfFunID);
 
                 if (currentSourceOfFund == null)
                 {
@@ -166,7 +166,7 @@ namespace ProcureEaseAPI.Controllers
                         TenantID = db.SourceOfFunds.Where(y => y.TenantID == tenantID).Select(y => x.TenantID),
                         x.SourceOfFundID,
                         x.SourceOfFund,
-                        Enabled = db.SourceOfFundsOrganizationSettings.Where(y => y.SourceOfFundID == y.SourceOfFundID).Select(y => y.EnableSourceOFFund)
+                        Enabled = db.SourceOfFundsOrganizationSettings.Where(y => y.SourceOfFunID == y.SourceOfFunID).Select(y => y.EnableSourceOFFund)
                     })
                 }, JsonRequestBehavior.AllowGet);
             }

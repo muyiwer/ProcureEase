@@ -219,7 +219,7 @@ namespace ProcureEaseAPI.Controllers
             {
                 db.SourceOfFundsOrganizationSettings.Add(new SourceOfFundsOrganizationSettings()
                 {
-                    SourceOfFundID = source.SourceOfFundID,
+                    SourceOfFunID = source.SourceOfFundID,
                     OrganizationID = OrganizationID,
                     TenantID = TenantID,
                     EnableSourceOFFund = true,

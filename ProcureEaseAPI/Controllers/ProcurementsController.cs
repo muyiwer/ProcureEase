@@ -1407,7 +1407,7 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementMethodID,
                         x.ProcurementMethod.Name
                     }),
-                    ProjectCategory = db.ProjectCategory.Where(x => x.TenantID == tenantId).Select(x => new
+                    ProjectCategory = db.ProjectCategory.Where(x => x.ProjectCategoryID == x.ProjectCategoryID).Select(x => new
                     {
                         x.ProjectCategoryID,
                         x.Name
@@ -1473,7 +1473,7 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementMethodID,
                         x.ProcurementMethod.Name
                     }),
-                    ProjectCategory = db.ProjectCategory.Where(x => x.TenantID == tenantId).Select(x => new
+                    ProjectCategory = db.ProjectCategory.Where(x => x.ProjectCategoryID == x.ProjectCategoryID).Select(x => new
                     {
                         x.ProjectCategoryID,
                         x.Name

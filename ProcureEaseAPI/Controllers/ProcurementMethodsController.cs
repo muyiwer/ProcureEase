@@ -14,6 +14,7 @@ namespace ProcureEaseAPI.Controllers
     public class ProcurementMethodsController : Controller
     {
         private ProcureEaseEntities db = new ProcureEaseEntities();
+        private CatalogsController catalog = new CatalogsController();
 
         // GET: ProcurementMethods
         public ActionResult Index()
@@ -31,9 +32,10 @@ namespace ProcureEaseAPI.Controllers
                 procurementMethod.ProcurementMethodID = Guid.NewGuid();
                 procurementMethod.DateCreated = dt;
                 procurementMethod.DateModified = dt;
-                procurementMethod.CreatedBy = "MDA Administrator";
+                procurementMethod.CreatedBy = "Techspecialist";
                 db.ProcurementMethod.Add(procurementMethod);
                 db.SaveChanges();
+
                 return Json(new
                 {
                     success = true,

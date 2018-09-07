@@ -14,7 +14,6 @@ namespace ProcureEaseAPI.Controllers
     public class ProcurementMethodsController : Controller
     {
         private ProcureEaseEntities db = new ProcureEaseEntities();
-        private CatalogsController catalog = new CatalogsController();
 
         // GET: ProcurementMethods
         public ActionResult Index()
@@ -32,19 +31,17 @@ namespace ProcureEaseAPI.Controllers
                 procurementMethod.ProcurementMethodID = Guid.NewGuid();
                 procurementMethod.DateCreated = dt;
                 procurementMethod.DateModified = dt;
-                procurementMethod.CreatedBy = "Techspecialist";
+                procurementMethod.CreatedBy = "MDA Administrator";
                 db.ProcurementMethod.Add(procurementMethod);
                 db.SaveChanges();
-
                 return Json(new
                 {
                     success = true,
                     message = "Procurement Method added successfully!!!",
-                    data = db.ProcurementMethodOrganizationSettings.Select(x => new
+                    data = db.ProcurementMethod.Select(x => new
                     {
                         x.ProcurementMethodID,
-                        x.ProcurementMethod.Name,
-                        x.EnableProcurementMethod,
+                        x.Name
                     })
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -144,11 +141,11 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = true,
                     message = "Editted successfully!!!",
-                    data = db.ProcurementMethodOrganizationSettings.Select(x => new
+                    data = db.ProcurementMethod.Select(x => new
                     {
                         x.ProcurementMethodID,
-                        x.ProcurementMethod.Name,
-                        x.EnableProcurementMethod,
+                        x.Name,
+                        Enabled = db.ProcurementMethodOrganizationSettings.Where(y => y.ProcurementMethodID == y.ProcurementMethodID).Select(y => y.EnableProcurementMethod)  
                     })
                 }, JsonRequestBehavior.AllowGet);
             }

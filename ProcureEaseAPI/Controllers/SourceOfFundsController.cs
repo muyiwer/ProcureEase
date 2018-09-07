@@ -40,11 +40,10 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = true,
                     message = "Source Of Fund added successfully!!!",
-                    data = db.SourceOfFundsOrganizationSettings.Where(x => x.TenantID == tenantID).Select(x => new
+                    data = db.SourceOfFunds.Select(x => new
                     {
                         x.SourceOfFundID,
-                        x.SourceOfFunds.SourceOfFund,                        
-                        x.EnableSourceOFFund
+                        x.SourceOfFund,                        
                     })
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -116,7 +115,7 @@ namespace ProcureEaseAPI.Controllers
 
         // POST: SourceOfFunds/Edit
         [HttpPost]
-        public ActionResult Edit(SourceOfFundsOrganizationSettings sourceOfFundsOrganizationSettings)
+        public ActionResult Edit(SourceOfFunds sourceOfFunds)
         {
             try
             {
@@ -124,7 +123,7 @@ namespace ProcureEaseAPI.Controllers
                 DateTime dt = DateTime.Now;
 
                 var CurrentSourceOfFundIDOnOrganizationSettings = db.SourceOfFundsOrganizationSettings.FirstOrDefault(s => s.SourceOfFundID == s.SourceOfFundID);
-                var CurrentSourceOfFundOnOrganizationSettings = db.SourceOfFundsOrganizationSettings.Where(x => x.SourceOfFunds == x.SourceOfFunds).Select(x => x.SourceOfFunds).FirstOrDefault();
+                var CurrentSourceOfFund = db.SourceOfFunds.Where(x => x.SourceOfFund == x.SourceOfFund).Select(x => x.SourceOfFund).FirstOrDefault();
 
                 if (CurrentSourceOfFundIDOnOrganizationSettings == null)
                 {
@@ -136,7 +135,7 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                if (CurrentSourceOfFundOnOrganizationSettings != null)
+                if (CurrentSourceOfFund != null)
                 {
                     CurrentSourceOfFundIDOnOrganizationSettings.EnableSourceOFFund = CurrentSourceOfFundIDOnOrganizationSettings.EnableSourceOFFund;
                     CurrentSourceOfFundIDOnOrganizationSettings.DateModified = dt;
@@ -144,14 +143,24 @@ namespace ProcureEaseAPI.Controllers
                 }
                 else
                 {
-                    sourceOfFundsOrganizationSettings.SourceOfFundID = Guid.NewGuid();
+                    var Organization = db.OrganizationSettings.Where(x => x.TenantID == tenantID).Select(x => x.OrganizationNameInFull).FirstOrDefault();
+                    
+                    sourceOfFunds.SourceOfFundID = Guid.NewGuid();
+                    sourceOfFunds.SourceOfFund = sourceOfFunds.SourceOfFund;
+                    sourceOfFunds.DateCreated = dt;
+                    sourceOfFunds.DateModified = dt;
+                    sourceOfFunds.CreatedBy = Organization;
+                    db.SourceOfFunds.Add(sourceOfFunds);
+
+                    SourceOfFundsOrganizationSettings sourceOfFundsOrganizationSettings = new SourceOfFundsOrganizationSettings();
+                    sourceOfFundsOrganizationSettings.SourceOfFundID = sourceOfFunds.SourceOfFundID;
                     sourceOfFundsOrganizationSettings.TenantID = tenantID;
                     sourceOfFundsOrganizationSettings.OrganizationID = catalog.GetOrganizationID();
-                    sourceOfFundsOrganizationSettings.SourceOfFunds = sourceOfFundsOrganizationSettings.SourceOfFunds;
-                    sourceOfFundsOrganizationSettings.EnableSourceOFFund = sourceOfFundsOrganizationSettings.EnableSourceOFFund;
+                    sourceOfFundsOrganizationSettings.EnableSourceOFFund = true;
                     sourceOfFundsOrganizationSettings.DateCreated = dt;
                     sourceOfFundsOrganizationSettings.DateModified = dt;
                     db.SourceOfFundsOrganizationSettings.Add(sourceOfFundsOrganizationSettings);
+
                     db.SaveChanges();
                 }
                 return Json(new

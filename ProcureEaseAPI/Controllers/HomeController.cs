@@ -33,101 +33,6 @@ namespace ProcureEaseAPI.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        // POST: Home/RequestForDemo
-        [HttpPost]
-        public async Task<ActionResult> RequestForDemo(RequestForDemo requestForDemo)
-        {
-            try
-            {
-                var OrganizationFullName = db.RequestForDemo.Where(x => x.OrganizationFullName == requestForDemo.OrganizationFullName).Select(x => x.OrganizationFullName).FirstOrDefault();
-                if (OrganizationFullName != null)
-                {
-                    LogHelper.Log(Log.Event.REQUESTFORDEMO, "Duplicate insertion attempt, OrganizationFullName already exist");
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    return Error("Duplicate insertion attempt, Organization Full Name already exist");
-                }
-                var OrganizationShortName = db.RequestForDemo.Where(x => x.OrganizationShortName == requestForDemo.OrganizationShortName).Select(x => x.OrganizationShortName).FirstOrDefault();
-                if (OrganizationShortName != null)
-                {
-                    LogHelper.Log(Log.Event.REQUESTFORDEMO, "Duplicate insertion attempted, OrganizationShortName already exist");
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    return Error("Duplicate insertion attempt, Organization Short Name already exist");
-                }
-                var AdministratorEmail = db.RequestForDemo.Where(x => x.AdministratorEmail == requestForDemo.AdministratorEmail).Select(x => x.AdministratorEmail).FirstOrDefault();
-                if (AdministratorEmail != null)
-                {
-                    LogHelper.Log(Log.Event.REQUESTFORDEMO, "Duplicate insertion attempted, AdministratorEmail already exist");
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    return Error("Duplicate insertion attempt, Administrator Email already exist");
-                }
-                var AdministratorPhoneNumber = db.RequestForDemo.Where(x => x.AdministratorPhoneNumber == requestForDemo.AdministratorPhoneNumber).Select(x => x.AdministratorPhoneNumber).FirstOrDefault();
-                if (AdministratorPhoneNumber != null)
-                {
-                    LogHelper.Log(Log.Event.REQUESTFORDEMO, "Duplicate insertion attempted, AdministratorPhoneNumber already exist");
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    return Error("Duplicate insertion attempt, Administrator PhoneNumber already exist");
-                }
-                DateTime dt = DateTime.Now;
-                requestForDemo.RequestID = Guid.NewGuid();
-                requestForDemo.DateCreated = dt;
-                db.RequestForDemo.Add(requestForDemo);
-                db.SaveChanges();
-
-                await SendMailToTechspecialist(requestForDemo);
-                await SendMailToUser(requestForDemo);
-
-                return Json(new
-                {
-                    success = true,
-                    message = "Request Sent Successfully",
-                    data = db.RequestForDemo.Where(x => x.RequestID == requestForDemo.RequestID).Select(x => new
-                    {
-                        x.RequestID,
-                        x.OrganizationFullName,
-                        x.OrganizationShortName,
-                        x.AdministratorEmail,
-                        x.AdministratorFirstName,
-                        x.AdministratorLastName,
-                        x.AdministratorPhoneNumber,
-                        DateCreated = x.DateCreated.Value.ToString()
-                    })
-                });
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log(Log.Event.REQUESTFORDEMO, ex.Message);
-                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = new { }
-                }, JsonRequestBehavior.AllowGet);
-            }
-        }
-        public async Task SendMailToTechspecialist(RequestForDemo requestForDemo)
-        {
-            var RecipientEmail = requestForDemo.AdministratorEmail;
-            string Subject = "Request For Demo";
-            string Body = new EmailTemplateHelper().GetTemplateContent("RequestForDemoTemplate_User");
-            string newTemplateContent = string.Format(Body, "annieajeks@gmail.com");
-            //newTemplateContent = newTemplateContent.Replace("[RecipientEmail]", RecipientEmail.Trim());
-            Message message = new Message(RecipientEmail, Subject, newTemplateContent);
-            EmailHelper emailHelper = new EmailHelper();
-            await emailHelper.AddEmailToQueue(message);
-        }
-        public async Task SendMailToUser(RequestForDemo requestForDemo)
-        {
-            var RecipientEmail = requestForDemo.AdministratorEmail;
-            string Subject = "Request For Demo";
-            string Body = new EmailTemplateHelper().GetTemplateContent("RequestForDemoTemplate_Techspecialist");
-            string newTemplateContent = string.Format(Body, requestForDemo.AdministratorEmail);
-            //newTemplateContent = newTemplateContent.Replace("[RecipientEmail]", RecipientEmail.Trim());
-            Message message = new Message(RecipientEmail, Subject, newTemplateContent);
-            EmailHelper emailHelper = new EmailHelper();
-            await emailHelper.AddEmailToQueue(message);
-        }
-
         // POST: Home/OrganizationUnBoarding
         [HttpPost]
         public ActionResult OrganizationOnboarding(Guid RequestID)
@@ -140,9 +45,9 @@ namespace ProcureEaseAPI.Controllers
                 var ThisTenant = db.OrganizationSettings.Where(x => x.OrganizationID == x.OrganizationID).Select(x => x.OrganizationNameAbbreviation).FirstOrDefault();
                 if (ThisTenant != null)
                 {
-                    LogHelper.Log(Log.Event.ONBOARDING, "Duplicate insertion attempt, Organization already exist");
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    return Error("Duplicate insertion attempt, Organization already exist");
+                    //LogHelper.Log(Log.Event.ONBOARDING, "Duplicate insertion attempt, Organization already exist");
+                    //Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    //return Error("Duplicate insertion attempt, Organization already exist");
                 }
                 else
                 {
@@ -169,20 +74,44 @@ namespace ProcureEaseAPI.Controllers
                 UpdateTenantRecord.DateModified = dt;
                 db.SaveChanges();
 
-                SaveDefaultSouceOfFundRecord();
                 SaveDefaultProcurementMethodRecord();
+                SaveDefaultSouceOfFundRecord();
                 SaveDefaultProjectCategoryRecord();
 
+                var SourceOfFunds = db.SourceOfFundsOrganizationSettings.Where(x => x.TenantID == tenantID).Select(x => new
+                {
+                    x.SourceOfFundID,
+                    x.SourceOfFunds.SourceOfFund,
+                    x.EnableSourceOFFund
+                });
+
+                var ProcurementMethod = db.ProcurementMethodOrganizationSettings.Where(x => x.TenantID == tenantID).Select(x => new
+                {
+                    x.ProcurementMethodID,
+                    x.ProcurementMethod.Name,
+                    x.EnableProcurementMethod
+                });
+                var ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(x => x.TenantID == tenantID).Select(x => new
+                {
+                    x.ProjectCategoryID,
+                    x.ProjectCategory.Name,
+                    x.EnableProjectCategory
+                });
                 return Json(new
                 {
                     success = true,
                     message = "Organization Onboarded Successfully",
-                    data = new { }
+                    data = db.Catalog.Where(x => x.TenantID == tenantID).Select(x => new
+                    {
+                        SourceOfFunds = SourceOfFunds,
+                        ProcurementMethod = ProcurementMethod,
+                        ProjectCategory = ProjectCategory
+                    })
                 });
             }
             catch (Exception ex)
             {
-                LogHelper.Log(Log.Event.ONBOARDING, ex.Message);
+                //LogHelper.Log(Log.Event.ONBOARDING, ex.Message);
                 return Json(new
                 {
                     success = false,
@@ -222,15 +151,30 @@ namespace ProcureEaseAPI.Controllers
                     SourceOfFundID = source.SourceOfFundID,
                     OrganizationID = OrganizationID,
                     TenantID = TenantID,
-                    EnableSourceOFFund = true,
+                    EnableSourceOFFund = false,
                     DateCreated = dt
                 });
                 db.SaveChanges();
             }
+            //List<string> string1 = new List<string>();
+            //string1.Add("test1");
+            //string1.Add("test2");
+            //string1.Add("test3");
+            //string1.Add("test4");
+            //var UpdateSourceOfFund = db.SourceOfFunds.Select(x => x.SourceOfFund == "Budgetary allocation/appropriation" && x.SourceOfFund == "Internally generated fund" && x.SourceOfFund == "Special intervention fund" && x.SourceOfFund == "Power sector intervention fund" && x.SourceOfFund == "ETF Special intervention fund").ToList();
+            //foreach (string str in string1)
+            //{
+            //    SourceOfFundsOrganizationSettings sourceOfFundsOrganizationSettings = db.SourceOfFundsOrganizationSettings.Find(source.SourceOfFundID);
+            //    sourceOfFundsOrganizationSettings.EnableSourceOFFund = true;
+            //    sourceOfFundsOrganizationSettings.DateModified = dt;
+            //    db.Entry(sourceOfFundsOrganizationSettings).State = EntityState.Modified;
+            //    db.SaveChanges();
+            //}
         }
         public void SaveDefaultProcurementMethodRecord()
         {
             DateTime dt = DateTime.Now;
+            var CurrentProcurementMethod = db.ProcurementMethodOrganizationSettings.Where(s => s.ProcurementMethodID == s.ProcurementMethodID);
             var OrganizationID = db.OrganizationSettings.Where(x => x.OrganizationID == x.OrganizationID).Select(x => x.OrganizationID).FirstOrDefault();
             var TenantID = db.Catalog.Where(x => x.TenantID == x.TenantID).Select(x => x.TenantID).FirstOrDefault();
             var ProcurementMethod = db.ProcurementMethod.ToList();
@@ -241,9 +185,20 @@ namespace ProcureEaseAPI.Controllers
                     ProcurementMethodID = source.ProcurementMethodID,
                     OrganizationID = OrganizationID,
                     TenantID = TenantID,
-                    EnableProcurementMethod = true,
+                    EnableProcurementMethod = false,
                     DateCreated = dt
                 });
+                db.SaveChanges();
+            }
+            var UpdateProcurementMethod = db.ProcurementMethod.Select(x => x.Name == "Selective Tendering" && x.Name == "Direct procurement" && x.Name == "Open Competitive method").ToList();
+            bool[] DefaultProcurementMethod = new bool[3];
+            DefaultProcurementMethod.ToString();
+            foreach (ProcurementMethod source in ProcurementMethod)
+            {
+                ProcurementMethodOrganizationSettings procurementMethodOrganizationSettings = db.ProcurementMethodOrganizationSettings.Find(source.ProcurementMethodID);
+                procurementMethodOrganizationSettings.EnableProcurementMethod = true;
+                procurementMethodOrganizationSettings.DateModified = dt;
+                db.Entry(procurementMethodOrganizationSettings).State = EntityState.Modified;
                 db.SaveChanges();
             }
         }
@@ -260,10 +215,71 @@ namespace ProcureEaseAPI.Controllers
                     ProjectCategoryID = source.ProjectCategoryID,
                     OrganizationID = OrganizationID,
                     TenantID = TenantID,
-                    EnableProjectCategory = true,
+                    EnableProjectCategory = false,
                     DateCreated = dt
                 });
                 db.SaveChanges();
+            }
+
+            var UpdateProjectCategory = db.ProjectCategory.Where(x => x.Name == "Goods" && x.Name == "Services" && x.Name == "Works").ToList();
+            foreach (ProjectCategory source in UpdateProjectCategory)
+            {
+                ProjectCategoryOrganizationSettings projectCategoryOrganizationSettings = db.ProjectCategoryOrganizationSettings.Find(source.ProjectCategoryID);
+                projectCategoryOrganizationSettings.EnableProjectCategory = true;
+                projectCategoryOrganizationSettings.DateModified = dt;
+                db.Entry(projectCategoryOrganizationSettings).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+        }
+
+        public ActionResult test()
+        {
+            DateTime dt = DateTime.Now;
+            List<string> string1 = new List<string>();
+            string1.Add("Budgetary allocation/appropriation");
+            string1.Add("Internally generated fund");
+            string1.Add("Special intervention fund");
+            string1.Add("Power sector intervention fund");
+            var databaselist = db.SourceOfFunds.Where(x=> x.SourceOfFundID == x.SourceOfFundID).Select(x=> x.SourceOfFund).FirstOrDefault();
+            var sourceOfFundID = db.SourceOfFundsOrganizationSettings.Where(x => x.SourceOfFundID == x.SourceOfFundID).Select(x => x.SourceOfFundID).FirstOrDefault();
+            foreach (string str in string1)
+            {
+                for (int i = 0; i < string1.Count(); i++)
+                {
+                    if (string1[i] == databaselist)
+                    {
+                        foreach (var source in databaselist)
+                        {
+                            SourceOfFundsOrganizationSettings sourceOfFundsOrganizationSettings = db.SourceOfFundsOrganizationSettings.Find(sourceOfFundID);
+                            sourceOfFundsOrganizationSettings.EnableSourceOFFund = true;
+                            sourceOfFundsOrganizationSettings.DateModified = dt;
+                            db.Entry(sourceOfFundsOrganizationSettings).State = EntityState.Modified;
+                            db.SaveChanges();
+                        }
+                    }
+                }
+            }
+            var result = db.SourceOfFunds.ToList();
+            return Json(new
+            {
+                result = result,
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        public IEnumerable<SourceOfFunds> GetElements(IEnumerable<string> hugeList, int chunkSize = 100)
+        {
+            List<string> string1 = new List<string>();
+            string1.Add("Budgetary allocation/appropriation");
+            string1.Add("Internally generated fund");
+            string1.Add("Special intervention fund");
+            string1.Add("Power sector intervention fund");
+            foreach (var chunk in hugeList)
+            {
+                var q = db.SourceOfFunds.Where(a => chunk.Contains(a.SourceOfFund));
+                foreach (var item in q)
+                {
+                    yield return item;
+                }
             }
         }
     }

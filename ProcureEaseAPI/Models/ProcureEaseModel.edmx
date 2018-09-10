@@ -1996,7 +1996,6 @@
           </AssociationSet>
           <EntitySet Name="ProcurementMethodOrganizationSettings" EntityType="ProcureEaseModel.ProcurementMethodOrganizationSettings" />
           <EntitySet Name="ProjectCategoryOrganizationSettings" EntityType="ProcureEaseModel.ProjectCategoryOrganizationSettings" />
-          <EntitySet Name="SourceOfFundsOrganizationSettings" EntityType="ProcureEaseModel.SourceOfFundsOrganizationSettings" />
           <AssociationSet Name="FK_ProcurementMethodOrganizationSettings_Catalog" Association="ProcureEaseModel.FK_ProcurementMethodOrganizationSettings_Catalog">
             <End Role="Catalog" EntitySet="Catalog" />
             <End Role="ProcurementMethodOrganizationSettings" EntitySet="ProcurementMethodOrganizationSettings" />
@@ -2005,10 +2004,6 @@
             <End Role="Catalog" EntitySet="Catalog" />
             <End Role="ProjectCategoryOrganizationSettings" EntitySet="ProjectCategoryOrganizationSettings" />
           </AssociationSet>
-          <AssociationSet Name="FK_SourceOfFundsOrganizationSettings_Catalog" Association="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_Catalog">
-            <End Role="Catalog" EntitySet="Catalog" />
-            <End Role="SourceOfFundsOrganizationSettings" EntitySet="SourceOfFundsOrganizationSettings" />
-          </AssociationSet>
           <AssociationSet Name="FK_ProcurementMethodOrganizationSettings_OrganizationSettings" Association="ProcureEaseModel.FK_ProcurementMethodOrganizationSettings_OrganizationSettings">
             <End Role="OrganizationSettings" EntitySet="OrganizationSettings" />
             <End Role="ProcurementMethodOrganizationSettings" EntitySet="ProcurementMethodOrganizationSettings" />
@@ -2016,6 +2011,11 @@
           <AssociationSet Name="FK_ProjectCategoryOrganizationSettings_OrganizationSettings" Association="ProcureEaseModel.FK_ProjectCategoryOrganizationSettings_OrganizationSettings">
             <End Role="OrganizationSettings" EntitySet="OrganizationSettings" />
             <End Role="ProjectCategoryOrganizationSettings" EntitySet="ProjectCategoryOrganizationSettings" />
+          </AssociationSet>
+          <EntitySet Name="SourceOfFundsOrganizationSettings" EntityType="ProcureEaseModel.SourceOfFundsOrganizationSettings" />
+          <AssociationSet Name="FK_SourceOfFundsOrganizationSettings_Catalog" Association="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_Catalog">
+            <End Role="Catalog" EntitySet="Catalog" />
+            <End Role="SourceOfFundsOrganizationSettings" EntitySet="SourceOfFundsOrganizationSettings" />
           </AssociationSet>
           <AssociationSet Name="FK_SourceOfFundsOrganizationSettings_OrganizationSettings" Association="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_OrganizationSettings">
             <End Role="OrganizationSettings" EntitySet="OrganizationSettings" />
@@ -2496,20 +2496,6 @@
           <NavigationProperty Name="OrganizationSettings" Relationship="ProcureEaseModel.FK_ProjectCategoryOrganizationSettings_OrganizationSettings" FromRole="ProjectCategoryOrganizationSettings" ToRole="OrganizationSettings" />
           <NavigationProperty Name="ProjectCategory" Relationship="ProcureEaseModel.FK_ProjectCategoryOrganizationSettings_ProjectCategory" FromRole="ProjectCategoryOrganizationSettings" ToRole="ProjectCategory" />
         </EntityType>
-        <EntityType Name="SourceOfFundsOrganizationSettings">
-          <Key>
-            <PropertyRef Name="SourceOfFundID" />
-          </Key>
-          <Property Name="SourceOfFundID" Type="Guid" Nullable="false" />
-          <Property Name="TenantID" Type="Guid" />
-          <Property Name="OrganizationID" Type="Guid" />
-          <Property Name="EnableSourceOFFund" Type="Boolean" />
-          <Property Name="DateCreated" Type="DateTime" Precision="3" />
-          <Property Name="DateModified" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_Catalog" FromRole="SourceOfFundsOrganizationSettings" ToRole="Catalog" />
-          <NavigationProperty Name="OrganizationSettings" Relationship="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_OrganizationSettings" FromRole="SourceOfFundsOrganizationSettings" ToRole="OrganizationSettings" />
-          <NavigationProperty Name="SourceOfFunds" Relationship="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_SourceOfFunds" FromRole="SourceOfFundsOrganizationSettings" ToRole="SourceOfFunds" />
-        </EntityType>
         <Association Name="FK_ProcurementMethodOrganizationSettings_Catalog">
           <End Type="ProcureEaseModel.Catalog" Role="Catalog" Multiplicity="0..1" />
           <End Type="ProcureEaseModel.ProcurementMethodOrganizationSettings" Role="ProcurementMethodOrganizationSettings" Multiplicity="*" />
@@ -2530,18 +2516,6 @@
               <PropertyRef Name="TenantID" />
             </Principal>
             <Dependent Role="ProjectCategoryOrganizationSettings">
-              <PropertyRef Name="TenantID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_SourceOfFundsOrganizationSettings_Catalog">
-          <End Type="ProcureEaseModel.Catalog" Role="Catalog" Multiplicity="0..1" />
-          <End Type="ProcureEaseModel.SourceOfFundsOrganizationSettings" Role="SourceOfFundsOrganizationSettings" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Catalog">
-              <PropertyRef Name="TenantID" />
-            </Principal>
-            <Dependent Role="SourceOfFundsOrganizationSettings">
               <PropertyRef Name="TenantID" />
             </Dependent>
           </ReferentialConstraint>
@@ -2567,6 +2541,32 @@
             </Principal>
             <Dependent Role="ProjectCategoryOrganizationSettings">
               <PropertyRef Name="OrganizationID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="SourceOfFundsOrganizationSettings">
+          <Key>
+            <PropertyRef Name="SourceOfFundID" />
+          </Key>
+          <Property Name="SourceOfFundID" Type="Guid" Nullable="false" />
+          <Property Name="TenantID" Type="Guid" />
+          <Property Name="OrganizationID" Type="Guid" />
+          <Property Name="EnableSourceOFFund" Type="Boolean" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="DateModified" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_Catalog" FromRole="SourceOfFundsOrganizationSettings" ToRole="Catalog" />
+          <NavigationProperty Name="OrganizationSettings" Relationship="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_OrganizationSettings" FromRole="SourceOfFundsOrganizationSettings" ToRole="OrganizationSettings" />
+          <NavigationProperty Name="SourceOfFunds" Relationship="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_SourceOfFunds" FromRole="SourceOfFundsOrganizationSettings" ToRole="SourceOfFunds" />
+        </EntityType>
+        <Association Name="FK_SourceOfFundsOrganizationSettings_Catalog">
+          <End Type="ProcureEaseModel.Catalog" Role="Catalog" Multiplicity="0..1" />
+          <End Type="ProcureEaseModel.SourceOfFundsOrganizationSettings" Role="SourceOfFundsOrganizationSettings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Catalog">
+              <PropertyRef Name="TenantID" />
+            </Principal>
+            <Dependent Role="SourceOfFundsOrganizationSettings">
+              <PropertyRef Name="TenantID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>

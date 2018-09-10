@@ -40,8 +40,6 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 DateTime dt = DateTime.Now;
-                string url = System.Web.HttpContext.Current.Request.Url.Host;
-                var tenantID = catalog.GetTenantID();
                 var ThisTenant = db.OrganizationSettings.Where(x => x.OrganizationID == x.OrganizationID).Select(x => x.OrganizationNameAbbreviation).FirstOrDefault();
                 if (ThisTenant != null)
                 {

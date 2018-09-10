@@ -45,9 +45,9 @@ namespace ProcureEaseAPI.Controllers
                 var ThisTenant = db.OrganizationSettings.Where(x => x.OrganizationID == x.OrganizationID).Select(x => x.OrganizationNameAbbreviation).FirstOrDefault();
                 if (ThisTenant != null)
                 {
-                    //LogHelper.Log(Log.Event.ONBOARDING, "Duplicate insertion attempt, Organization already exist");
-                    //Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    //return Error("Duplicate insertion attempt, Organization already exist");
+                    LogHelper.Log(Log.Event.ONBOARDING, "Duplicate insertion attempt, Organization already exist");
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Error("Duplicate insertion attempt, Organization already exist");
                 }
                 else
                 {
@@ -77,41 +77,16 @@ namespace ProcureEaseAPI.Controllers
                 SaveDefaultProcurementMethodRecord();
                 SaveDefaultSouceOfFundRecord();
                 SaveDefaultProjectCategoryRecord();
-
-                var SourceOfFunds = db.SourceOfFundsOrganizationSettings.Where(x => x.TenantID == tenantID).Select(x => new
-                {
-                    x.SourceOfFundID,
-                    x.SourceOfFunds.SourceOfFund,
-                    x.EnableSourceOFFund
-                });
-
-                var ProcurementMethod = db.ProcurementMethodOrganizationSettings.Where(x => x.TenantID == tenantID).Select(x => new
-                {
-                    x.ProcurementMethodID,
-                    x.ProcurementMethod.Name,
-                    x.EnableProcurementMethod
-                });
-                var ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(x => x.TenantID == tenantID).Select(x => new
-                {
-                    x.ProjectCategoryID,
-                    x.ProjectCategory.Name,
-                    x.EnableProjectCategory
-                });
                 return Json(new
                 {
                     success = true,
                     message = "Organization Onboarded Successfully",
-                    data = db.Catalog.Where(x => x.TenantID == tenantID).Select(x => new
-                    {
-                        SourceOfFunds = SourceOfFunds,
-                        ProcurementMethod = ProcurementMethod,
-                        ProjectCategory = ProjectCategory
-                    })
+                    data = new { }
                 });
             }
             catch (Exception ex)
             {
-                //LogHelper.Log(Log.Event.ONBOARDING, ex.Message);
+                LogHelper.Log(Log.Event.ONBOARDING, ex.Message);
                 return Json(new
                 {
                     success = false,
@@ -156,20 +131,38 @@ namespace ProcureEaseAPI.Controllers
                 });
                 db.SaveChanges();
             }
-            //List<string> string1 = new List<string>();
-            //string1.Add("test1");
-            //string1.Add("test2");
-            //string1.Add("test3");
-            //string1.Add("test4");
-            //var UpdateSourceOfFund = db.SourceOfFunds.Select(x => x.SourceOfFund == "Budgetary allocation/appropriation" && x.SourceOfFund == "Internally generated fund" && x.SourceOfFund == "Special intervention fund" && x.SourceOfFund == "Power sector intervention fund" && x.SourceOfFund == "ETF Special intervention fund").ToList();
-            //foreach (string str in string1)
-            //{
-            //    SourceOfFundsOrganizationSettings sourceOfFundsOrganizationSettings = db.SourceOfFundsOrganizationSettings.Find(source.SourceOfFundID);
-            //    sourceOfFundsOrganizationSettings.EnableSourceOFFund = true;
-            //    sourceOfFundsOrganizationSettings.DateModified = dt;
-            //    db.Entry(sourceOfFundsOrganizationSettings).State = EntityState.Modified;
-            //    db.SaveChanges();
-            //}
+            var DefaultSourceOFFund1 = "Budgetary allocation/appropriation";
+            var DefaultSourceOFFundID1 = db.SourceOfFunds.Where(x => x.SourceOfFund.Contains(DefaultSourceOFFund1)).Select(x => x.SourceOfFundID).FirstOrDefault();
+            SourceOfFundsOrganizationSettings sourceOfFundsOrganizationSettings = db.SourceOfFundsOrganizationSettings.Find(DefaultSourceOFFundID1);
+            sourceOfFundsOrganizationSettings.EnableSourceOFFund = true;
+            sourceOfFundsOrganizationSettings.DateModified = dt;
+
+            var DefaultSourceOFFund2 = "Internally generated fund";
+            var DefaultSourceOFFundID2 = db.SourceOfFunds.Where(x => x.SourceOfFund.Contains(DefaultSourceOFFund2)).Select(x => x.SourceOfFundID).FirstOrDefault();
+            sourceOfFundsOrganizationSettings = db.SourceOfFundsOrganizationSettings.Find(DefaultSourceOFFundID2);
+            sourceOfFundsOrganizationSettings.EnableSourceOFFund = true;
+            sourceOfFundsOrganizationSettings.DateModified = dt;
+
+            var DefaultSourceOFFund3 = "Special intervention fund";
+            var DefaultSourceOFFundID3 = db.SourceOfFunds.Where(x => x.SourceOfFund.Contains(DefaultSourceOFFund3)).Select(x => x.SourceOfFundID).FirstOrDefault();
+            sourceOfFundsOrganizationSettings = db.SourceOfFundsOrganizationSettings.Find(DefaultSourceOFFundID3);
+            sourceOfFundsOrganizationSettings.EnableSourceOFFund = true;
+            sourceOfFundsOrganizationSettings.DateModified = dt;
+
+            var DefaultSourceOFFund4 = "Power sector intervention fund";
+            var DefaultSourceOFFundID4 = db.SourceOfFunds.Where(x => x.SourceOfFund.Contains(DefaultSourceOFFund4)).Select(x => x.SourceOfFundID).FirstOrDefault();
+            sourceOfFundsOrganizationSettings = db.SourceOfFundsOrganizationSettings.Find(DefaultSourceOFFundID4);
+            sourceOfFundsOrganizationSettings.EnableSourceOFFund = true;
+            sourceOfFundsOrganizationSettings.DateModified = dt;
+
+            var DefaultSourceOFFund5 = "ETF Special intervention fund";
+            var DefaultSourceOFFundID5 = db.SourceOfFunds.Where(x => x.SourceOfFund.Contains(DefaultSourceOFFund5)).Select(x => x.SourceOfFundID).FirstOrDefault();
+            sourceOfFundsOrganizationSettings = db.SourceOfFundsOrganizationSettings.Find(DefaultSourceOFFundID5);
+            sourceOfFundsOrganizationSettings.EnableSourceOFFund = true;
+            sourceOfFundsOrganizationSettings.DateModified = dt;
+
+            db.Entry(sourceOfFundsOrganizationSettings).State = EntityState.Modified;
+            db.SaveChanges();
         }
         public void SaveDefaultProcurementMethodRecord()
         {
@@ -190,17 +183,26 @@ namespace ProcureEaseAPI.Controllers
                 });
                 db.SaveChanges();
             }
-            var UpdateProcurementMethod = db.ProcurementMethod.Select(x => x.Name == "Selective Tendering" && x.Name == "Direct procurement" && x.Name == "Open Competitive method").ToList();
-            bool[] DefaultProcurementMethod = new bool[3];
-            DefaultProcurementMethod.ToString();
-            foreach (ProcurementMethod source in ProcurementMethod)
-            {
-                ProcurementMethodOrganizationSettings procurementMethodOrganizationSettings = db.ProcurementMethodOrganizationSettings.Find(source.ProcurementMethodID);
-                procurementMethodOrganizationSettings.EnableProcurementMethod = true;
-                procurementMethodOrganizationSettings.DateModified = dt;
-                db.Entry(procurementMethodOrganizationSettings).State = EntityState.Modified;
-                db.SaveChanges();
-            }
+            var DefaultProcurementMethod1 = "Selective Tendering";
+            var DefaultProcurementMethodID1 = db.ProcurementMethod.Where(x => x.Name.Contains(DefaultProcurementMethod1)).Select(x => x.ProcurementMethodID).FirstOrDefault();
+            ProcurementMethodOrganizationSettings procurementMethodOrganizationSettings = db.ProcurementMethodOrganizationSettings.Find(DefaultProcurementMethodID1);
+            procurementMethodOrganizationSettings.EnableProcurementMethod = true;
+            procurementMethodOrganizationSettings.DateModified = dt;
+
+            var DefaultProcurementMethod2 = "Direct procurement";
+            var DefaultProcurementMethodID2 = db.ProcurementMethod.Where(x => x.Name.Contains(DefaultProcurementMethod2)).Select(x => x.ProcurementMethodID).FirstOrDefault();
+            procurementMethodOrganizationSettings = db.ProcurementMethodOrganizationSettings.Find(DefaultProcurementMethodID2);
+            procurementMethodOrganizationSettings.EnableProcurementMethod = true;
+            procurementMethodOrganizationSettings.DateModified = dt;
+
+            var DefaultProcurementMethod3 = "Open Competitive method";
+            var DefaultProcurementMethodID3 = db.ProcurementMethod.Where(x => x.Name.Contains(DefaultProcurementMethod3)).Select(x => x.ProcurementMethodID).FirstOrDefault();
+            procurementMethodOrganizationSettings = db.ProcurementMethodOrganizationSettings.Find(DefaultProcurementMethodID3);
+            procurementMethodOrganizationSettings.EnableProcurementMethod = true;
+            procurementMethodOrganizationSettings.DateModified = dt;
+
+            db.Entry(procurementMethodOrganizationSettings).State = EntityState.Modified;
+            db.SaveChanges();
         }
         public void SaveDefaultProjectCategoryRecord()
         {
@@ -220,67 +222,26 @@ namespace ProcureEaseAPI.Controllers
                 });
                 db.SaveChanges();
             }
+            var DefaultProjectCategory1 = "Goods";
+            var DefaultProjectCategoryID1 = db.ProjectCategory.Where(x => x.Name.Contains(DefaultProjectCategory1)).Select(x => x.ProjectCategoryID).FirstOrDefault();
+            ProjectCategoryOrganizationSettings projectCategoryOrganizationSettings = db.ProjectCategoryOrganizationSettings.Find(DefaultProjectCategoryID1);
+            projectCategoryOrganizationSettings.EnableProjectCategory = true;
+            projectCategoryOrganizationSettings.DateModified = dt;
 
-            var UpdateProjectCategory = db.ProjectCategory.Where(x => x.Name == "Goods" && x.Name == "Services" && x.Name == "Works").ToList();
-            foreach (ProjectCategory source in UpdateProjectCategory)
-            {
-                ProjectCategoryOrganizationSettings projectCategoryOrganizationSettings = db.ProjectCategoryOrganizationSettings.Find(source.ProjectCategoryID);
-                projectCategoryOrganizationSettings.EnableProjectCategory = true;
-                projectCategoryOrganizationSettings.DateModified = dt;
-                db.Entry(projectCategoryOrganizationSettings).State = EntityState.Modified;
-                db.SaveChanges();
-            }
-        }
+            var DefaultProjectCategory2 = "Services";
+            var DefaultProjectCategoryID2 = db.ProjectCategory.Where(x => x.Name.Contains(DefaultProjectCategory2)).Select(x => x.ProjectCategoryID).FirstOrDefault();
+            projectCategoryOrganizationSettings = db.ProjectCategoryOrganizationSettings.Find(DefaultProjectCategoryID2);
+            projectCategoryOrganizationSettings.EnableProjectCategory = true;
+            projectCategoryOrganizationSettings.DateModified = dt;
 
-        public ActionResult test()
-        {
-            DateTime dt = DateTime.Now;
-            List<string> string1 = new List<string>();
-            string1.Add("Budgetary allocation/appropriation");
-            string1.Add("Internally generated fund");
-            string1.Add("Special intervention fund");
-            string1.Add("Power sector intervention fund");
-            var databaselist = db.SourceOfFunds.Where(x=> x.SourceOfFundID == x.SourceOfFundID).Select(x=> x.SourceOfFund).FirstOrDefault();
-            var sourceOfFundID = db.SourceOfFundsOrganizationSettings.Where(x => x.SourceOfFundID == x.SourceOfFundID).Select(x => x.SourceOfFundID).FirstOrDefault();
-            foreach (string str in string1)
-            {
-                for (int i = 0; i < string1.Count(); i++)
-                {
-                    if (string1[i] == databaselist)
-                    {
-                        foreach (var source in databaselist)
-                        {
-                            SourceOfFundsOrganizationSettings sourceOfFundsOrganizationSettings = db.SourceOfFundsOrganizationSettings.Find(sourceOfFundID);
-                            sourceOfFundsOrganizationSettings.EnableSourceOFFund = true;
-                            sourceOfFundsOrganizationSettings.DateModified = dt;
-                            db.Entry(sourceOfFundsOrganizationSettings).State = EntityState.Modified;
-                            db.SaveChanges();
-                        }
-                    }
-                }
-            }
-            var result = db.SourceOfFunds.ToList();
-            return Json(new
-            {
-                result = result,
-            }, JsonRequestBehavior.AllowGet);
-        }
+            var DefaultProjectCategory3 = "Works";
+            var DefaultProjectCategoryID3 = db.ProjectCategory.Where(x => x.Name.Contains(DefaultProjectCategory3)).Select(x => x.ProjectCategoryID).FirstOrDefault();
+            projectCategoryOrganizationSettings = db.ProjectCategoryOrganizationSettings.Find(DefaultProjectCategoryID3);
+            projectCategoryOrganizationSettings.EnableProjectCategory = true;
+            projectCategoryOrganizationSettings.DateModified = dt;
 
-        public IEnumerable<SourceOfFunds> GetElements(IEnumerable<string> hugeList, int chunkSize = 100)
-        {
-            List<string> string1 = new List<string>();
-            string1.Add("Budgetary allocation/appropriation");
-            string1.Add("Internally generated fund");
-            string1.Add("Special intervention fund");
-            string1.Add("Power sector intervention fund");
-            foreach (var chunk in hugeList)
-            {
-                var q = db.SourceOfFunds.Where(a => chunk.Contains(a.SourceOfFund));
-                foreach (var item in q)
-                {
-                    yield return item;
-                }
-            }
+            db.Entry(projectCategoryOrganizationSettings).State = EntityState.Modified;
+            db.SaveChanges();
         }
     }
 }

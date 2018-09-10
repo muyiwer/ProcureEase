@@ -30,8 +30,8 @@ namespace ProcureEaseAPI.Models
     
         public virtual AdvertisedItems AdvertisedItems { get; set; }
         public virtual ApprovedItems ApprovedItems { get; set; }
+        public virtual Catalog Catalog { get; set; }
         public virtual ItemCode ItemCode { get; set; }
         public virtual Procurements Procurements { get; set; }
-        public virtual Catalog Catalog { get; set; }
     }
 }

@@ -45,7 +45,8 @@ namespace Utilities
             PROCUREMENT_NEEDS_SUMMARY,
             PROCUREMENT_PLAN_SUMMARY,
             GET_ORGANIZATION_ID,
-            REQUESTFORDEMO
+            REQUESTFORDEMO,
+            ONBOARDING
         };
     }
 

@@ -22,16 +22,12 @@ namespace ProcureEaseAPI.Models
     
         public System.Guid ProcurementMethodID { get; set; }
         public string Name { get; set; }
-        public Nullable<bool> EnableProcurementMethod { get; set; }
         public Nullable<System.DateTime> DateModified { get; set; }
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> DateCreated { get; set; }
-        public Nullable<System.Guid> TenantID { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Procurements> Procurements { get; set; }
-        public virtual ProcurementMethodOrganisationsettings ProcurementMethodOrganisationsettings { get; set; }
-        public virtual Catalog Catalog { get; set; }
-        public virtual Catalog Catalog1 { get; set; }
+        public virtual ProcurementMethodOrganizationSettings ProcurementMethodOrganizationSettings { get; set; }
     }
 }

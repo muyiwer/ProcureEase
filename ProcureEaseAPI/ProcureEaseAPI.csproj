@@ -308,7 +308,7 @@
     <Compile Include="Models\ProcurementMethod.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\ProcurementMethodOrganisationsettings.cs">
+    <Compile Include="Models\ProcurementMethodOrganizationSettings.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Procurements.cs">
@@ -320,7 +320,7 @@
     <Compile Include="Models\ProjectCategory.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\ProjectCategoryOrganisationSettings.cs">
+    <Compile Include="Models\ProjectCategoryOrganizationSettings.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\RequestForDemo.cs">
@@ -329,7 +329,7 @@
     <Compile Include="Models\SourceOfFunds.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\SourceOfFundsOrganisationSettings.cs">
+    <Compile Include="Models\SourceOfFundsOrganizationSettings.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\sysdiagrams.cs">

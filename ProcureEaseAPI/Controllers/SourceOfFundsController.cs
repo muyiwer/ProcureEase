@@ -115,17 +115,17 @@ namespace ProcureEaseAPI.Controllers
 
         // POST: SourceOfFunds/Edit
         [HttpPost]
-        public ActionResult Edit(SourceOfFunds sourceOfFunds)
+        public ActionResult Edit(SourceOfFundsOrganizationSettings sourceOfFundsOrganizationSettings, string SourceOfFund, bool EnableSourceOFFund)
         {
             try
             {
                 var tenantID = catalog.GetTenantID();
                 DateTime dt = DateTime.Now;
 
-                var CurrentSourceOfFundIDOnOrganizationSettings = db.SourceOfFundsOrganizationSettings.FirstOrDefault(s => s.SourceOfFundID == s.SourceOfFundID);
-                var CurrentSourceOfFund = db.SourceOfFunds.Where(x => x.SourceOfFund == x.SourceOfFund).Select(x => x.SourceOfFund).FirstOrDefault();
+                var CurrentSourceOfFundID = db.SourceOfFundsOrganizationSettings.FirstOrDefault(s => s.SourceOfFundID == sourceOfFundsOrganizationSettings.SourceOfFundID);
+                var CurrentSourceOfFund = db.SourceOfFunds.Where(x => x.SourceOfFund == SourceOfFund).Select(x => x.SourceOfFundID).FirstOrDefault();
 
-                if (CurrentSourceOfFundIDOnOrganizationSettings == null)
+                if (CurrentSourceOfFundID == null)
                 {
                     LogHelper.Log(Log.Event.UPDATE_SOURCEOFFUNDS, "SourceOfFundID not found");
                     return Json(new
@@ -137,22 +137,22 @@ namespace ProcureEaseAPI.Controllers
                 }
                 if (CurrentSourceOfFund != null)
                 {
-                    CurrentSourceOfFundIDOnOrganizationSettings.EnableSourceOFFund = CurrentSourceOfFundIDOnOrganizationSettings.EnableSourceOFFund;
-                    CurrentSourceOfFundIDOnOrganizationSettings.DateModified = dt;
+                    CurrentSourceOfFundID.EnableSourceOFFund = EnableSourceOFFund;
+                    CurrentSourceOfFundID.DateModified = dt;
                     db.SaveChanges();
                 }
                 else
                 {
                     var Organization = db.OrganizationSettings.Where(x => x.TenantID == tenantID).Select(x => x.OrganizationNameInFull).FirstOrDefault();
-                    
+
+                    SourceOfFunds sourceOfFunds = new SourceOfFunds();
                     sourceOfFunds.SourceOfFundID = Guid.NewGuid();
-                    sourceOfFunds.SourceOfFund = sourceOfFunds.SourceOfFund;
+                    sourceOfFunds.SourceOfFund = SourceOfFund;
                     sourceOfFunds.DateCreated = dt;
                     sourceOfFunds.DateModified = dt;
                     sourceOfFunds.CreatedBy = Organization;
                     db.SourceOfFunds.Add(sourceOfFunds);
 
-                    SourceOfFundsOrganizationSettings sourceOfFundsOrganizationSettings = new SourceOfFundsOrganizationSettings();
                     sourceOfFundsOrganizationSettings.SourceOfFundID = sourceOfFunds.SourceOfFundID;
                     sourceOfFundsOrganizationSettings.TenantID = tenantID;
                     sourceOfFundsOrganizationSettings.OrganizationID = catalog.GetOrganizationID();
@@ -171,7 +171,7 @@ namespace ProcureEaseAPI.Controllers
                     {
                         x.SourceOfFundID,
                         x.SourceOfFunds.SourceOfFund,
-                        Enabled = db.SourceOfFundsOrganizationSettings.Where(y => y.EnableSourceOFFund == true).Select(y => y.EnableSourceOFFund).FirstOrDefault()
+                        Enabled = x.EnableSourceOFFund
                     })
                 }, JsonRequestBehavior.AllowGet);
             }

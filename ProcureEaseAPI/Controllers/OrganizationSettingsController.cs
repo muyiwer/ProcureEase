@@ -22,7 +22,7 @@ namespace ProcureEaseAPI.Controllers
             return View(db.OrganizationSettings.ToList());
         }
 
-        //http://localhost:8/OrganizationSettings/UpdateBasicDetails
+        //Post: OrganizationSettings/AddBasicDetails
         [HttpPost]
         [AllowAnonymous]
         public ActionResult AddBasicDetails([Bind(Include = "OrganizationID,OrganizationNameInFull,OrganizationNameAbbreviation,OrganizationEmail,Address,Country,State,AboutOrganization,DateModified,CreatedBy,DateCreated")]OrganizationSettings organizationSettings)
@@ -54,23 +54,7 @@ namespace ProcureEaseAPI.Controllers
             }
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
-        public void AddTelephone(OrganizationSettings organizationSettings, params string[] telephoneNumbers)
-        {
-            foreach (var telephone in telephoneNumbers)
-            {
-                DateTime dt = DateTime.Now;
-                db.TelephoneNumbers.Add(new TelephoneNumbers
-                {
-                    TelephoneNumberID = Guid.NewGuid(),
-                    OrganizationID = organizationSettings.OrganizationID,
-                    TelephoneNumber = telephone,
-                    DateCreated = dt,
-                    DateModified = dt,
-                    CreatedBy = "Admin"
-                });
-                db.SaveChanges();
-            }
-        }
+
         // GET: OrganizationSettings/Details/5
         public ActionResult Details(Guid? id)
         {

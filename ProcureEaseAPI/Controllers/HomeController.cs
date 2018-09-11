@@ -41,24 +41,18 @@ namespace ProcureEaseAPI.Controllers
             {
                 DateTime dt = DateTime.Now;
                 var tenantID = catalog.GetTenantID();
-                var ThisTenant = db.Catalog.Where(x => x.TenantID == x.OrganizationID).Select(x => x.RequestID).FirstOrDefault();
-                var GetRequestID = db.RequestForDemo.Where(x => x.RequestID == x.RequestID).Select(x=> x.RequestID).FirstOrDefault();
-                if (RequestID == null)
+                var GetRequestID = db.RequestForDemo.Where(x => x.RequestID == RequestID).Select(x=> x.RequestID).FirstOrDefault();
+                if (RequestID == null || GetRequestID == null)
                 {
                     LogHelper.Log(Log.Event.ONBOARDING, "RequestID is null");
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    return Error("Please Input RequestID");
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    return Error("RequestID is null OR does not exist");
                 }
-                if (GetRequestID == null)
-                {
-                    LogHelper.Log(Log.Event.ONBOARDING, "RequestID does not exist");
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    return Error("This Organization has not requested for a demo, RequestID does not exist");
-                }
+                var ThisTenant = db.Catalog.Where(x => x.TenantID == tenantID).Select(x => x.RequestID).FirstOrDefault();
                 if (ThisTenant != null)
                 {
                     LogHelper.Log(Log.Event.ONBOARDING, "Duplicate insertion attempt, Organization already exist");
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    Response.StatusCode = (int)HttpStatusCode.Conflict;
                     return Error("Duplicate insertion attempt, Organization already exist");
                 }
                 else
@@ -104,7 +98,7 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = false,
                     message = "" + ex.Message,
-                    data = new { }
+                    data = new {InternalServerError = ex.StackTrace}
                 }, JsonRequestBehavior.AllowGet);
             }
         }

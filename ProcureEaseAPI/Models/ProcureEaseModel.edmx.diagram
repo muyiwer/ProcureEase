@@ -23,14 +23,11 @@
         <EntityTypeShape EntityType="ProcureEaseModel.Items" Width="1.5" PointX="7.5" PointY="35.375" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.OrganizationSettings" Width="1.5" PointX="0.75" PointY="37.875" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.ProcurementStatus" Width="1.5" PointX="5.25" PointY="60.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProcureEaseModel.ProjectCategory" Width="1.5" PointX="5.25" PointY="64" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProcureEaseModel.SourceOfFunds" Width="1.5" PointX="5.25" PointY="71.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.sysdiagrams" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.TelephoneNumbers" Width="1.5" PointX="10.25" PointY="33" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.UserProfile" Width="1.5" PointX="13.5" PointY="41.375" IsExpanded="true" />
         <AssociationConnector Association="ProcureEaseModel.FK__AdvertCat__Adver__4D94879B" ManuallyRouted="false" />
         <AssociationConnector Association="ProcureEaseModel.FK__AdvertCat__Adver__4CA06362" ManuallyRouted="false" />
-        <AssociationConnector Association="ProcureEaseModel.FK__AdvertCat__Proje__4E88ABD4" ManuallyRouted="false" />
         <AssociationConnector Association="ProcureEaseModel.FK__Items__Advertise__5BE2A6F2" ManuallyRouted="false" />
         <AssociationConnector Association="ProcureEaseModel.FK__AdvertLot__Adver__4F7CD00D" ManuallyRouted="false" />
         <AssociationConnector Association="ProcureEaseModel.FK__Adverts__AdvertS__5165187F" ManuallyRouted="false" />
@@ -48,11 +45,7 @@
         <AssociationConnector Association="ProcureEaseModel.FK__AdvertLot__Procu__403A8C7D" />
         <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Budge__4AB81AF0" />
         <AssociationConnector Association="ProcureEaseModel.FK__Items__Procureme__49C3F6B7" />
-        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Proje__4E88ABD4" />
-        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Sourc__4F7CD00D" />
         <AssociationConnector Association="ProcureEaseModel.FK_Procurements_ProcurementStatus" />
-        <EntityTypeShape EntityType="ProcureEaseModel.ProcurementMethod" Width="1.5" PointX="5.25" PointY="30.875" />
-        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Procu__4D94879B" />
         <EntityTypeShape EntityType="ProcureEaseModel.Department" Width="1.5" PointX="15.75" PointY="39.375" />
         <AssociationConnector Association="ProcureEaseModel.FK__Departmen__Depar__59063A47" />
         <AssociationConnector Association="ProcureEaseModel.FK__UserProfi__Depar__6B24EA82" />
@@ -73,27 +66,29 @@
         <AssociationConnector Association="ProcureEaseModel.FK_ItemCode_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_Items_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_OrganizationSettings_Catalog" />
-        <AssociationConnector Association="ProcureEaseModel.FK_ProcurementMethod_Catalog" />
-        <AssociationConnector Association="ProcureEaseModel.FK_ProcurementMethod_Catalog1" />
         <AssociationConnector Association="ProcureEaseModel.FK_Procurements_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_ProcurementStatus_Catalog" />
-        <AssociationConnector Association="ProcureEaseModel.FK_ProjectCategory_Catalog" />
-        <AssociationConnector Association="ProcureEaseModel.FK_ProjectCategory_Catalog1" />
-        <AssociationConnector Association="ProcureEaseModel.FK_SourceOfFunds_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_TelephoneNumbers_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_UserProfile_Catalog" />
         <EntityTypeShape EntityType="ProcureEaseModel.RequestForDemo" Width="1.5" PointX="8.25" PointY="54.875" />
         <AssociationConnector Association="ProcureEaseModel.FK__Catalog__Request__5812160E" />
-        <EntityTypeShape EntityType="ProcureEaseModel.ProcurementMethodOrganizationsettings" Width="1.5" PointX="15.75" PointY="44" />
         <EntityTypeShape EntityType="ProcureEaseModel.ProjectCategoryOrganizationSettings" Width="1.5" PointX="12.75" PointY="51.125" />
         <EntityTypeShape EntityType="ProcureEaseModel.SourceOfFundsOrganizationSettings" Width="1.5" PointX="12.75" PointY="54.75" />
         <AssociationConnector Association="ProcureEaseModel.FK_ProcurementCategoryOrganisationSettings_Catalog" />
-        <AssociationConnector Association="ProcureEaseModel.FK_ProcurementMethodOrganisationsettings_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_SourceOFFundsOrganisationSettings_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_ProcurementCategoryOrganisationSettings_OrganizationSettings" />
-        <AssociationConnector Association="ProcureEaseModel.FK_ProcurementMethodOrganisationsettings_OrganizationSettings" />
         <AssociationConnector Association="ProcureEaseModel.FK_SourceOFFundsOrganisationSettings_OrganizationSettings" />
+        <EntityTypeShape EntityType="ProcureEaseModel.ProcurementMethod" Width="1.5" PointX="0.75" PointY="4" />
+        <EntityTypeShape EntityType="ProcureEaseModel.ProcurementMethodOrganizationSettings" Width="1.5" PointX="13.125" PointY="29.125" />
+        <EntityTypeShape EntityType="ProcureEaseModel.ProjectCategory" Width="1.5" PointX="8.625" PointY="48.375" />
+        <EntityTypeShape EntityType="ProcureEaseModel.SourceOfFunds" Width="1.5" PointX="10.875" PointY="58.375" />
+        <AssociationConnector Association="ProcureEaseModel.FK__AdvertCat__Proje__4E88ABD4" />
+        <AssociationConnector Association="ProcureEaseModel.FK_ProcurementMethodOrganizationSettings_Catalog" />
+        <AssociationConnector Association="ProcureEaseModel.FK_ProcurementMethodOrganisationsettings_OrganizationSettings" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Procu__4D94879B" />
         <AssociationConnector Association="ProcureEaseModel.FK_ProcurementMethodOrganisationsettings_ProcurementMethod" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Proje__4E88ABD4" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Procureme__Sourc__4F7CD00D" />
         <AssociationConnector Association="ProcureEaseModel.FK_ProcurementCategoryOrganisationSettings_ProjectCategory" />
         <AssociationConnector Association="ProcureEaseModel.FK_SourceOFFundsOrganisationSettings_SourceOfFunds" />
         </Diagram>

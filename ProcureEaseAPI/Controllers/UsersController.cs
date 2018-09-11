@@ -23,50 +23,59 @@ namespace ProcureEaseAPI.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> Login(string UserName, string Password)
         {
-            DateTimeSettings DateTimeSettings = new DateTimeSettings();
-            /*This will depend totally on how you will get access to the identity provider and get your token, this is just a sample of how it would be done*/
-            /*Get Access Token Start*/
-            HttpClient httpClient = new HttpClient();
-            httpClient.BaseAddress = System.Web.HttpContext.Current.Request.Url;
-            var postData = new List<KeyValuePair<string, string>>();
-            postData.Add(new KeyValuePair<string, string>("UserName", UserName));
-            postData.Add(new KeyValuePair<string, string>("Password", Password));
-            postData.Add(new KeyValuePair<string, string>("grant_type", "password"));
-            HttpContent content = new FormUrlEncodedContent(postData);
-            HttpResponseMessage response = await httpClient.PostAsync("/token", content);
-            //  var error = response.EnsureSuccessStatusCode();
-            string ResponseContent = await response.Content.ReadAsStringAsync();
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            Token token = serializer.Deserialize<Token>(ResponseContent);
- 
-            if (response.StatusCode != HttpStatusCode.OK)
+            try
             {
-                LogHelper.Log(Log.Event.LOGIN, ResponseContent);
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                return Json(new
+                DateTimeSettings DateTimeSettings = new DateTimeSettings();
+                /*This will depend totally on how you will get access to the identity provider and get your token, this is just a sample of how it would be done*/
+                /*Get Access Token Start*/
+                HttpClient httpClient = new HttpClient();
+                httpClient.BaseAddress = System.Web.HttpContext.Current.Request.Url;
+                var postData = new List<KeyValuePair<string, string>>();
+                postData.Add(new KeyValuePair<string, string>("UserName", UserName));
+                postData.Add(new KeyValuePair<string, string>("Password", Password));
+                postData.Add(new KeyValuePair<string, string>("grant_type", "password"));
+                HttpContent content = new FormUrlEncodedContent(postData);
+                HttpResponseMessage response = await httpClient.PostAsync("/token", content);
+                //  var error = response.EnsureSuccessStatusCode();
+                string ResponseContent = await response.Content.ReadAsStringAsync();
+                JavaScriptSerializer serializer = new JavaScriptSerializer();
+                Token token = serializer.Deserialize<Token>(ResponseContent);
+
+                if (response.StatusCode != HttpStatusCode.OK)
                 {
-                    success = false,
-                    message = "Invalid username or password",
-                    data = new {}
-                }, JsonRequestBehavior.AllowGet);
-            } else {
-                var User = db.AspNetUsers.Where(x => x.UserName == UserName).FirstOrDefault();
-                return Json(new
-                {
-                    success = true,
-                    message = "Login successful",
-                    data = new
+                    LogHelper.Log(Log.Event.LOGIN, ResponseContent);
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Json(new
                     {
-                       User.Id,
-                       Email = User.UserName,
-                       DepartmentID = db.UserProfile.Where(x=>x.UserEmail == UserName).Select(x=>x.DepartmentID).FirstOrDefault(),
-                       Role = db.AspNetUserRoles.Where(x=>x.UserId == User.Id).Select(x=>x.AspNetRoles.Name).FirstOrDefault(),
-                       BudgetYear = DateTimeSettings.CurrentYear(),
-                       OrganizationName= db.UserProfile.Where(x=>x.UserEmail == UserName).Select(x=>x.OrganizationSettings.OrganizationNameAbbreviation).FirstOrDefault(),
-                        OrganizationID = db.UserProfile.Where(x => x.UserEmail == UserName).Select(x => x.OrganizationID).FirstOrDefault(),
-                        token = token
-                    }
-                }, JsonRequestBehavior.AllowGet);
+                        success = false,
+                        message = "Invalid username or password",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    var User = db.AspNetUsers.Where(x => x.UserName == UserName).FirstOrDefault();
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Login successful",
+                        data = new
+                        {
+                            User.Id,
+                            Email = User.UserName,
+                            DepartmentID = db.UserProfile.Where(x => x.UserEmail == UserName).Select(x => x.DepartmentID).FirstOrDefault(),
+                            Role = db.AspNetUserRoles.Where(x => x.UserId == User.Id).Select(x => x.AspNetRoles.Name).FirstOrDefault(),
+                            BudgetYear = DateTimeSettings.CurrentYear(),
+                            OrganizationName = db.UserProfile.Where(x => x.UserEmail == UserName).Select(x => x.OrganizationSettings.OrganizationNameAbbreviation).FirstOrDefault(),
+                            OrganizationID = db.UserProfile.Where(x => x.UserEmail == UserName).Select(x => x.OrganizationID).FirstOrDefault(),
+                            token = token
+                        }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+            }catch(Exception ex)
+            {
+                LogHelper.Log(Log.Event.LOGIN, ex.Message);
+                return ExceptionError(ex.Message, ex.StackTrace);
             }
         }
 
@@ -131,6 +140,7 @@ namespace ProcureEaseAPI.Controllers
                         { }
                     }, JsonRequestBehavior.AllowGet);
                 }
+               
                 UserProfile.UserID = Guid.NewGuid();
                 db.UserProfile.Add(UserProfile);
                 db.SaveChanges();             
@@ -167,13 +177,7 @@ namespace ProcureEaseAPI.Controllers
                 LogHelper.Log(Log.Event.ADD_USER, ex.Message);
                 LogHelper.Log(Log.Event.ADD_USER, ex.StackTrace);
                 // return Json(ex.Message + ex.StackTrace, JsonRequestBehavior.AllowGet);
-                return Json(new
-                {
-                    success = false,
-                    message = "" +ex.Message,
-                    data =new
-                    { }
-                }, JsonRequestBehavior.AllowGet);
+                return ExceptionError(ex.Message, ex.StackTrace);
             }
           
         }
@@ -231,13 +235,7 @@ namespace ProcureEaseAPI.Controllers
             catch(Exception ex)
             {
                 LogHelper.Log(Log.Event.INITIATE_PASSWORD_RESET, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message+ex.StackTrace,
-                    data =new
-                    { }
-                }, JsonRequestBehavior.AllowGet);
+                return ExceptionError(ex.Message, ex.StackTrace);
             } 
 
         }
@@ -287,13 +285,7 @@ namespace ProcureEaseAPI.Controllers
             catch (Exception ex)
             {
               LogHelper.Log(Log.Event.RESET_PASSWORD, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data =  new
-                    { }
-                }, JsonRequestBehavior.AllowGet);
+                return ExceptionError(ex.Message, ex.StackTrace);
             }                    
 
         }
@@ -373,13 +365,7 @@ namespace ProcureEaseAPI.Controllers
             catch(Exception ex)
             {
                 LogHelper.Log(Log.Event.SIGN_UP, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = new
-                    { }
-                }, JsonRequestBehavior.AllowGet);
+                return ExceptionError(ex.Message, ex.StackTrace);
             }
            
         }
@@ -474,13 +460,7 @@ namespace ProcureEaseAPI.Controllers
             }catch(Exception ex)
             {
                 LogHelper.Log(Log.Event.SIGN_UP, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message + ex.StackTrace,
-                    data = db.UserProfile.Select(x => new
-                    { }).FirstOrDefault()
-                }, JsonRequestBehavior.AllowGet);
+                return ExceptionError(ex.Message, ex.StackTrace);
             }
         }
 
@@ -611,16 +591,8 @@ namespace ProcureEaseAPI.Controllers
             catch(Exception ex)
             {
                 LogHelper.Log(Log.Event.UPDATE_USER_PROFILE, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data =  new
-                    { }
-                }, JsonRequestBehavior.AllowGet);
-            }
-
-          
+                return ExceptionError(ex.Message, ex.StackTrace);
+            }          
         }
 
         //PUT: Users/UpdateDepartmentHead
@@ -704,13 +676,7 @@ namespace ProcureEaseAPI.Controllers
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.UPDATE_DEPARTMENT_HEAD, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = db.UserProfile.Select(x => new
-                    { }).FirstOrDefault()
-                }, JsonRequestBehavior.AllowGet);
+                return ExceptionError(ex.Message, ex.StackTrace);
             }
         }
 
@@ -843,13 +809,7 @@ namespace ProcureEaseAPI.Controllers
             }catch(Exception ex)
             {
                 LogHelper.Log(Log.Event.UPDATE_DEPARTMENT_HEAD, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = db.UserProfile.Select(x => new
-                    { }).FirstOrDefault()
-                }, JsonRequestBehavior.AllowGet);
+                return ExceptionError(ex.Message, ex.StackTrace);
             }
             
         }
@@ -861,6 +821,16 @@ namespace ProcureEaseAPI.Controllers
                 success = false,
                 message = message,
                 data = new { }
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        private ActionResult ExceptionError(string message, string StackTrace)
+        {
+            return Json(new
+            {
+                success = false,
+                message = message,
+                data = new {InternalError = StackTrace }
             }, JsonRequestBehavior.AllowGet);
         }
 

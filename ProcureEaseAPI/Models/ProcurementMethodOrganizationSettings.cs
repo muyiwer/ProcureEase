@@ -12,10 +12,10 @@ namespace ProcureEaseAPI.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class ProcurementMethodOrganizationsettings
+    public partial class ProcurementMethodOrganizationSettings
     {
         public System.Guid ProcurementMethodID { get; set; }
-        public Nullable<System.Guid> OrganisationID { get; set; }
+        public Nullable<System.Guid> OrganizationID { get; set; }
         public Nullable<System.Guid> TenantID { get; set; }
         public Nullable<bool> EnableProcurementMethod { get; set; }
         public Nullable<System.DateTime> DateCreated { get; set; }

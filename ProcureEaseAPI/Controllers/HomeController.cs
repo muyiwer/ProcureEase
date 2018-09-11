@@ -33,14 +33,28 @@ namespace ProcureEaseAPI.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        // POST: Home/OrganizationUnBoarding
+        // POST: Home/OnBoarding
         [HttpPost]
-        public ActionResult OrganizationOnboarding(Guid RequestID)
+        public ActionResult Onboarding(Guid? RequestID)
         {
             try
             {
                 DateTime dt = DateTime.Now;
-                var ThisTenant = db.OrganizationSettings.Where(x => x.OrganizationID == x.OrganizationID).Select(x => x.OrganizationNameAbbreviation).FirstOrDefault();
+                var tenantID = catalog.GetTenantID();
+                var ThisTenant = db.Catalog.Where(x => x.TenantID == x.OrganizationID).Select(x => x.RequestID).FirstOrDefault();
+                var GetRequestID = db.RequestForDemo.FirstOrDefault(x => x.RequestID == x.RequestID);
+                if (GetRequestID == null)
+                {
+                    LogHelper.Log(Log.Event.ONBOARDING, "RequestID does not exist");
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Error("This Organization has not requested for a demo, RequestID does not exist");
+                }
+                if (RequestID == null)
+                {
+                    LogHelper.Log(Log.Event.ONBOARDING, "RequestID is null");
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Error("Please Input RequestID");
+                }
                 if (ThisTenant != null)
                 {
                     LogHelper.Log(Log.Event.ONBOARDING, "Duplicate insertion attempt, Organization already exist");
@@ -94,7 +108,7 @@ namespace ProcureEaseAPI.Controllers
             }
         }
 
-        public void SaveTenantsRequestOnOrganizationSettings(Guid RequestID)
+        public void SaveTenantsRequestOnOrganizationSettings(Guid? RequestID)
         {
             DateTime dt = DateTime.Now;
             var Request = db.RequestForDemo.Where(x => x.RequestID == RequestID).ToList();

@@ -35,14 +35,14 @@ namespace ProcureEaseAPI.Controllers
 
         // POST: Home/OnBoarding
         [HttpPost]
-        public ActionResult Onboarding(Guid? RequestID)
+        public ActionResult Onboarding(Guid RequestID)
         {
             try
             {
                 DateTime dt = DateTime.Now;
                 var tenantID = catalog.GetTenantID();
                 var ThisTenant = db.Catalog.Where(x => x.TenantID == x.OrganizationID).Select(x => x.RequestID).FirstOrDefault();
-                var GetRequestID = db.RequestForDemo.FirstOrDefault(x => x.RequestID == x.RequestID);
+                var GetRequestID = db.RequestForDemo.Where(x => x.RequestID == x.RequestID).Select(x=> x.RequestID).FirstOrDefault();
                 if (RequestID == null)
                 {
                     LogHelper.Log(Log.Event.ONBOARDING, "RequestID is null");
@@ -99,6 +99,7 @@ namespace ProcureEaseAPI.Controllers
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.ONBOARDING, ex.Message);
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 return Json(new
                 {
                     success = false,
@@ -108,7 +109,7 @@ namespace ProcureEaseAPI.Controllers
             }
         }
 
-        public void SaveTenantsRequestOnOrganizationSettings(Guid? RequestID)
+        public void SaveTenantsRequestOnOrganizationSettings(Guid RequestID)
         {
             DateTime dt = DateTime.Now;
             var Request = db.RequestForDemo.Where(x => x.RequestID == RequestID).ToList();

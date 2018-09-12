@@ -14,7 +14,6 @@ namespace ProcureEaseAPI.Controllers
     public class SetUpController : Controller
     {
         private ProcureEaseEntities db = new ProcureEaseEntities();
-        private CatalogsController catalog = new CatalogsController();
         // GET: SetUp
         public ActionResult Index()
         {
@@ -34,9 +33,10 @@ namespace ProcureEaseAPI.Controllers
                     message = "All source of funds",
                     data = db.SourceOfFunds.Select(x => new
                     {
+                        TenantID = db.SourceOfFunds.Where(y => y.TenantID == x.TenantID).Select(y => y.TenantID),
                         x.SourceOfFundID,
                         x.SourceOfFund,
-                        Enabled = db.SourceOfFundsOrganizationSettings.Where(y => y.TenantID == y.SourceOfFundID).Select(y => y.EnableSourceOFFund)
+                        Enabled = db.SourceOfFundsOrganizationSettings.Where(y => y.SourceOfFundID == y.SourceOfFundID).Select(y => y.EnableSourceOfFund)
                     })
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -58,14 +58,20 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
+                var ProcurementMethod = db.ProcurementMethod.Select(x => new
+                {
+                    x.ProcurementMethodID,
+                    x.Name,
+                    x.EnableProcurementMethod,
+                });
                 return Json(new
                 {
                     success = true,
                     message = "All Procurement Method",
-                    data = db.ProcurementMethodOrganizationSettings.Select(x => new
+                    data = db.ProcurementMethod.Select(x => new
                     {
                         x.ProcurementMethodID,
-                        x.ProcurementMethod.Name,
+                        x.Name,
                         x.EnableProcurementMethod,
                     })
                 }, JsonRequestBehavior.AllowGet);
@@ -92,11 +98,11 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = true,
                     message = "All Project Category",
-                    data = db.ProjectCategoryOrganizationSettings.Select(x => new
+                    data = db.ProjectCategory.Select(x => new
                     {
                         x.ProjectCategoryID,
-                        x.ProjectCategory.Name,
-                        x.EnableProjectCategory,
+                        x.Name,
+                       // x.EnableProjectCategory,
                     })
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -118,11 +124,10 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                var tenantID = catalog.GetTenantID();
                 DateTime dt = DateTime.Now;
                 var currentOrganizationDetails = db.OrganizationSettings.FirstOrDefault(o => o.OrganizationID == o.OrganizationID);
-                var Organization = db.OrganizationSettings.Where(x => x.TenantID == tenantID).Select(x => x.OrganizationNameInFull).FirstOrDefault();
-                if (currentOrganizationDetails == null && tenantID == null)
+
+                if (currentOrganizationDetails == null)
                 {
                     LogHelper.Log(Log.Event.UPDATE_BASICDETAILS, "OrgasnizationID not found");
                     return Json(new
@@ -132,18 +137,7 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                if (tenantID == null)
-                {
-                    LogHelper.Log(Log.Event.UPDATE_BASICDETAILS, "TenantID is null");
-                    return Json(new
-                    {
-                        success = false,
-                        message = "TenantID is null",
-                        data = new { }
-                    }, JsonRequestBehavior.AllowGet);
-                }
 
-                currentOrganizationDetails.TenantID = tenantID;
                 currentOrganizationDetails.OrganizationNameInFull = organizationSettings.OrganizationNameInFull;
                 currentOrganizationDetails.OrganizationNameAbbreviation = organizationSettings.OrganizationNameAbbreviation;
                 currentOrganizationDetails.OrganizationEmail = organizationSettings.OrganizationEmail;
@@ -152,7 +146,7 @@ namespace ProcureEaseAPI.Controllers
                 currentOrganizationDetails.State = organizationSettings.State;
                 currentOrganizationDetails.AboutOrganization = organizationSettings.AboutOrganization;
                 currentOrganizationDetails.DateModified = dt;
-                currentOrganizationDetails.CreatedBy = Organization;
+                currentOrganizationDetails.CreatedBy = "MDA Administrator";
                 if (image != null)
                 {
                     currentOrganizationDetails.OrganizationLogoPath = await new FileUploadHelper().UploadImageToAzureStorage(image) + "";
@@ -162,13 +156,12 @@ namespace ProcureEaseAPI.Controllers
                 {
                     AddTelephone(organizationSettings, telephoneNumbers);
                 }
-                return Json(new
+                return Json ( new
                 {
                     success = true,
                     message = "Basic details added successfully!!!",
-                    data = db.OrganizationSettings.Where(x => x.OrganizationID == organizationSettings.OrganizationID).Select(x => new
+                    data = db.OrganizationSettings.Select(x => new
                     {
-                        TenantID = db.OrganizationSettings.Where(y => y.TenantID == tenantID).Select(y => y.TenantID).FirstOrDefault(),
                         x.OrganizationID,
                         x.OrganizationNameInFull,
                         x.OrganizationNameAbbreviation,
@@ -201,8 +194,7 @@ namespace ProcureEaseAPI.Controllers
 
         public void AddTelephone(OrganizationSettings organizationSettings, params string[] telephoneNumbers)
         {
-            // TODO: Anita. check if this telephone number has already been added for this organization
-            var tenantID = catalog.GetTenantID();
+            // TODO: Anita. check if this telephone number has already been added for this organization    
             var TelephoneNumbersFromDB = db.TelephoneNumbers.Select(x => x.TelephoneNumber).ToList();
             var DistinctTelephoneNumbers = telephoneNumbers.Except(TelephoneNumbersFromDB);
             foreach (var telephone in DistinctTelephoneNumbers)
@@ -211,7 +203,6 @@ namespace ProcureEaseAPI.Controllers
                 db.TelephoneNumbers.Add(new TelephoneNumbers
                 {
                     TelephoneNumberID = Guid.NewGuid(),
-                    TenantID = tenantID,
                     OrganizationID = organizationSettings.OrganizationID,
                     TelephoneNumber = telephone,
                     DateCreated = dt,
@@ -283,10 +274,10 @@ namespace ProcureEaseAPI.Controllers
                    // x.EnableSourceOfFund,
                 });
 
-                var ProcurementMethod = db.ProcurementMethodOrganizationSettings.Select(x => new
+                var ProcurementMethod = db.ProcurementMethod.Select(x => new
                 {
                     x.ProcurementMethodID,
-                    x.ProcurementMethod.Name,
+                    x.Name,
                     x.EnableProcurementMethod,
                 });
 

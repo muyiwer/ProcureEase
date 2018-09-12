@@ -116,35 +116,33 @@ namespace ProcureEaseAPI.Controllers
 
         // POST: ProcurementMethod/Edit
         [HttpPost]
-        public ActionResult Edit([Bind(Include = "ProcurementMethodID,ProcurementMethod1,EnableProcurementMethod,DateModified,CreatedBy,DateCreated")] ProcurementMethod procurementMethod)
+        public ActionResult Edit(ProcurementMethodOrganizationSettings procurementMethodOrganizationSettings, bool EnableProcurementMethod)
         {
             try
             {
-
+                var tenantID = catalog.GetTenantID();
                 DateTime dt = DateTime.Now;
-                var currentProcurementMethod = db.ProcurementMethod.FirstOrDefault(p => p.ProcurementMethodID == p.ProcurementMethodID);
-                var currentProcurementMethodOrganizationSettings = db.ProcurementMethodOrganizationSettings.FirstOrDefault(p => p.ProcurementMethodID == p.ProcurementMethodID);
+                var currentProcurementMethodID = db.ProcurementMethodOrganizationSettings.FirstOrDefault(p => p.ProcurementMethodID == procurementMethodOrganizationSettings.ProcurementMethodID);
 
-                if (currentProcurementMethod == null) { 
-                LogHelper.Log(Log.Event.UPDATE_PROCUREMENTMETHOD, "ProcurementMethodID not found");
-                return Json(new
-                {
-                    success = false,
-                    message = "ProcurementMethodID not found",
-                    data = new { }
-                }, JsonRequestBehavior.AllowGet);
+                if (currentProcurementMethodID == null)
+                { 
+                    LogHelper.Log(Log.Event.UPDATE_PROCUREMENTMETHOD, "ProcurementMethodID not found");
+                    return Json(new
+                    {
+                        success = false,
+                        message = "ProcurementMethodID not found",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
                 }
 
-                currentProcurementMethod.DateModified = dt;
-
-                currentProcurementMethodOrganizationSettings.EnableProcurementMethod = currentProcurementMethodOrganizationSettings.EnableProcurementMethod;
-                currentProcurementMethodOrganizationSettings.DateModified = dt;
+                currentProcurementMethodID.EnableProcurementMethod = EnableProcurementMethod;
+                currentProcurementMethodID.DateModified = dt;
                 db.SaveChanges();
                 return Json(new
                 {
                     success = true,
                     message = "Editted successfully!!!",
-                    data = db.ProcurementMethodOrganizationSettings.Select(x => new
+                    data = db.ProcurementMethodOrganizationSettings.Where(x => x.TenantID == tenantID).Select(x => new
                     {
                         x.ProcurementMethodID,
                         x.ProcurementMethod.Name,

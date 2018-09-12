@@ -15,8 +15,8 @@ namespace ProcureEaseAPI.Models
     public partial class SourceOfFundsOrganizationSettings
     {
         public System.Guid SourceOfFundID { get; set; }
-        public Nullable<System.Guid> TenantID { get; set; }
-        public Nullable<System.Guid> OrganizationID { get; set; }
+        public System.Guid TenantID { get; set; }
+        public System.Guid OrganizationID { get; set; }
         public Nullable<bool> EnableSourceOFFund { get; set; }
         public Nullable<System.DateTime> DateCreated { get; set; }
         public Nullable<System.DateTime> DateModified { get; set; }

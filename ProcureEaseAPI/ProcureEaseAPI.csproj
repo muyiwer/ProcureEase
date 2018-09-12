@@ -227,7 +227,6 @@
     <Compile Include="Controllers\ProjectCategoriesController.cs" />
     <Compile Include="Controllers\RequestForDemoController.cs" />
     <Compile Include="Controllers\SetUpController.cs" />
-    <Compile Include="Controllers\SourceOfFundsController.cs" />
     <Compile Include="Controllers\TelephoneNumbersController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Global.asax.cs">

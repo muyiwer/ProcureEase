@@ -18,6 +18,7 @@ namespace ProcureEaseAPI.Models
         public SourceOfFunds()
         {
             this.Procurements = new HashSet<Procurements>();
+            this.SourceOfFundsOrganizationSettings = new HashSet<SourceOfFundsOrganizationSettings>();
         }
     
         public System.Guid SourceOfFundID { get; set; }
@@ -28,6 +29,7 @@ namespace ProcureEaseAPI.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Procurements> Procurements { get; set; }
-        public virtual SourceOfFundsOrganizationSettings SourceOfFundsOrganizationSettings { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SourceOfFundsOrganizationSettings> SourceOfFundsOrganizationSettings { get; set; }
     }
 }

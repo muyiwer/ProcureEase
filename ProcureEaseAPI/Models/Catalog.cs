@@ -34,9 +34,9 @@ namespace ProcureEaseAPI.Models
             this.ProcurementStatus = new HashSet<ProcurementStatus>();
             this.TelephoneNumbers = new HashSet<TelephoneNumbers>();
             this.UserProfile = new HashSet<UserProfile>();
-            this.ProcurementMethodOrganizationSettings = new HashSet<ProcurementMethodOrganizationSettings>();
             this.ProjectCategoryOrganizationSettings = new HashSet<ProjectCategoryOrganizationSettings>();
             this.SourceOfFundsOrganizationSettings = new HashSet<SourceOfFundsOrganizationSettings>();
+            this.ProcurementMethodOrganizationSettings = new HashSet<ProcurementMethodOrganizationSettings>();
         }
     
         public System.Guid TenantID { get; set; }
@@ -82,10 +82,10 @@ namespace ProcureEaseAPI.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserProfile> UserProfile { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ProcurementMethodOrganizationSettings> ProcurementMethodOrganizationSettings { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProjectCategoryOrganizationSettings> ProjectCategoryOrganizationSettings { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SourceOfFundsOrganizationSettings> SourceOfFundsOrganizationSettings { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProcurementMethodOrganizationSettings> ProcurementMethodOrganizationSettings { get; set; }
     }
 }

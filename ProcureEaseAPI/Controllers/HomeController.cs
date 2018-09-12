@@ -23,16 +23,104 @@ namespace ProcureEaseAPI.Controllers
             return View();
         }
 
-        private ActionResult Error(string message)
+        #region ProcessRequestForDemo
+        // POST: Home/RequestForDemo
+        [HttpPost]
+        public async Task<ActionResult> RequestForDemo(RequestForDemo requestForDemo)
         {
+            try
+            {
+                var OrganizationFullName = db.RequestForDemo.Where(x => x.OrganizationFullName == requestForDemo.OrganizationFullName).Select(x => x.OrganizationFullName).FirstOrDefault();
+                if (OrganizationFullName != null)
+                {
+                    LogHelper.Log(Log.Event.REQUESTFORDEMO, "Duplicate insertion attempt, OrganizationFullName already exist");
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Error("Duplicate insertion attempt, Organization Full Name already exist");
+                }
+                var OrganizationShortName = db.RequestForDemo.Where(x => x.OrganizationShortName == requestForDemo.OrganizationShortName).Select(x => x.OrganizationShortName).FirstOrDefault();
+                if (OrganizationShortName != null)
+                {
+                    LogHelper.Log(Log.Event.REQUESTFORDEMO, "Duplicate insertion attempted, OrganizationShortName already exist");
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Error("Duplicate insertion attempt, Organization Short Name already exist");
+                }
+                var AdministratorEmail = db.RequestForDemo.Where(x => x.AdministratorEmail == requestForDemo.AdministratorEmail).Select(x => x.AdministratorEmail).FirstOrDefault();
+                if (AdministratorEmail != null)
+                {
+                    LogHelper.Log(Log.Event.REQUESTFORDEMO, "Duplicate insertion attempted, AdministratorEmail already exist");
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Error("Duplicate insertion attempt, Administrator Email already exist");
+                }
+                var AdministratorPhoneNumber = db.RequestForDemo.Where(x => x.AdministratorPhoneNumber == requestForDemo.AdministratorPhoneNumber).Select(x => x.AdministratorPhoneNumber).FirstOrDefault();
+                if (AdministratorPhoneNumber != null)
+                {
+                    LogHelper.Log(Log.Event.REQUESTFORDEMO, "Duplicate insertion attempted, AdministratorPhoneNumber already exist");
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Error("Duplicate insertion attempt, Administrator PhoneNumber already exist");
+                }
+                DateTime dt = DateTime.Now;
+                requestForDemo.RequestID = Guid.NewGuid();
+                requestForDemo.DateCreated = dt;
+                db.RequestForDemo.Add(requestForDemo);
+                db.SaveChanges();
+
+                await SendMailToTechspecialist(requestForDemo);
+                await SendMailToUser(requestForDemo);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(Log.Event.REQUESTFORDEMO, ex.Message);
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                ExceptionError(ex.Message, ex.StackTrace);
+            }
             return Json(new
             {
-                success = false,
-                message = message,
-                data = new { }
-            }, JsonRequestBehavior.AllowGet);
+                success = true,
+                message = "Request Sent Successfully",
+                data = db.RequestForDemo.Where(x => x.RequestID == requestForDemo.RequestID).Select(x => new
+                {
+                    x.RequestID,
+                    x.OrganizationFullName,
+                    x.OrganizationShortName,
+                    x.AdministratorEmail,
+                    x.AdministratorFirstName,
+                    x.AdministratorLastName,
+                    x.AdministratorPhoneNumber,
+                    DateCreated = x.DateCreated.Value.ToString()
+                })
+            });
         }
+        #endregion
 
+            #region ProcessSendMailToTechspecialist
+        public async Task SendMailToTechspecialist(RequestForDemo requestForDemo)
+        {
+            var RecipientEmail = requestForDemo.AdministratorEmail;
+            string Subject = "Request For Demo";
+            string Body = new EmailTemplateHelper().GetTemplateContent("RequestForDemoTemplate_User");
+            string newTemplateContent = string.Format(Body, "annieajeks@gmail.com");
+            //newTemplateContent = newTemplateContent.Replace("[RecipientEmail]", RecipientEmail.Trim());
+            Message message = new Message(RecipientEmail, Subject, newTemplateContent);
+            EmailHelper emailHelper = new EmailHelper();
+            await emailHelper.AddEmailToQueue(message);
+        }
+            #endregion
+
+            #region SendMailToUser
+        public async Task SendMailToUser(RequestForDemo requestForDemo)
+        {
+            var RecipientEmail = requestForDemo.AdministratorEmail;
+            string Subject = "Request For Demo";
+            string Body = new EmailTemplateHelper().GetTemplateContent("RequestForDemoTemplate_Techspecialist");
+            string newTemplateContent = string.Format(Body, requestForDemo.AdministratorEmail);
+            //newTemplateContent = newTemplateContent.Replace("[RecipientEmail]", RecipientEmail.Trim());
+            Message message = new Message(RecipientEmail, Subject, newTemplateContent);
+            EmailHelper emailHelper = new EmailHelper();
+            await emailHelper.AddEmailToQueue(message);
+        }
+        #endregion
+
+        #region ProcessOnboarding
         // POST: Home/OnBoarding
         [HttpPost]
         public ActionResult Onboarding(Guid? RequestID)
@@ -107,7 +195,9 @@ namespace ProcureEaseAPI.Controllers
                 }, JsonRequestBehavior.AllowGet);
             }
         }
+        #endregion
 
+            #region ProcessSaveTenantsRequestOnOrganizationSettings
         public void SaveTenantsRequestOnOrganizationSettings(Guid? RequestID)
         {
             DateTime dt = DateTime.Now;
@@ -125,6 +215,9 @@ namespace ProcureEaseAPI.Controllers
                 db.SaveChanges();
             }
         }
+        #endregion
+
+            #region ProcessSaveDefaultSouceOfFundRecord
         public void SaveDefaultSouceOfFundRecord()
         {
             DateTime dt = DateTime.Now;
@@ -176,6 +269,9 @@ namespace ProcureEaseAPI.Controllers
             db.Entry(sourceOfFundsOrganizationSettings).State = EntityState.Modified;
             db.SaveChanges();
         }
+        #endregion
+
+            #region ProcessSaveDefaultProcurementMethodRecord
         public void SaveDefaultProcurementMethodRecord()
         {
             DateTime dt = DateTime.Now;
@@ -216,6 +312,9 @@ namespace ProcureEaseAPI.Controllers
             db.Entry(procurementMethodOrganizationSettings).State = EntityState.Modified;
             db.SaveChanges();
         }
+        #endregion
+
+            #region ProcessSaveDefaultProjectCategoryRecord
         public void SaveDefaultProjectCategoryRecord()
         {
             DateTime dt = DateTime.Now;
@@ -255,5 +354,30 @@ namespace ProcureEaseAPI.Controllers
             db.Entry(projectCategoryOrganizationSettings).State = EntityState.Modified;
             db.SaveChanges();
         }
+        #endregion
+
+        #region ProcessError
+        private ActionResult Error(string message)
+        {
+            return Json(new
+            {
+                success = false,
+                message = message,
+                data = new { }
+            }, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+
+        #region ProcessExceptionError
+        private ActionResult ExceptionError(string message, string StackTrace)
+        {
+            return Json(new
+            {
+                success = false,
+                message = message,
+                data = new { InternalError = StackTrace }
+            }, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
     }
 }

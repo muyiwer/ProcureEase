@@ -14,7 +14,6 @@ namespace ProcureEaseAPI.Controllers
     public class ProjectCategoriesController : Controller
     {
         private ProcureEaseEntities db = new ProcureEaseEntities();
-        private CatalogsController catalog = new CatalogsController();
 
         // GET: ProjectCategories
         public ActionResult Index()
@@ -32,7 +31,7 @@ namespace ProcureEaseAPI.Controllers
                 projectCategory.ProjectCategoryID = Guid.NewGuid();
                 projectCategory.DateCreated = dt;
                 projectCategory.DateModified = dt;
-                projectCategory.CreatedBy = "Techspecialist";
+                projectCategory.CreatedBy = "MDA Administrator";
                 db.ProjectCategory.Add(projectCategory);
                 db.SaveChanges();
                 return Json(new

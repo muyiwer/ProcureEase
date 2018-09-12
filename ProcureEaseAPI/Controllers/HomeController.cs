@@ -23,6 +23,29 @@ namespace ProcureEaseAPI.Controllers
             return View();
         }
 
+        #region ProcessGetOnboardingRequests
+        // GET: Home/OnboardingRequests
+        public ActionResult OnboardingRequests()
+        {
+            return Json(new
+            {
+                success = true,
+                message = "Ok",
+                data = db.RequestForDemo.Select(x => new
+                {
+                    x.RequestID,
+                    x.OrganizationFullName,
+                    x.OrganizationShortName,
+                    x.AdministratorEmail,
+                    x.AdministratorFirstName,
+                    x.AdministratorLastName,
+                    x.AdministratorPhoneNumber,
+                    DateCreated = x.DateCreated.Value.ToString()
+                }),
+            }, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+
         #region ProcessRequestForDemo
         // POST: Home/RequestForDemo
         [HttpPost]

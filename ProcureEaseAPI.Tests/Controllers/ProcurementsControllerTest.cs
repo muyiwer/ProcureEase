@@ -13,12 +13,13 @@ namespace ProcureEaseAPI.Tests.Controllers
     [TestClass]
     public class ProcurementsControllerTest
     {
-
+        public string LOCAL_SERVER = "http://localhost.procureease.ng/";
         [TestMethod]
         public void TestDraftNeedsSummary()
         {
-            string id = "3A380F88-6B8B-40AF-AA14-DF546CEC1AA6";
             var testDraftNeedsSummary = new ProcurementsController();
+           Mocker.MockControllerContext(testDraftNeedsSummary, LOCAL_SERVER);
+            string id = "8DEFC11D-5595-41DD-87A9-2A0EF5FE04B8";         
             JsonResult result = (JsonResult) testDraftNeedsSummary.DraftNeedsSummary(id);            
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("Drafted procurement Summary"));   

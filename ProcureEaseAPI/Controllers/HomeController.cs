@@ -23,72 +23,91 @@ namespace ProcureEaseAPI.Controllers
             return View();
         }
 
-        private ActionResult Error(string message)
+        // GET: Home/OnboardingRequests
+        public ActionResult OnboardingRequests()
         {
-            return Json(new
+            try
             {
-                success = false,
-                message = message,
-                data = new { }
-            }, JsonRequestBehavior.AllowGet);
+                return Json(new
+                {
+                    success = true,
+                    message = "Ok",
+                    data = db.RequestForDemo.Select(x => new
+                    {
+                        x.RequestID,
+                        x.OrganizationFullName,
+                        x.OrganizationShortName,
+                        x.AdministratorEmail,
+                        x.AdministratorFirstName,
+                        x.AdministratorLastName,
+                        x.AdministratorPhoneNumber,
+                        DateCreated = x.DateCreated.Value.ToString()
+                    }),
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(Log.Event.REQUESTFORDEMO, ex.Message);
+                return Json(new
+                {
+                    success = false,
+                    message = "message",
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         // POST: Home/OnBoarding
         [HttpPost]
-        public ActionResult Onboarding(Guid RequestID)
+        public ActionResult Onboarding(Guid? RequestID)
         {
             try
             {
                 DateTime dt = DateTime.Now;
-                var tenantID = catalog.GetTenantID();
-                var GetRequestID = db.RequestForDemo.Where(x => x.RequestID == RequestID).Select(x=> x.RequestID).FirstOrDefault();
-                if (RequestID == null || GetRequestID == null)
+                if (RequestID == null)
                 {
                     LogHelper.Log(Log.Event.ONBOARDING, "RequestID is null");
                     Response.StatusCode = (int)HttpStatusCode.NotFound;
-                    return Error("RequestID is null OR does not exist");
+                    return Error("RequestID is null");
                 }
-                var ThisTenant = db.Catalog.Where(x => x.TenantID == tenantID).Select(x => x.RequestID).FirstOrDefault();
+                var ThisTenant = db.Catalog.Where(x => x.RequestID == RequestID).Select(x => x.RequestID).FirstOrDefault();
                 if (ThisTenant != null)
                 {
-                    LogHelper.Log(Log.Event.ONBOARDING, "Duplicate insertion attempt, Organization already exist");
+                    LogHelper.Log(Log.Event.ONBOARDING, "Duplicate insertion attempt, OrganizationID already exist");
                     Response.StatusCode = (int)HttpStatusCode.Conflict;
-                    return Error("Duplicate insertion attempt, Organization already exist");
+                    return Error("Duplicate insertion attempt,This Organization already exist");
+                }
+                var CheckIfRequestIDExist = db.RequestForDemo.Where(x => x.RequestID == RequestID).Select(x => x.OrganizationFullName).FirstOrDefault();
+                if (CheckIfRequestIDExist == null)
+                {
+                    LogHelper.Log(Log.Event.ONBOARDING, "RequestID does not exist on RequestForDemo");
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    return Error("RequestID is not valid.");
                 }
                 else
-                {
+                { 
+                    Guid TenantID = Guid.NewGuid();
                     Catalog Tenant = new Catalog();
-                    Tenant.TenantID = Guid.NewGuid();
+                    Tenant.TenantID = TenantID;
                     Tenant.RequestID = RequestID;
                     Tenant.DateCreated = dt;
                     Tenant.DateModified = dt;
                     db.Catalog.Add(Tenant);
                     db.SaveChanges();
-                    SaveTenantsRequestOnOrganizationSettings(RequestID);
-                }
 
-                var TenantID = db.Catalog.Where(x => x.TenantID == x.TenantID).Select(x => x.TenantID).FirstOrDefault();
-                var UpdateOrganizationRecord = db.OrganizationSettings.FirstOrDefault(o => o.OrganizationID == o.OrganizationID);
-                UpdateOrganizationRecord.TenantID = TenantID;
-                UpdateOrganizationRecord.DateCreated = dt;
+                    Guid OrganizationID = Guid.NewGuid();
+                    SaveTenantsRequestOnOrganizationSettings(RequestID,OrganizationID, TenantID);
+                    SaveDefaultSouceOfFundRecord(TenantID, OrganizationID);
+                    SaveDefaultProcurementMethodRecord(TenantID, OrganizationID);
+                    SaveDefaultProjectCategoryRecord(TenantID, OrganizationID);
 
-                var OrganizationID = db.OrganizationSettings.Where(x => x.OrganizationID == x.OrganizationID).Select(x => x.OrganizationID).FirstOrDefault();
-                var SubDomain = db.OrganizationSettings.Where(x => x.OrganizationID == x.OrganizationID).Select(x => x.OrganizationNameAbbreviation).FirstOrDefault();
-                var UpdateTenantRecord = db.Catalog.FirstOrDefault(o => o.TenantID == o.TenantID);
-                UpdateTenantRecord.OrganizationID = OrganizationID;
-                UpdateTenantRecord.SubDomain = SubDomain;
-                UpdateTenantRecord.DateModified = dt;
-                db.SaveChanges();
-
-                SaveDefaultProcurementMethodRecord();
-                SaveDefaultSouceOfFundRecord();
-                SaveDefaultProjectCategoryRecord();
-                return Json(new
-                {
-                    success = true,
-                    message = "Organization Onboarded Successfully",
-                    data = new { }
-                });
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Organization Onboarded Successfully",
+                        data = new { }
+                    });
+                }             
             }
             catch (Exception ex)
             {
@@ -103,15 +122,15 @@ namespace ProcureEaseAPI.Controllers
             }
         }
 
-        public void SaveTenantsRequestOnOrganizationSettings(Guid RequestID)
+        public void SaveTenantsRequestOnOrganizationSettings(Guid? RequestID, Guid OrganizationID, Guid TenantID )
         {
-            DateTime dt = DateTime.Now;
+            DateTime dt = DateTime.Now;            
             var Request = db.RequestForDemo.Where(x => x.RequestID == RequestID).ToList();
             foreach (RequestForDemo record in Request)
             {
                 db.OrganizationSettings.Add(new OrganizationSettings()
                 {
-                    OrganizationID = Guid.NewGuid(),
+                    OrganizationID = OrganizationID,
                     OrganizationNameInFull = record.OrganizationFullName,
                     OrganizationNameAbbreviation = record.OrganizationShortName,
                     DateCreated = dt,
@@ -119,12 +138,20 @@ namespace ProcureEaseAPI.Controllers
                 });
                 db.SaveChanges();
             }
+            var UpdateOrganizationRecord = db.OrganizationSettings.FirstOrDefault(o => o.OrganizationID == OrganizationID);
+            UpdateOrganizationRecord.TenantID = TenantID;
+
+            var SubDomain = db.OrganizationSettings.Where(x => x.OrganizationID == OrganizationID).Select(x => x.OrganizationNameAbbreviation).FirstOrDefault();
+            var UpdateTenantRecord = db.Catalog.FirstOrDefault(o => o.TenantID == TenantID);
+            UpdateTenantRecord.OrganizationID = OrganizationID;
+            UpdateTenantRecord.SubDomain = SubDomain;
+            UpdateTenantRecord.DateModified = dt;
+            db.SaveChanges();
         }
-        public void SaveDefaultSouceOfFundRecord()
+
+        public void SaveDefaultSouceOfFundRecord(Guid TenantID,Guid OrganizationID)
         {
             DateTime dt = DateTime.Now;
-            var OrganizationID = db.OrganizationSettings.Where(x => x.OrganizationID == x.OrganizationID).Select(x => x.OrganizationID).FirstOrDefault();
-            var TenantID = db.Catalog.Where(x => x.TenantID == x.TenantID).Select(x => x.TenantID).FirstOrDefault();
             var Sourceoffund = db.SourceOfFunds.ToList();
             foreach (SourceOfFunds source in Sourceoffund)
             {
@@ -138,45 +165,43 @@ namespace ProcureEaseAPI.Controllers
                 });
                 db.SaveChanges();
             }
+
             var DefaultSourceOFFund1 = "Budgetary allocation/appropriation";
             var DefaultSourceOFFundID1 = db.SourceOfFunds.Where(x => x.SourceOfFund.Contains(DefaultSourceOFFund1)).Select(x => x.SourceOfFundID).FirstOrDefault();
-            SourceOfFundsOrganizationSettings sourceOfFundsOrganizationSettings = db.SourceOfFundsOrganizationSettings.Find(DefaultSourceOFFundID1);
+            SourceOfFundsOrganizationSettings sourceOfFundsOrganizationSettings = db.SourceOfFundsOrganizationSettings.Find(DefaultSourceOFFundID1, TenantID, OrganizationID);
             sourceOfFundsOrganizationSettings.EnableSourceOFFund = true;
             sourceOfFundsOrganizationSettings.DateModified = dt;
 
             var DefaultSourceOFFund2 = "Internally generated fund";
             var DefaultSourceOFFundID2 = db.SourceOfFunds.Where(x => x.SourceOfFund.Contains(DefaultSourceOFFund2)).Select(x => x.SourceOfFundID).FirstOrDefault();
-            sourceOfFundsOrganizationSettings = db.SourceOfFundsOrganizationSettings.Find(DefaultSourceOFFundID2);
+            sourceOfFundsOrganizationSettings = db.SourceOfFundsOrganizationSettings.Find(DefaultSourceOFFundID2, TenantID, OrganizationID);
             sourceOfFundsOrganizationSettings.EnableSourceOFFund = true;
             sourceOfFundsOrganizationSettings.DateModified = dt;
 
             var DefaultSourceOFFund3 = "Special intervention fund";
             var DefaultSourceOFFundID3 = db.SourceOfFunds.Where(x => x.SourceOfFund.Contains(DefaultSourceOFFund3)).Select(x => x.SourceOfFundID).FirstOrDefault();
-            sourceOfFundsOrganizationSettings = db.SourceOfFundsOrganizationSettings.Find(DefaultSourceOFFundID3);
+            sourceOfFundsOrganizationSettings = db.SourceOfFundsOrganizationSettings.Find(DefaultSourceOFFundID3, TenantID, OrganizationID);
             sourceOfFundsOrganizationSettings.EnableSourceOFFund = true;
             sourceOfFundsOrganizationSettings.DateModified = dt;
 
             var DefaultSourceOFFund4 = "Power sector intervention fund";
             var DefaultSourceOFFundID4 = db.SourceOfFunds.Where(x => x.SourceOfFund.Contains(DefaultSourceOFFund4)).Select(x => x.SourceOfFundID).FirstOrDefault();
-            sourceOfFundsOrganizationSettings = db.SourceOfFundsOrganizationSettings.Find(DefaultSourceOFFundID4);
+            sourceOfFundsOrganizationSettings = db.SourceOfFundsOrganizationSettings.Find(DefaultSourceOFFundID4, TenantID, OrganizationID);
             sourceOfFundsOrganizationSettings.EnableSourceOFFund = true;
             sourceOfFundsOrganizationSettings.DateModified = dt;
 
             var DefaultSourceOFFund5 = "ETF Special intervention fund";
             var DefaultSourceOFFundID5 = db.SourceOfFunds.Where(x => x.SourceOfFund.Contains(DefaultSourceOFFund5)).Select(x => x.SourceOfFundID).FirstOrDefault();
-            sourceOfFundsOrganizationSettings = db.SourceOfFundsOrganizationSettings.Find(DefaultSourceOFFundID5);
+            sourceOfFundsOrganizationSettings = db.SourceOfFundsOrganizationSettings.Find(DefaultSourceOFFundID5, TenantID, OrganizationID);
             sourceOfFundsOrganizationSettings.EnableSourceOFFund = true;
             sourceOfFundsOrganizationSettings.DateModified = dt;
 
             db.Entry(sourceOfFundsOrganizationSettings).State = EntityState.Modified;
             db.SaveChanges();
         }
-        public void SaveDefaultProcurementMethodRecord()
+        public void SaveDefaultProcurementMethodRecord(Guid TenantID, Guid OrganizationID)
         {
             DateTime dt = DateTime.Now;
-            var CurrentProcurementMethod = db.ProcurementMethodOrganizationSettings.Where(s => s.ProcurementMethodID == s.ProcurementMethodID);
-            var OrganizationID = db.OrganizationSettings.Where(x => x.OrganizationID == x.OrganizationID).Select(x => x.OrganizationID).FirstOrDefault();
-            var TenantID = db.Catalog.Where(x => x.TenantID == x.TenantID).Select(x => x.TenantID).FirstOrDefault();
             var ProcurementMethod = db.ProcurementMethod.ToList();
             foreach (ProcurementMethod source in ProcurementMethod)
             {
@@ -192,30 +217,28 @@ namespace ProcureEaseAPI.Controllers
             }
             var DefaultProcurementMethod1 = "Selective Tendering";
             var DefaultProcurementMethodID1 = db.ProcurementMethod.Where(x => x.Name.Contains(DefaultProcurementMethod1)).Select(x => x.ProcurementMethodID).FirstOrDefault();
-            ProcurementMethodOrganizationSettings procurementMethodOrganizationSettings = db.ProcurementMethodOrganizationSettings.Find(DefaultProcurementMethodID1);
+            ProcurementMethodOrganizationSettings procurementMethodOrganizationSettings = db.ProcurementMethodOrganizationSettings.Find(DefaultProcurementMethodID1, TenantID, OrganizationID);
             procurementMethodOrganizationSettings.EnableProcurementMethod = true;
             procurementMethodOrganizationSettings.DateModified = dt;
 
             var DefaultProcurementMethod2 = "Direct procurement";
             var DefaultProcurementMethodID2 = db.ProcurementMethod.Where(x => x.Name.Contains(DefaultProcurementMethod2)).Select(x => x.ProcurementMethodID).FirstOrDefault();
-            procurementMethodOrganizationSettings = db.ProcurementMethodOrganizationSettings.Find(DefaultProcurementMethodID2);
+            procurementMethodOrganizationSettings = db.ProcurementMethodOrganizationSettings.Find(DefaultProcurementMethodID2, TenantID, OrganizationID);
             procurementMethodOrganizationSettings.EnableProcurementMethod = true;
             procurementMethodOrganizationSettings.DateModified = dt;
 
             var DefaultProcurementMethod3 = "Open Competitive method";
             var DefaultProcurementMethodID3 = db.ProcurementMethod.Where(x => x.Name.Contains(DefaultProcurementMethod3)).Select(x => x.ProcurementMethodID).FirstOrDefault();
-            procurementMethodOrganizationSettings = db.ProcurementMethodOrganizationSettings.Find(DefaultProcurementMethodID3);
+            procurementMethodOrganizationSettings = db.ProcurementMethodOrganizationSettings.Find(DefaultProcurementMethodID3, TenantID, OrganizationID);
             procurementMethodOrganizationSettings.EnableProcurementMethod = true;
             procurementMethodOrganizationSettings.DateModified = dt;
 
             db.Entry(procurementMethodOrganizationSettings).State = EntityState.Modified;
             db.SaveChanges();
         }
-        public void SaveDefaultProjectCategoryRecord()
+        public void SaveDefaultProjectCategoryRecord(Guid TenantID, Guid OrganizationID)
         {
             DateTime dt = DateTime.Now;
-            var OrganizationID = db.OrganizationSettings.Where(x => x.OrganizationID == x.OrganizationID).Select(x => x.OrganizationID).FirstOrDefault();
-            var TenantID = db.Catalog.Where(x => x.TenantID == x.TenantID).Select(x => x.TenantID).FirstOrDefault();
             var ProjectCategory = db.ProjectCategory.ToList();
             foreach (ProjectCategory source in ProjectCategory)
             {
@@ -231,24 +254,45 @@ namespace ProcureEaseAPI.Controllers
             }
             var DefaultProjectCategory1 = "Goods";
             var DefaultProjectCategoryID1 = db.ProjectCategory.Where(x => x.Name.Contains(DefaultProjectCategory1)).Select(x => x.ProjectCategoryID).FirstOrDefault();
-            ProjectCategoryOrganizationSettings projectCategoryOrganizationSettings = db.ProjectCategoryOrganizationSettings.Find(DefaultProjectCategoryID1);
+            ProjectCategoryOrganizationSettings projectCategoryOrganizationSettings = db.ProjectCategoryOrganizationSettings.Find(DefaultProjectCategoryID1, TenantID, OrganizationID);
             projectCategoryOrganizationSettings.EnableProjectCategory = true;
             projectCategoryOrganizationSettings.DateModified = dt;
 
             var DefaultProjectCategory2 = "Services";
             var DefaultProjectCategoryID2 = db.ProjectCategory.Where(x => x.Name.Contains(DefaultProjectCategory2)).Select(x => x.ProjectCategoryID).FirstOrDefault();
-            projectCategoryOrganizationSettings = db.ProjectCategoryOrganizationSettings.Find(DefaultProjectCategoryID2);
+            projectCategoryOrganizationSettings = db.ProjectCategoryOrganizationSettings.Find(DefaultProjectCategoryID2, TenantID, OrganizationID);
             projectCategoryOrganizationSettings.EnableProjectCategory = true;
             projectCategoryOrganizationSettings.DateModified = dt;
 
             var DefaultProjectCategory3 = "Works";
             var DefaultProjectCategoryID3 = db.ProjectCategory.Where(x => x.Name.Contains(DefaultProjectCategory3)).Select(x => x.ProjectCategoryID).FirstOrDefault();
-            projectCategoryOrganizationSettings = db.ProjectCategoryOrganizationSettings.Find(DefaultProjectCategoryID3);
+            projectCategoryOrganizationSettings = db.ProjectCategoryOrganizationSettings.Find(DefaultProjectCategoryID3, TenantID, OrganizationID);
             projectCategoryOrganizationSettings.EnableProjectCategory = true;
             projectCategoryOrganizationSettings.DateModified = dt;
 
             db.Entry(projectCategoryOrganizationSettings).State = EntityState.Modified;
             db.SaveChanges();
         }
+
+        private ActionResult Error(string message)
+        {
+            return Json(new
+            {
+                success = false,
+                message = message,
+                data = new { }
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        private ActionResult ExceptionError(string message, string StackTrace)
+        {
+            return Json(new
+            {
+                success = false,
+                message = message,
+                data = new { InternalError = StackTrace }
+            }, JsonRequestBehavior.AllowGet);
+        }
+
     }
 }

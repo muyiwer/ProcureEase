@@ -23,11 +23,10 @@ namespace ProcureEaseAPI.Controllers
             return View();
         }
 
+        #region ProcessGetOnboardingRequests
         // GET: Home/OnboardingRequests
         public ActionResult OnboardingRequests()
         {
-            try
-            {
                 return Json(new
                 {
                     success = true,
@@ -44,19 +43,10 @@ namespace ProcureEaseAPI.Controllers
                         DateCreated = x.DateCreated.Value.ToString()
                     }),
                 }, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log(Log.Event.REQUESTFORDEMO, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "message",
-                    data = new { }
-                }, JsonRequestBehavior.AllowGet);
-            }
         }
+        #endregion
 
+        #region ProcessOnboarding
         // POST: Home/OnBoarding
         [HttpPost]
         public ActionResult Onboarding(Guid? RequestID)
@@ -100,28 +90,24 @@ namespace ProcureEaseAPI.Controllers
                     SaveDefaultSouceOfFundRecord(TenantID, OrganizationID);
                     SaveDefaultProcurementMethodRecord(TenantID, OrganizationID);
                     SaveDefaultProjectCategoryRecord(TenantID, OrganizationID);
-
-                    return Json(new
-                    {
-                        success = true,
-                        message = "Organization Onboarded Successfully",
-                        data = new { }
-                    });
                 }             
             }
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.ONBOARDING, ex.Message);
                 Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = new {InternalServerError = ex.StackTrace}
-                }, JsonRequestBehavior.AllowGet);
+                ExceptionError(ex.Message, ex.StackTrace);
             }
+            return Json(new
+            {
+                success = true,
+                message = "Organization Onboarded Successfully",
+                data = new { }
+            });
         }
+        #endregion
 
+           #region ProcessSaveTenantsRequestOnOrganizationSettings
         public void SaveTenantsRequestOnOrganizationSettings(Guid? RequestID, Guid OrganizationID, Guid TenantID )
         {
             DateTime dt = DateTime.Now;            
@@ -148,7 +134,9 @@ namespace ProcureEaseAPI.Controllers
             UpdateTenantRecord.DateModified = dt;
             db.SaveChanges();
         }
+        #endregion
 
+           #region ProcessSaveTenantsRequestOnOrganizationSettings
         public void SaveDefaultSouceOfFundRecord(Guid TenantID,Guid OrganizationID)
         {
             DateTime dt = DateTime.Now;
@@ -199,6 +187,9 @@ namespace ProcureEaseAPI.Controllers
             db.Entry(sourceOfFundsOrganizationSettings).State = EntityState.Modified;
             db.SaveChanges();
         }
+        #endregion
+
+           #region ProcessSaveDefaultProcurementMethodRecord
         public void SaveDefaultProcurementMethodRecord(Guid TenantID, Guid OrganizationID)
         {
             DateTime dt = DateTime.Now;
@@ -236,6 +227,9 @@ namespace ProcureEaseAPI.Controllers
             db.Entry(procurementMethodOrganizationSettings).State = EntityState.Modified;
             db.SaveChanges();
         }
+        #endregion
+
+           #region ProcessSaveDefaultProjectCategoryRecord
         public void SaveDefaultProjectCategoryRecord(Guid TenantID, Guid OrganizationID)
         {
             DateTime dt = DateTime.Now;
@@ -273,7 +267,9 @@ namespace ProcureEaseAPI.Controllers
             db.Entry(projectCategoryOrganizationSettings).State = EntityState.Modified;
             db.SaveChanges();
         }
+        #endregion
 
+        #region ProcessError
         private ActionResult Error(string message)
         {
             return Json(new
@@ -283,7 +279,9 @@ namespace ProcureEaseAPI.Controllers
                 data = new { }
             }, JsonRequestBehavior.AllowGet);
         }
+        #endregion
 
+        #region ProcessExceptionError
         private ActionResult ExceptionError(string message, string StackTrace)
         {
             return Json(new
@@ -293,6 +291,7 @@ namespace ProcureEaseAPI.Controllers
                 data = new { InternalError = StackTrace }
             }, JsonRequestBehavior.AllowGet);
         }
+        #endregion
 
     }
 }

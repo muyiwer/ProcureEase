@@ -131,7 +131,7 @@ namespace ProcureEaseAPI.Controllers
                 if(CheckIfEmailExist != null)
                 {
                     LogHelper.Log(Log.Event.ADD_USER, "User email already exists");
-                   // return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Email already exist! Please check and try again");
+                    Response.StatusCode = (int)HttpStatusCode.Conflict;
                     return Json(new
                     {
                         success = false,
@@ -195,6 +195,7 @@ namespace ProcureEaseAPI.Controllers
                 if (user == null)
                 {
                     LogHelper.Log(Log.Event.INITIATE_PASSWORD_RESET, "Email does not exist");
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
                     return Json(new
                     {
                         success = false,
@@ -253,6 +254,7 @@ namespace ProcureEaseAPI.Controllers
                 if (user == null)
                 {
                     LogHelper.Log(Log.Event.RESET_PASSWORD, "Email does not exist");
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
                     return Json(new
                     {
                         success = false,
@@ -303,6 +305,7 @@ namespace ProcureEaseAPI.Controllers
                 if (CheckIfUserHasSignedUp != null)
                 {
                     LogHelper.Log(Log.Event.SIGN_UP, "Email already exists on AspNetUser table.");
+                    Response.StatusCode = (int)HttpStatusCode.Conflict;
                     return Json(new
                     {
                         success = false,
@@ -315,7 +318,7 @@ namespace ProcureEaseAPI.Controllers
                 if (UserProfile.UserEmail == null || CheckIfUserHasBeenAddedByAdmin == null)
                 {
                     LogHelper.Log(Log.Event.SIGN_UP, "Email is null or UserEmail does not exist UserProfile table.");
-                   // return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Please Input your email");
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
                     return Json(new
                     {
                         success = false,
@@ -382,6 +385,7 @@ namespace ProcureEaseAPI.Controllers
                 if (UserProfile.DepartmentID == null)
                 {
                     LogHelper.Log(Log.Event.EDIT_USER, "Department ID is null");
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     return Json(new
                     {
                         success = false,
@@ -390,6 +394,7 @@ namespace ProcureEaseAPI.Controllers
                         { }
                     }, JsonRequestBehavior.AllowGet);
                 }
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 if (UserProfile.UserID == null)
                 {
                     LogHelper.Log(Log.Event.EDIT_USER, "UserID is Null");
@@ -553,6 +558,7 @@ namespace ProcureEaseAPI.Controllers
                 if(Id == null)
                 {
                     LogHelper.Log(Log.Event.UPDATE_USER_PROFILE, "Id is Null(Not yet signed up)");
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
                     return Json(new
                     {
                         success = false,
@@ -561,7 +567,8 @@ namespace ProcureEaseAPI.Controllers
                         { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                if(UserProfile.UserID == null)
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                if (UserProfile.UserID == null)
                 {
                     LogHelper.Log(Log.Event.UPDATE_USER_PROFILE, "UserID is Null");
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "UserID is null");
@@ -603,6 +610,7 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 var SubDomain = catalog.GetSubDomain();
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 if (UserProfile.UserID == null)
                 {
                     LogHelper.Log(Log.Event.UPDATE_DEPARTMENT_HEAD, "UserID is Null");
@@ -616,8 +624,15 @@ namespace ProcureEaseAPI.Controllers
                 }
                 var CheckDepartmentHead = db.Department.Where(x => x.DepartmentHeadUserID == UserProfile.UserID).Select(x => x.DepartmentHeadUserID).FirstOrDefault();
                 if (CheckDepartmentHead != null)
-                {          
-                    return new HttpStatusCodeResult(HttpStatusCode.OK, "User already head of department");
+                {
+                    Response.StatusCode = (int)HttpStatusCode.Conflict;
+                    return Json(new
+                    {
+                        success = false,
+                        message = "User already head of department",
+                        data = new
+                        { }
+                    }, JsonRequestBehavior.AllowGet);
                 }
                 var CheckUserDepartmentName = db.Department.Where(x => x.DepartmentID == UserProfile.DepartmentID).Select(x => x.DepartmentName).FirstOrDefault();
                 var Id = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();

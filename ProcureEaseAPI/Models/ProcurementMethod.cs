@@ -22,6 +22,7 @@ namespace ProcureEaseAPI.Models
     
         public System.Guid ProcurementMethodID { get; set; }
         public string Name { get; set; }
+        public Nullable<bool> EnableProcurementMethod { get; set; }
         public Nullable<System.DateTime> DateModified { get; set; }
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> DateCreated { get; set; }

@@ -60,21 +60,39 @@ namespace ProcureEaseAPI.Tests.Controllers
         [TestMethod]
         public void TestSendProcurementNeeds()
         {
-            Guid DepartmentID = new Guid("066AF5C4-3F41-419E-ADD5-77E8EC0E1E93");
+
+            Guid DepartmentID = new Guid("8DEFC11D-5595-41DD-87A9-2A0EF5FE04B8");
             int BudgetYear = 2018;
-            DepartmentItems Items = new DepartmentItems();
-            Items.Quantity = 2000;
-            Items.UnitPrice = 5000;
-            Items.ItemName = "Office stationaries";
-            Items.ItemCodeID = new Guid("93E6FFA5-E700-45B0-BDE7-6B3570DAB27B");
-            DepartmentProject project = new DepartmentProject();
-            project.ProcurementMethodID = new Guid("3D30C690-F37B-43D9-A17C-D47A4F5DA127");
-            project.ProjectName = "Procurement of Office stationary";
-            project.ProjectCategoryID = new Guid();
-            project.Items.Add(Items);
+            List<DepartmentItems> Items = new List<DepartmentItems>();
+            Items.Add(new DepartmentItems
+            {
+                ItemID = new Guid("FD1597B6-E857-4530-8B32-16FD6592CFC8"),
+                ItemCodeID = new Guid("05B5775D-6400-4FAA-8AC3-BD1EDCAB1CC0"),
+                ItemCode = "IT0100",
+                ItemName = "Keyboards",
+                UnitPrice = 70000,
+                Quantity = 20
+            });
+            Items.Add(new DepartmentItems
+            {
+                ItemID = new Guid("848B0648-22E8-489C-8E60-9976325861BA"),
+                ItemCodeID = new Guid("05B5775D-6400-4FAA-8AC3-BD1EDCAB1CC0"),
+                ItemCode = "IT0100",
+                ItemName = "Monitors",
+                UnitPrice = 50000,
+                Quantity = 20
+            });
             List<DepartmentProject> Projects = new List<DepartmentProject>();
-            Projects.Add(project);
+            Projects.Add(new DepartmentProject
+            {
+                ProcurementID = new Guid("D4C85763-A4E7-43D4-AA1A-4D1C1E1E1EAF"),
+                ProcurementMethodID = new Guid("4AAF793E-965B-4C0A-8CC3-9957AE52EACC"),
+                ProjectCategoryID = new Guid("C4A8C27A-E46E-4B59-AD0F-AA44761248F0"),
+                ProjectName = "Procurement of furnitures",
+              //  Items = Items
+            });           
             var testDraftNeeds = new ProcurementsController();
+            Mocker.MockControllerContext(testDraftNeeds, LOCAL_SERVER);
             JsonResult result = (JsonResult)testDraftNeeds.SendProcurementNeeds(DepartmentID, BudgetYear, Projects);
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("Drafted procurement"));

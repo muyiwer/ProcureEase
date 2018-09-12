@@ -108,7 +108,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\AdvertControllerTest.cs" />
     <Compile Include="Controllers\Mocker.cs" />
     <Compile Include="Controllers\ProcurementsControllerTest.cs" />
     <Compile Include="Controllers\UsersControllerTest.cs" />

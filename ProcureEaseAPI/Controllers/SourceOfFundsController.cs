@@ -22,6 +22,16 @@ namespace ProcureEaseAPI.Controllers
             return View(db.SourceOfFunds.ToList());
         }
 
+        private ActionResult ExceptionError(string message, string StackTrace)
+        {
+            return Json(new
+            {
+                success = false,
+                message = message,
+                data = new { InternalError = StackTrace }
+            }, JsonRequestBehavior.AllowGet);
+        }
+
         // POST: SourceOfFunds/AddSourceOfFunds
         [HttpPost]
         public ActionResult AddSourceOfFunds(SourceOfFunds sourceOfFunds)
@@ -35,27 +45,22 @@ namespace ProcureEaseAPI.Controllers
                 sourceOfFunds.CreatedBy = "Techspecialist";
                 db.SourceOfFunds.Add(sourceOfFunds);
                 db.SaveChanges();
-                return Json(new
-                {
-                    success = true,
-                    message = "Source Of Fund added successfully!!!",
-                    data = db.SourceOfFunds.Select(x => new
-                    {
-                        x.SourceOfFundID,
-                        x.SourceOfFund,                        
-                    })
-                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.ADD_SOURCEOFFUNDS, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = new { }
-                }, JsonRequestBehavior.AllowGet);
+                ExceptionError(ex.Message, ex.StackTrace);
             }
+            return Json(new
+            {
+                success = true,
+                message = "Source Of Fund added successfully!!!",
+                data = db.SourceOfFunds.Select(x => new
+                {
+                    x.SourceOfFundID,
+                    x.SourceOfFund,
+                })
+            }, JsonRequestBehavior.AllowGet);
         }
 
         // GET: SourceOfFunds/Details/5
@@ -116,9 +121,18 @@ namespace ProcureEaseAPI.Controllers
         [HttpPost]
         public ActionResult Edit(SourceOfFundsOrganizationSettings sourceOfFundsOrganizationSettings, bool EnableSourceOFFund)
         {
+            Guid? tenantId = catalog.GetTenantID();
             try
             {
-                var tenantID = catalog.GetTenantID();
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 DateTime dt = DateTime.Now;
                 var CurrentSourceOfFundID = db.SourceOfFundsOrganizationSettings.FirstOrDefault(s => s.SourceOfFundID == sourceOfFundsOrganizationSettings.SourceOfFundID);
 
@@ -135,29 +149,23 @@ namespace ProcureEaseAPI.Controllers
                 CurrentSourceOfFundID.EnableSourceOFFund = EnableSourceOFFund;
                 CurrentSourceOfFundID.DateModified = dt;
                 db.SaveChanges();
-
-                return Json(new
-                {
-                    success = true,
-                    message = "Edited successfully",
-                    data = db.SourceOfFundsOrganizationSettings.Where(x => x.TenantID == tenantID).Select(x => new
-                    {
-                        x.SourceOfFundID,
-                        x.SourceOfFunds.SourceOfFund,
-                        Enabled = x.EnableSourceOFFund
-                    })
-                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.UPDATE_SOURCEOFFUNDS, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = new { }
-                }, JsonRequestBehavior.AllowGet);
+                ExceptionError(ex.Message, ex.StackTrace);
             }
+            return Json(new
+            {
+                success = true,
+                message = "Edited successfully",
+                data = db.SourceOfFundsOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
+                {
+                    x.SourceOfFundID,
+                    x.SourceOfFunds.SourceOfFund,
+                    Enabled = x.EnableSourceOFFund
+                })
+            }, JsonRequestBehavior.AllowGet);
         }
 
             // GET: SourceOfFunds/Delete/5

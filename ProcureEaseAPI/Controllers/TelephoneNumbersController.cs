@@ -7,12 +7,14 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using ProcureEaseAPI.Models;
+using Utilities;
 
 namespace ProcureEaseAPI.Controllers
 {
     public class TelephoneNumbersController : Controller
     {
         private ProcureEaseEntities db = new ProcureEaseEntities();
+        CatalogsController catalog = new CatalogsController();
 
         // GET: TelephoneNumbers
         public ActionResult Index()
@@ -117,25 +119,52 @@ namespace ProcureEaseAPI.Controllers
         [HttpPost, ActionName("Delete")]
         public ActionResult DeleteConfirmed(Guid id)
         {
-            TelephoneNumbers telephoneNumbers = db.TelephoneNumbers.Find(id);
-            db.TelephoneNumbers.Remove(telephoneNumbers);
-            db.SaveChanges();
-            var TelephoneNumbers = db.TelephoneNumbers.Select(x => new
+            Guid? tenantId = catalog.GetTenantID();
+            try
             {
-                x.TelephoneNumberID,
-                x.TelephoneNumber,
-                x.OrganizationID,
-            });
-            var AdminDashboard = new
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                TelephoneNumbers telephoneNumbers = db.TelephoneNumbers.Find(id);
+                db.TelephoneNumbers.Remove(telephoneNumbers);
+                db.SaveChanges();
+                var TelephoneNumbers = db.TelephoneNumbers.Select(x => new
+                {
+
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(Log.Event.DELETE_TELEPHONENUMBER, ex.Message);
+                ExceptionError(ex.Message, ex.StackTrace);
+            }
+            return Json(new
             {
                 success = true,
                 message = "Deleted Successfully",
-                data = new
+                data = db.TelephoneNumbers.Where(x => x.TenantID == tenantId).Select(x => new
                 {
-                    TelephoneNumbers = TelephoneNumbers
-                }
-            };
-            return Json(AdminDashboard, JsonRequestBehavior.AllowGet);
+                    x.TelephoneNumberID,
+                    x.TelephoneNumber,
+                    x.OrganizationID,
+                })
+            });
+        }
+
+        private ActionResult ExceptionError(string message, string StackTrace)
+        {
+            return Json(new
+            {
+                success = false,
+                message = message,
+                data = new { InternalError = StackTrace }
+            }, JsonRequestBehavior.AllowGet);
         }
 
         protected override void Dispose(bool disposing)

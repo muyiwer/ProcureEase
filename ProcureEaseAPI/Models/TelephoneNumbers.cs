@@ -24,6 +24,5 @@ namespace ProcureEaseAPI.Models
     
         public virtual Catalog Catalog { get; set; }
         public virtual OrganizationSettings OrganizationSettings { get; set; }
-        public virtual Catalog Catalog { get; set; }
     }
 }

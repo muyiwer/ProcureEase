@@ -15,7 +15,7 @@ namespace ProcureEaseAPI.Controllers
     public class DepartmentsController : Controller
     {
         private ProcureEaseEntities db = new ProcureEaseEntities();
-        
+        CatalogsController catalog = new CatalogsController();
 
         private ActionResult Error(string message)
         {
@@ -52,55 +52,51 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                Department department = new Department();
-                var Departments = db.Department.Select(x => new
-                {
-                    x.DepartmentID,
-                    x.DepartmentName,
-                    x.DepartmentHeadUserID,
-                    x.CreatedBy
-                });
-
-                return Json(new
-                {
-                    success = true,
-                    message = "Ok",
-                    data = db.Department.Select(x => new
-                    {
-                        Department = new
-                        {
-                            x.DepartmentID,
-                            x.DepartmentName
-                        },
-                        Head = new
-                        {
-                            DepartmentHeadUserID = db.UserProfile.Where(y => x.DepartmentHeadUserID == y.UserID).Select(y => (true) || (false)).FirstOrDefault(),
-                            FullName = db.UserProfile.Where(z => z.UserID == x.DepartmentHeadUserID).Select(y => y.FirstName + " " + y.LastName)
-                            //FullName = db.UserProfile.Where(z => new Guid(z.Id) == x.DepartmentHeadUserID).Select(y => y.FirstName + " " + y.LastName)
-                        }
-
-                    }),
-                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.GET_DEPARTMENT, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = new { }
-                }, JsonRequestBehavior.AllowGet);
+                ExceptionError(ex.Message, ex.StackTrace);
             }
+            Department department = new Department();
+            return Json(new
+            {
+                success = true,
+                message = "Ok",
+                data = db.Department.Select(x => new
+                {
+                    Department = new
+                    {
+                        x.DepartmentID,
+                        x.DepartmentName
+                    },
+                    Head = new
+                    {
+                        DepartmentHeadUserID = db.UserProfile.Where(y => x.DepartmentHeadUserID == y.UserID).Select(y => (true) || (false)).FirstOrDefault(),
+                        FullName = db.UserProfile.Where(z => z.UserID == x.DepartmentHeadUserID).Select(y => y.FirstName + " " + y.LastName)
+                        //FullName = db.UserProfile.Where(z => new Guid(z.Id) == x.DepartmentHeadUserID).Select(y => y.FirstName + " " + y.LastName)
+                    }
+                }),
+            }, JsonRequestBehavior.AllowGet);
         }
 
         // POST: Departments/AddDepartment
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult AddDepartment(string DepartmentName)
+        public ActionResult AddDepartment(string DepartmentName, Guid UserID)
         {
+            Guid? tenantId = catalog.GetTenantID();
             try
             {
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 DateTime dt = DateTime.Now;
                 Department department = new Department();
                 {
@@ -109,40 +105,44 @@ namespace ProcureEaseAPI.Controllers
                     department.DateCreated = dt;
                     department.DateModified = dt;
                     department.CreatedBy = "MDA Administrator";
+                    department.TenantID = tenantId;
+                    department.OrganisationID = catalog.GetOrganizationID();
                 };
                     db.Department.Add(department);
-                    db.SaveChanges();
-                return Json(new
-                {
-                    success = true,
-                    message = "Department Added Successfully",
-                    data = db.Department.Select(x => new
-                    {
-                        Department = new
-                        {
-                            x.DepartmentID,
-                            x.DepartmentName
-                        },
-                        Head = new
-                        {
-                            DepartmentHeadUserID = db.UserProfile.Where(y => x.DepartmentHeadUserID == y.UserID).Select(y => (true) || (false)).FirstOrDefault(),
-                            FullName = db.UserProfile.Where(z => z.UserID == x.DepartmentHeadUserID).Select(y => y.FirstName + " " + y.LastName)
-                        }
 
-                    }),
-                }, JsonRequestBehavior.AllowGet);
+                var userProfile = db.UserProfile.ToList();
+                var departmentID = db.UserProfile.Where(x => x.UserID == UserID).Select(x => x.UserID).FirstOrDefault();
+                foreach (UserProfile Department in userProfile)
+                {
+                    department = db.Department.Find(Department.DepartmentID);
+                    department.DepartmentHeadUserID = departmentID;
+                };
+                db.SaveChanges();
             }
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.ADD_DEPARTMENT, ex.Message + ex.StackTrace);
-                return Json(new
-                {
-                    success = false,
-                    message = ex.Message,
-                    data = new { }
-                });
-
+                ExceptionError(ex.Message, ex.StackTrace);
             }
+            return Json(new
+            {
+                success = true,
+                message = "Department Added Successfully",
+                data = db.Department.Select(x => new
+                {
+                    Department = new
+                    {
+                        x.DepartmentID,
+                        x.DepartmentName
+                    },
+                    Head = new
+                    {
+                        DepartmentHeadUserID = db.UserProfile.Where(y => x.DepartmentHeadUserID == y.UserID).Select(y => (true) || (false)).FirstOrDefault(),
+                        FullName = db.UserProfile.Where(z => z.UserID == x.DepartmentHeadUserID).Select(y => y.FirstName + " " + y.LastName)
+                    }
+
+                }),
+            }, JsonRequestBehavior.AllowGet);
         }
 
         // PUT: Departments/Edit

@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using ProcureEaseAPI.Models;
+using System.Threading.Tasks;
+using Utilities;
 
 namespace ProcureEaseAPI.Controllers
 {
@@ -18,6 +20,39 @@ namespace ProcureEaseAPI.Controllers
         public ActionResult Index()
         {
             return View(db.OrganizationSettings.ToList());
+        }
+
+        //Post: OrganizationSettings/AddBasicDetails
+        [HttpPost]
+        [AllowAnonymous]
+        public ActionResult AddBasicDetails([Bind(Include = "OrganizationID,OrganizationNameInFull,OrganizationNameAbbreviation,OrganizationEmail,Address,Country,State,AboutOrganization,DateModified,CreatedBy,DateCreated")]OrganizationSettings organizationSettings)
+        {
+            if (ModelState.IsValid)
+            {
+                DateTime dt = DateTime.Now;
+                organizationSettings.OrganizationID = Guid.NewGuid();
+                organizationSettings.DateCreated = dt;
+                organizationSettings.CreatedBy = "Admin";
+                db.OrganizationSettings.Add(organizationSettings);
+                db.SaveChanges();
+                var BasicDetails = db.OrganizationSettings.Select(x => new
+                {
+                        x.OrganizationID,
+                        DateCreated = x.DateCreated.Value.ToString(),
+                        x.CreatedBy
+                });
+                var AdminDashboard = new
+                {
+                    success = true,
+                    message = "Organization onboarded successfully!!!",
+                    data = new
+                    {
+                        BasicDetails = BasicDetails,
+                    }
+                };
+                return Json(AdminDashboard, JsonRequestBehavior.AllowGet);
+            }
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
 
         // GET: OrganizationSettings/Details/5

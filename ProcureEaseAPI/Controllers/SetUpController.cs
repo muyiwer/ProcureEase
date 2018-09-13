@@ -1,10 +1,13 @@
 ﻿using ProcureEaseAPI.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Utilities;
 
 namespace ProcureEaseAPI.Controllers
 {
@@ -17,39 +20,43 @@ namespace ProcureEaseAPI.Controllers
             return View();
         }
 
-        //http://localhost:85/SetUp/SourceOfFunds
+        // GET: SetUp/SourceOfFunds
         [AllowAnonymous]
         [HttpGet]
-        public ActionResult SourceOfFunds(SourceOfFunds sourceOfFunds)
+        public ActionResult SourceOfFunds()
         {
-            if (ModelState.IsValid)
+            try
             {
-                var SourceOfFunds = db.SourceOfFunds.Select(x => new
-                {
-                    x.SourceOfFundID,
-                    x.SourceOfFund,
-                    x.EnableSourceOfFund
-                });
-                var AdminDashboard = new
+                return Json(new
                 {
                     success = true,
                     message = "All source of funds",
-                    data = new
+                    data = db.SourceOfFunds.Select(x => new
                     {
-                        SourceOfFunds = SourceOfFunds
-                    }
-                };
-                return Json(AdminDashboard, JsonRequestBehavior.AllowGet);
+                        TenantID = db.SourceOfFunds.Where(y => y.TenantID == x.TenantID).Select(y => y.TenantID),
+                        x.SourceOfFundID,
+                        x.SourceOfFund,
+                        Enabled = db.SourceOfFundsOrganizationSettings.Where(y => y.SourceOfFundID == y.SourceOfFundID).Select(y => y.EnableSourceOfFund)
+                    })
+                }, JsonRequestBehavior.AllowGet);
             }
-            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            catch (Exception ex)
+            {
+                LogHelper.Log(Log.Event.GET_ALL_SOURCEOFFUNDS, ex.Message);
+                return Json(new
+                {
+                    success = false,
+                    message = "" + ex.Message,
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
 
-        //http://localhost:85/SetUp/ProcurementMethod
-        [AllowAnonymous]
+        // GET: SetUp/ProcurementMethod
         [HttpGet]
-        public ActionResult ProcurementMethod(ProcurementMethod procurementMethod)
+        public ActionResult ProcurementMethod()
         {
-            if (ModelState.IsValid)
+            try
             {
                 var ProcurementMethod = db.ProcurementMethod.Select(x => new
                 {
@@ -57,69 +64,103 @@ namespace ProcureEaseAPI.Controllers
                     x.Name,
                     x.EnableProcurementMethod,
                 });
-                var AdminDashboard = new
+                return Json(new
                 {
                     success = true,
                     message = "All Procurement Method",
-                    data = new
+                    data = db.ProcurementMethod.Select(x => new
                     {
-                        ProcurementMethod = ProcurementMethod
-                    }
-                };
-                return Json(AdminDashboard, JsonRequestBehavior.AllowGet);
+                        x.ProcurementMethodID,
+                        x.Name,
+                        x.EnableProcurementMethod,
+                    })
+                }, JsonRequestBehavior.AllowGet);
             }
-            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            catch (Exception ex)
+            {
+                LogHelper.Log(Log.Event.GET_ALL_PROCUREMENTMETHOD, ex.Message);
+                return Json(new
+                {
+                    success = false,
+                    message = "" + ex.Message,
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
 
-        //http://localhost:85/SetUp/ProjectCategory
-        [AllowAnonymous]
+        // GET: SetUp/ProjectCategory
         [HttpGet]
-        public ActionResult ProjectCategory(ProjectCategory projectCategory)
+        public ActionResult ProjectCategory()
         {
-            if (ModelState.IsValid)
+            try
             {
-                var ProjectCategory = db.ProjectCategory.Select(x => new
-                {
-                    x.ProjectCategoryID,
-                    x.Name,
-                    x.EnableProjectCategory,
-                });
-                var AdminDashboard = new
+                return Json(new
                 {
                     success = true,
                     message = "All Project Category",
-                    data = new
+                    data = db.ProjectCategory.Select(x => new
                     {
-                        ProjectCategory = ProjectCategory
-                    }
-                };
-                return Json(AdminDashboard, JsonRequestBehavior.AllowGet);
+                        x.ProjectCategoryID,
+                        x.Name,
+                       // x.EnableProjectCategory,
+                    })
+                }, JsonRequestBehavior.AllowGet);
             }
-            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            catch (Exception ex)
+            {
+                LogHelper.Log(Log.Event.GET_ALL_PROJECTCATEGORY, ex.Message);
+                return Json(new
+                {
+                    success = false,
+                    message = "" + ex.Message,
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
 
-        //http://localhost:85/SetUp/UpdateBasicDetails
-        [HttpPost]
-        [AllowAnonymous]
-        //[ValidateAntiForgeryToken]
-        public ActionResult UpdateBasicDetails([Bind(Include = "OrganizationID,OrganizationNameInFull,OrganizationNameAbbreviation,OrganizationEmail,Address,Country,State,AboutOrganization,DateModified,CreatedBy,DateCreated,OrganizationLogoPath")]OrganizationSettings organizationSettings, List<TelephoneNumbers> telephoneNumbers)
+        // PUT: SetUp/UpdateBasicDetails
+        [HttpPut]
+        public async Task<ActionResult> UpdateBasicDetails([Bind(Include = "OrganizationID,OrganizationNameInFull,OrganizationNameAbbreviation,OrganizationEmail,Address,Country,State,AboutOrganization,DateModified,CreatedBy,DateCreated")]OrganizationSettings organizationSettings, HttpPostedFileBase image, params string[] telephoneNumbers)
         {
-            if (ModelState.IsValid)
+            try
             {
                 DateTime dt = DateTime.Now;
-                organizationSettings.OrganizationID = Guid.NewGuid();
-                organizationSettings.DateCreated = dt;
-                organizationSettings.DateModified = dt;
-                organizationSettings.CreatedBy = "Admin";
-                db.OrganizationSettings.Add(organizationSettings);
+                var currentOrganizationDetails = db.OrganizationSettings.FirstOrDefault(o => o.OrganizationID == o.OrganizationID);
+
+                if (currentOrganizationDetails == null)
+                {
+                    LogHelper.Log(Log.Event.UPDATE_BASICDETAILS, "OrgasnizationID not found");
+                    return Json(new
+                    {
+                        success = false,
+                        message = "OrgasnizationID not found",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+
+                currentOrganizationDetails.OrganizationNameInFull = organizationSettings.OrganizationNameInFull;
+                currentOrganizationDetails.OrganizationNameAbbreviation = organizationSettings.OrganizationNameAbbreviation;
+                currentOrganizationDetails.OrganizationEmail = organizationSettings.OrganizationEmail;
+                currentOrganizationDetails.Address = organizationSettings.Address;
+                currentOrganizationDetails.Country = organizationSettings.Country;
+                currentOrganizationDetails.State = organizationSettings.State;
+                currentOrganizationDetails.AboutOrganization = organizationSettings.AboutOrganization;
+                currentOrganizationDetails.DateModified = dt;
+                currentOrganizationDetails.CreatedBy = "MDA Administrator";
+                if (image != null)
+                {
+                    currentOrganizationDetails.OrganizationLogoPath = await new FileUploadHelper().UploadImageToAzureStorage(image) + "";
+                }
                 db.SaveChanges();
-                AddTelephone(organizationSettings, telephoneNumbers);
-                var list = telephoneNumbers.ToArray();
-                var BasicDetails = db.OrganizationSettings.Where(y => organizationSettings.OrganizationID == organizationSettings.OrganizationID).Select(x => new
+                if (telephoneNumbers != null && telephoneNumbers.Length > 0)
+                {
+                    AddTelephone(organizationSettings, telephoneNumbers);
+                }
+                return Json ( new
                 {
                     success = true,
-                    message = "Organization settings added successfully!!!",
-                    data = new
+                    message = "Basic details added successfully!!!",
+                    data = db.OrganizationSettings.Select(x => new
                     {
                         x.OrganizationID,
                         x.OrganizationNameInFull,
@@ -130,44 +171,54 @@ namespace ProcureEaseAPI.Controllers
                         x.AboutOrganization,
                         x.Address,
                         x.OrganizationLogoPath,
-                        DateCreated = x.DateCreated.Value.ToString(),
                         DateModified = x.DateModified.Value.ToString(),
                         x.CreatedBy,
                         TelephoneNumbers = db.TelephoneNumbers.Where(y => y.OrganizationID == x.OrganizationID).Select(y => new
                         {
                             y.TelephoneNumber
                         })
-                    }
-                });
-                return Json(BasicDetails);
+                    })
+                }, JsonRequestBehavior.AllowGet);
             }
-            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            catch (Exception ex)
+            {
+                LogHelper.Log(Log.Event.UPDATE_BASICDETAILS, ex.Message);
+                return Json(new
+                {
+                    success = false,
+                    message = "" + ex.Message,
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
-        public void AddTelephone(OrganizationSettings organizationSettings, List<TelephoneNumbers> telephoneNumbers)
+
+        public void AddTelephone(OrganizationSettings organizationSettings, params string[] telephoneNumbers)
         {
-            //var OrganizationName = db.OrganizationSettings.Where(y => y.OrganizationNameInFull == y.OrganizationNameInFull).Select(y => y.OrganizationID).SingleOrDefault();
-            //var organizationID = db.OrganizationSettings.Where(y => y.OrganizationID == OrganizationName).Select(y => y.OrganizationID).SingleOrDefault();
-            foreach (var Telephone in telephoneNumbers)
+            // TODO: Anita. check if this telephone number has already been added for this organization    
+            var TelephoneNumbersFromDB = db.TelephoneNumbers.Select(x => x.TelephoneNumber).ToList();
+            var DistinctTelephoneNumbers = telephoneNumbers.Except(TelephoneNumbersFromDB);
+            foreach (var telephone in DistinctTelephoneNumbers)
             {
                 DateTime dt = DateTime.Now;
                 db.TelephoneNumbers.Add(new TelephoneNumbers
                 {
                     TelephoneNumberID = Guid.NewGuid(),
                     OrganizationID = organizationSettings.OrganizationID,
-                    TelephoneNumber = Telephone.TelephoneNumber,
+                    TelephoneNumber = telephone,
                     DateCreated = dt,
                     DateModified = dt,
                     CreatedBy = "Admin"
                 });
                 db.SaveChanges();
+
             }
         }
-        //http://localhost:85/SetUp/OrganizationSettings
-        [AllowAnonymous]
+
+        // GET: SetUp/OrganizationSettings
         [HttpGet]
-        public ActionResult OrganizationSettings(OrganizationSettings OrganizationSettings)
+        public ActionResult OrganizationSettings()
         {
-            if (ModelState.IsValid)
+            try
             {
                 var BasicDetails = db.OrganizationSettings.Select(x => new
                 {
@@ -220,7 +271,7 @@ namespace ProcureEaseAPI.Controllers
                 {
                     x.SourceOfFundID,
                     x.SourceOfFund,
-                    x.EnableSourceOfFund,
+                   // x.EnableSourceOfFund,
                 });
 
                 var ProcurementMethod = db.ProcurementMethod.Select(x => new
@@ -234,7 +285,7 @@ namespace ProcureEaseAPI.Controllers
                 {
                     x.ProjectCategoryID,
                     x.Name,
-                    x.EnableProjectCategory,
+                   // x.EnableProjectCategory,
                 });
 
                 var Users = db.UserProfile.Select(x => new
@@ -249,7 +300,7 @@ namespace ProcureEaseAPI.Controllers
                     x.DepartmentName
                 });
 
-                var AdminDashboard = new
+                return Json(new
                 {
                     success = true,
                     message = "OK",
@@ -264,10 +315,18 @@ namespace ProcureEaseAPI.Controllers
                         Users = Users,
                         Departments = Departments
                     }
-                };
-                return Json(AdminDashboard, JsonRequestBehavior.AllowGet);
+                }, JsonRequestBehavior.AllowGet);
             }
-            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            catch (Exception ex)
+            {
+                LogHelper.Log(Log.Event.GET_ORGANIZATIONSETTINGS, ex.Message);
+                return Json(new
+                {
+                    success = false,
+                    message = "" + ex.Message,
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
     }
 }

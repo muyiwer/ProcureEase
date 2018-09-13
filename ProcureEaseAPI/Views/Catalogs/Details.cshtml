@@ -1,0 +1,42 @@
+﻿@model ProcureEaseAPI.Models.Catalog
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Catalog</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.SubDomain)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SubDomain)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OrganizationSettings.OrganizationNameInFull)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OrganizationSettings.OrganizationNameInFull)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RequestForDemo.OrganizationFullName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RequestForDemo.OrganizationFullName)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.CatalogItemID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

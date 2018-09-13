@@ -217,10 +217,6 @@
     <Compile Include="Controllers\DepartmentsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\OrganizationSettingsController.cs" />
-    <Compile Include="Controllers\ProcurementMethodsController.cs" />
-    <Compile Include="Controllers\ProjectCategoriesController.cs" />
-    <Compile Include="Controllers\SetUpController.cs" />
-    <Compile Include="Controllers\SourceOfFundsController.cs" />
     <Compile Include="Controllers\TelephoneNumbersController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Global.asax.cs">
@@ -265,6 +261,9 @@
     <Compile Include="Models\BudgetYear.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Catalog.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\C__MigrationHistory.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
@@ -272,6 +271,9 @@
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\IdentityModel.cs" />
+    <Compile Include="Models\ItemCode.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Items.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
@@ -296,6 +298,9 @@
     <Compile Include="Models\ProcurementMethod.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ProcurementMethodOrganizationSettings.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Procurements.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
@@ -305,7 +310,16 @@
     <Compile Include="Models\ProjectCategory.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ProjectCategoryOrganizationSettings.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\RequestForDemo.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\SourceOfFunds.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SourceOfFundsOrganizationSettings.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\sysdiagrams.cs">

@@ -19,6 +19,7 @@ namespace ProcureEaseAPI.Models
         {
             this.AdvertCategoryNumber = new HashSet<AdvertCategoryNumber>();
             this.Procurements = new HashSet<Procurements>();
+            this.ProjectCategoryOrganizationSettings = new HashSet<ProjectCategoryOrganizationSettings>();
         }
     
         public System.Guid ProjectCategoryID { get; set; }
@@ -31,6 +32,7 @@ namespace ProcureEaseAPI.Models
         public virtual ICollection<AdvertCategoryNumber> AdvertCategoryNumber { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Procurements> Procurements { get; set; }
-        public virtual ProjectCategoryOrganizationSettings ProjectCategoryOrganizationSettings { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProjectCategoryOrganizationSettings> ProjectCategoryOrganizationSettings { get; set; }
     }
 }

@@ -83,7 +83,7 @@ namespace ProcureEaseAPI.Controllers
         // POST: Departments/AddDepartment
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult AddDepartment(string DepartmentName, Guid UserID)
+        public ActionResult AddDepartment(string DepartmentName, Guid? UserID)
         {
             Guid? tenantId = catalog.GetTenantID();
             try
@@ -187,12 +187,12 @@ namespace ProcureEaseAPI.Controllers
             {
                 success = true,
                 message = "Editted successfully",
-                data = db.Department.Select(x => new
+                data = db.Department.Where(z => z.TenantID == tenantId).Select(x => new
                 {
                     User = new
                     {
                         x.UserProfile.UserID,
-                        FullName = db.UserProfile.Where(z => z.UserID == x.DepartmentHeadUserID).Select(y => y.FirstName + " " + y.LastName).FirstOrDefault()
+                        FullName = db.UserProfile.Where(z => z.UserID == x.DepartmentHeadUserID && z.TenantID == tenantId && x.DepartmentHeadUserID != Guid.Empty).Select(y => y.FirstName + " " + y.LastName).FirstOrDefault()
                     },
                     Head = new
                     {

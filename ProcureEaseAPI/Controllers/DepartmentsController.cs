@@ -109,14 +109,11 @@ namespace ProcureEaseAPI.Controllers
                     department.OrganisationID = catalog.GetOrganizationID();
                 };
                     db.Department.Add(department);
+                    db.SaveChanges();
 
-                var userProfile = db.UserProfile.ToList();
+                var currentDepartmentDetail = db.Department.FirstOrDefault(d => d.DepartmentID == department.DepartmentID);
                 var departmentID = db.UserProfile.Where(x => x.UserID == UserID).Select(x => x.UserID).FirstOrDefault();
-                foreach (UserProfile Department in userProfile)
-                {
-                    department = db.Department.Find(Department.DepartmentID);
-                    department.DepartmentHeadUserID = departmentID;
-                };
+                currentDepartmentDetail.DepartmentHeadUserID = departmentID;
                 db.SaveChanges();
             }
             catch (Exception ex)
@@ -138,7 +135,7 @@ namespace ProcureEaseAPI.Controllers
                     Head = new
                     {
                         DepartmentHeadUserID = db.UserProfile.Where(y => x.DepartmentHeadUserID == y.UserID).Select(y => (true) || (false)).FirstOrDefault(),
-                        FullName = db.UserProfile.Where(z => z.UserID == x.DepartmentHeadUserID).Select(y => y.FirstName + " " + y.LastName)
+                        FullName = db.UserProfile.Where(z => z.UserID == x.DepartmentHeadUserID).Select(y => y.FirstName + " " + y.LastName).FirstOrDefault()
                     }
 
                 }),
@@ -147,15 +144,25 @@ namespace ProcureEaseAPI.Controllers
 
         // PUT: Departments/Edit
         [HttpPut]
-        public ActionResult Edit([Bind(Include = "DepartmentID,DepartmentHeadUserID,DepartmentName,DateModified,CreatedBy,DateCreated")] Department department)
+        public ActionResult Edit (Department department)
         {
+            Guid? tenantId = catalog.GetTenantID();
             try
             {
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 UserProfile userProfile = new UserProfile();
 
                 DateTime dt = DateTime.Now;
                 var currentDepartmentDetail = db.Department.FirstOrDefault(d => d.DepartmentID == department.DepartmentID);
-
+                //var DepartmentHeadUserID = db.UserProfile.Where(x => x.DepartmentID == department.DepartmentID).Select(x => x.UserID).FirstOrDefault();
                 if (currentDepartmentDetail == null)
                 {
                     LogHelper.Log(Log.Event.EDIT_DEPARTMENT, "DepartmentID not found");
@@ -170,36 +177,31 @@ namespace ProcureEaseAPI.Controllers
                 currentDepartmentDetail.DepartmentName = department.DepartmentName;
                 currentDepartmentDetail.DepartmentHeadUserID = department.DepartmentHeadUserID;
                 db.SaveChanges();
-                return Json(new
-                {
-                    success = true,
-                    message = "Editted successfully",
-                    data = db.Department.Select(x => new
-                    {
-                        User = new
-                        {
-                            x.UserProfile.UserID,
-                            FullName = db.UserProfile.Where(z => z.UserID == x.DepartmentHeadUserID).Select(y => y.FirstName + " " + y.LastName)
-                        },
-                        Head = new
-                        {
-                            x.DepartmentID,
-                            x.DepartmentName                        
-                        }
-
-                    }),
-                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.EDIT_DEPARTMENT, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = new { }
-                }, JsonRequestBehavior.AllowGet);
+                ExceptionError(ex.Message, ex.StackTrace);
             }
+            return Json(new
+            {
+                success = true,
+                message = "Editted successfully",
+                data = db.Department.Select(x => new
+                {
+                    User = new
+                    {
+                        x.UserProfile.UserID,
+                        FullName = db.UserProfile.Where(z => z.UserID == x.DepartmentHeadUserID).Select(y => y.FirstName + " " + y.LastName).FirstOrDefault()
+                    },
+                    Head = new
+                    {
+                        x.DepartmentID,
+                        x.DepartmentName
+                    }
+
+                }),
+            }, JsonRequestBehavior.AllowGet);
         }
 
         // POST: Departments/Delete
@@ -226,7 +228,7 @@ namespace ProcureEaseAPI.Controllers
                         Head = new
                         {
                             DepartmentHeadUserID = db.UserProfile.Where(y => x.DepartmentHeadUserID == y.UserID).Select(y => (true) || (false)).FirstOrDefault(),
-                            FullName = db.UserProfile.Where(z => z.UserID == x.DepartmentHeadUserID).Select(y => y.FirstName + " " + y.LastName)
+                            FullName = db.UserProfile.Where(z => z.UserID == x.DepartmentHeadUserID).Select(y => y.FirstName + " " + y.LastName).FirstOrDefault()
                         }
 
                     }),

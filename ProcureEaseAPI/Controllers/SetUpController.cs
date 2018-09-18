@@ -149,12 +149,13 @@ namespace ProcureEaseAPI.Controllers
 
         // PUT: SetUp/UpdateBasicDetails
         [HttpPut]
-        public async Task<ActionResult> UpdateBasicDetails([Bind(Include = "OrganizationID,OrganizationNameInFull,OrganizationNameAbbreviation,OrganizationEmail,Address,Country,State,AboutOrganization,DateModified,CreatedBy,DateCreated")]OrganizationSettings organizationSettings, HttpPostedFileBase image, params string[] telephoneNumbers)
+        public async Task<ActionResult> UpdateBasicDetails(OrganizationSettings organizationSettings, HttpPostedFileBase image, params string[] TelephoneNumbers)
         {
             Guid? tenantId = catalog.GetTenantID();
+            var OrganizationSettingsTenantID = db.OrganizationSettings.Where(x => x.OrganizationID == organizationSettings.OrganizationID).Select(x => x.TenantID).FirstOrDefault();
             try
             {
-                if (tenantId == null)
+                if (OrganizationSettingsTenantID != tenantId)
                 {
                     return Json(new
                     {
@@ -191,9 +192,9 @@ namespace ProcureEaseAPI.Controllers
                     currentOrganizationDetails.OrganizationLogoPath = await new FileUploadHelper().UploadImageToAzureStorage(image) + "";
                 }
                 db.SaveChanges();
-                if (telephoneNumbers != null && telephoneNumbers.Length > 0)
+                if (TelephoneNumbers != null && TelephoneNumbers.Length > 0 )
                 {
-                    AddTelephone(organizationSettings, telephoneNumbers);
+                    AddTelephone(organizationSettings, TelephoneNumbers);
                 }
             }
             catch (Exception ex)
@@ -219,20 +220,17 @@ namespace ProcureEaseAPI.Controllers
                     x.OrganizationLogoPath,
                     DateModified = x.DateModified.Value.ToString(),
                     x.CreatedBy,
-                    TelephoneNumbers = db.TelephoneNumbers.Where(y => y.OrganizationID == x.OrganizationID).Select(y => new
-                    {
-                        y.TelephoneNumber
-                    })
+                    TelephoneNumbers = db.TelephoneNumbers.Where(y => y.OrganizationID == x.OrganizationID).Select(y => y.TelephoneNumber)
                 })
             }, JsonRequestBehavior.AllowGet);
         }
 
-        public void AddTelephone(OrganizationSettings organizationSettings, params string[] telephoneNumbers)
+        public void AddTelephone(OrganizationSettings organizationSettings, params string[] TelephoneNumbers)
         {
             // TODO: Anita. check if this telephone number has already been added for this organization
             var tenantID = catalog.GetTenantID();
             var TelephoneNumbersFromDB = db.TelephoneNumbers.Select(x => x.TelephoneNumber).ToList();
-            var DistinctTelephoneNumbers = telephoneNumbers.Except(TelephoneNumbersFromDB);
+            var DistinctTelephoneNumbers = TelephoneNumbers.Except(TelephoneNumbersFromDB);
             foreach (var telephone in DistinctTelephoneNumbers)
             {
                 DateTime dt = DateTime.Now;
@@ -284,11 +282,7 @@ namespace ProcureEaseAPI.Controllers
                 x.AboutOrganization,
                 x.OrganizationLogoPath,
                 x.CreatedBy,
-                TelephoneNumbers = db.TelephoneNumbers.Where(y => y.OrganizationID == x.OrganizationID).Select(y => new
-                {
-                    y.TelephoneNumber
-                })
-
+                TelephoneNumbers = db.TelephoneNumbers.Where(y => y.OrganizationID == x.OrganizationID).Select(y => y.TelephoneNumber)
             });
 
             var DepartmentSetup = db.Department.Select(x => new
@@ -308,16 +302,17 @@ namespace ProcureEaseAPI.Controllers
 
             var UserManagement = db.UserProfile.Select(x => new
             {
-                User = db.UserProfile.Where(y => y.TenantID == tenantId).Select(y => new
+                User = db.UserProfile.Where(y => y.TenantID == tenantId && x.UserID == x.UserID).Select(y => new
                 {
                     y.UserID,
-                    FullName = x.FirstName + " " + x.LastName
+                    FullName = x.FirstName + " " + x.LastName,
                 }),
-                Department = db.UserProfile.Where(y => y.UserID == x.UserID && y.TenantID == tenantId).Select(y => new
+                Department = db.UserProfile.Where(z => z.UserID == x.UserID && z.TenantID == tenantId).Select(z => new
                 {
                     x.DepartmentID,
-                    y.Department1.DepartmentName
+                    z.Department1.DepartmentName
                 })
+
             });
 
             var SourceOfFunds = db.SourceOfFundsOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new

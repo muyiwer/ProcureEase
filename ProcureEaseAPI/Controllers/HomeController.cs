@@ -146,12 +146,13 @@ namespace ProcureEaseAPI.Controllers
         #region ProcessOnboarding
         // POST: Home/OnBoarding
         [HttpPost]
-        public ActionResult Onboarding(Guid? RequestID)
+        public async Task<ActionResult>  Onboarding(Guid? RequestID, string Password)
         {
             try
             {
                 DateTime dt = DateTime.Now;
                 var tenantID = catalog.GetTenantID();
+                var organizationID = catalog.GetOrganizationID();
                 var ThisTenant = db.Catalog.Where(x => x.TenantID == x.OrganizationID).Select(x => x.RequestID).FirstOrDefault();
                 var GetRequestID = db.RequestForDemo.FirstOrDefault(x => x.RequestID == x.RequestID);
                 if (RequestID == null)
@@ -189,17 +190,39 @@ namespace ProcureEaseAPI.Controllers
                 UpdateOrganizationRecord.TenantID = TenantID;
                 UpdateOrganizationRecord.DateCreated = dt;
 
-                var OrganizationID = db.OrganizationSettings.Where(x => x.OrganizationID == x.OrganizationID).Select(x => x.OrganizationID).FirstOrDefault();
-                var SubDomain = db.OrganizationSettings.Where(x => x.OrganizationID == x.OrganizationID).Select(x => x.OrganizationNameAbbreviation).FirstOrDefault();
+                var OrganizationID = db.OrganizationSettings.Select(x => x.OrganizationID).FirstOrDefault();
+                var SubDomain = db.OrganizationSettings.Select(x => x.OrganizationNameAbbreviation).FirstOrDefault();
                 var UpdateTenantRecord = db.Catalog.FirstOrDefault(o => o.TenantID == o.TenantID);
                 UpdateTenantRecord.OrganizationID = OrganizationID;
                 UpdateTenantRecord.SubDomain = SubDomain;
                 UpdateTenantRecord.DateModified = dt;
                 db.SaveChanges();
 
-                SaveDefaultProcurementMethodRecord();
-                SaveDefaultSouceOfFundRecord();
-                SaveDefaultProjectCategoryRecord();
+                //var OrganizationEmail = db.RequestForDemo.Where(x=> x.RequestID == RequestID).Select(x => x.AdministratorEmail).FirstOrDefault();
+                //AddUserModel UserModel = new AddUserModel
+                //{
+                //    Email = OrganizationEmail,
+                //    Password = Password,
+                //    UserName = OrganizationEmail
+                //};
+                //Guid UserDepartmentName = new Guid("");
+                //AuthRepository Repository = new AuthRepository();
+                //ApplicationUser User = await Repository.RegisterAdmin(UserModel);
+
+                //UserProfile userProfile = new UserProfile();
+                //userProfile.UserID = Guid.NewGuid();
+                //userProfile.TenantID = TenantID;
+                //userProfile.DepartmentID = UserDepartmentName;
+                //userProfile.OrganizationID = OrganizationID;
+                //userProfile.Id = User.Id;
+                //userProfile.UserEmail = User.Email;
+                //db.UserProfile.Add(userProfile);
+                //db.SaveChanges();
+
+                //SaveDefaultProcurementMethodRecord();
+                //SaveDefaultSouceOfFundRecord();
+                //SaveDefaultProjectCategoryRecord();
+
                 return Json(new
                 {
                     success = true,
@@ -237,6 +260,75 @@ namespace ProcureEaseAPI.Controllers
                 });
                 db.SaveChanges();
             }
+        }
+        #endregion
+
+        #region ProcessSignUpAdministrator
+        [HttpPost]
+        public async Task<ActionResult> SignUpAdministrator(UserProfile UserProfile, string Password)
+        {
+            try
+            {
+                var OrganizationID = db.OrganizationSettings.Where(x => x.OrganizationID == x.OrganizationID).Select(x => x.OrganizationID).FirstOrDefault();
+                var TenantID = db.Catalog.Where(x => x.TenantID == x.TenantID).Select(x => x.TenantID).FirstOrDefault();
+                var SubDomain = catalog.GetSubDomain();
+                var CheckIfUserHasSignedUp = db.AspNetUsers.Where(x => x.UserName == UserProfile.UserEmail).Select(x => x.UserName).FirstOrDefault();
+                if (CheckIfUserHasSignedUp != null)
+                {
+                    LogHelper.Log(Log.Event.SIGN_UP, "Email already exists on AspNetUser table.");
+                    Response.StatusCode = (int)HttpStatusCode.Conflict;
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Email has already signed up! Please use a different email address.",
+                        data = new
+                        { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                AddUserModel UserModel = new AddUserModel
+                {
+                    Email = UserProfile.UserEmail,
+                    Password = Password,
+                    UserName = UserProfile.UserEmail
+                };
+           
+                var UserDepartmentName = "";
+                AuthRepository Repository = new AuthRepository();
+                ApplicationUser User = await Repository.RegisterUser(UserModel, UserDepartmentName);
+
+                UserProfile.UserID = Guid.NewGuid();
+                UserProfile.TenantID = TenantID;
+                UserProfile.OrganizationID = OrganizationID;
+                UserProfile.Id = User.Id;
+                db.UserProfile.Add(UserProfile);
+                db.SaveChanges();
+
+                return Json(new
+                {
+                    success = true,
+                    message = "Admin Signed up successfully.",
+                    data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
+                    {
+                        User = new
+                        {
+                            x.UserID,
+                            FullName = x.FirstName + " " + x.LastName
+                        },
+                        Department = new
+                        {
+                            x.DepartmentID,
+                            x.Department1.DepartmentName
+                        }
+
+                    }),
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(Log.Event.SIGN_UP, ex.Message);
+                return ExceptionError(ex.Message, ex.StackTrace);
+            }
+
         }
         #endregion
 

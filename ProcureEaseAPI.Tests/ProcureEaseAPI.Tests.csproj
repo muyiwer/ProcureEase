@@ -108,8 +108,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\MDA_OnboardingTestcs.cs" />
     <Compile Include="Controllers\Mocker.cs" />
-    <Compile Include="Controllers\ProcurementsControllerTest.cs" />
     <Compile Include="Controllers\UsersControllerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitTest1.cs" />

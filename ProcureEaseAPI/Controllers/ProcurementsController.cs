@@ -279,7 +279,7 @@ namespace ProcureEaseAPI.Controllers
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.POST_DRAFT_NEEDS, ex.Message);
-                return ExceptionError(ex.Message, ex.StackTrace);
+                return Error("" + ex.Message + ex.StackTrace);
             }
 
         }
@@ -562,7 +562,7 @@ namespace ProcureEaseAPI.Controllers
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.SEND_PROCUREMENTS_NEEDS, ex.Message);
-                return ExceptionError(ex.Message, ex.StackTrace);
+                return Error("" + ex.Message + ex.StackTrace);
             }
 
         }
@@ -598,7 +598,7 @@ namespace ProcureEaseAPI.Controllers
                 catch (FormatException ex)
                 {
                     Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    return ExceptionError(ex.Message, ex.StackTrace);
+                    return Error(ex.Message);
                 }
 
                 int PendingProcurementStatusID = 0;
@@ -646,7 +646,7 @@ namespace ProcureEaseAPI.Controllers
                             x.ProcurementStatusID,
                             x.Status
                         }),
-                        ProcureMentMethod = db.ProcurementMethodOrganizationSettings.Where(x => x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
+                        ProcureMentMethod = db.ProcurementMethodOrganizationsettings.Where(x => x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
                         {
                             x.ProcurementMethodID,
                             x.ProcurementMethod.Name
@@ -667,7 +667,6 @@ namespace ProcureEaseAPI.Controllers
 
         }
 
-        [HttpGet]
         public ActionResult AutoCompleteItemName(string ItemName)
         {
             try
@@ -708,7 +707,7 @@ namespace ProcureEaseAPI.Controllers
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.AUTO_COMPLETE_ITEMNAME, ex.Message);
-                return ExceptionError(ex.Message, ex.StackTrace);
+                return Error("" + ex.Message + ex.StackTrace);
             }
         }
 
@@ -719,15 +718,6 @@ namespace ProcureEaseAPI.Controllers
                 success = false,
                 message = message,
                 data = new { }
-            }, JsonRequestBehavior.AllowGet);
-        }
-        private ActionResult ExceptionError(string message, string StackTrace)
-        {
-            return Json(new
-            {
-                success = false,
-                message = message,
-                data = new { InternalError = StackTrace }
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -774,7 +764,7 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementStatusID,
                         x.Status
                     }),
-                    ProcureMentMethod = db.ProcurementMethodOrganizationSettings.Where(x => x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
+                    ProcureMentMethod = db.ProcurementMethodOrganizationsettings.Where(x => x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
                     {
                         x.ProcurementMethodID,
                         x.ProcurementMethod.Name
@@ -828,7 +818,7 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementStatusID,
                         x.Status
                     }),
-                    ProcureMentMethod = db.ProcurementMethodOrganizationSettings.Where(x=> x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
+                    ProcureMentMethod = db.ProcurementMethodOrganizationsettings.Where(x=> x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
                     {
                         x.ProcurementMethodID,
                         x.ProcurementMethod.Name
@@ -897,7 +887,7 @@ namespace ProcureEaseAPI.Controllers
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.PROCUREMENT_NEEDS_SUMMARY, ex.Message);
-                return ExceptionError(ex.Message, ex.StackTrace);
+                return Error("" + ex.Message + ex.StackTrace);
             }
         }
 
@@ -935,7 +925,7 @@ namespace ProcureEaseAPI.Controllers
                         {
                             Response.StatusCode = (int)HttpStatusCode.BadRequest;
                             LogHelper.Log(Log.Event.ALL_DRAFT_PROCUREMENT_NEEDS, "Guid format exeception");
-                            return ExceptionError(ex.Message, ex.StackTrace);
+                            return Error(ex.Message);
                         }
                         var BudgetYear = db.BudgetYear.Where(x => x.TenantID == tenantId && x.BudgetYearID == guidID2).Select(x => x.BudgetYear1.Value.Year).FirstOrDefault();
                         Response.StatusCode = (int)HttpStatusCode.OK;
@@ -1207,7 +1197,7 @@ namespace ProcureEaseAPI.Controllers
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.POST_DRAFT_NEEDS, ex.Message);
-                return ExceptionError(ex.Message, ex.StackTrace);
+                return Error("" + ex.Message + ex.StackTrace);
             }
 
         }
@@ -1312,7 +1302,7 @@ namespace ProcureEaseAPI.Controllers
                         {
                             Response.StatusCode = (int)HttpStatusCode.BadRequest;
                             LogHelper.Log(Log.Event.ALL_DRAFT_PROCUREMENT_NEEDS, "Guid format exeception");
-                            return ExceptionError(ex.Message, ex.StackTrace);
+                            return Error(ex.Message);
                         }
                         var BudgetYear = db.BudgetYear.Where(x => x.TenantID == tenantId && x.BudgetYearID == guidID2).Select(x => x.BudgetYear1.Value.Year).FirstOrDefault();
                         Response.StatusCode = (int)HttpStatusCode.OK;
@@ -1368,7 +1358,7 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementStatusID,
                         x.Status
                     }),
-                    ProcureMentMethod = db.ProcurementMethodOrganizationSettings.Where(x=> x.TenantID == tenantId && x.EnableProcurementMethod==true).Select(x => new
+                    ProcureMentMethod = db.ProcurementMethodOrganizationsettings.Where(x=> x.TenantID == tenantId && x.EnableProcurementMethod==true).Select(x => new
                     {
                         x.ProcurementMethodID,
                         x.ProcurementMethod.Name
@@ -1445,7 +1435,7 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementStatusID,
                         x.Status
                     }),
-                    ProcureMentMethod = db.ProcurementMethodOrganizationSettings.Where(x => x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
+                    ProcureMentMethod = db.ProcurementMethodOrganizationsettings.Where(x => x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
                     {
                         x.ProcurementMethodID,
                         x.ProcurementMethod.Name
@@ -1504,15 +1494,15 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementStatusID,
                         x.Status
                     }),
-                    ProcureMentMethod = db.ProcurementMethodOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
+                    ProcureMentMethod = db.ProcurementMethodOrganizationsettings.Where(x => x.TenantID == tenantId).Select(x => new
                     {
                         x.ProcurementMethodID,
                         x.ProcurementMethod.Name
                     }),
-                    ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
+                    ProjectCategory = db.ProjectCategory.Where(x => x.TenantID == tenantId).Select(x => new
                     {
                         x.ProjectCategoryID,
-                        x.ProjectCategory.Name
+                        x.Name
                     }),
                     BudgetYear = db.BudgetYear.Where(x => x.TenantID == tenantId).Select(x => new
                     {
@@ -1579,15 +1569,15 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementStatusID,
                         x.Status
                     }),
-                    ProcureMentMethod = db.ProcurementMethodOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
+                    ProcureMentMethod = db.ProcurementMethodOrganizationsettings.Where(x => x.TenantID == tenantId).Select(x => new
                     {
                         x.ProcurementMethodID,
                         x.ProcurementMethod.Name
                     }),
-                    ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
+                    ProjectCategory = db.ProjectCategory.Where(x => x.TenantID == tenantId).Select(x => new
                     {
                         x.ProjectCategoryID,
-                        x.ProjectCategory.Name
+                        x.Name
                     }),
                     BudgetYear = db.BudgetYear.Where(x => x.TenantID == tenantId).Select(x => new
                     {
@@ -1654,7 +1644,7 @@ namespace ProcureEaseAPI.Controllers
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.PROCUREMENT_PLAN_SUMMARY, ex.Message);
-                return ExceptionError(ex.Message, ex.StackTrace);
+                return Error("" + ex.Message + ex.StackTrace);
             }
         }
 
@@ -1807,7 +1797,7 @@ namespace ProcureEaseAPI.Controllers
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.POST_DRAFT_NEEDS, ex.Message);
-                return ExceptionError(ex.Message, ex.StackTrace);
+                return Error("" + ex.Message + ex.StackTrace);
             }
 
         }

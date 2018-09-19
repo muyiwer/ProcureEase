@@ -223,10 +223,7 @@
     <Compile Include="Controllers\OrganizationSettingsController.cs" />
     <Compile Include="Controllers\ProcureController.cs" />
     <Compile Include="Controllers\ProcurementMethodsController.cs" />
-    <Compile Include="Controllers\ProcurementsController.cs" />
-    <Compile Include="Controllers\ProjectCategoriesController.cs" />
     <Compile Include="Controllers\RequestForDemoController.cs" />
-    <Compile Include="Controllers\TelephoneNumbersController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -243,6 +240,7 @@
     <Compile Include="Models\AdvertLotNumber.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\AdvertPreparation.cs" />
     <Compile Include="Models\Adverts.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>

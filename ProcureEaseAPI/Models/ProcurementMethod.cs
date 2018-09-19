@@ -18,6 +18,7 @@ namespace ProcureEaseAPI.Models
         public ProcurementMethod()
         {
             this.Procurements = new HashSet<Procurements>();
+            this.ProcurementMethodOrganizationSettings = new HashSet<ProcurementMethodOrganizationSettings>();
         }
     
         public System.Guid ProcurementMethodID { get; set; }
@@ -29,6 +30,7 @@ namespace ProcureEaseAPI.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Procurements> Procurements { get; set; }
-        public virtual ProcurementMethodOrganizationSettings ProcurementMethodOrganizationSettings { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProcurementMethodOrganizationSettings> ProcurementMethodOrganizationSettings { get; set; }
     }
 }

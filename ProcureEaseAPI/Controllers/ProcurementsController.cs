@@ -593,12 +593,12 @@ namespace ProcureEaseAPI.Controllers
                             x.ProcurementStatusID,
                             x.Status
                         }),
-                        ProcureMentMethod = db.ProcurementMethod.Where(x => x.EnableProcurementMethod == true).Select(x => new
+                        ProcureMentMethod = db.ProcurementMethodOrganizationSettings.Where(x => x.EnableProcurementMethod == true).Select(x => new
                         {
                             x.ProcurementMethodID,
-                            x.Name
+                            x.ProcurementMethod.Name
                         }),
-                        ProjectCategory = db.ProjectCategoryOrganisationSettings.Where(x => x.EnableProjectCategory == true).Select(x => new
+                        ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(x => x.EnableProjectCategory == true).Select(x => new
                         {
                             x.ProjectCategoryID,
                             x.ProjectCategory.Name
@@ -701,12 +701,12 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementStatusID,
                         x.Status
                     }),
-                    ProcureMentMethod = db.ProcurementMethod.Where(x => x.EnableProcurementMethod == true).Select(x => new
+                    ProcureMentMethod = db.ProcurementMethodOrganizationSettings.Where(x => x.EnableProcurementMethod == true).Select(x => new
                     {
                         x.ProcurementMethodID,
-                        x.Name
+                        x.ProcurementMethod.Name
                     }),
-                    ProjectCategory = db.ProjectCategoryOrganisationSettings.Where(x => x.EnableProjectCategory == true).Select(x => new
+                    ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(x => x.EnableProjectCategory == true).Select(x => new
                     {
                         x.ProjectCategoryID,
                         x.ProjectCategory.Name
@@ -755,12 +755,12 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementStatusID,
                         x.Status
                     }),
-                    ProcureMentMethod = db.ProcurementMethod.Where(x=>x.EnableProcurementMethod == true).Select(x => new
+                    ProcureMentMethod = db.ProcurementMethodOrganizationSettings.Where(x=>x.EnableProcurementMethod == true).Select(x => new
                     {
                         x.ProcurementMethodID,
-                        x.Name
+                        x.ProcurementMethod.Name
                     }),
-                    ProjectCategory = db.ProjectCategoryOrganisationSettings.Where(x => x.EnableProjectCategory == true).Select(x => new
+                    ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(x => x.EnableProjectCategory == true).Select(x => new
                     {
                         x.ProjectCategoryID,
                         x.ProjectCategory.Name
@@ -1247,12 +1247,12 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementStatusID,
                         x.Status
                     }),
-                    ProcureMentMethod = db.ProcurementMethod.Where(x=>x.EnableProcurementMethod==true).Select(x => new
+                    ProcureMentMethod = db.ProcurementMethodOrganizationSettings.Where(x=>x.EnableProcurementMethod==true).Select(x => new
                     {
                         x.ProcurementMethodID,
-                        x.Name
+                        x.ProcurementMethod.Name
                     }),
-                    ProjectCategory = db.ProjectCategoryOrganisationSettings.Where(x => x.EnableProjectCategory == true).Select(x => new
+                    ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(x => x.EnableProjectCategory == true).Select(x => new
                     {
                         x.ProjectCategoryID,
                         x.ProjectCategory.Name
@@ -1314,12 +1314,12 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementStatusID,
                         x.Status
                     }),
-                    ProcureMentMethod = db.ProcurementMethod.Where(x => x.EnableProcurementMethod == true).Select(x => new
+                    ProcureMentMethod = db.ProcurementMethodOrganizationSettings.Where(x => x.EnableProcurementMethod == true).Select(x => new
                     {
                         x.ProcurementMethodID,
-                        x.Name
+                        x.ProcurementMethod.Name
                     }),
-                    ProjectCategory = db.ProjectCategoryOrganisationSettings.Where(x => x.EnableProjectCategory == true).Select(x => new
+                    ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(x => x.EnableProjectCategory == true).Select(x => new
                     {
                         x.ProjectCategoryID,
                         x.ProjectCategory.Name

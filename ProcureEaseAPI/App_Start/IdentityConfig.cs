@@ -1,14 +1,18 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using System.Web;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using ProcureEaseAPI.Models;
-using System;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
-namespace ProcureEaseAPI.App_Start
+namespace ProcureEaseAPI
 {
     public class EmailService : IIdentityMessageService
     {
@@ -43,7 +47,7 @@ namespace ProcureEaseAPI.App_Start
             manager.UserValidator = new UserValidator<ApplicationUser>(manager)
             {
                 AllowOnlyAlphanumericUserNames = false,
-                RequireUniqueEmail = true
+                RequireUniqueEmail = false
             };
 
             // Configure validation logic for passwords
@@ -92,10 +96,10 @@ namespace ProcureEaseAPI.App_Start
         {
         }
 
-        //public override Task<ClaimsIdentity> CreateUserIDentityAsync(ApplicationUser user)
-        //{
-        //    return user.GenerateUserIDentityAsync((ApplicationUserManager)UserManager);
-        //}
+        public override Task<ClaimsIdentity> CreateUserIdentityAsync(ApplicationUser user)
+        {
+            return user.GenerateUserIDentityAsync((ApplicationUserManager)UserManager);
+        }
 
         public static ApplicationSignInManager Create(IdentityFactoryOptions<ApplicationSignInManager> options, IOwinContext context)
         {

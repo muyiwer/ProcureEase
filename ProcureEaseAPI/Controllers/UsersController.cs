@@ -9,90 +9,138 @@ using System.Threading.Tasks;
 using static Utilities.EmailHelper;
 using System.Net.Http;
 using System.Web.Script.Serialization;
-
+using ProcureEaseAPI.Providers;
+using ProcureEaseAPI.Controllers;
 namespace ProcureEaseAPI.Controllers
 {
     public class UsersController : Controller
     {
         private ProcureEaseEntities db = new ProcureEaseEntities();
+        private CatalogsController catalog = new CatalogsController();
 
         //POST: Users/Login
         [HttpPost]
         [AllowAnonymous]
         public async Task<ActionResult> Login(string UserName, string Password)
         {
-
-            /*This will depend totally on how you will get access to the identity provider and get your token, this is just a sample of how it would be done*/
-            /*Get Access Token Start*/
-            HttpClient httpClient = new HttpClient();
-            httpClient.BaseAddress = System.Web.HttpContext.Current.Request.Url;
-            var postData = new List<KeyValuePair<string, string>>();
-            postData.Add(new KeyValuePair<string, string>("UserName", UserName));
-            postData.Add(new KeyValuePair<string, string>("Password", Password));
-            postData.Add(new KeyValuePair<string, string>("grant_type", "password"));
-            HttpContent content = new FormUrlEncodedContent(postData);
-            HttpResponseMessage response = await httpClient.PostAsync("/token", content);
-            //  var error = response.EnsureSuccessStatusCode();
-            string ResponseContent = await response.Content.ReadAsStringAsync();
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            Token token = serializer.Deserialize<Token>(ResponseContent);
- 
-            if (response.StatusCode != HttpStatusCode.OK)
+            try
             {
-                LogHelper.Log(Log.Event.LOGIN, ResponseContent);
-                return Json(new
+                DateTimeSettings DateTimeSettings = new DateTimeSettings();
+                /*This will depend totally on how you will get access to the identity provider and get your token, this is just a sample of how it would be done*/
+                /*Get Access Token Start*/
+                HttpClient httpClient = new HttpClient();
+                httpClient.BaseAddress = System.Web.HttpContext.Current.Request.Url;
+                var postData = new List<KeyValuePair<string, string>>();
+                postData.Add(new KeyValuePair<string, string>("UserName", UserName));
+                postData.Add(new KeyValuePair<string, string>("Password", Password));
+                postData.Add(new KeyValuePair<string, string>("grant_type", "password"));
+                HttpContent content = new FormUrlEncodedContent(postData);
+                HttpResponseMessage response = await httpClient.PostAsync("/token", content);
+                //  var error = response.EnsureSuccessStatusCode();
+                string ResponseContent = await response.Content.ReadAsStringAsync();
+                JavaScriptSerializer serializer = new JavaScriptSerializer();
+                Token token = serializer.Deserialize<Token>(ResponseContent);
+
+                if (response.StatusCode != HttpStatusCode.OK)
                 {
-                    success = false,
-                    message = "Invalid username or password",
-                    data = new {}
-                }, JsonRequestBehavior.AllowGet);
-            } else {
-                var User = db.AspNetUsers.Where(x => x.UserName == UserName).FirstOrDefault();
-                return Json(new
-                {
-                    success = true,
-                    message = "Login successful",
-                    data = new
+                    LogHelper.Log(Log.Event.LOGIN, ResponseContent);
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Json(new
                     {
-                       User.Id,
-                       Email = User.UserName,
-                       token = token
-                    }
-                }, JsonRequestBehavior.AllowGet);
+                        success = false,
+                        message = "Invalid username or password",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    var User = db.AspNetUsers.Where(x => x.UserName == UserName).FirstOrDefault();
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Login successful",
+                        data = new
+                        {
+                            User.Id,
+                            Email = User.UserName,
+                            DepartmentID = db.UserProfile.Where(x => x.UserEmail == UserName).Select(x => x.DepartmentID).FirstOrDefault(),
+                            Role = db.AspNetUserRoles.Where(x => x.UserId == User.Id).Select(x => x.AspNetRoles.Name).FirstOrDefault(),
+                            BudgetYear = DateTimeSettings.CurrentYear(),
+                            OrganizationName = db.UserProfile.Where(x => x.UserEmail == UserName).Select(x => x.OrganizationSettings.OrganizationNameAbbreviation).FirstOrDefault(),
+                            OrganizationID = db.UserProfile.Where(x => x.UserEmail == UserName).Select(x => x.OrganizationID).FirstOrDefault(),
+                            token = token
+                        }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+            }catch(Exception ex)
+            {
+                LogHelper.Log(Log.Event.LOGIN, ex.Message);
+                return ExceptionError(ex.Message, ex.StackTrace);
             }
         }
 
         // POST: Users/Add
        [HttpPost]
-       [Authorize]
+     //  [Providers.Authorize]
        public async Task<ActionResult> Add(UserProfile UserProfile)
         {
             try
-            {                 
-                if(UserProfile.UserEmail == null)
+            {
+               var tenantId = catalog.GetTenantID();
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                var organizationId = catalog.GetOrganizationID();
+                if (organizationId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "OrganizationId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                UserProfile.TenantID = tenantId;
+                if (UserProfile.UserEmail == null)
                 {
                     LogHelper.Log(Log.Event.ADD_USER, "User email is null");
                     return Json(new
                     {
                         success = false,
                         message = "Please input user email",
-                        data = db.UserProfile.Select(x => new
-                        { }).FirstOrDefault()
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                if (UserProfile.DepartmentID == new Guid())
+                {
+                    LogHelper.Log(Log.Event.ADD_USER, "DepartmentID is null");
+                    return Json(new
+                    {
+                        success = false,
+                        message = "DepartmentID is null",
+                        data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
                 var CheckIfEmailExist = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.UserEmail).FirstOrDefault();
                 if(CheckIfEmailExist != null)
                 {
                     LogHelper.Log(Log.Event.ADD_USER, "User email already exists");
-                   // return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Email already exist! Please check and try again");
+                    Response.StatusCode = (int)HttpStatusCode.Conflict;
                     return Json(new
                     {
                         success = false,
                         message = "Email already exists! Please check and try again.",
-                        data = db.UserProfile.Select(x => new
-                        { }).FirstOrDefault()
+                        data = new
+                        { }
                     }, JsonRequestBehavior.AllowGet);
                 }
+               
                 UserProfile.UserID = Guid.NewGuid();
                 db.UserProfile.Add(UserProfile);
                 db.SaveChanges();             
@@ -104,191 +152,179 @@ namespace ProcureEaseAPI.Controllers
                 Message message = new Message( RecipientEmail,Subject, newTemplateContent);
                 EmailHelper emailHelper = new EmailHelper();
                 await emailHelper.AddEmailToQueue(message);
+                return Json(new
+                {
+                    success = true,
+                    message = "User added successfully.",
+                    data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        User = new
+                        {
+                            x.UserID,
+                            FullName = x.FirstName + " " + x.LastName
+                        },
+                        Department = new
+                        {
+                            x.DepartmentID,
+                            x.Department1.DepartmentName
+                        }
+
+                    }),
+                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.ADD_USER, ex.Message);
                 LogHelper.Log(Log.Event.ADD_USER, ex.StackTrace);
                 // return Json(ex.Message + ex.StackTrace, JsonRequestBehavior.AllowGet);
-                return Json(new
-                {
-                    success = false,
-                    message = "" +ex.Message,
-                    data = db.UserProfile.Select(x => new
-                    { }).FirstOrDefault()
-                }, JsonRequestBehavior.AllowGet);
+                return ExceptionError(ex.Message, ex.StackTrace);
             }
-            return Json(new
-            {
-                success = true,
-                message = "User added successfully.",
-                data = db.UserProfile.Select(x => new
-                {
-                    User = new
-                    {
-                        x.UserID,
-                        FullName = x.FirstName + " " + x.LastName
-                    },
-                    Department = new
-                    {
-                        x.DepartmentID,
-                        x.Department1.DepartmentName
-                    }
-
-                }),
-            }, JsonRequestBehavior.AllowGet);
+          
         }
 
           // Users/InitiatePasswordReset
         [HttpPost]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<ActionResult> InitiatePasswordReset(string UserEmail)
         {
             try
             {
+                var SubDomain = catalog.GetSubDomain();
                 AuthRepository Repository = new AuthRepository();
                 ApplicationUser user = await Repository.FindEmail(UserEmail);
                 if (user == null)
                 {
                     LogHelper.Log(Log.Event.INITIATE_PASSWORD_RESET, "Email does not exist");
-                //    return new HttpStatusCodeResult(HttpStatusCode.NotFound, "Email does not Exist! Please check and try again");
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
                     return Json(new
                     {
                         success = false,
                         message = "Email does not exist! Please check and try again.",
-                        data = db.UserProfile.Select(x => new
-                        { }).FirstOrDefault()
+                        data = new
+                        { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                var PasswordToken = await Repository.GeneratePasswordToken(user.Id);
+                var PasswordToken =  await Repository.GeneratePasswordToken(user.Id);
                 string RecipientEmail = UserEmail;
                 string Subject = "Password Reset";
-                string Body = new EmailTemplateHelper().GetTemplateContent("NMRC-Template");
+                string Body = new EmailTemplateHelper().GetTemplateContent("PasswordResetTemplate");
                 var url = System.Web.HttpContext.Current.Request.Url.Host;
-                string newTemplateContent = string.Format(Body,url + "/#/email/resetpassword/token" + PasswordToken);
+                string newTemplateContent = string.Format(Body,"http://"+ url + "/#/resetpassword/"+UserEmail +"/"+ PasswordToken);
                 Message message = new Message(RecipientEmail, Subject, newTemplateContent);
                 EmailHelper emailHelper = new EmailHelper();
                 await emailHelper.AddEmailToQueue(message);
+                return Json(new
+                {
+                    success = true,
+                    message = "Please check your email to reset password.",
+                    data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
+                    {
+                        User = new
+                        {
+                            x.UserID,
+                            FullName = x.FirstName + " " + x.LastName
+                        },
+                        Department = new
+                        {
+                            x.DepartmentID,
+                            x.Department1.DepartmentName
+                        }
+
+                    }),
+                }, JsonRequestBehavior.AllowGet);
             }
             catch(Exception ex)
             {
                 LogHelper.Log(Log.Event.INITIATE_PASSWORD_RESET, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = db.UserProfile.Select(x => new
-                    { }).FirstOrDefault()
-                }, JsonRequestBehavior.AllowGet);
-            }
-            return Json(new
-            {
-                success = true,
-                message = "Sign up successful.",
-                data = db.UserProfile.Select(x => new
-                {
-                    User = new
-                    {
-                        x.UserID,
-                        FullName = x.FirstName + " " + x.LastName
-                    },
-                    Department = new
-                    {
-                        x.DepartmentID,
-                        x.Department1.DepartmentName
-                    }
-
-                }),
-            }, JsonRequestBehavior.AllowGet);
+                return ExceptionError(ex.Message, ex.StackTrace);
+            } 
 
         }
 
         // Users/ResetPassword
         [HttpPost]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<ActionResult> ResetPassword(ResetPasswordModel ResetPassword)
         {
             try
             {
+                var SubDomain = catalog.GetSubDomain();
                 AuthRepository Repository = new AuthRepository();
                 ApplicationUser user = await Repository.FindEmail(ResetPassword.UserEmail);
                 if (user == null)
                 {
                     LogHelper.Log(Log.Event.RESET_PASSWORD, "Email does not exist");
-                   // return new HttpStatusCodeResult(HttpStatusCode.NotFound, "Email does not Exist! Please check and try again");
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
                     return Json(new
                     {
                         success = false,
                         message = "Email does not exist! Please check and try again.",
-                        data = db.UserProfile.Select(x => new
-                        { }).FirstOrDefault()
+                        data = new
+                        { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                var result = await Repository.ResetPassword(ResetPassword, user.Id);
+                var result = await Repository.ResetPassword(ResetPassword.ResetToken,ResetPassword.NewPassword, user.Id);
+                return Json(new
+                {
+                    success = true,
+                    message = "Password reset successful.",
+                    data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
+                    {
+                        User = new
+                        {
+                            x.UserID,
+                            FullName = x.FirstName + " " + x.LastName
+                        },
+                        Department = new
+                        {
+                            x.DepartmentID,
+                            x.Department1.DepartmentName
+                        }
+
+                    }),
+                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
               LogHelper.Log(Log.Event.RESET_PASSWORD, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = db.UserProfile.Select(x => new
-                    { }).FirstOrDefault()
-                }, JsonRequestBehavior.AllowGet);
-            }
-            return Json(new
-            {
-                success = true,
-                message = "Sign up successful.",
-                data = db.UserProfile.Select(x => new
-                {
-                    User = new
-                    {
-                        x.UserID,
-                        FullName = x.FirstName + " " + x.LastName
-                    },
-                    Department = new
-                    {
-                        x.DepartmentID,
-                        x.Department1.DepartmentName
-                    }
-
-                }),
-            }, JsonRequestBehavior.AllowGet);
+                return ExceptionError(ex.Message, ex.StackTrace);
+            }                    
 
         }
 
         //POST: Users/SignUp
         [HttpPost]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<ActionResult> SignUp(UserProfile UserProfile, string Password)
         {
             try
             {
+                var SubDomain = catalog.GetSubDomain();
+                var organizationId = catalog.GetOrganizationID();                
                 var CheckIfUserHasSignedUp = db.AspNetUsers.Where(x => x.UserName == UserProfile.UserEmail).Select(x => x.UserName).FirstOrDefault();
                 if (CheckIfUserHasSignedUp != null)
                 {
                     LogHelper.Log(Log.Event.SIGN_UP, "Email already exists on AspNetUser table.");
-                  //  return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Email has already signed up! Please check and try again");
+                    Response.StatusCode = (int)HttpStatusCode.Conflict;
                     return Json(new
                     {
                         success = false,
                         message = "Email has already signed up! Please use a different email address.",
-                        data = db.UserProfile.Select(x => new
-                        { }).FirstOrDefault()
+                        data =new
+                        { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                if (UserProfile.UserEmail == null)
+                var CheckIfUserHasBeenAddedByAdmin = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.UserEmail).FirstOrDefault();
+                if (UserProfile.UserEmail == null || CheckIfUserHasBeenAddedByAdmin == null)
                 {
-                    LogHelper.Log(Log.Event.SIGN_UP, "Email can not be null");
-                   // return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Please Input your email");
+                    LogHelper.Log(Log.Event.SIGN_UP, "Email is null or UserEmail does not exist UserProfile table.");
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
                     return Json(new
                     {
                         success = false,
-                        message = "Please input your email",
-                        data = db.UserProfile.Select(x => new
-                        { }).FirstOrDefault()
+                        message = "User not yet added by admin.",
+                        data =  new
+                        { }
                     }, JsonRequestBehavior.AllowGet);
                 }
                 AddUserModel UserModel = new AddUserModel
@@ -303,75 +339,62 @@ namespace ProcureEaseAPI.Controllers
                 ApplicationUser User =  await Repository.RegisterUser(UserModel,UserDepartmentName);
                 var Id = db.AspNetUsers.Where(x => x.Email == UserProfile.UserEmail).Select(x => x.Id).FirstOrDefault();
                 var CheckIfUserIsAddedByAdmin = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.UserID).FirstOrDefault();
-                if (CheckIfUserIsAddedByAdmin == null)
-                {
-                    LogHelper.Log(Log.Event.SIGN_UP, "Email does not exist on UserProfile table");
-                  // return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Admin has not send Invitation Email to this Email!!");
-                    return Json(new
-                    {
-                        success = false,
-                        message = "Admin has not sent an invitation to this email.",
-                        data = db.UserProfile.Select(x => new
-                        { }).FirstOrDefault()
-                    }, JsonRequestBehavior.AllowGet);
-                }
                 var UserID = CheckIfUserIsAddedByAdmin;
                 UserProfile EditProfile = db.UserProfile.Where(x => x.UserID == UserID).FirstOrDefault();
                 EditProfile.Id = User.Id;
                 EditProfile.FirstName = UserProfile.FirstName;
                 EditProfile.LastName = UserProfile.LastName;           
                 db.SaveChanges();
-            }catch(Exception ex)
-            {
-                LogHelper.Log(Log.Event.SIGN_UP, ex.Message);
                 return Json(new
                 {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = db.UserProfile.Select(x => new
-                    { }).FirstOrDefault()
+                    success = true,
+                    message = "Sign up successful.",
+                    data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
+                    {
+                        User = new
+                        {
+                            x.UserID,
+                            FullName = x.FirstName + " " + x.LastName
+                        },
+                        Department = new
+                        {
+                            x.DepartmentID,
+                            x.Department1.DepartmentName
+                        }
+
+                    }),
                 }, JsonRequestBehavior.AllowGet);
             }
-            return Json(new
+            catch(Exception ex)
             {
-                success = true,
-                message = "Sign up successful.",
-                data = db.UserProfile.Select(x => new
-                {
-                    User = new
-                    {
-                        x.UserID,
-                        FullName = x.FirstName + " " + x.LastName
-                    },
-                    Department = new
-                    {
-                        x.DepartmentID,
-                        x.Department1.DepartmentName
-                    }
-
-                }),
-            }, JsonRequestBehavior.AllowGet);
+                LogHelper.Log(Log.Event.SIGN_UP, ex.Message);
+                return ExceptionError(ex.Message, ex.StackTrace);
+            }
+           
         }
 
  
         //PUT: Users/EditUser
         [HttpPut]
-        [Authorize]
+        [Providers.Authorize]
         public ActionResult EditUser(UserProfile UserProfile)
         {
             try
-            {               
+            {
+                var SubDomain = catalog.GetSubDomain();
                 if (UserProfile.DepartmentID == null)
                 {
                     LogHelper.Log(Log.Event.EDIT_USER, "Department ID is null");
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     return Json(new
                     {
                         success = false,
                         message = "No Department is Selected",
-                        data = db.UserProfile.Select(x => new
-                        { }).FirstOrDefault()
+                        data =  new
+                        { }
                     }, JsonRequestBehavior.AllowGet);
                 }
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 if (UserProfile.UserID == null)
                 {
                     LogHelper.Log(Log.Event.EDIT_USER, "UserID is Null");
@@ -379,20 +402,20 @@ namespace ProcureEaseAPI.Controllers
                     {
                         success = false,
                         message = "UserID is Null",
-                        data = db.UserProfile.Select(x => new
-                        { }).FirstOrDefault()
+                        data =  new
+                        { }
                     }, JsonRequestBehavior.AllowGet);
                 }
 
                 var Id= db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
                 if (Id == null)
                 {
-                    EditUserWithoutID(UserProfile);
+                    EditUserWithoutID(UserProfile);              
                     return Json(new
                     {
                         success = true,
-                        message = "",
-                        data = db.UserProfile.Select(x => new
+                        message = "Edited successfully.",
+                        data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                         {
                             x.UserID,
                             FullName = x.FirstName + " " + x.LastName,
@@ -427,8 +450,8 @@ namespace ProcureEaseAPI.Controllers
                     return Json(new
                     {
                         success = true,
-                        message = "",
-                        data = db.UserProfile.Select(x => new
+                        message = "Edited Successfully.",
+                        data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                         {
                             x.UserID,
                             FullName = x.FirstName + " " + x.LastName,
@@ -442,13 +465,7 @@ namespace ProcureEaseAPI.Controllers
             }catch(Exception ex)
             {
                 LogHelper.Log(Log.Event.SIGN_UP, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = db.UserProfile.Select(x => new
-                    { }).FirstOrDefault()
-                }, JsonRequestBehavior.AllowGet);
+                return ExceptionError(ex.Message, ex.StackTrace);
             }
         }
 
@@ -531,24 +548,27 @@ namespace ProcureEaseAPI.Controllers
 
         //PUT: Users/UpdateUserProfile
         [HttpPut]
-        [Authorize]
+        [Providers.Authorize]
         public ActionResult UpdateUserProfile(UserProfile UserProfile)
         {
             try
             {
+                var SubDomain = catalog.GetSubDomain();
                 var Id = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
                 if(Id == null)
                 {
                     LogHelper.Log(Log.Event.UPDATE_USER_PROFILE, "Id is Null(Not yet signed up)");
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
                     return Json(new
                     {
                         success = false,
                         message = "Not yet signed up",
-                        data = db.UserProfile.Select(x => new
-                        { }).FirstOrDefault()
+                        data = new
+                        { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                if(UserProfile.UserID == null)
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                if (UserProfile.UserID == null)
                 {
                     LogHelper.Log(Log.Event.UPDATE_USER_PROFILE, "UserID is Null");
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "UserID is null");
@@ -560,41 +580,37 @@ namespace ProcureEaseAPI.Controllers
                 AspNetUsers EditUser = db.AspNetUsers.Where(x => x.Id == Id).FirstOrDefault();
                 EditUser.UserName = UserProfile.UserEmail;
                 db.SaveChanges();
+                return Json(new
+                {
+                    success = true,
+                    message = "Profile update successful.",
+                    data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
+                    {
+                        x.UserID,
+                        FullName = x.FirstName + " " + x.LastName,
+                        x.Department1.DepartmentName,
+                        x.DepartmentID,
+                        x.UserEmail,
+                        DepartmentHeadUserID = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
+                    })
+                }, JsonRequestBehavior.AllowGet);
             }
             catch(Exception ex)
             {
                 LogHelper.Log(Log.Event.UPDATE_USER_PROFILE, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = db.UserProfile.Select(x => new
-                    { }).FirstOrDefault()
-                }, JsonRequestBehavior.AllowGet);
-            }
-            return Json(new
-            {
-                success = true,
-                message = "",
-                data = db.UserProfile.Select(x => new
-                {
-                    x.UserID,
-                    FullName = x.FirstName + " " + x.LastName,
-                    x.Department1.DepartmentName,
-                    x.DepartmentID,
-                    x.UserEmail,
-                    DepartmentHeadUserID = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
-                })
-            }, JsonRequestBehavior.AllowGet);
+                return ExceptionError(ex.Message, ex.StackTrace);
+            }          
         }
 
         //PUT: Users/UpdateDepartmentHead
-        [Authorize]
+        [Providers.Authorize]
         [HttpPut]
         public ActionResult UpdateDepartmentHead(UserProfile UserProfile)
         {
             try
             {
+                var SubDomain = catalog.GetSubDomain();
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 if (UserProfile.UserID == null)
                 {
                     LogHelper.Log(Log.Event.UPDATE_DEPARTMENT_HEAD, "UserID is Null");
@@ -602,14 +618,21 @@ namespace ProcureEaseAPI.Controllers
                     {
                         success = false,
                         message = "Input UserID",
-                        data = db.UserProfile.Select(x => new
-                        { }).FirstOrDefault()
+                        data = new
+                        { }
                     }, JsonRequestBehavior.AllowGet);
                 }
                 var CheckDepartmentHead = db.Department.Where(x => x.DepartmentHeadUserID == UserProfile.UserID).Select(x => x.DepartmentHeadUserID).FirstOrDefault();
                 if (CheckDepartmentHead != null)
-                {          
-                    return new HttpStatusCodeResult(HttpStatusCode.OK, "User already head of department");
+                {
+                    Response.StatusCode = (int)HttpStatusCode.Conflict;
+                    return Json(new
+                    {
+                        success = false,
+                        message = "User already head of department",
+                        data = new
+                        { }
+                    }, JsonRequestBehavior.AllowGet);
                 }
                 var CheckUserDepartmentName = db.Department.Where(x => x.DepartmentID == UserProfile.DepartmentID).Select(x => x.DepartmentName).FirstOrDefault();
                 var Id = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
@@ -649,11 +672,12 @@ namespace ProcureEaseAPI.Controllers
                         db.SaveChanges();
                     
                 }
+               
                 return Json(new
                 {
                     success = true,
-                    message = "",
-                    data = db.UserProfile.Select(x => new
+                    message = "User added as department head successful.",
+                    data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                     {
                         x.UserID,
                         FullName = x.FirstName + " " + x.LastName,
@@ -667,27 +691,22 @@ namespace ProcureEaseAPI.Controllers
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.UPDATE_DEPARTMENT_HEAD, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = db.UserProfile.Select(x => new
-                    { }).FirstOrDefault()
-                }, JsonRequestBehavior.AllowGet);
+                return ExceptionError(ex.Message, ex.StackTrace);
             }
         }
 
         [HttpGet]
-        [Authorize]
+      //  [Providers.Authorize]
         public ActionResult GetAllUsers(string id = "")
         {
+            var SubDomain = catalog.GetSubDomain();
             if (string.IsNullOrEmpty(id))
             {
                 return Json(new
                 {
                     success = true,
                     message = "",
-                    data = db.UserProfile.Select(x => new
+                    data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                     {
                         x.UserID,
                         FullName = x.FirstName + " " + x.LastName,
@@ -710,15 +729,15 @@ namespace ProcureEaseAPI.Controllers
                     {
                         success = false,
                         message = "" + ex.Message,
-                        data = db.UserProfile.Select(x => new
-                        { })
+                        data =new
+                        { }
                     }, JsonRequestBehavior.AllowGet);
                 }
                 return Json(new
                 {
                     success = true,
-                    message = "",
-                    data = db.UserProfile.Where(x => x.DepartmentID == guidID).Select(x => new
+                    message = "All Users",
+                    data = db.UserProfile.Where(x => x.DepartmentID == guidID &&  x.Catalog.SubDomain == SubDomain).Select(x => new
                     {
                         x.UserID,
                         FullName = x.FirstName + " " + x.LastName,
@@ -731,26 +750,26 @@ namespace ProcureEaseAPI.Controllers
             }
         }
 
-      
         [HttpDelete]
-        [Authorize]
+        [Providers.Authorize]
         public ActionResult Delete(UserProfile UserProfile)
         {
             try
-            { 
-            if(UserProfile.UserID==null)
+            {
+                var SubDomain = catalog.GetSubDomain();
+                if (UserProfile.UserID==null)
             {
                 LogHelper.Log(Log.Event.DELETE_USER, "UserID is Null");
-                    // return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     return Json(new
                     {
                         success = false,
                         message = "UserID is Null",
-                        data = db.UserProfile.Select(x => new
-                        { }).FirstOrDefault()
+                        data = new
+                        {}
                     }, JsonRequestBehavior.AllowGet);
                 }
-            var UserAspNetID = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
+                var UserAspNetID = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
                 if (UserAspNetID == null)
                 {
                     var checkIfUserIsHeadOfDepartment = db.Department.Where(x => x.DepartmentHeadUserID == UserProfile.UserID).FirstOrDefault();
@@ -759,16 +778,15 @@ namespace ProcureEaseAPI.Controllers
                         Department RemoveUserFromHeadOfDepartment = db.Department.SingleOrDefault(x => x.DepartmentHeadUserID == UserProfile.UserID);
                         RemoveUserFromHeadOfDepartment.DepartmentHeadUserID = null;
                         db.SaveChanges();
-
                     }
                     UserProfile profile = db.UserProfile.SingleOrDefault(x => x.UserID == UserProfile.UserID);
                     db.UserProfile.Remove(profile);
-                    db.SaveChanges();
+                    db.SaveChanges();                   
                     return Json(new
                     {
                         success = true,
-                        message = "",
-                        data = db.UserProfile.Select(x => new
+                        message = "User is deleted successfully",
+                        data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                         {
                             x.UserID,
                             FullName = x.FirstName + " " + x.LastName,
@@ -787,12 +805,12 @@ namespace ProcureEaseAPI.Controllers
                     db.AspNetUserRoles.Remove(role);
                     AspNetUsers users = db.AspNetUsers.SingleOrDefault(x => x.Id == UserAspNetID);
                     db.AspNetUsers.Remove(users);
-                    db.SaveChanges();
+                    db.SaveChanges();                   
                     return Json(new
                     {
                         success = true,
-                        message = "",
-                        data = db.UserProfile.Select(x => new
+                        message = "User is deleted suessfully",
+                        data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                         {
                             x.UserID,
                             FullName = x.FirstName + " " + x.LastName,
@@ -806,15 +824,30 @@ namespace ProcureEaseAPI.Controllers
             }catch(Exception ex)
             {
                 LogHelper.Log(Log.Event.UPDATE_DEPARTMENT_HEAD, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = db.UserProfile.Select(x => new
-                    { }).FirstOrDefault()
-                }, JsonRequestBehavior.AllowGet);
+                return ExceptionError(ex.Message, ex.StackTrace);
             }
             
         }
+
+        private ActionResult Error(string message)
+        {
+            return Json(new
+            {
+                success = false,
+                message = message,
+                data = new { }
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        private ActionResult ExceptionError(string message, string StackTrace)
+        {
+            return Json(new
+            {
+                success = false,
+                message = message,
+                data = new {InternalError = StackTrace }
+            }, JsonRequestBehavior.AllowGet);
+        }
+
     }
 }

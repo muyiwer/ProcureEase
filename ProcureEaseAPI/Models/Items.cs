@@ -18,7 +18,6 @@ namespace ProcureEaseAPI.Models
         public Nullable<System.Guid> ProcurementID { get; set; }
         public Nullable<System.Guid> ApprovedItemID { get; set; }
         public Nullable<System.Guid> AdvertisedItemID { get; set; }
-        public string ItemCode { get; set; }
         public string ItemName { get; set; }
         public string Description { get; set; }
         public Nullable<double> Quantity { get; set; }
@@ -26,9 +25,13 @@ namespace ProcureEaseAPI.Models
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> DateCreated { get; set; }
         public Nullable<System.DateTime> DateModified { get; set; }
+        public Nullable<System.Guid> ItemCodeID { get; set; }
+        public Nullable<System.Guid> TenantID { get; set; }
     
         public virtual AdvertisedItems AdvertisedItems { get; set; }
         public virtual ApprovedItems ApprovedItems { get; set; }
+        public virtual ItemCode ItemCode { get; set; }
         public virtual Procurements Procurements { get; set; }
+        public virtual Catalog Catalog { get; set; }
     }
 }

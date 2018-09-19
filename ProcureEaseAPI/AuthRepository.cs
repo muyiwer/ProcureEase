@@ -6,26 +6,79 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace ProcureEaseAPI
 {
     public class AuthRepository
     {
-        private ApplicationDbContext _ctx;
+        //private ApplicationDbContext _ctx;
 
-        private UserManager<ApplicationUser> _userManager;
+        //private UserManager<ApplicationUser> _userManager; 
 
+        //public AuthRepository()
+        //{
+        //    _ctx = new ApplicationDbContext();
+        //    _userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_ctx));           
+        //}
+
+        private ApplicationSignInManager _signInManager;
+        private ApplicationUserManager _userManager;
+        ApplicationDbContext _ctx;
         public AuthRepository()
         {
             _ctx = new ApplicationDbContext();
-            _userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_ctx));
         }
 
-        public async Task<ApplicationUser> RegisterUser(AddUserModel userModel, string UserDepartment)
+        public AuthRepository(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
+            UserManager = userManager;
+            SignInManager = signInManager;
+        }
+
+        public ApplicationSignInManager SignInManager
+        {
+            get
+            {
+                return _signInManager ?? HttpContext.Current.GetOwinContext().Get<ApplicationSignInManager>();
+            }
+            private set
+            {
+                _signInManager = value;
+            }
+        }
+
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
+        public async Task<ApplicationUser> RegisterAdmin(AddUserModel userModel)
+        {
+            var _userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_ctx));
             ApplicationUser user = new ApplicationUser
             {
-                UserName = userModel.UserName
+                UserName = userModel.UserName,
+                Email = userModel.Email,
+                EmailConfirmed = true
+            };
+            var result = await _userManager.CreateAsync(user, userModel.Password);
+            return user;
+        }
+            public async Task<ApplicationUser> RegisterUser(AddUserModel userModel, string UserDepartment)
+        {
+            var _userManager =  new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_ctx));
+            ApplicationUser user = new ApplicationUser
+            {
+                UserName = userModel.UserName,
+                Email = userModel.Email,
+                EmailConfirmed = true
             };
 
             var result = await _userManager.CreateAsync(user, userModel.Password);
@@ -43,36 +96,34 @@ namespace ProcureEaseAPI
         public async Task<ApplicationUser> FindEmail(string UserEmail)
         {
 
-            ApplicationUser result = await _userManager.FindByEmailAsync(UserEmail);
+            ApplicationUser result = await UserManager.FindByEmailAsync(UserEmail);
 
             return result;
         }
 
         public async Task<ApplicationUser> FindUser(string userName, string password)
         {
+            var _userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_ctx));
             ApplicationUser user = await _userManager.FindAsync(userName, password);
-
             return user;
         }
 
         public async Task<string> GeneratePasswordToken(string UserID)
-        {
-            var PasswordToken = await _userManager.GeneratePasswordResetTokenAsync(UserID);
-
+        {          
+            var PasswordToken = await UserManager.GeneratePasswordResetTokenAsync(UserID);
             return PasswordToken;
         }
 
-        public async Task<IdentityResult> ResetPassword(ResetPasswordModel ResetPassword, string UserID)
-        {
-            var PasswordToken = await _userManager.ResetPasswordAsync(UserID, ResetPassword.ResetToken, ResetPassword.NewPassword);
-
+        public async Task<IdentityResult> ResetPassword(string ResetToken,string NewPassword, string UserID)
+        {           
+            var PasswordToken = await UserManager.ResetPasswordAsync(UserID, ResetToken,NewPassword);
             return PasswordToken;
         }
 
     public void Dispose()
         {
             _ctx.Dispose();
-            _userManager.Dispose();
+            UserManager.Dispose();
 
         }
     }

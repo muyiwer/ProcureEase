@@ -145,15 +145,15 @@ namespace ProcureEaseAPI.Controllers
 
         #region ProcessOnboarding
         [HttpPost]
-        public async Task<ActionResult>  Onboarding(Guid? RequestID, string Password)
+        public async Task<ActionResult>  Onboarding(string AdministratorEmail, string Password)
         {
             try
             {
                 DateTime dt = DateTime.Now;
                 Guid TenantID = Guid.NewGuid();
-                var ThisTenant = db.Catalog.Where(x => x.TenantID == x.OrganizationID).Select(x => x.RequestID).FirstOrDefault();
-                var GetRequestID = db.RequestForDemo.FirstOrDefault(x => x.RequestID == RequestID);
-                if (RequestID == null)
+                var GetRequestID = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.RequestID).FirstOrDefault();
+                var ThisTenant = db.Catalog.Where(x => x.RequestID == GetRequestID).Select(x => x.RequestID).FirstOrDefault();
+                if (AdministratorEmail == null)
                 {
                     LogHelper.Log(Log.Event.ONBOARDING, "RequestID is null");
                     Response.StatusCode = (int)HttpStatusCode.BadRequest;
@@ -175,16 +175,16 @@ namespace ProcureEaseAPI.Controllers
                 {
                     Catalog Tenant = new Catalog();
                     Tenant.TenantID = TenantID;
-                    Tenant.RequestID = RequestID;
+                    Tenant.RequestID = GetRequestID;
                     Tenant.DateCreated = dt;
                     Tenant.DateModified = dt;
                     db.Catalog.Add(Tenant);
                     db.SaveChanges();
                 }
                 Guid OrganizationID = Guid.NewGuid();
-                SaveTenantsRequestOnOrganizationSettings(RequestID, TenantID, OrganizationID);
+                SaveTenantsRequestOnOrganizationSettings(GetRequestID, TenantID, OrganizationID);
 
-                var SubDomain = db.RequestForDemo.Where(x=> x.RequestID == RequestID).Select(x => x.OrganizationShortName).FirstOrDefault();
+                var SubDomain = db.RequestForDemo.Where(x=> x.RequestID == GetRequestID).Select(x => x.OrganizationShortName).FirstOrDefault();
                 var UpdateTenantRecord = db.Catalog.FirstOrDefault(o => o.TenantID == TenantID);
                 UpdateTenantRecord.OrganizationID = OrganizationID;
                 UpdateTenantRecord.SubDomain = SubDomain;
@@ -195,7 +195,6 @@ namespace ProcureEaseAPI.Controllers
                 SaveDefaultProcurementMethodRecord(TenantID, OrganizationID);
                 SaveDefaultProjectCategoryRecord(TenantID, OrganizationID);
 
-                var AdministratorEmail = db.RequestForDemo.Where(x => x.RequestID == RequestID).Select(x => x.AdministratorEmail).FirstOrDefault();
                 AddUserModel UserModel = new AddUserModel
                 {
                     Email = AdministratorEmail,
@@ -205,6 +204,8 @@ namespace ProcureEaseAPI.Controllers
                 AuthRepository Repository = new AuthRepository();
                 ApplicationUser User = await Repository.RegisterAdmin(UserModel);
 
+                var GetAdministratorFirstName = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.AdministratorFirstName).FirstOrDefault();
+                var GetAdministratorLastName = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.AdministratorLastName).FirstOrDefault();
                 UserProfile userProfile = new UserProfile();
                 userProfile.UserID = Guid.NewGuid();
                 userProfile.Id = User.Id;
@@ -212,6 +213,9 @@ namespace ProcureEaseAPI.Controllers
                 userProfile.OrganizationID = OrganizationID;
                 userProfile.TenantID = TenantID;
                 userProfile.UserEmail = User.Email;
+                userProfile.FirstName = GetAdministratorFirstName;
+                userProfile.LastName = GetAdministratorLastName;
+                userProfile.DateCreated = dt;
                 db.UserProfile.Add(userProfile);
                 db.SaveChanges();
 

@@ -24,10 +24,10 @@ namespace ProcureEaseAPI.Tests.Controllers
         [TestMethod]
         public async Task TestOnboarding_Null_ID()
         {
-            Guid RequestID = new Guid();
+            string AdministatorEmail = "";
             string Password = "";
             var TestOnboarding_For_Null_ID = new HomeController();
-            JsonResult result = (JsonResult) await TestOnboarding_For_Null_ID.Onboarding(RequestID, Password);
+            JsonResult result = (JsonResult) await TestOnboarding_For_Null_ID.Onboarding(AdministatorEmail, Password);
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("RequestID is Null"));
         }
@@ -35,10 +35,10 @@ namespace ProcureEaseAPI.Tests.Controllers
         [TestMethod]
         public async Task TestOnboarding_For_RequestForDemo()
         {
-            Guid RequestID = new Guid();
+            string AdministatorEmail = "";
             string Password = "";
             var TestOnboarding_If_RequestExistsOn_RequestForDemo = new HomeController();
-            JsonResult result = (JsonResult) await TestOnboarding_If_RequestExistsOn_RequestForDemo.Onboarding(RequestID, Password);
+            JsonResult result = (JsonResult) await TestOnboarding_If_RequestExistsOn_RequestForDemo.Onboarding(AdministatorEmail, Password);
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("RequestID does not exist on RequestForDemo"));
         }
@@ -46,10 +46,10 @@ namespace ProcureEaseAPI.Tests.Controllers
         [TestMethod]
         public async Task TestPostOnboarding_Successful()
         {
-            Guid RequestID = new Guid("3C0EBB6F-D4BB-46C0-A3AE-1D8FD592D459");
-            string Password = "Anita";
+            string AdministatorEmail = "annieajek@gmail.com";
+            string Password = "Password";
             var testOnboarding_Successful = new HomeController();
-            JsonResult result = (JsonResult)await testOnboarding_Successful.Onboarding(RequestID, Password);
+            JsonResult result = (JsonResult)await testOnboarding_Successful.Onboarding(AdministatorEmail, Password);
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("Organization Onboarded Successfully"));
         }
@@ -57,10 +57,10 @@ namespace ProcureEaseAPI.Tests.Controllers
         [TestMethod]
         public async Task TestOnboarding_If_OrganizationExists()
         {
-            Guid RequestID = new Guid("3C0EBB6F-D4BB-46C0-A3AE-1D8FD592D459");
-            string Password = "Another Password";
+            string AdministatorEmail = "annieajek@gmail.com";
+            string Password = "Password";
             var TestOnboarding_If_OrganizationAlreadyExists = new HomeController();
-            JsonResult result = (JsonResult)await TestOnboarding_If_OrganizationAlreadyExists.Onboarding(RequestID, Password);
+            JsonResult result = (JsonResult)await TestOnboarding_If_OrganizationAlreadyExists.Onboarding(AdministatorEmail, Password);
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("Duplicate insertion attempt, OrganizationID already exist"));
         }

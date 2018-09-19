@@ -151,25 +151,27 @@ namespace ProcureEaseAPI.Controllers
             {
                 DateTime dt = DateTime.Now;
                 Guid TenantID = Guid.NewGuid();
+                var GetEmail = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.AdministratorEmail).FirstOrDefault();
                 var GetRequestID = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.RequestID).FirstOrDefault();
-                var ThisTenant = db.Catalog.Where(x => x.RequestID == GetRequestID).Select(x => x.RequestID).FirstOrDefault();
                 if (AdministratorEmail == null)
                 {
-                    LogHelper.Log(Log.Event.ONBOARDING, "RequestID is null");
+                    LogHelper.Log(Log.Event.ONBOARDING, "AdministratorEmail is null");
                     Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    return Error("Please Input RequestID");
+                    return Error("Please Input AdministratorEmail");
                 }
-                if (GetRequestID == null)
+                if (GetEmail == null)
                 {
-                    LogHelper.Log(Log.Event.ONBOARDING, "RequestID does not exist");
+                    LogHelper.Log(Log.Event.ONBOARDING, AdministratorEmail + "has not requested for a demo," + " " + "Email does not exist.");
                     Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    return Error("This Organization has not requested for a demo, RequestID does not exist");
+                    return Error(AdministratorEmail + " " + "has not requested for a Demo");
                 }
+                var OrganizationNameInFull = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.OrganizationFullName).FirstOrDefault();
+                var ThisTenant = db.Catalog.Where(x => x.RequestID == GetRequestID).Select(x => x.RequestID).FirstOrDefault();
                 if (ThisTenant != null)
                 {
-                    LogHelper.Log(Log.Event.ONBOARDING, "Duplicate insertion attempt, Organization already exist");
+                    LogHelper.Log(Log.Event.ONBOARDING, "Onboarding has been done for" + " " + OrganizationNameInFull + " " + "by the Email" + " " + AdministratorEmail);
                     Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    return Error("Duplicate insertion attempt, Organization already exist");
+                    return Error("Onboarding has been done for" + " " + OrganizationNameInFull + " " + "by the Email" + " " + AdministratorEmail);
                 }
                 else
                 {

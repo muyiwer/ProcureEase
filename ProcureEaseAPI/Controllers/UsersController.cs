@@ -697,15 +697,15 @@ namespace ProcureEaseAPI.Controllers
 
         [HttpGet]
       //  [Providers.Authorize]
-        public ActionResult GetAllUsers(string id = "")
+        public ActionResult GetAllUsers(string departmentId = "")
         {
             var SubDomain = catalog.GetSubDomain();
-            if (string.IsNullOrEmpty(id))
+            if (string.IsNullOrEmpty(departmentId))
             {
                 return Json(new
                 {
                     success = true,
-                    message = "",
+                    message = "Users in: " + SubDomain,
                     data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                     {
                         x.UserID,
@@ -718,10 +718,10 @@ namespace ProcureEaseAPI.Controllers
                 }, JsonRequestBehavior.AllowGet);
             } else
             {
-                Guid guidID = new Guid();
+                Guid departmentGuidId = new Guid();
                 try
                 {
-                    guidID = Guid.Parse(id);
+                    departmentGuidId = Guid.Parse(departmentId);
                 }
                 catch (FormatException ex)
                 {
@@ -737,7 +737,7 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = true,
                     message = "All Users",
-                    data = db.UserProfile.Where(x => x.DepartmentID == guidID &&  x.Catalog.SubDomain == SubDomain).Select(x => new
+                    data = db.UserProfile.Where(x => x.DepartmentID == departmentGuidId &&  x.Catalog.SubDomain == SubDomain).Select(x => new
                     {
                         x.UserID,
                         FullName = x.FirstName + " " + x.LastName,

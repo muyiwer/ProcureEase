@@ -21,6 +21,16 @@ namespace ProcureEaseAPI.Controllers
             return View(db.ProjectCategory.ToList());
         }
 
+        private ActionResult ExceptionError(string message, string StackTrace)
+        {
+            return Json(new
+            {
+                success = false,
+                message = message,
+                data = new { InternalError = StackTrace }
+            }, JsonRequestBehavior.AllowGet);
+        }
+
         // POST: ProjectCategories/AddProjectCategory
         [HttpPost]
         public ActionResult AddProjectCategory(ProjectCategory projectCategory)
@@ -34,28 +44,23 @@ namespace ProcureEaseAPI.Controllers
                 projectCategory.CreatedBy = "MDA Administrator";
                 db.ProjectCategory.Add(projectCategory);
                 db.SaveChanges();
-                return Json(new
-                {
-                    success = true,
-                    message = "Project Category added successfully!!!",
-                    data = db.ProjectCategoryOrganizationSettings.Select(x => new
-                    {
-                        x.ProjectCategoryID,
-                        x.ProjectCategory.Name,
-                        x.EnableProjectCategory,
-                    })
-                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.ADD_PROJECTCATEGORY, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = new { }
-                }, JsonRequestBehavior.AllowGet);
+                ExceptionError(ex.Message, ex.StackTrace);
             }
+            return Json(new
+            {
+                success = true,
+                message = "Project Category added successfully!!!",
+                data = db.ProjectCategoryOrganizationSettings.Select(x => new
+                {
+                    x.ProjectCategoryID,
+                    x.ProjectCategory.Name,
+                    x.EnableProjectCategory,
+                })
+            }, JsonRequestBehavior.AllowGet);
         }
 
 
@@ -117,8 +122,18 @@ namespace ProcureEaseAPI.Controllers
         [HttpPost]
         public ActionResult Edit(ProjectCategoryOrganizationSettings projectCategoryOrganizationSettings, bool EnableProjectCategory)
         {
+            Guid? tenantId = catalog.GetTenantID();
             try
             {
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 DateTime dt = DateTime.Now;
                 var currentProjectCategoryID = db.ProjectCategoryOrganizationSettings.FirstOrDefault(p => p.ProjectCategoryID == projectCategoryOrganizationSettings.ProjectCategoryID);
 
@@ -137,28 +152,23 @@ namespace ProcureEaseAPI.Controllers
                 currentProjectCategoryID.DateModified = dt;
 
                 db.SaveChanges();
-                return Json(new
-                {
-                    success = true,
-                    message = "Edited successfully",
-                    data = db.ProjectCategoryOrganizationSettings.Select(x => new
-                    {
-                        x.ProjectCategoryID,
-                        x.ProjectCategory.Name,
-                        x.EnableProjectCategory
-                    })
-                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.UPDATE_PROJECTCATEGORY, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = new { }
-                }, JsonRequestBehavior.AllowGet);
+                ExceptionError(ex.Message, ex.StackTrace);
             }
+            return Json(new
+            {
+                success = true,
+                message = "Edited successfully",
+                data = db.ProjectCategoryOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
+                {
+                    x.ProjectCategoryID,
+                    x.ProjectCategory.Name,
+                    x.EnableProjectCategory
+                })
+            }, JsonRequestBehavior.AllowGet);
         }
 
         // GET: ProjectCategories/Delete/5

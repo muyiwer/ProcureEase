@@ -736,7 +736,7 @@ namespace ProcureEaseAPI.Controllers
                 return Json(new
                 {
                     success = true,
-                    message = "All Users",
+                    message = "Users in: " + SubDomain + ", in department with ID: " + departmentGuidId,
                     data = db.UserProfile.Where(x => x.DepartmentID == departmentGuidId &&  x.Catalog.SubDomain == SubDomain).Select(x => new
                     {
                         x.UserID,

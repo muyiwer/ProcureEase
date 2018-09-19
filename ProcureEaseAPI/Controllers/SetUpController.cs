@@ -14,10 +14,31 @@ namespace ProcureEaseAPI.Controllers
     public class SetUpController : Controller
     {
         private ProcureEaseEntities db = new ProcureEaseEntities();
+        private CatalogsController catalog = new CatalogsController();
         // GET: SetUp
         public ActionResult Index()
         {
             return View();
+        }
+
+        private ActionResult Error(string message)
+        {
+            return Json(new
+            {
+                success = false,
+                message = message,
+                data = new { }
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        private ActionResult ExceptionError(string message, string StackTrace)
+        {
+            return Json(new
+            {
+                success = false,
+                message = message,
+                data = new { InternalError = StackTrace }
+            }, JsonRequestBehavior.AllowGet);
         }
 
         // GET: SetUp/SourceOfFunds
@@ -25,109 +46,127 @@ namespace ProcureEaseAPI.Controllers
         [HttpGet]
         public ActionResult SourceOfFunds()
         {
+            Guid? tenantId = catalog.GetTenantID();
             try
             {
-                return Json(new
+                if (tenantId == null)
                 {
-                    success = true,
-                    message = "All source of funds",
-                    data = db.SourceOfFunds.Select(x => new
+                    return Json(new
                     {
-                        TenantID = db.SourceOfFunds.Where(y => y.TenantID == x.TenantID).Select(y => y.TenantID),
-                        x.SourceOfFundID,
-                        x.SourceOfFund,
-                        Enabled = db.SourceOfFundsOrganizationSettings.Where(y => y.SourceOfFunID == y.SourceOfFunID).Select(y => y.EnableSourceOFFund)
-                    })
-                }, JsonRequestBehavior.AllowGet);
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }       
             }
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.GET_ALL_SOURCEOFFUNDS, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = new { }
-                }, JsonRequestBehavior.AllowGet);
+                ExceptionError(ex.Message, ex.StackTrace);
             }
+            return Json(new
+            {
+                success = true,
+                message = "All source of funds",
+                data = db.SourceOfFundsOrganizationSettings.Where(y => y.TenantID == tenantId).Select(x => new
+                {
+                    x.SourceOfFundID,
+                    x.SourceOfFunds.SourceOfFund,
+                    Enabled = x.EnableSourceOFFund
+                })
+            }, JsonRequestBehavior.AllowGet);
         }
 
         // GET: SetUp/ProcurementMethod
         [HttpGet]
         public ActionResult ProcurementMethod()
         {
+            Guid? tenantId = catalog.GetTenantID();
             try
             {
-                var ProcurementMethod = db.ProcurementMethodOrganizationSettings.Select(x => new
+                if (tenantId == null)
                 {
-                    x.ProcurementMethodID,
-                    x.ProcurementMethod.Name,
-                    x.EnableProcurementMethod,
-                });
-                return Json(new
-                {
-                    success = true,
-                    message = "All Procurement Method",
-                    data = db.ProcurementMethodOrganizationSettings.Select(x => new
+                    return Json(new
                     {
-                        x.ProcurementMethodID,
-                        x.ProcurementMethod,
-                        x.EnableProcurementMethod,
-                    })
-                }, JsonRequestBehavior.AllowGet);
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }        
             }
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.GET_ALL_PROCUREMENTMETHOD, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = new { }
-                }, JsonRequestBehavior.AllowGet);
+                ExceptionError(ex.Message, ex.StackTrace);
             }
+            return Json(new
+            {
+                success = true,
+                message = "All Procurement Method",
+                data = db.ProcurementMethodOrganizationSettings.Where(y => y.TenantID == tenantId).Select(x => new
+                {
+                    x.ProcurementMethodID,
+                    x.ProcurementMethod.Name,
+                    x.EnableProcurementMethod,
+                })
+            }, JsonRequestBehavior.AllowGet);
         }
 
         // GET: SetUp/ProjectCategory
         [HttpGet]
         public ActionResult ProjectCategory()
         {
+            Guid? tenantId = catalog.GetTenantID();
             try
             {
-                return Json(new
+                if (tenantId == null)
                 {
-                    success = true,
-                    message = "All Project Category",
-                    data = db.ProjectCategory.Select(x => new
+                    return Json(new
                     {
-                        x.ProjectCategoryID,
-                        x.Name,
-                       // x.EnableProjectCategory,
-                    })
-                }, JsonRequestBehavior.AllowGet);
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
             }
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.GET_ALL_PROJECTCATEGORY, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = new { }
-                }, JsonRequestBehavior.AllowGet);
+                ExceptionError(ex.Message, ex.StackTrace);
             }
+            return Json(new
+            {
+                success = true,
+                message = "All Project Category",
+                data = db.ProjectCategoryOrganizationSettings.Where(x=> x.TenantID == tenantId).Select(x => new
+                {
+                    x.ProjectCategoryID,
+                    x.ProjectCategory.Name,
+                    x.EnableProjectCategory,
+                })
+            }, JsonRequestBehavior.AllowGet);
         }
 
         // PUT: SetUp/UpdateBasicDetails
         [HttpPut]
         public async Task<ActionResult> UpdateBasicDetails([Bind(Include = "OrganizationID,OrganizationNameInFull,OrganizationNameAbbreviation,OrganizationEmail,Address,Country,State,AboutOrganization,DateModified,CreatedBy,DateCreated")]OrganizationSettings organizationSettings, HttpPostedFileBase image, params string[] telephoneNumbers)
         {
+            Guid? tenantId = catalog.GetTenantID();
             try
             {
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 DateTime dt = DateTime.Now;
                 var currentOrganizationDetails = db.OrganizationSettings.FirstOrDefault(o => o.OrganizationID == o.OrganizationID);
-
-                if (currentOrganizationDetails == null)
+                var Organization = db.OrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => x.OrganizationNameInFull).FirstOrDefault();
+                if (currentOrganizationDetails == null && tenantId == null)
                 {
                     LogHelper.Log(Log.Event.UPDATE_BASICDETAILS, "OrgasnizationID not found");
                     return Json(new
@@ -137,7 +176,7 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-
+                currentOrganizationDetails.TenantID = tenantId;
                 currentOrganizationDetails.OrganizationNameInFull = organizationSettings.OrganizationNameInFull;
                 currentOrganizationDetails.OrganizationNameAbbreviation = organizationSettings.OrganizationNameAbbreviation;
                 currentOrganizationDetails.OrganizationEmail = organizationSettings.OrganizationEmail;
@@ -146,7 +185,7 @@ namespace ProcureEaseAPI.Controllers
                 currentOrganizationDetails.State = organizationSettings.State;
                 currentOrganizationDetails.AboutOrganization = organizationSettings.AboutOrganization;
                 currentOrganizationDetails.DateModified = dt;
-                currentOrganizationDetails.CreatedBy = "MDA Administrator";
+                currentOrganizationDetails.CreatedBy = Organization;
                 if (image != null)
                 {
                     currentOrganizationDetails.OrganizationLogoPath = await new FileUploadHelper().UploadImageToAzureStorage(image) + "";
@@ -156,45 +195,42 @@ namespace ProcureEaseAPI.Controllers
                 {
                     AddTelephone(organizationSettings, telephoneNumbers);
                 }
-                return Json ( new
-                {
-                    success = true,
-                    message = "Basic details added successfully!!!",
-                    data = db.OrganizationSettings.Select(x => new
-                    {
-                        x.OrganizationID,
-                        x.OrganizationNameInFull,
-                        x.OrganizationNameAbbreviation,
-                        x.OrganizationEmail,
-                        x.State,
-                        x.Country,
-                        x.AboutOrganization,
-                        x.Address,
-                        x.OrganizationLogoPath,
-                        DateModified = x.DateModified.Value.ToString(),
-                        x.CreatedBy,
-                        TelephoneNumbers = db.TelephoneNumbers.Where(y => y.OrganizationID == x.OrganizationID).Select(y => new
-                        {
-                            y.TelephoneNumber
-                        })
-                    })
-                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.UPDATE_BASICDETAILS, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = new { }
-                }, JsonRequestBehavior.AllowGet);
+                ExceptionError(ex.Message, ex.StackTrace);
             }
+            return Json(new
+            {
+                success = true,
+                message = "Basic details added successfully!!!",
+                data = db.OrganizationSettings.Where(x => x.OrganizationID == organizationSettings.OrganizationID).Select(x => new
+                {
+                    TenantID = db.OrganizationSettings.Where(y => y.TenantID == tenantId).Select(y => y.TenantID).FirstOrDefault(),
+                    x.OrganizationID,
+                    x.OrganizationNameInFull,
+                    x.OrganizationNameAbbreviation,
+                    x.OrganizationEmail,
+                    x.State,
+                    x.Country,
+                    x.AboutOrganization,
+                    x.Address,
+                    x.OrganizationLogoPath,
+                    DateModified = x.DateModified.Value.ToString(),
+                    x.CreatedBy,
+                    TelephoneNumbers = db.TelephoneNumbers.Where(y => y.OrganizationID == x.OrganizationID).Select(y => new
+                    {
+                        y.TelephoneNumber
+                    })
+                })
+            }, JsonRequestBehavior.AllowGet);
         }
 
         public void AddTelephone(OrganizationSettings organizationSettings, params string[] telephoneNumbers)
         {
-            // TODO: Anita. check if this telephone number has already been added for this organization    
+            // TODO: Anita. check if this telephone number has already been added for this organization
+            var tenantID = catalog.GetTenantID();
             var TelephoneNumbersFromDB = db.TelephoneNumbers.Select(x => x.TelephoneNumber).ToList();
             var DistinctTelephoneNumbers = telephoneNumbers.Except(TelephoneNumbersFromDB);
             foreach (var telephone in DistinctTelephoneNumbers)
@@ -203,6 +239,7 @@ namespace ProcureEaseAPI.Controllers
                 db.TelephoneNumbers.Add(new TelephoneNumbers
                 {
                     TelephoneNumberID = Guid.NewGuid(),
+                    TenantID = tenantID,
                     OrganizationID = organizationSettings.OrganizationID,
                     TelephoneNumber = telephone,
                     DateCreated = dt,
@@ -218,115 +255,119 @@ namespace ProcureEaseAPI.Controllers
         [HttpGet]
         public ActionResult OrganizationSettings()
         {
+            Guid? tenantId = catalog.GetTenantID();
             try
             {
-                var BasicDetails = db.OrganizationSettings.Select(x => new
+                if (tenantId == null)
                 {
-                    x.OrganizationID,
-                    x.OrganizationEmail,
-                    x.OrganizationNameInFull,
-                    x.OrganizationNameAbbreviation,
-                    x.State,
-                    x.Country,
-                    x.AboutOrganization,
-                    x.OrganizationLogoPath,
-                    x.CreatedBy,
-                    TelephoneNumbers = db.TelephoneNumbers.Where(y => y.OrganizationID == x.OrganizationID).Select(y => new
+                    return Json(new
                     {
-                        y.TelephoneNumber
-                    })
-
-                });
-
-                var DepartmentSetup = db.Department.Select(x => new
-                {
-                    Department = db.Department.Where(y => y.DepartmentID == x.DepartmentID).Select(y => new
-                    {
-                        y.DepartmentID,
-                        y.DepartmentName
-                    }),
-
-                    Head = db.UserProfile.Where(y => x.DepartmentID == y.DepartmentID).Select(y => new
-                    {
-                        x.DepartmentHeadUserID,
-                        FullName = y.FirstName + " " + y.LastName
-                    })
-                });
-
-                var UserManagement = db.UserProfile.Select(x => new
-                {
-                    User = db.UserProfile.Where(y => y.UserID == x.UserID).Select(y => new
-                    {
-                        y.UserID,
-                        FullName = x.FirstName + " " + x.LastName
-                    }),
-                    Department = db.UserProfile.Where(y => y.UserID == x.UserID).Select(y => new
-                    {
-                        x.DepartmentID,
-                        y.Department1.DepartmentName
-                    })
-                });
-
-                var SourceOfFunds = db.SourceOfFunds.Select(x => new
-                {
-                    x.SourceOfFundID,
-                    x.SourceOfFund,
-                   // x.EnableSourceOfFund,
-                });
-
-                var ProcurementMethod = db.ProcurementMethodOrganizationSettings.Select(x => new
-                {
-                    x.ProcurementMethodID,
-                    x.ProcurementMethod,
-                    x.EnableProcurementMethod,
-                });
-
-                var ProjectCategory = db.ProjectCategory.Select(x => new
-                {
-                    x.ProjectCategoryID,
-                    x.Name,
-                   // x.EnableProjectCategory,
-                });
-
-                var Users = db.UserProfile.Select(x => new
-                {
-                    x.UserID,
-                    FullName = x.FirstName + " " + x.LastName
-                });
-
-                var Departments = db.Department.Select(x => new
-                {
-                    x.DepartmentID,
-                    x.DepartmentName
-                });
-
-                return Json(new
-                {
-                    success = true,
-                    message = "OK",
-                    data = new
-                    {
-                        BasicDetails = BasicDetails,
-                        DepartmentSetup = DepartmentSetup,
-                        UserManagement = UserManagement,
-                        SourceOfFunds = SourceOfFunds,
-                        ProcurementMethod = ProcurementMethod,
-                        ProjectCategory = ProjectCategory,
-                        Users = Users,
-                        Departments = Departments
-                    }
-                }, JsonRequestBehavior.AllowGet);
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
             }
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.GET_ORGANIZATIONSETTINGS, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = new { }
-                }, JsonRequestBehavior.AllowGet);
+                ExceptionError(ex.Message, ex.StackTrace);
             }
+            var BasicDetails = db.OrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
+            {
+                x.OrganizationID,
+                x.OrganizationEmail,
+                x.OrganizationNameInFull,
+                x.OrganizationNameAbbreviation,
+                x.State,
+                x.Country,
+                x.AboutOrganization,
+                x.OrganizationLogoPath,
+                x.CreatedBy,
+                TelephoneNumbers = db.TelephoneNumbers.Where(y => y.OrganizationID == x.OrganizationID).Select(y => new
+                {
+                    y.TelephoneNumber
+                })
+
+            });
+
+            var DepartmentSetup = db.Department.Select(x => new
+            {
+                Department = db.Department.Where(y => y.TenantID == tenantId).Select(y => new
+                {
+                    y.DepartmentID,
+                    y.DepartmentName
+                }),
+
+                Head = db.UserProfile.Where(y =>x.DepartmentID == x.DepartmentID && x.TenantID == tenantId).Select(y => new
+                {
+                    x.DepartmentHeadUserID,
+                    FullName = y.FirstName + " " + y.LastName
+                })
+            });
+
+            var UserManagement = db.UserProfile.Select(x => new
+            {
+                User = db.UserProfile.Where(y => y.TenantID == tenantId).Select(y => new
+                {
+                    y.UserID,
+                    FullName = x.FirstName + " " + x.LastName
+                }),
+                Department = db.UserProfile.Where(y => y.UserID == x.UserID && y.TenantID == tenantId).Select(y => new
+                {
+                    x.DepartmentID,
+                    y.Department1.DepartmentName
+                })
+            });
+
+            var SourceOfFunds = db.SourceOfFundsOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
+            {
+                x.SourceOfFundID,
+                x.SourceOfFunds.SourceOfFund,
+                x.EnableSourceOFFund,
+            });
+
+            var ProcurementMethod = db.ProcurementMethodOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
+            {
+                x.ProcurementMethodID,
+                x.ProcurementMethod.Name,
+                x.EnableProcurementMethod,
+            });
+
+            var ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
+            {
+                x.ProjectCategoryID,
+                x.ProjectCategory.Name,
+                x.EnableProjectCategory,
+            });
+
+            var Users = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
+            {
+                x.UserID,
+                FullName = x.FirstName + " " + x.LastName
+            });
+
+            var Departments = db.Department.Where(x => x.TenantID == tenantId).Select(x => new
+            {
+                x.DepartmentID,
+                x.DepartmentName
+            });
+            return Json(new
+            {
+                success = true,
+                message = "OK",
+                data = new
+                {
+                    BasicDetails = BasicDetails,
+                    DepartmentSetup = DepartmentSetup,
+                    UserManagement = UserManagement,
+                    SourceOfFunds = SourceOfFunds,
+                    ProcurementMethod = ProcurementMethod,
+                    ProjectCategory = ProjectCategory,
+                    Users = Users,
+                    Departments = Departments
+                }
+            }, JsonRequestBehavior.AllowGet);
         }
     }
 }

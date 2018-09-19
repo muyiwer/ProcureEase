@@ -29,12 +29,12 @@ namespace ProcureEaseAPI.Tests.Controllers
         }
 
         [TestMethod]
-        public async Task TestPostRequestForDemo()
+        public async Task TestPostRequestForDemo_Successful()
         {
             RequestForDemo requestForDemo = new RequestForDemo
             {
-                OrganizationFullName = "Central Bank of Nigeria",
-                OrganizationShortName = "CBN",
+                OrganizationFullName = "The Organization",
+                OrganizationShortName = "TO",
                 AdministratorEmail = "annieajeks@outlook.com",
                 AdministratorFirstName = "Muyiwer",
                 AdministratorLastName = "Aro",
@@ -43,6 +43,26 @@ namespace ProcureEaseAPI.Tests.Controllers
 
             var testRequestForDemo = new HomeController();
             JsonResult result = (JsonResult)await testRequestForDemo.RequestForDemo(requestForDemo);
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("Request Sent Successfully"));
+        }
+
+        [TestMethod]
+        public async Task TestPostRequestForDemo_UnSuccessful()
+        {
+            RequestForDemo requestForDemo = new RequestForDemo
+            {
+                OrganizationFullName = "My Organization",
+                OrganizationShortName = "MO",
+                AdministratorEmail = "annie@outlook.com",
+                AdministratorFirstName = "Anita",
+                AdministratorLastName = "Ajekuko",
+                AdministratorPhoneNumber = "+2348100009525",
+            };
+
+            var testRequestForDemo = new HomeController();
+            JsonResult result = (JsonResult)await testRequestForDemo.RequestForDemo(requestForDemo);
+            result = (JsonResult)await testRequestForDemo.RequestForDemo(requestForDemo);//Duplicate insertion attempt
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("Request Sent Successfully"));
         }

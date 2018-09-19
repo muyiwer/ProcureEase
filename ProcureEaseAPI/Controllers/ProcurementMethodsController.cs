@@ -14,11 +14,22 @@ namespace ProcureEaseAPI.Controllers
     public class ProcurementMethodsController : Controller
     {
         private ProcureEaseEntities db = new ProcureEaseEntities();
+        private CatalogsController catalog = new CatalogsController();
 
         // GET: ProcurementMethods
         public ActionResult Index()
         {
             return View(db.ProcurementMethod.ToList());
+        }
+
+        private ActionResult ExceptionError(string message, string StackTrace)
+        {
+            return Json(new
+            {
+                success = false,
+                message = message,
+                data = new { InternalError = StackTrace }
+            }, JsonRequestBehavior.AllowGet);
         }
 
         // POST: ProcurementMethod/AddProcurementMethod
@@ -31,30 +42,26 @@ namespace ProcureEaseAPI.Controllers
                 procurementMethod.ProcurementMethodID = Guid.NewGuid();
                 procurementMethod.DateCreated = dt;
                 procurementMethod.DateModified = dt;
-                procurementMethod.CreatedBy = "MDA Administrator";
+                procurementMethod.CreatedBy = "Techspecialist";
                 db.ProcurementMethod.Add(procurementMethod);
                 db.SaveChanges();
-                return Json(new
-                {
-                    success = true,
-                    message = "Procurement Method added successfully!!!",
-                    data = db.ProcurementMethod.Select(x => new
-                    {
-                        x.ProcurementMethodID,
-                        x.Name
-                    })
-                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.ADD_PROCUREMENTMETHOD, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = new { }
-                }, JsonRequestBehavior.AllowGet);
+                ExceptionError(ex.Message, ex.StackTrace);
             }
+            return Json(new
+            {
+                success = true,
+                message = "Procurement Method added successfully!!!",
+                data = db.ProcurementMethodOrganizationSettings.Select(x => new
+                {
+                    x.ProcurementMethodID,
+                    x.ProcurementMethod.Name,
+                    x.EnableProcurementMethod,
+                })
+            }, JsonRequestBehavior.AllowGet);
         }
 
         // GET: ProcurementMethods/Details/5
@@ -113,52 +120,54 @@ namespace ProcureEaseAPI.Controllers
 
         // POST: ProcurementMethod/Edit
         [HttpPost]
-        public ActionResult Edit([Bind(Include = "ProcurementMethodID,ProcurementMethod1,EnableProcurementMethod,DateModified,CreatedBy,DateCreated")] ProcurementMethod procurementMethod)
+        public ActionResult Edit(ProcurementMethodOrganizationSettings procurementMethodOrganizationSettings, bool EnableProcurementMethod)
         {
+            Guid? tenantId = catalog.GetTenantID();
             try
             {
-
-                DateTime dt = DateTime.Now;
-                var currentProcurementMethod = db.ProcurementMethod.FirstOrDefault(p => p.ProcurementMethodID == p.ProcurementMethodID);
-                var currentProcurementMethodOrganizationSettings = db.ProcurementMethodOrganizationSettings.FirstOrDefault(p => p.ProcurementMethodID == p.ProcurementMethodID);
-
-                if (currentProcurementMethod == null) { 
-                LogHelper.Log(Log.Event.UPDATE_PROCUREMENTMETHOD, "ProcurementMethodID not found");
-                return Json(new
+                if (tenantId == null)
                 {
-                    success = false,
-                    message = "ProcurementMethodID not found",
-                    data = new { }
-                }, JsonRequestBehavior.AllowGet);
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                DateTime dt = DateTime.Now;
+                var currentProcurementMethodID = db.ProcurementMethodOrganizationSettings.FirstOrDefault(p => p.ProcurementMethodID == procurementMethodOrganizationSettings.ProcurementMethodID);
+
+                if (currentProcurementMethodID == null)
+                { 
+                    LogHelper.Log(Log.Event.UPDATE_PROCUREMENTMETHOD, "ProcurementMethodID not found");
+                    return Json(new
+                    {
+                        success = false,
+                        message = "ProcurementMethodID not found",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
                 }
 
-                currentProcurementMethod.DateModified = dt;
-
-                currentProcurementMethodOrganizationSettings.EnableProcurementMethod = currentProcurementMethodOrganizationSettings.EnableProcurementMethod;
-                currentProcurementMethodOrganizationSettings.DateModified = dt;
+                currentProcurementMethodID.EnableProcurementMethod = EnableProcurementMethod;
+                currentProcurementMethodID.DateModified = dt;
                 db.SaveChanges();
-                return Json(new
-                {
-                    success = true,
-                    message = "Editted successfully!!!",
-                    data = db.ProcurementMethod.Select(x => new
-                    {
-                        x.ProcurementMethodID,
-                        x.Name,
-                        Enabled = db.ProcurementMethodOrganizationSettings.Where(y => y.ProcurementMethodID == y.ProcurementMethodID).Select(y => y.EnableProcurementMethod)  
-                    })
-                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.UPDATE_PROCUREMENTMETHOD, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = new { }
-                }, JsonRequestBehavior.AllowGet);
+                ExceptionError(ex.Message, ex.StackTrace);
             }
+            return Json(new
+            {
+                success = true,
+                message = "Editted successfully!!!",
+                data = db.ProcurementMethodOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
+                {
+                    x.ProcurementMethodID,
+                    x.ProcurementMethod.Name,
+                    x.EnableProcurementMethod,
+                })
+            }, JsonRequestBehavior.AllowGet);
         }
 
         // GET: ProcurementMethods/Delete/5

@@ -30,6 +30,7 @@ namespace ProcureEaseAPI.Controllers
             List<Catalog> records = db.Catalog.Where(x => x.SubDomain == subDomain).ToList();
             if (records == null || records.Count == 0)
             {
+                CheckForNullTenantID(records);
                 return null;
             }
             else
@@ -47,6 +48,7 @@ namespace ProcureEaseAPI.Controllers
             List<Catalog> records = db.Catalog.Where(x => x.SubDomain == subDomain).ToList();
             if (records == null || records.Count == 0)
             {
+                CheckForNullTenantID(records);
                 return null;
             }
             else
@@ -55,19 +57,42 @@ namespace ProcureEaseAPI.Controllers
             }
         }
 
+        public ActionResult CheckForNullTenantID(List<Catalog> records)
+        {
+            if(records == null)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "TenantId is null",
+                    data = new { }   
+                }, JsonRequestBehavior.AllowGet);
+            }
+            return null;
+        }
+
+
+        [HttpPost]
         public ActionResult Add(Catalog catalog)
         {
+            string url = System.Web.HttpContext.Current.Request.Url.Host; // expecting format nitda.procureease.ng
+            string[] hostUrlParts = url.Split('.');// extract sub domain from URL
+            string subDomain = hostUrlParts[0];
             catalog.TenantID = Guid.NewGuid();
+            catalog.SubDomain = subDomain;
             db.Catalog.Add(catalog);
             db.SaveChanges();
-            return Json(catalog, JsonRequestBehavior.AllowGet);
+            return Json(subDomain, JsonRequestBehavior.AllowGet);
         }
-        public ActionResult AddOrganization(OrganizationSettings catalog)
+        public ActionResult AddOrganization(OrganizationSettings organizationSettings)
         {
-            catalog.OrganizationID = Guid.NewGuid();
-            db.OrganizationSettings.Add(catalog);
+            Guid? GettenantId = GetTenantID();
+            var tenantId = GettenantId.Value;
+            organizationSettings.OrganizationID = Guid.NewGuid();
+            organizationSettings.TenantID = tenantId;
+            db.OrganizationSettings.Add(organizationSettings);
             db.SaveChanges();
-            return Json(catalog, JsonRequestBehavior.AllowGet);
+            return Json(tenantId, JsonRequestBehavior.AllowGet);
         }
 
         protected override void Dispose(bool disposing)

@@ -14,11 +14,22 @@ namespace ProcureEaseAPI.Controllers
     public class ProjectCategoriesController : Controller
     {
         private ProcureEaseEntities db = new ProcureEaseEntities();
+        private CatalogsController catalog = new CatalogsController();
 
         // GET: ProjectCategories
         public ActionResult Index()
         {
             return View(db.ProjectCategory.ToList());
+        }
+
+        private ActionResult ExceptionError(string message, string StackTrace)
+        {
+            return Json(new
+            {
+                success = false,
+                message = message,
+                data = new { InternalError = StackTrace }
+            }, JsonRequestBehavior.AllowGet);
         }
 
         // POST: ProjectCategories/AddProjectCategory
@@ -31,31 +42,26 @@ namespace ProcureEaseAPI.Controllers
                 projectCategory.ProjectCategoryID = Guid.NewGuid();
                 projectCategory.DateCreated = dt;
                 projectCategory.DateModified = dt;
-                projectCategory.CreatedBy = "MDA Administrator";
+                projectCategory.CreatedBy = "Techspecialist";
                 db.ProjectCategory.Add(projectCategory);
                 db.SaveChanges();
-                return Json(new
-                {
-                    success = true,
-                    message = "Project Category added successfully!!!",
-                    data = db.ProjectCategory.Select(x => new
-                    {
-                        x.ProjectCategoryID,
-                        x.Name,
-                       // x.EnableProjectCategory,
-                    })
-                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.ADD_PROJECTCATEGORY, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = new { }
-                }, JsonRequestBehavior.AllowGet);
+                ExceptionError(ex.Message, ex.StackTrace);
             }
+            return Json(new
+            {
+                success = true,
+                message = "Project Category added successfully!!!",
+                data = db.ProjectCategoryOrganizationSettings.Select(x => new
+                {
+                    x.ProjectCategoryID,
+                    x.ProjectCategory.Name,
+                    x.EnableProjectCategory,
+                })
+            }, JsonRequestBehavior.AllowGet);
         }
 
 
@@ -115,14 +121,24 @@ namespace ProcureEaseAPI.Controllers
 
         // POST: ProjectCategories/Edit
         [HttpPost]
-        public ActionResult Edit([Bind(Include = "ProjectCategoryID,ProjectCategory1,EnableProjectCategory,DateModified,CreatedBy,DateCreated")] ProjectCategory projectCategory)
+        public ActionResult Edit(ProjectCategoryOrganizationSettings projectCategoryOrganizationSettings, bool EnableProjectCategory)
         {
+            Guid? tenantId = catalog.GetTenantID();
             try
             {
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 DateTime dt = DateTime.Now;
-                var currentProjectCategory = db.ProjectCategory.FirstOrDefault(p => p.ProjectCategoryID == p.ProjectCategoryID);
+                var currentProjectCategoryID = db.ProjectCategoryOrganizationSettings.FirstOrDefault(p => p.ProjectCategoryID == projectCategoryOrganizationSettings.ProjectCategoryID);
 
-                if (currentProjectCategory == null)
+                if (currentProjectCategoryID == null)
                 {
                     LogHelper.Log(Log.Event.UPDATE_PROJECTCATEGORY, "ProjectCategoryID not found");
                     return Json(new
@@ -132,31 +148,28 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                currentProjectCategory.DateModified = dt;
-               // currentProjectCategory.EnableProjectCategory = projectCategory.EnableProjectCategory;
+
+                currentProjectCategoryID.EnableProjectCategory = EnableProjectCategory;
+                currentProjectCategoryID.DateModified = dt;
+
                 db.SaveChanges();
-                return Json(new
-                {
-                    success = true,
-                    message = "Edited successfully",
-                    data = db.ProjectCategory.Select(x => new
-                    {
-                        x.ProjectCategoryID,
-                        x.Name,
-                      //  x.EnableProjectCategory
-                    })
-                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.UPDATE_PROJECTCATEGORY, ex.Message);
-                return Json(new
-                {
-                    success = false,
-                    message = "" + ex.Message,
-                    data = new { }
-                }, JsonRequestBehavior.AllowGet);
+                ExceptionError(ex.Message, ex.StackTrace);
             }
+            return Json(new
+            {
+                success = true,
+                message = "Edited successfully",
+                data = db.ProjectCategoryOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
+                {
+                    x.ProjectCategoryID,
+                    x.ProjectCategory.Name,
+                    x.EnableProjectCategory
+                })
+            }, JsonRequestBehavior.AllowGet);
         }
 
         // GET: ProjectCategories/Delete/5

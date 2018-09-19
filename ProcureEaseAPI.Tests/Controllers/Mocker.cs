@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using ProcureEaseAPI.Controllers;
 using System;
 using System.Web;
 using System.Web.Mvc;
@@ -10,7 +9,7 @@ namespace ProcureEaseAPI.Tests.Controllers
 {
     public class Mocker
     {
-        public static void MockControllerContext(UsersController controller, string server)
+        public static void MockControllerContext(Controller controller, string server)
         {
             var context = new Mock<HttpContextBase>();
             var session = new Mock<HttpSessionStateBase>();

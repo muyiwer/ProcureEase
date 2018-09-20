@@ -409,7 +409,8 @@ namespace ProcureEaseAPI.Controllers
                 }
 
                 var Id= db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
-                if (Id == null)
+                var CheckIfIdIsNull = db.UserProfile.Where(x => x.Id == Id).ToList();
+                if (CheckIfIdIsNull == null || CheckIfIdIsNull.Count < 0)
                 {
                     EditUserWithoutID(UserProfile);
                     Response.StatusCode = (int)HttpStatusCode.OK;
@@ -557,7 +558,8 @@ namespace ProcureEaseAPI.Controllers
             {
                 var SubDomain = catalog.GetSubDomain();
                 var Id = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
-                if(Id == null)
+                var GetId = db.UserProfile.Where(x => x.Id == Id).ToList();
+                if (Id == null && GetId.Count < 0)
                 {
                     LogHelper.Log(Log.Event.UPDATE_USER_PROFILE, "Id is Null(Not yet signed up)");
                     Response.StatusCode = (int)HttpStatusCode.NotFound;
@@ -624,8 +626,8 @@ namespace ProcureEaseAPI.Controllers
                         { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                var CheckDepartmentHead = db.Department.Where(x => x.DepartmentHeadUserID == UserProfile.UserID).Select(x => x.DepartmentHeadUserID).FirstOrDefault();
-                if (CheckDepartmentHead != null)
+                var CheckDepartmentHead = db.Department.Where(x => x.DepartmentHeadUserID == UserProfile.UserID).ToList();
+                if (CheckDepartmentHead != null && CheckDepartmentHead.Count > 0)
                 {
                     Response.StatusCode = (int)HttpStatusCode.Conflict;
                     return Json(new
@@ -638,7 +640,8 @@ namespace ProcureEaseAPI.Controllers
                 }
                 var CheckUserDepartmentName = db.Department.Where(x => x.DepartmentID == UserProfile.DepartmentID).Select(x => x.DepartmentName).FirstOrDefault();
                 var Id = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
-                if (Id != null)
+                var GetId = db.UserProfile.Where(x => x.Id == Id).ToList();
+                if (Id != null && GetId.Count > 0)
                 {
                     if (CheckUserDepartmentName == "Procurement")
                     {
@@ -771,8 +774,9 @@ namespace ProcureEaseAPI.Controllers
                         {}
                     }, JsonRequestBehavior.AllowGet);
                 }
-                var UserAspNetID = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
-                if (UserAspNetID == null)
+                var userAspNetID = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
+                var getUserAspNetID = db.UserProfile.Where(x => x.Id == userAspNetID).ToList();
+                if (userAspNetID == null)
                 {
                     var checkIfUserIsHeadOfDepartment = db.Department.Where(x => x.DepartmentHeadUserID == UserProfile.UserID).FirstOrDefault();
                     if (checkIfUserIsHeadOfDepartment != null)
@@ -803,9 +807,9 @@ namespace ProcureEaseAPI.Controllers
                 {                  
                     UserProfile profile = db.UserProfile.SingleOrDefault(x => x.UserID == UserProfile.UserID);
                     db.UserProfile.Remove(profile);
-                    AspNetUserRoles role = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == UserAspNetID);
+                    AspNetUserRoles role = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == userAspNetID);
                     db.AspNetUserRoles.Remove(role);
-                    AspNetUsers users = db.AspNetUsers.SingleOrDefault(x => x.Id == UserAspNetID);
+                    AspNetUsers users = db.AspNetUsers.SingleOrDefault(x => x.Id == userAspNetID);
                     db.AspNetUsers.Remove(users);
                     db.SaveChanges();                   
                     return Json(new

@@ -1,0 +1,720 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="ProcureEaseModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="__MigrationHistory">
+    <Key>
+      <PropertyRef Name="MigrationId" />
+      <PropertyRef Name="ContextKey" />
+    </Key>
+    <Property Name="MigrationId" Type="nvarchar" MaxLength="150" Nullable="false" />
+    <Property Name="ContextKey" Type="nvarchar" MaxLength="300" Nullable="false" />
+    <Property Name="Model" Type="varbinary(max)" Nullable="false" />
+    <Property Name="ProductVersion" Type="nvarchar" MaxLength="32" Nullable="false" />
+  </EntityType>
+  <EntityType Name="AdvertCategory">
+    <Key>
+      <PropertyRef Name="AdvertCategoryID" />
+    </Key>
+    <Property Name="AdvertCategoryID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="AdvertCategory" Type="varchar" MaxLength="150" />
+    <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+    <Property Name="DateCreated" Type="datetime" />
+    <Property Name="DateModified" Type="datetime" />
+  </EntityType>
+  <EntityType Name="AdvertCategoryNumber">
+    <Key>
+      <PropertyRef Name="AdvertCategoryNumberID" />
+    </Key>
+    <Property Name="AdvertCategoryNumberID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="AdvertID" Type="uniqueidentifier" />
+    <Property Name="AdvertCategoryID" Type="uniqueidentifier" />
+    <Property Name="ProjectCategoryID" Type="uniqueidentifier" />
+    <Property Name="CategoryLotCode" Type="nvarchar" MaxLength="128" />
+    <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+    <Property Name="DateCreated" Type="datetime" />
+    <Property Name="DateModified" Type="datetime" />
+  </EntityType>
+  <EntityType Name="AdvertisedItems">
+    <Key>
+      <PropertyRef Name="ItemID" />
+    </Key>
+    <Property Name="ItemID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="Quantity" Type="varchar" MaxLength="150" />
+    <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+    <Property Name="DateCreated" Type="datetime" />
+    <Property Name="DateModified" Type="datetime" />
+  </EntityType>
+  <EntityType Name="AdvertLotNumber">
+    <Key>
+      <PropertyRef Name="AdvertLotNumberID" />
+    </Key>
+    <Property Name="AdvertLotNumberID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="AdvertID" Type="uniqueidentifier" />
+    <Property Name="ProcurementID" Type="uniqueidentifier" />
+    <Property Name="LotCode" Type="nvarchar" MaxLength="128" />
+    <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+    <Property Name="DateCreated" Type="datetime" />
+    <Property Name="DateModified" Type="datetime" />
+  </EntityType>
+  <EntityType Name="Adverts">
+    <Key>
+      <PropertyRef Name="AdvertID" />
+    </Key>
+    <Property Name="AdvertID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="BudgetYearID" Type="uniqueidentifier" />
+    <Property Name="AdvertStatusID" Type="uniqueidentifier" />
+    <Property Name="Headline" Type="varchar(max)" />
+    <Property Name="Introduction" Type="varchar(max)" />
+    <Property Name="ScopeOfWork" Type="varchar(max)" />
+    <Property Name="EligibiltyRequirement" Type="varchar(max)" />
+    <Property Name="CollectionOfTenderDocument" Type="varchar(max)" />
+    <Property Name="BidSubmission" Type="varchar(max)" />
+    <Property Name="OtherImportantInformation" Type="varchar(max)" />
+    <Property Name="BidOpeningDate" Type="datetime" />
+    <Property Name="BidClosingDate" Type="datetime" />
+    <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+    <Property Name="DateCreated" Type="datetime" />
+    <Property Name="DateModified" Type="datetime" />
+  </EntityType>
+  <EntityType Name="AdvertStatus">
+    <Key>
+      <PropertyRef Name="AdvertStatusID" />
+    </Key>
+    <Property Name="AdvertStatusID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="Status" Type="varchar" MaxLength="50" />
+    <Property Name="DateModified" Type="datetime" />
+    <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+    <Property Name="DateCreated" Type="datetime" />
+  </EntityType>
+  <EntityType Name="ApprovedItems">
+    <Key>
+      <PropertyRef Name="ItemID" />
+    </Key>
+    <Property Name="ItemID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="Quantity" Type="varchar" MaxLength="150" />
+    <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+    <Property Name="DateCreated" Type="datetime" />
+    <Property Name="DateModified" Type="datetime" />
+  </EntityType>
+  <EntityType Name="AspNetRoles">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
+  </EntityType>
+  <EntityType Name="AspNetUserClaims">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="ClaimType" Type="nvarchar(max)" />
+    <Property Name="ClaimValue" Type="nvarchar(max)" />
+  </EntityType>
+  <EntityType Name="AspNetUserLogins">
+    <Key>
+      <PropertyRef Name="LoginProvider" />
+      <PropertyRef Name="ProviderKey" />
+      <PropertyRef Name="UserId" />
+    </Key>
+    <Property Name="LoginProvider" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="ProviderKey" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+  </EntityType>
+  <EntityType Name="AspNetUserRoles">
+    <Key>
+      <PropertyRef Name="UserId" />
+      <PropertyRef Name="RoleId" />
+    </Key>
+    <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="RoleId" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="Date_Created" Type="datetime2" Precision="7" />
+  </EntityType>
+  <EntityType Name="AspNetUsers">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="Email" Type="nvarchar" MaxLength="256" />
+    <Property Name="EmailConfirmed" Type="bit" Nullable="false" />
+    <Property Name="PasswordHash" Type="nvarchar(max)" />
+    <Property Name="SecurityStamp" Type="nvarchar(max)" />
+    <Property Name="PhoneNumber" Type="nvarchar(max)" />
+    <Property Name="PhoneNumberConfirmed" Type="bit" Nullable="false" />
+    <Property Name="TwoFactorEnabled" Type="bit" Nullable="false" />
+    <Property Name="LockoutEndDateUtc" Type="datetime" />
+    <Property Name="LockoutEnabled" Type="bit" Nullable="false" />
+    <Property Name="AccessFailedCount" Type="int" Nullable="false" />
+    <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
+  </EntityType>
+  <EntityType Name="BudgetYear">
+    <Key>
+      <PropertyRef Name="BudgetYearID" />
+    </Key>
+    <Property Name="BudgetYearID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="BudgetYear" Type="date" />
+    <Property Name="DateModified" Type="datetime" />
+    <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+    <Property Name="DateCreated" Type="datetime" />
+  </EntityType>
+  <EntityType Name="Department">
+    <Key>
+      <PropertyRef Name="DepartmentID" />
+    </Key>
+    <Property Name="DepartmentID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="DepartmentHeadUserID" Type="nvarchar" MaxLength="128" />
+    <Property Name="DepartmentName" Type="varchar" MaxLength="100" />
+    <Property Name="DateModified" Type="datetime" />
+    <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+    <Property Name="DateCreated" Type="datetime" />
+  </EntityType>
+  <EntityType Name="Items">
+    <Key>
+      <PropertyRef Name="ItemID" />
+    </Key>
+    <Property Name="ItemID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="ProcurementID" Type="uniqueidentifier" />
+    <Property Name="ApprovedItemID" Type="uniqueidentifier" />
+    <Property Name="AdvertisedItemID" Type="uniqueidentifier" />
+    <Property Name="ItemCode" Type="nvarchar" MaxLength="128" />
+    <Property Name="ItemName" Type="varchar" MaxLength="150" />
+    <Property Name="Description" Type="varchar(max)" />
+    <Property Name="Quantity" Type="float" />
+    <Property Name="UnitPrice" Type="float" />
+    <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+    <Property Name="DateCreated" Type="datetime" />
+    <Property Name="DateModified" Type="datetime" />
+  </EntityType>
+  <EntityType Name="OrganizationSettings">
+    <Key>
+      <PropertyRef Name="OrganizationID" />
+    </Key>
+    <Property Name="OrganizationID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="OrganizationNameInFull" Type="varchar" MaxLength="150" />
+    <Property Name="OrganizationNameAbbreviation" Type="varchar" MaxLength="10" />
+    <Property Name="OrganizationEmail" Type="varchar" MaxLength="100" />
+    <Property Name="Address" Type="varchar" MaxLength="500" />
+    <Property Name="Country" Type="varchar" MaxLength="100" />
+    <Property Name="State" Type="varchar" MaxLength="100" />
+    <Property Name="AboutOrganization" Type="varchar(max)" />
+    <Property Name="DateModified" Type="datetime" />
+    <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+    <Property Name="DateCreated" Type="datetime" />
+    <Property Name="OrganizationLogoPath" Type="nvarchar(max)" />
+  </EntityType>
+  <EntityType Name="ProcurementMethod">
+    <Key>
+      <PropertyRef Name="ProcurementMethodID" />
+    </Key>
+    <Property Name="ProcurementMethodID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="300" />
+    <Property Name="EnableProcurementMethod" Type="bit" />
+    <Property Name="DateModified" Type="datetime" />
+    <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+    <Property Name="DateCreated" Type="datetime" />
+  </EntityType>
+  <EntityType Name="Procurements">
+    <Key>
+      <PropertyRef Name="ProcurementID" />
+    </Key>
+    <Property Name="ProcurementID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="BudgetYearID" Type="uniqueidentifier" />
+    <Property Name="DepartmentID" Type="uniqueidentifier" />
+    <Property Name="ProjectName" Type="varchar" MaxLength="150" />
+    <Property Name="ProjectCategoryID" Type="uniqueidentifier" />
+    <Property Name="ProcurementStatusID" Type="uniqueidentifier" />
+    <Property Name="ProcurementMethodID" Type="uniqueidentifier" />
+    <Property Name="SourceOfFundID" Type="uniqueidentifier" />
+    <Property Name="DateModified" Type="datetime" />
+    <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+    <Property Name="DateCreated" Type="datetime" />
+  </EntityType>
+  <EntityType Name="ProcurementStatus">
+    <Key>
+      <PropertyRef Name="ProcurementStatusID" />
+    </Key>
+    <Property Name="ProcurementStatusID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="Status" Type="varchar" MaxLength="50" />
+    <Property Name="Description" Type="varchar" MaxLength="100" />
+    <Property Name="DateModified" Type="datetime" />
+    <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+    <Property Name="DateCreated" Type="datetime" />
+  </EntityType>
+  <EntityType Name="ProjectCategory">
+    <Key>
+      <PropertyRef Name="ProjectCategoryID" />
+    </Key>
+    <Property Name="ProjectCategoryID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="100" />
+    <Property Name="EnableProjectCategory" Type="bit" />
+    <Property Name="DateModified" Type="datetime" />
+    <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+    <Property Name="DateCreated" Type="datetime" />
+  </EntityType>
+  <EntityType Name="SourceOfFunds">
+    <Key>
+      <PropertyRef Name="SourceOfFundID" />
+    </Key>
+    <Property Name="SourceOfFundID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="SourceOfFund" Type="varchar" MaxLength="200" />
+    <Property Name="EnableSourceOfFund" Type="bit" />
+    <Property Name="DateModified" Type="datetime" />
+    <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+    <Property Name="DateCreated" Type="datetime" />
+  </EntityType>
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="principal_id" Type="int" Nullable="false" />
+    <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="version" Type="int" />
+    <Property Name="definition" Type="varbinary(max)" />
+  </EntityType>
+  <EntityType Name="TelephoneNumbers">
+    <Key>
+      <PropertyRef Name="TelephoneNumberID" />
+    </Key>
+    <Property Name="TelephoneNumberID" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="TelephoneNumber" Type="varchar" MaxLength="50" />
+    <Property Name="DateModified" Type="datetime" />
+    <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+    <Property Name="DateCreated" Type="datetime" />
+    <Property Name="OrganizationID" Type="uniqueidentifier" />
+  </EntityType>
+  <EntityType Name="UserProfile">
+    <Key>
+      <PropertyRef Name="UserId" />
+    </Key>
+    <Property Name="UserId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="Id" Type="nvarchar" MaxLength="128" />
+    <Property Name="DepartmentID" Type="uniqueidentifier" />
+    <Property Name="UserEmail" Type="varchar" MaxLength="100" />
+    <Property Name="FirstName" Type="varchar" MaxLength="100" />
+    <Property Name="LastName" Type="varchar" MaxLength="100" />
+    <Property Name="UserName" Type="varchar" MaxLength="50" />
+    <Property Name="DateModified" Type="datetime" />
+    <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+    <Property Name="DateCreated" Type="datetime" />
+  </EntityType>
+  <Association Name="FK__AdvertCat__Adver__70DDC3D8">
+    <End Role="Adverts" Type="Self.Adverts" Multiplicity="0..1" />
+    <End Role="AdvertCategoryNumber" Type="Self.AdvertCategoryNumber" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Adverts">
+        <PropertyRef Name="AdvertID" />
+      </Principal>
+      <Dependent Role="AdvertCategoryNumber">
+        <PropertyRef Name="AdvertID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__AdvertCat__Adver__71D1E811">
+    <End Role="AdvertCategory" Type="Self.AdvertCategory" Multiplicity="0..1" />
+    <End Role="AdvertCategoryNumber" Type="Self.AdvertCategoryNumber" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AdvertCategory">
+        <PropertyRef Name="AdvertCategoryID" />
+      </Principal>
+      <Dependent Role="AdvertCategoryNumber">
+        <PropertyRef Name="AdvertCategoryID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__AdvertCat__Proje__72C60C4A">
+    <End Role="ProjectCategory" Type="Self.ProjectCategory" Multiplicity="0..1" />
+    <End Role="AdvertCategoryNumber" Type="Self.AdvertCategoryNumber" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ProjectCategory">
+        <PropertyRef Name="ProjectCategoryID" />
+      </Principal>
+      <Dependent Role="AdvertCategoryNumber">
+        <PropertyRef Name="ProjectCategoryID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__AdvertLot__Adver__75A278F5">
+    <End Role="Adverts" Type="Self.Adverts" Multiplicity="0..1" />
+    <End Role="AdvertLotNumber" Type="Self.AdvertLotNumber" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Adverts">
+        <PropertyRef Name="AdvertID" />
+      </Principal>
+      <Dependent Role="AdvertLotNumber">
+        <PropertyRef Name="AdvertID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__AdvertLot__Procu__76969D2E">
+    <End Role="Procurements" Type="Self.Procurements" Multiplicity="0..1" />
+    <End Role="AdvertLotNumber" Type="Self.AdvertLotNumber" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Procurements">
+        <PropertyRef Name="ProcurementID" />
+      </Principal>
+      <Dependent Role="AdvertLotNumber">
+        <PropertyRef Name="ProcurementID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Adverts__AdvertS__6C190EBB">
+    <End Role="AdvertStatus" Type="Self.AdvertStatus" Multiplicity="0..1" />
+    <End Role="Adverts" Type="Self.Adverts" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AdvertStatus">
+        <PropertyRef Name="AdvertStatusID" />
+      </Principal>
+      <Dependent Role="Adverts">
+        <PropertyRef Name="AdvertStatusID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Adverts__BudgetY__6B24EA82">
+    <End Role="BudgetYear" Type="Self.BudgetYear" Multiplicity="0..1" />
+    <End Role="Adverts" Type="Self.Adverts" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="BudgetYear">
+        <PropertyRef Name="BudgetYearID" />
+      </Principal>
+      <Dependent Role="Adverts">
+        <PropertyRef Name="BudgetYearID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Departmen__Depar__4E88ABD4">
+    <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
+    <End Role="Department" Type="Self.Department" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetUsers">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Department">
+        <PropertyRef Name="DepartmentHeadUserID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Items__Advertise__66603565">
+    <End Role="AdvertisedItems" Type="Self.AdvertisedItems" Multiplicity="0..1" />
+    <End Role="Items" Type="Self.Items" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AdvertisedItems">
+        <PropertyRef Name="ItemID" />
+      </Principal>
+      <Dependent Role="Items">
+        <PropertyRef Name="AdvertisedItemID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Items__ApprovedI__656C112C">
+    <End Role="ApprovedItems" Type="Self.ApprovedItems" Multiplicity="0..1" />
+    <End Role="Items" Type="Self.Items" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ApprovedItems">
+        <PropertyRef Name="ItemID" />
+      </Principal>
+      <Dependent Role="Items">
+        <PropertyRef Name="ApprovedItemID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Items__Procureme__6477ECF3">
+    <End Role="Procurements" Type="Self.Procurements" Multiplicity="0..1" />
+    <End Role="Items" Type="Self.Items" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Procurements">
+        <PropertyRef Name="ProcurementID" />
+      </Principal>
+      <Dependent Role="Items">
+        <PropertyRef Name="ProcurementID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Procureme__Budge__59063A47">
+    <End Role="BudgetYear" Type="Self.BudgetYear" Multiplicity="0..1" />
+    <End Role="Procurements" Type="Self.Procurements" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="BudgetYear">
+        <PropertyRef Name="BudgetYearID" />
+      </Principal>
+      <Dependent Role="Procurements">
+        <PropertyRef Name="BudgetYearID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Procureme__Depar__59FA5E80">
+    <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+    <End Role="Procurements" Type="Self.Procurements" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Department">
+        <PropertyRef Name="DepartmentID" />
+      </Principal>
+      <Dependent Role="Procurements">
+        <PropertyRef Name="DepartmentID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Procureme__Procu__5BE2A6F2">
+    <End Role="ProcurementStatus" Type="Self.ProcurementStatus" Multiplicity="0..1" />
+    <End Role="Procurements" Type="Self.Procurements" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ProcurementStatus">
+        <PropertyRef Name="ProcurementStatusID" />
+      </Principal>
+      <Dependent Role="Procurements">
+        <PropertyRef Name="ProcurementStatusID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Procureme__Procu__5CD6CB2B">
+    <End Role="ProcurementMethod" Type="Self.ProcurementMethod" Multiplicity="0..1" />
+    <End Role="Procurements" Type="Self.Procurements" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ProcurementMethod">
+        <PropertyRef Name="ProcurementMethodID" />
+      </Principal>
+      <Dependent Role="Procurements">
+        <PropertyRef Name="ProcurementMethodID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Procureme__Proje__5AEE82B9">
+    <End Role="ProjectCategory" Type="Self.ProjectCategory" Multiplicity="0..1" />
+    <End Role="Procurements" Type="Self.Procurements" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ProjectCategory">
+        <PropertyRef Name="ProjectCategoryID" />
+      </Principal>
+      <Dependent Role="Procurements">
+        <PropertyRef Name="ProjectCategoryID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Procureme__Sourc__5DCAEF64">
+    <End Role="SourceOfFunds" Type="Self.SourceOfFunds" Multiplicity="0..1" />
+    <End Role="Procurements" Type="Self.Procurements" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SourceOfFunds">
+        <PropertyRef Name="SourceOfFundID" />
+      </Principal>
+      <Dependent Role="Procurements">
+        <PropertyRef Name="SourceOfFundID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Telephone__Organ__0B91BA14">
+    <End Role="OrganizationSettings" Type="Self.OrganizationSettings" Multiplicity="0..1" />
+    <End Role="TelephoneNumbers" Type="Self.TelephoneNumbers" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="OrganizationSettings">
+        <PropertyRef Name="OrganizationID" />
+      </Principal>
+      <Dependent Role="TelephoneNumbers">
+        <PropertyRef Name="OrganizationID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__UserProfi__Depar__52593CB8">
+    <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+    <End Role="UserProfile" Type="Self.UserProfile" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Department">
+        <PropertyRef Name="DepartmentID" />
+      </Principal>
+      <Dependent Role="UserProfile">
+        <PropertyRef Name="DepartmentID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__UserProfile__Id__5165187F">
+    <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
+    <End Role="UserProfile" Type="Self.UserProfile" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetUsers">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="UserProfile">
+        <PropertyRef Name="Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+    <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="AspNetUserClaims" Type="Self.AspNetUserClaims" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetUsers">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="AspNetUserClaims">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+    <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="AspNetUserLogins" Type="Self.AspNetUserLogins" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetUsers">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="AspNetUserLogins">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId">
+    <End Role="AspNetRoles" Type="Self.AspNetRoles" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="AspNetUserRoles" Type="Self.AspNetUserRoles" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetRoles">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="AspNetUserRoles">
+        <PropertyRef Name="RoleId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId">
+    <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="AspNetUserRoles" Type="Self.AspNetUserRoles" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetUsers">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="AspNetUserRoles">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="ProcureEaseModelStoreContainer">
+    <EntitySet Name="__MigrationHistory" EntityType="Self.__MigrationHistory" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="AdvertCategory" EntityType="Self.AdvertCategory" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="AdvertCategoryNumber" EntityType="Self.AdvertCategoryNumber" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="AdvertisedItems" EntityType="Self.AdvertisedItems" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="AdvertLotNumber" EntityType="Self.AdvertLotNumber" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Adverts" EntityType="Self.Adverts" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="AdvertStatus" EntityType="Self.AdvertStatus" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ApprovedItems" EntityType="Self.ApprovedItems" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaims" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogins" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="AspNetUserRoles" EntityType="Self.AspNetUserRoles" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="BudgetYear" EntityType="Self.BudgetYear" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Department" EntityType="Self.Department" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Items" EntityType="Self.Items" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="OrganizationSettings" EntityType="Self.OrganizationSettings" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ProcurementMethod" EntityType="Self.ProcurementMethod" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Procurements" EntityType="Self.Procurements" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ProcurementStatus" EntityType="Self.ProcurementStatus" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ProjectCategory" EntityType="Self.ProjectCategory" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="SourceOfFunds" EntityType="Self.SourceOfFunds" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TelephoneNumbers" EntityType="Self.TelephoneNumbers" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="UserProfile" EntityType="Self.UserProfile" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK__AdvertCat__Adver__70DDC3D8" Association="Self.FK__AdvertCat__Adver__70DDC3D8">
+      <End Role="Adverts" EntitySet="Adverts" />
+      <End Role="AdvertCategoryNumber" EntitySet="AdvertCategoryNumber" />
+    </AssociationSet>
+    <AssociationSet Name="FK__AdvertCat__Adver__71D1E811" Association="Self.FK__AdvertCat__Adver__71D1E811">
+      <End Role="AdvertCategory" EntitySet="AdvertCategory" />
+      <End Role="AdvertCategoryNumber" EntitySet="AdvertCategoryNumber" />
+    </AssociationSet>
+    <AssociationSet Name="FK__AdvertCat__Proje__72C60C4A" Association="Self.FK__AdvertCat__Proje__72C60C4A">
+      <End Role="ProjectCategory" EntitySet="ProjectCategory" />
+      <End Role="AdvertCategoryNumber" EntitySet="AdvertCategoryNumber" />
+    </AssociationSet>
+    <AssociationSet Name="FK__AdvertLot__Adver__75A278F5" Association="Self.FK__AdvertLot__Adver__75A278F5">
+      <End Role="Adverts" EntitySet="Adverts" />
+      <End Role="AdvertLotNumber" EntitySet="AdvertLotNumber" />
+    </AssociationSet>
+    <AssociationSet Name="FK__AdvertLot__Procu__76969D2E" Association="Self.FK__AdvertLot__Procu__76969D2E">
+      <End Role="Procurements" EntitySet="Procurements" />
+      <End Role="AdvertLotNumber" EntitySet="AdvertLotNumber" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Adverts__AdvertS__6C190EBB" Association="Self.FK__Adverts__AdvertS__6C190EBB">
+      <End Role="AdvertStatus" EntitySet="AdvertStatus" />
+      <End Role="Adverts" EntitySet="Adverts" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Adverts__BudgetY__6B24EA82" Association="Self.FK__Adverts__BudgetY__6B24EA82">
+      <End Role="BudgetYear" EntitySet="BudgetYear" />
+      <End Role="Adverts" EntitySet="Adverts" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Departmen__Depar__4E88ABD4" Association="Self.FK__Departmen__Depar__4E88ABD4">
+      <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="Department" EntitySet="Department" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Items__Advertise__66603565" Association="Self.FK__Items__Advertise__66603565">
+      <End Role="AdvertisedItems" EntitySet="AdvertisedItems" />
+      <End Role="Items" EntitySet="Items" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Items__ApprovedI__656C112C" Association="Self.FK__Items__ApprovedI__656C112C">
+      <End Role="ApprovedItems" EntitySet="ApprovedItems" />
+      <End Role="Items" EntitySet="Items" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Items__Procureme__6477ECF3" Association="Self.FK__Items__Procureme__6477ECF3">
+      <End Role="Procurements" EntitySet="Procurements" />
+      <End Role="Items" EntitySet="Items" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Procureme__Budge__59063A47" Association="Self.FK__Procureme__Budge__59063A47">
+      <End Role="BudgetYear" EntitySet="BudgetYear" />
+      <End Role="Procurements" EntitySet="Procurements" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Procureme__Depar__59FA5E80" Association="Self.FK__Procureme__Depar__59FA5E80">
+      <End Role="Department" EntitySet="Department" />
+      <End Role="Procurements" EntitySet="Procurements" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Procureme__Procu__5BE2A6F2" Association="Self.FK__Procureme__Procu__5BE2A6F2">
+      <End Role="ProcurementStatus" EntitySet="ProcurementStatus" />
+      <End Role="Procurements" EntitySet="Procurements" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Procureme__Procu__5CD6CB2B" Association="Self.FK__Procureme__Procu__5CD6CB2B">
+      <End Role="ProcurementMethod" EntitySet="ProcurementMethod" />
+      <End Role="Procurements" EntitySet="Procurements" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Procureme__Proje__5AEE82B9" Association="Self.FK__Procureme__Proje__5AEE82B9">
+      <End Role="ProjectCategory" EntitySet="ProjectCategory" />
+      <End Role="Procurements" EntitySet="Procurements" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Procureme__Sourc__5DCAEF64" Association="Self.FK__Procureme__Sourc__5DCAEF64">
+      <End Role="SourceOfFunds" EntitySet="SourceOfFunds" />
+      <End Role="Procurements" EntitySet="Procurements" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Telephone__Organ__0B91BA14" Association="Self.FK__Telephone__Organ__0B91BA14">
+      <End Role="OrganizationSettings" EntitySet="OrganizationSettings" />
+      <End Role="TelephoneNumbers" EntitySet="TelephoneNumbers" />
+    </AssociationSet>
+    <AssociationSet Name="FK__UserProfi__Depar__52593CB8" Association="Self.FK__UserProfi__Depar__52593CB8">
+      <End Role="Department" EntitySet="Department" />
+      <End Role="UserProfile" EntitySet="UserProfile" />
+    </AssociationSet>
+    <AssociationSet Name="FK__UserProfile__Id__5165187F" Association="Self.FK__UserProfile__Id__5165187F">
+      <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="UserProfile" EntitySet="UserProfile" />
+    </AssociationSet>
+    <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+      <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
+    </AssociationSet>
+    <AssociationSet Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+      <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="AspNetUserLogins" EntitySet="AspNetUserLogins" />
+    </AssociationSet>
+    <AssociationSet Name="FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId" Association="Self.FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId">
+      <End Role="AspNetRoles" EntitySet="AspNetRoles" />
+      <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
+    </AssociationSet>
+    <AssociationSet Name="FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId">
+      <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

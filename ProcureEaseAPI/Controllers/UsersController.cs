@@ -384,6 +384,7 @@ namespace ProcureEaseAPI.Controllers
                 var SubDomain = catalog.GetSubDomain();
                 if (UserProfile.DepartmentID == null)
                 {
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     LogHelper.Log(Log.Event.EDIT_USER, "Department ID is null");
                     Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     return Json(new
@@ -393,10 +394,10 @@ namespace ProcureEaseAPI.Controllers
                         data =  new
                         { }
                     }, JsonRequestBehavior.AllowGet);
-                }
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                }             
                 if (UserProfile.UserID == null)
                 {
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     LogHelper.Log(Log.Event.EDIT_USER, "UserID is Null");
                     return Json(new
                     {
@@ -410,7 +411,8 @@ namespace ProcureEaseAPI.Controllers
                 var Id= db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
                 if (Id == null)
                 {
-                    EditUserWithoutID(UserProfile);              
+                    EditUserWithoutID(UserProfile);
+                    Response.StatusCode = (int)HttpStatusCode.OK;
                     return Json(new
                     {
                         success = true,
@@ -446,7 +448,7 @@ namespace ProcureEaseAPI.Controllers
                     {
                         EditToHeadOfDepartmentRole(UserProfile, Id);
                     }
-
+                    Response.StatusCode = (int)HttpStatusCode.OK;
                     return Json(new
                     {
                         success = true,

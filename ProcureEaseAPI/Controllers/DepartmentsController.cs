@@ -38,6 +38,7 @@ namespace ProcureEaseAPI.Controllers
         }
 
         // GET: Departments
+        [Providers.Authorize]
         public ActionResult Index()
         {
             Guid? tenantId = catalog.GetTenantID();
@@ -63,7 +64,7 @@ namespace ProcureEaseAPI.Controllers
             {
                 success = true,
                 message = "Ok",
-                data = db.Department.Select(x => new
+                data = db.Department.Where(x=> x.TenantID == tenantId).Select(x => new
                 {
                     Department = new
                     {
@@ -82,7 +83,7 @@ namespace ProcureEaseAPI.Controllers
 
         // POST: Departments/AddDepartment
         [HttpPost]
-        [AllowAnonymous]
+        [Providers.Authorize]
         public ActionResult AddDepartment(string DepartmentName, Guid? UserID)
         {
             Guid? tenantId = catalog.GetTenantID();
@@ -107,6 +108,7 @@ namespace ProcureEaseAPI.Controllers
                     department.CreatedBy = "MDA Administrator";
                     department.TenantID = tenantId;
                     department.OrganisationID = catalog.GetOrganizationID();
+                    department.CreatedBy = "Administrator";
                 };
                     db.Department.Add(department);
                     db.SaveChanges();
@@ -125,7 +127,68 @@ namespace ProcureEaseAPI.Controllers
             {
                 success = true,
                 message = "Department Added Successfully",
-                data = db.Department.Select(x => new
+                data = db.Department.Where(x=> x.TenantID == tenantId).Select(x => new
+                {
+                    Department = new
+                    {
+                        x.DepartmentID,
+                        x.DepartmentName
+                    },
+                    Head = new
+                    {
+                        DepartmentHeadUserID = db.UserProfile.Where(y => x.DepartmentHeadUserID == y.UserID).Select(y => (true) || (false)).FirstOrDefault(),
+                        FullName = db.UserProfile.Where(z => z.UserID == x.DepartmentHeadUserID).Select(y => y.FirstName + " " + y.LastName).FirstOrDefault()
+                    }
+                }),
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        // PUT: Departments/Edit
+        [HttpPut]
+        [Providers.Authorize]
+        public ActionResult Edit (Department department, Guid UserID)
+        {
+            Guid? tenantId = catalog.GetTenantID();
+            try
+            {
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+
+                DateTime dt = DateTime.Now;
+                var currentDepartmentDetail = db.Department.FirstOrDefault(d => d.DepartmentID == department.DepartmentID);
+                var DepartmentHeadUserID = db.UserProfile.Where(x => x.UserID == UserID).Select(x => x.UserID).FirstOrDefault();
+                if (currentDepartmentDetail == null)
+                {
+                    LogHelper.Log(Log.Event.EDIT_DEPARTMENT, "DepartmentID not found");
+                    return Json(new
+                    {
+                        success = false,
+                        message = "DepartmentID not found",
+                        data = new { }
+                    });
+                }
+                currentDepartmentDetail.DepartmentHeadUserID = DepartmentHeadUserID;
+                currentDepartmentDetail.DepartmentName = department.DepartmentName;
+                currentDepartmentDetail.DateModified = dt;
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(Log.Event.EDIT_DEPARTMENT, ex.Message);
+                ExceptionError(ex.Message, ex.StackTrace);
+            }
+            return Json(new
+            {
+                success = true,
+                message = "Editted successfully",
+                data = db.Department.Where(x => x.TenantID == tenantId).Select(x => new
                 {
                     Department = new
                     {
@@ -142,75 +205,23 @@ namespace ProcureEaseAPI.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        // PUT: Departments/Edit
-        [HttpPut]
-        public ActionResult Edit (Department department)
+        // POST: Departments/Delete
+        [HttpPost, ActionName("Delete")]
+        [Providers.Authorize]
+        public ActionResult Delete(Guid id)
         {
             Guid? tenantId = catalog.GetTenantID();
             try
-            {
-                if (tenantId == null)
                 {
-                    return Json(new
+                    if (tenantId == null)
                     {
-                        success = false,
-                        message = "TenantId is null",
-                        data = new { }
-                    }, JsonRequestBehavior.AllowGet);
-                }
-                UserProfile userProfile = new UserProfile();
-
-                DateTime dt = DateTime.Now;
-                var currentDepartmentDetail = db.Department.FirstOrDefault(d => d.DepartmentID == department.DepartmentID);
-                //var DepartmentHeadUserID = db.UserProfile.Where(x => x.DepartmentID == department.DepartmentID).Select(x => x.UserID).FirstOrDefault();
-                if (currentDepartmentDetail == null)
-                {
-                    LogHelper.Log(Log.Event.EDIT_DEPARTMENT, "DepartmentID not found");
-                    return Json(new
-                    {
-                        success = false,
-                        message = "DepartmentID not found",
-                        data = new { }
-                    });
-                }
-                currentDepartmentDetail.DateModified = dt;
-                currentDepartmentDetail.DepartmentName = department.DepartmentName;
-                currentDepartmentDetail.DepartmentHeadUserID = department.DepartmentHeadUserID;
-                db.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log(Log.Event.EDIT_DEPARTMENT, ex.Message);
-                ExceptionError(ex.Message, ex.StackTrace);
-            }
-            return Json(new
-            {
-                success = true,
-                message = "Editted successfully",
-                data = db.Department.Where(z => z.TenantID == tenantId).Select(x => new
-                {
-                    User = new
-                    {
-                        x.UserProfile.UserID,
-                        FullName = db.UserProfile.Where(z => z.UserID == x.DepartmentHeadUserID && z.TenantID == tenantId && x.DepartmentHeadUserID != Guid.Empty).Select(y => y.FirstName + " " + y.LastName).FirstOrDefault()
-                    },
-                    Head = new
-                    {
-                        x.DepartmentID,
-                        x.DepartmentName
+                        return Json(new
+                        {
+                            success = false,
+                            message = "TenantId is null",
+                            data = new { }
+                        }, JsonRequestBehavior.AllowGet);
                     }
-
-                }),
-            }, JsonRequestBehavior.AllowGet);
-        }
-
-        // POST: Departments/Delete
-        [HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        public ActionResult Delete(Guid id)
-        {
-                try
-                {
                     Department department = db.Department.Find(id);
                     db.Department.Remove(department);
                     db.SaveChanges();
@@ -218,7 +229,7 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = true,
                     message = "Deleted Successfully",
-                    data = db.Department.Select(x => new
+                    data = db.Department.Where(x=> x.TenantID == tenantId).Select(x => new
                     {
                         Department = new
                         {
@@ -236,7 +247,7 @@ namespace ProcureEaseAPI.Controllers
             }
             catch (Exception ex)
             {
-                LogHelper.Log(Log.Event.GET_DEPARTMENT, ex.Message);
+                LogHelper.Log(Log.Event.DELETE_DEPARTMENT, ex.Message);
                 return Json(new
                 {
                     success = false,
@@ -247,71 +258,59 @@ namespace ProcureEaseAPI.Controllers
 
         }
 
-        // GET: Departments/Edit
-        public ActionResult getEditedDetail(Guid? id)
+        // GET: Departments/Details/5
+        [HttpPost]
+        [Providers.Authorize]
+        public ActionResult Details(Guid? id)
         {
-            if (id == null)
+            Guid? tenantId = catalog.GetTenantID();
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                Department department = db.Department.Find(id);
+                if (department == null)
+                {
+                    return HttpNotFound();
+                }
+
             }
-            Department department = db.Department.Find(id);
-            if (department == null)
+            catch (Exception ex)
             {
-                return HttpNotFound();
+                LogHelper.Log(Log.Event.GET_DEPARTMENT, ex.Message);
+                return Json(new
+                {
+                    success = false,
+                    message = "" + ex.Message,
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
             }
-            var Departments = db.Department.Select(x => new
-            {
-                x.DepartmentID,
-                x.DepartmentName,
-                x.DepartmentHeadUserID,
-                x.CreatedBy,
-                DateCreated = x.DateCreated.Value.ToString(),
-                DateModified = x.DateModified.Value.ToString()
-            });
-            var AdminDashboard = new
+
+            return Json(new
             {
                 success = true,
                 message = "Ok",
-                data = new
+                data = db.Department.Where(x => x.TenantID == tenantId).Select(x => new
                 {
-                    departments = Departments
-                }
-            };
-            return Json(AdminDashboard, JsonRequestBehavior.AllowGet);
-        }
-
-
-        // GET: Departments/Details/5
-        public ActionResult Details(Guid? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Department department = db.Department.Find(id);
-            if (department == null)
-            {
-                return HttpNotFound();
-            }
-            var Departments = db.Department.Select(x => new
-            {
-                x.DepartmentID,
-                x.DepartmentName,
-                x.DepartmentHeadUserID,
-                x.CreatedBy,
-                DateCreated = x.DateCreated.Value.ToString(),
-                DateModified = x.DateModified.Value.ToString()
-            });
-            var AdminDashboard = new
-            {
-                success = true,
-                message = "Deleted Successfully",
-                data = new
-                {
-                    departments = Departments
-                }
-            };
-            return Json(AdminDashboard, JsonRequestBehavior.AllowGet);
+                    x.DepartmentID,
+                    x.DepartmentName,
+                    x.DepartmentHeadUserID,
+                    x.CreatedBy,
+                    DateCreated = x.DateCreated.Value.ToString(),
+                    DateModified = x.DateModified.Value.ToString()
+                }).FirstOrDefault()
+            }, JsonRequestBehavior.AllowGet);
         }
 
 

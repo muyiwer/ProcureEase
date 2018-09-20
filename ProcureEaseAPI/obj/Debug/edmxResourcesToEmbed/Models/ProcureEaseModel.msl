@@ -177,32 +177,6 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="Catalog">
-      <EntityTypeMapping TypeName="ProcureEaseModel.Catalog">
-        <MappingFragment StoreEntitySet="Catalog">
-          <ScalarProperty Name="TenantID" ColumnName="TenantID" />
-          <ScalarProperty Name="RequestID" ColumnName="RequestID" />
-          <ScalarProperty Name="SubDomain" ColumnName="SubDomain" />
-          <ScalarProperty Name="OrganizationID" ColumnName="OrganizationID" />
-          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-          <ScalarProperty Name="DateModified" ColumnName="DateModified" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="Department">
-      <EntityTypeMapping TypeName="ProcureEaseModel.Department">
-        <MappingFragment StoreEntitySet="Department">
-          <ScalarProperty Name="DepartmentID" ColumnName="DepartmentID" />
-          <ScalarProperty Name="DepartmentName" ColumnName="DepartmentName" />
-          <ScalarProperty Name="DateModified" ColumnName="DateModified" />
-          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-          <ScalarProperty Name="DepartmentHeadUserID" ColumnName="DepartmentHeadUserID" />
-          <ScalarProperty Name="TenantID" ColumnName="TenantID" />
-          <ScalarProperty Name="OrganisationID" ColumnName="OrganisationID" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="ItemCode">
       <EntityTypeMapping TypeName="ProcureEaseModel.ItemCode">
         <MappingFragment StoreEntitySet="ItemCode">
@@ -251,47 +225,6 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="ProcurementMethod">
-      <EntityTypeMapping TypeName="ProcureEaseModel.ProcurementMethod">
-        <MappingFragment StoreEntitySet="ProcurementMethod">
-          <ScalarProperty Name="ProcurementMethodID" ColumnName="ProcurementMethodID" />
-          <ScalarProperty Name="Name" ColumnName="Name" />
-          <ScalarProperty Name="DateModified" ColumnName="DateModified" />
-          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="ProcurementMethodOrganizationSettings">
-      <EntityTypeMapping TypeName="ProcureEaseModel.ProcurementMethodOrganizationSettings">
-        <MappingFragment StoreEntitySet="ProcurementMethodOrganizationSettings">
-          <ScalarProperty Name="ProcurementMethodID" ColumnName="ProcurementMethodID" />
-          <ScalarProperty Name="TenantID" ColumnName="TenantID" />
-          <ScalarProperty Name="OrganizationID" ColumnName="OrganizationID" />
-          <ScalarProperty Name="EnableProcurementMethod" ColumnName="EnableProcurementMethod" />
-          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-          <ScalarProperty Name="DateModified" ColumnName="DateModified" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="Procurements">
-      <EntityTypeMapping TypeName="ProcureEaseModel.Procurements">
-        <MappingFragment StoreEntitySet="Procurements">
-          <ScalarProperty Name="ProcurementID" ColumnName="ProcurementID" />
-          <ScalarProperty Name="BudgetYearID" ColumnName="BudgetYearID" />
-          <ScalarProperty Name="DepartmentID" ColumnName="DepartmentID" />
-          <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
-          <ScalarProperty Name="ProjectCategoryID" ColumnName="ProjectCategoryID" />
-          <ScalarProperty Name="ProcurementStatusID" ColumnName="ProcurementStatusID" />
-          <ScalarProperty Name="ProcurementMethodID" ColumnName="ProcurementMethodID" />
-          <ScalarProperty Name="SourceOfFundID" ColumnName="SourceOfFundID" />
-          <ScalarProperty Name="DateModified" ColumnName="DateModified" />
-          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-          <ScalarProperty Name="TenantID" ColumnName="TenantID" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="ProcurementStatus">
       <EntityTypeMapping TypeName="ProcureEaseModel.ProcurementStatus">
         <MappingFragment StoreEntitySet="ProcurementStatus">
@@ -302,66 +235,6 @@
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
           <ScalarProperty Name="TenantID" ColumnName="TenantID" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="ProjectCategory">
-      <EntityTypeMapping TypeName="ProcureEaseModel.ProjectCategory">
-        <MappingFragment StoreEntitySet="ProjectCategory">
-          <ScalarProperty Name="ProjectCategoryID" ColumnName="ProjectCategoryID" />
-          <ScalarProperty Name="Name" ColumnName="Name" />
-          <ScalarProperty Name="DateModified" ColumnName="DateModified" />
-          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="ProjectCategoryOrganizationSettings">
-      <EntityTypeMapping TypeName="ProcureEaseModel.ProjectCategoryOrganizationSettings">
-        <MappingFragment StoreEntitySet="ProjectCategoryOrganizationSettings">
-          <ScalarProperty Name="ProjectCategoryID" ColumnName="ProjectCategoryID" />
-          <ScalarProperty Name="TenantID" ColumnName="TenantID" />
-          <ScalarProperty Name="OrganizationID" ColumnName="OrganizationID" />
-          <ScalarProperty Name="EnableProjectCategory" ColumnName="EnableProjectCategory" />
-          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-          <ScalarProperty Name="DateModified" ColumnName="DateModified" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="RequestForDemo">
-      <EntityTypeMapping TypeName="ProcureEaseModel.RequestForDemo">
-        <MappingFragment StoreEntitySet="RequestForDemo">
-          <ScalarProperty Name="RequestID" ColumnName="RequestID" />
-          <ScalarProperty Name="OrganizationFullName" ColumnName="OrganizationFullName" />
-          <ScalarProperty Name="OrganizationShortName" ColumnName="OrganizationShortName" />
-          <ScalarProperty Name="AdministratorEmail" ColumnName="AdministratorEmail" />
-          <ScalarProperty Name="AdministratorFirstName" ColumnName="AdministratorFirstName" />
-          <ScalarProperty Name="AdministratorLastName" ColumnName="AdministratorLastName" />
-          <ScalarProperty Name="AdministratorPhoneNumber" ColumnName="AdministratorPhoneNumber" />
-          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="SourceOfFunds">
-      <EntityTypeMapping TypeName="ProcureEaseModel.SourceOfFunds">
-        <MappingFragment StoreEntitySet="SourceOfFunds">
-          <ScalarProperty Name="SourceOfFundID" ColumnName="SourceOfFundID" />
-          <ScalarProperty Name="SourceOfFund" ColumnName="SourceOfFund" />
-          <ScalarProperty Name="DateModified" ColumnName="DateModified" />
-          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="SourceOfFundsOrganizationSettings">
-      <EntityTypeMapping TypeName="ProcureEaseModel.SourceOfFundsOrganizationSettings">
-        <MappingFragment StoreEntitySet="SourceOfFundsOrganizationSettings">
-          <ScalarProperty Name="SourceOfFundID" ColumnName="SourceOfFundID" />
-          <ScalarProperty Name="TenantID" ColumnName="TenantID" />
-          <ScalarProperty Name="OrganizationID" ColumnName="OrganizationID" />
-          <ScalarProperty Name="EnableSourceOFFund" ColumnName="EnableSourceOFFund" />
-          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-          <ScalarProperty Name="DateModified" ColumnName="DateModified" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -404,6 +277,133 @@
           <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
           <ScalarProperty Name="OrganizationID" ColumnName="OrganizationID" />
           <ScalarProperty Name="TenantID" ColumnName="TenantID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Procurements">
+      <EntityTypeMapping TypeName="ProcureEaseModel.Procurements">
+        <MappingFragment StoreEntitySet="Procurements">
+          <ScalarProperty Name="TenantID" ColumnName="TenantID" />
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+          <ScalarProperty Name="SourceOfFundID" ColumnName="SourceOfFundID" />
+          <ScalarProperty Name="ProcurementMethodID" ColumnName="ProcurementMethodID" />
+          <ScalarProperty Name="ProcurementStatusID" ColumnName="ProcurementStatusID" />
+          <ScalarProperty Name="ProjectCategoryID" ColumnName="ProjectCategoryID" />
+          <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
+          <ScalarProperty Name="DepartmentID" ColumnName="DepartmentID" />
+          <ScalarProperty Name="BudgetYearID" ColumnName="BudgetYearID" />
+          <ScalarProperty Name="ProcurementID" ColumnName="ProcurementID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Department">
+      <EntityTypeMapping TypeName="ProcureEaseModel.Department">
+        <MappingFragment StoreEntitySet="Department">
+          <ScalarProperty Name="OrganisationID" ColumnName="OrganisationID" />
+          <ScalarProperty Name="TenantID" ColumnName="TenantID" />
+          <ScalarProperty Name="DepartmentHeadUserID" ColumnName="DepartmentHeadUserID" />
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+          <ScalarProperty Name="DepartmentName" ColumnName="DepartmentName" />
+          <ScalarProperty Name="DepartmentID" ColumnName="DepartmentID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Catalog">
+      <EntityTypeMapping TypeName="ProcureEaseModel.Catalog">
+        <MappingFragment StoreEntitySet="Catalog">
+          <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+          <ScalarProperty Name="OrganizationID" ColumnName="OrganizationID" />
+          <ScalarProperty Name="SubDomain" ColumnName="SubDomain" />
+          <ScalarProperty Name="RequestID" ColumnName="RequestID" />
+          <ScalarProperty Name="TenantID" ColumnName="TenantID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="RequestForDemo">
+      <EntityTypeMapping TypeName="ProcureEaseModel.RequestForDemo">
+        <MappingFragment StoreEntitySet="RequestForDemo">
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+          <ScalarProperty Name="AdministratorPhoneNumber" ColumnName="AdministratorPhoneNumber" />
+          <ScalarProperty Name="AdministratorLastName" ColumnName="AdministratorLastName" />
+          <ScalarProperty Name="AdministratorFirstName" ColumnName="AdministratorFirstName" />
+          <ScalarProperty Name="AdministratorEmail" ColumnName="AdministratorEmail" />
+          <ScalarProperty Name="OrganizationShortName" ColumnName="OrganizationShortName" />
+          <ScalarProperty Name="OrganizationFullName" ColumnName="OrganizationFullName" />
+          <ScalarProperty Name="RequestID" ColumnName="RequestID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ProcurementMethod">
+      <EntityTypeMapping TypeName="ProcureEaseModel.ProcurementMethod">
+        <MappingFragment StoreEntitySet="ProcurementMethod">
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="ProcurementMethodID" ColumnName="ProcurementMethodID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ProjectCategory">
+      <EntityTypeMapping TypeName="ProcureEaseModel.ProjectCategory">
+        <MappingFragment StoreEntitySet="ProjectCategory">
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="ProjectCategoryID" ColumnName="ProjectCategoryID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SourceOfFunds">
+      <EntityTypeMapping TypeName="ProcureEaseModel.SourceOfFunds">
+        <MappingFragment StoreEntitySet="SourceOfFunds">
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+          <ScalarProperty Name="SourceOfFund" ColumnName="SourceOfFund" />
+          <ScalarProperty Name="SourceOfFundID" ColumnName="SourceOfFundID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ProcurementMethodOrganizationSettings">
+      <EntityTypeMapping TypeName="ProcureEaseModel.ProcurementMethodOrganizationSettings">
+        <MappingFragment StoreEntitySet="ProcurementMethodOrganizationSettings">
+          <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+          <ScalarProperty Name="EnableProcurementMethod" ColumnName="EnableProcurementMethod" />
+          <ScalarProperty Name="OrganizationID" ColumnName="OrganizationID" />
+          <ScalarProperty Name="TenantID" ColumnName="TenantID" />
+          <ScalarProperty Name="ProcurementMethodID" ColumnName="ProcurementMethodID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ProjectCategoryOrganizationSettings">
+      <EntityTypeMapping TypeName="ProcureEaseModel.ProjectCategoryOrganizationSettings">
+        <MappingFragment StoreEntitySet="ProjectCategoryOrganizationSettings">
+          <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+          <ScalarProperty Name="EnableProjectCategory" ColumnName="EnableProjectCategory" />
+          <ScalarProperty Name="OrganizationID" ColumnName="OrganizationID" />
+          <ScalarProperty Name="TenantID" ColumnName="TenantID" />
+          <ScalarProperty Name="ProjectCategoryID" ColumnName="ProjectCategoryID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SourceOfFundsOrganizationSettings">
+      <EntityTypeMapping TypeName="ProcureEaseModel.SourceOfFundsOrganizationSettings">
+        <MappingFragment StoreEntitySet="SourceOfFundsOrganizationSettings">
+          <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+          <ScalarProperty Name="EnableSourceOFFund" ColumnName="EnableSourceOFFund" />
+          <ScalarProperty Name="OrganizationID" ColumnName="OrganizationID" />
+          <ScalarProperty Name="TenantID" ColumnName="TenantID" />
+          <ScalarProperty Name="SourceOfFundID" ColumnName="SourceOfFundID" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

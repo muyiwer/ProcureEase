@@ -218,7 +218,7 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 var SubDomain = catalog.GetSubDomain();
-                var BasicDetails = db.OrganizationSettings.Where(x=>x.Catalog1.SubDomain==SubDomain).Select(x => new
+                var BasicDetails = db.OrganizationSettings.Where(x=>x.Catalog.SubDomain==SubDomain).Select(x => new
                 {
                     x.OrganizationID,
                     x.OrganizationEmail,

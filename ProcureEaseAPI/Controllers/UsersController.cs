@@ -25,6 +25,18 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
+                var SubDomain = catalog.GetSubDomain();
+                var tenantId = catalog.GetTenantID();
+                if (tenantId == null)
+                {
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 DateTimeSettings DateTimeSettings = new DateTimeSettings();
                 /*This will depend totally on how you will get access to the identity provider and get your token, this is just a sample of how it would be done*/
                 /*Get Access Token Start*/
@@ -66,6 +78,7 @@ namespace ProcureEaseAPI.Controllers
                             DepartmentID = db.UserProfile.Where(x => x.UserEmail == UserName).Select(x => x.DepartmentID).FirstOrDefault(),
                             Role = db.AspNetUserRoles.Where(x => x.UserId == User.Id).Select(x => x.AspNetRoles.Name).FirstOrDefault(),
                             BudgetYear = DateTimeSettings.CurrentYear(),
+                            SubDomain = SubDomain,
                             OrganizationName = db.UserProfile.Where(x => x.UserEmail == UserName).Select(x => x.OrganizationSettings.OrganizationNameAbbreviation).FirstOrDefault(),
                             OrganizationID = db.UserProfile.Where(x => x.UserEmail == UserName).Select(x => x.OrganizationID).FirstOrDefault(),
                             token = token
@@ -190,6 +203,17 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 var SubDomain = catalog.GetSubDomain();
+                var tenantId = catalog.GetTenantID();
+                if (tenantId == null)
+                {
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 AuthRepository Repository = new AuthRepository();
                 ApplicationUser user = await Repository.FindEmail(UserEmail);
                 if (user == null)
@@ -249,6 +273,17 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 var SubDomain = catalog.GetSubDomain();
+                var tenantId = catalog.GetTenantID();
+                if (tenantId == null)
+                {
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 AuthRepository Repository = new AuthRepository();
                 ApplicationUser user = await Repository.FindEmail(ResetPassword.UserEmail);
                 if (user == null)
@@ -300,6 +335,17 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 var SubDomain = catalog.GetSubDomain();
+                var tenantId = catalog.GetTenantID();
+                if (tenantId == null)
+                {
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 var organizationId = catalog.GetOrganizationID();                
                 var CheckIfUserHasSignedUp = db.AspNetUsers.Where(x => x.UserName == UserProfile.UserEmail).Select(x => x.UserName).FirstOrDefault();
                 if (CheckIfUserHasSignedUp != null)
@@ -382,6 +428,17 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 var SubDomain = catalog.GetSubDomain();
+                var tenantId = catalog.GetTenantID();
+                if (tenantId == null)
+                {
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 if (UserProfile.DepartmentID == null)
                 {
                     Response.StatusCode = (int)HttpStatusCode.BadRequest;
@@ -557,9 +614,20 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 var SubDomain = catalog.GetSubDomain();
+                var tenantId = catalog.GetTenantID();
+                if (tenantId == null)
+                {
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 var Id = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
                 var GetId = db.UserProfile.Where(x => x.Id == Id).ToList();
-                if (Id == null && GetId.Count < 0)
+                if (Id == null || GetId.Count < 0)
                 {
                     LogHelper.Log(Log.Event.UPDATE_USER_PROFILE, "Id is Null(Not yet signed up)");
                     Response.StatusCode = (int)HttpStatusCode.NotFound;
@@ -614,6 +682,17 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 var SubDomain = catalog.GetSubDomain();
+                var tenantId = catalog.GetTenantID();
+                if (tenantId == null)
+                {
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 if (UserProfile.UserID == null)
                 {
@@ -627,7 +706,7 @@ namespace ProcureEaseAPI.Controllers
                     }, JsonRequestBehavior.AllowGet);
                 }
                 var CheckDepartmentHead = db.Department.Where(x => x.DepartmentHeadUserID == UserProfile.UserID).ToList();
-                if (CheckDepartmentHead != null && CheckDepartmentHead.Count > 0)
+                if (CheckDepartmentHead != null || CheckDepartmentHead.Count > 0)
                 {
                     Response.StatusCode = (int)HttpStatusCode.Conflict;
                     return Json(new
@@ -641,7 +720,7 @@ namespace ProcureEaseAPI.Controllers
                 var CheckUserDepartmentName = db.Department.Where(x => x.DepartmentID == UserProfile.DepartmentID).Select(x => x.DepartmentName).FirstOrDefault();
                 var Id = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
                 var GetId = db.UserProfile.Where(x => x.Id == Id).ToList();
-                if (Id != null && GetId.Count > 0)
+                if (Id != null || GetId.Count > 0)
                 {
                     if (CheckUserDepartmentName == "Procurement")
                     {
@@ -705,6 +784,17 @@ namespace ProcureEaseAPI.Controllers
         public ActionResult GetAllUsers(string departmentId = "")
         {
             var SubDomain = catalog.GetSubDomain();
+            var tenantId = catalog.GetTenantID();
+            if (tenantId == null)
+            {
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return Json(new
+                {
+                    success = false,
+                    message = "TenantId is null",
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
             if (string.IsNullOrEmpty(departmentId))
             {
                 return Json(new
@@ -762,6 +852,17 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 var SubDomain = catalog.GetSubDomain();
+                var tenantId = catalog.GetTenantID();
+                if (tenantId == null)
+                {
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 if (UserProfile.UserID==null)
             {
                 LogHelper.Log(Log.Event.DELETE_USER, "UserID is Null");
@@ -776,10 +877,10 @@ namespace ProcureEaseAPI.Controllers
                 }
                 var userAspNetID = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
                 var getUserAspNetID = db.UserProfile.Where(x => x.Id == userAspNetID).ToList();
-                if (userAspNetID == null)
+                if (getUserAspNetID == null || getUserAspNetID.Count < 0)
                 {
-                    var checkIfUserIsHeadOfDepartment = db.Department.Where(x => x.DepartmentHeadUserID == UserProfile.UserID).FirstOrDefault();
-                    if (checkIfUserIsHeadOfDepartment != null)
+                    var checkIfUserIsHeadOfDepartment = db.Department.Where(x => x.DepartmentHeadUserID == UserProfile.UserID).ToList();
+                    if (checkIfUserIsHeadOfDepartment != null && checkIfUserIsHeadOfDepartment.Count > 0) 
                     {
                         Department RemoveUserFromHeadOfDepartment = db.Department.SingleOrDefault(x => x.DepartmentHeadUserID == UserProfile.UserID);
                         RemoveUserFromHeadOfDepartment.DepartmentHeadUserID = null;

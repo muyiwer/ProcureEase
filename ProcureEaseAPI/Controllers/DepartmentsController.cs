@@ -75,7 +75,6 @@ namespace ProcureEaseAPI.Controllers
                     {
                         DepartmentHeadUserID = db.UserProfile.Where(y => x.DepartmentHeadUserID == y.UserID).Select(y => (true) || (false)).FirstOrDefault(),
                         FullName = db.UserProfile.Where(z => z.UserID == x.DepartmentHeadUserID).Select(y => y.FirstName + " " + y.LastName)
-                        //FullName = db.UserProfile.Where(z => new Guid(z.Id) == x.DepartmentHeadUserID).Select(y => y.FirstName + " " + y.LastName)
                     }
                 }),
             }, JsonRequestBehavior.AllowGet);
@@ -99,16 +98,17 @@ namespace ProcureEaseAPI.Controllers
                     }, JsonRequestBehavior.AllowGet);
                 }
                 DateTime dt = DateTime.Now;
+                var GetRequestID = db.Catalog.Where(x => x.TenantID == tenantId).Select(x => x.RequestID).ToList().FirstOrDefault();
+                var GetAdministratorFirstName = db.RequestForDemo.Where(x => x.RequestID == GetRequestID).Select(x => x.AdministratorFirstName).FirstOrDefault();
                 Department department = new Department();
                 {
                     department.DepartmentID = Guid.NewGuid();
+                    department.TenantID = tenantId;
+                    department.OrganisationID = catalog.GetOrganizationID();
                     department.DepartmentName = DepartmentName;
                     department.DateCreated = dt;
                     department.DateModified = dt;
-                    department.CreatedBy = "MDA Administrator";
-                    department.TenantID = tenantId;
-                    department.OrganisationID = catalog.GetOrganizationID();
-                    department.CreatedBy = "Administrator";
+                    department.CreatedBy = GetAdministratorFirstName;
                 };
                     db.Department.Add(department);
                     db.SaveChanges();
@@ -146,11 +146,15 @@ namespace ProcureEaseAPI.Controllers
         // PUT: Departments/Edit
         [HttpPut]
         [Providers.Authorize]
-        public ActionResult Edit (Department department, Guid UserID)
+        public ActionResult Edit (Guid DepartmentID, Guid UserID, string DepartmentName)
         {
             Guid? tenantId = catalog.GetTenantID();
             try
             {
+                DateTime dt = DateTime.Now;
+                var currentDepartmentDetail = db.Department.FirstOrDefault(d => d.DepartmentID == DepartmentID);
+                var departmentID = db.Department.Find(DepartmentID);
+                var DepartmentHeadUserID = db.UserProfile.Where(x => x.UserID == UserID).Select(x => x.UserID).FirstOrDefault();
                 if (tenantId == null)
                 {
                     return Json(new
@@ -160,11 +164,7 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-
-                DateTime dt = DateTime.Now;
-                var currentDepartmentDetail = db.Department.FirstOrDefault(d => d.DepartmentID == department.DepartmentID);
-                var DepartmentHeadUserID = db.UserProfile.Where(x => x.UserID == UserID).Select(x => x.UserID).FirstOrDefault();
-                if (currentDepartmentDetail == null)
+                if (departmentID == null)
                 {
                     LogHelper.Log(Log.Event.EDIT_DEPARTMENT, "DepartmentID not found");
                     return Json(new
@@ -175,7 +175,7 @@ namespace ProcureEaseAPI.Controllers
                     });
                 }
                 currentDepartmentDetail.DepartmentHeadUserID = DepartmentHeadUserID;
-                currentDepartmentDetail.DepartmentName = department.DepartmentName;
+                currentDepartmentDetail.DepartmentName = DepartmentName;
                 currentDepartmentDetail.DateModified = dt;
                 db.SaveChanges();
             }

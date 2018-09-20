@@ -14,6 +14,7 @@ namespace ProcureEaseAPI.Controllers
     public class SetUpController : Controller
     {
         private ProcureEaseEntities db = new ProcureEaseEntities();
+        private CatalogsController catalog = new CatalogsController();
         // GET: SetUp
         public ActionResult Index()
         {
@@ -27,16 +28,16 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
+                var SubDomain = catalog.GetSubDomain();
                 return Json(new
                 {
                     success = true,
                     message = "All source of funds",
-                    data = db.SourceOfFunds.Select(x => new
-                    {
-                        TenantID = db.SourceOfFunds.Where(y => y.TenantID == x.TenantID).Select(y => y.TenantID),
+                    data = db.SourceOfFundsOrganizationSettings.Select(x => new
+                    {                     
                         x.SourceOfFundID,
-                        x.SourceOfFund,
-                        Enabled = db.SourceOfFundsOrganizationSettings.Where(y => y.SourceOfFundID == y.SourceOfFundID).Select(y => y.EnableSourceOfFund)
+                        Name = x.SourceOfFunds.SourceOfFund,
+                        Enabled = db.SourceOfFundsOrganizationSettings.Where(y => y.SourceOfFundID == x.SourceOfFundID).Select(y => y.EnableSourceOFFund)
                     })
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -47,7 +48,7 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = false,
                     message = "" + ex.Message,
-                    data = new { }
+                    data = new {InnerError = ex.StackTrace }
                 }, JsonRequestBehavior.AllowGet);
             }
         }
@@ -58,20 +59,15 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                var ProcurementMethod = db.ProcurementMethod.Select(x => new
-                {
-                    x.ProcurementMethodID,
-                    x.Name,
-                    x.EnableProcurementMethod,
-                });
+                var SubDomain = catalog.GetSubDomain();
                 return Json(new
                 {
                     success = true,
                     message = "All Procurement Method",
-                    data = db.ProcurementMethod.Select(x => new
+                    data = db.ProcurementMethodOrganizationSettings.Where(x=>x.Catalog.SubDomain==SubDomain).Select(x => new
                     {
                         x.ProcurementMethodID,
-                        x.Name,
+                        x.ProcurementMethod.Name,
                         x.EnableProcurementMethod,
                     })
                 }, JsonRequestBehavior.AllowGet);
@@ -83,7 +79,7 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = false,
                     message = "" + ex.Message,
-                    data = new { }
+                    data = new {InnerError = ex.StackTrace }
                 }, JsonRequestBehavior.AllowGet);
             }
         }
@@ -94,14 +90,15 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
+                var SubDomain = catalog.GetSubDomain();
                 return Json(new
                 {
                     success = true,
                     message = "All Project Category",
-                    data = db.ProjectCategory.Select(x => new
+                    data = db.ProjectCategoryOrganizationSettings.Where(x=>x.Catalog.SubDomain==SubDomain).Select(x => new
                     {
                         x.ProjectCategoryID,
-                        x.Name,
+                        x.ProjectCategory.Name,
                        // x.EnableProjectCategory,
                     })
                 }, JsonRequestBehavior.AllowGet);
@@ -220,7 +217,8 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                var BasicDetails = db.OrganizationSettings.Select(x => new
+                var SubDomain = catalog.GetSubDomain();
+                var BasicDetails = db.OrganizationSettings.Where(x=>x.Catalog1.SubDomain==SubDomain).Select(x => new
                 {
                     x.OrganizationID,
                     x.OrganizationEmail,
@@ -238,7 +236,7 @@ namespace ProcureEaseAPI.Controllers
 
                 });
 
-                var DepartmentSetup = db.Department.Select(x => new
+                var DepartmentSetup = db.Department.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                 {
                     Department = db.Department.Where(y => y.DepartmentID == x.DepartmentID).Select(y => new
                     {
@@ -246,14 +244,14 @@ namespace ProcureEaseAPI.Controllers
                         y.DepartmentName
                     }),
 
-                    Head = db.UserProfile.Where(y => x.DepartmentID == y.DepartmentID).Select(y => new
+                    Head = db.UserProfile.Where(y => y.DepartmentID == x.DepartmentID).Select(y => new
                     {
                         x.DepartmentHeadUserID,
                         FullName = y.FirstName + " " + y.LastName
                     })
                 });
 
-                var UserManagement = db.UserProfile.Select(x => new
+                var UserManagement = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                 {
                     User = db.UserProfile.Where(y => y.UserID == x.UserID).Select(y => new
                     {
@@ -267,34 +265,34 @@ namespace ProcureEaseAPI.Controllers
                     })
                 });
 
-                var SourceOfFunds = db.SourceOfFunds.Select(x => new
+                var SourceOfFunds = db.SourceOfFundsOrganizationSettings.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                 {
                     x.SourceOfFundID,
-                    x.SourceOfFund,
+                    Name = x.SourceOfFunds.SourceOfFund,
                    // x.EnableSourceOfFund,
                 });
 
-                var ProcurementMethod = db.ProcurementMethod.Select(x => new
+                var ProcurementMethod = db.ProcurementMethodOrganizationSettings.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                 {
                     x.ProcurementMethodID,
-                    x.Name,
+                    x.ProcurementMethod.Name,
                     x.EnableProcurementMethod,
                 });
 
-                var ProjectCategory = db.ProjectCategory.Select(x => new
+                var ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                 {
                     x.ProjectCategoryID,
-                    x.Name,
+                    x.ProjectCategory.Name,
                    // x.EnableProjectCategory,
                 });
 
-                var Users = db.UserProfile.Select(x => new
+                var Users = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                 {
                     x.UserID,
                     FullName = x.FirstName + " " + x.LastName
                 });
 
-                var Departments = db.Department.Select(x => new
+                var Departments = db.Department.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                 {
                     x.DepartmentID,
                     x.DepartmentName

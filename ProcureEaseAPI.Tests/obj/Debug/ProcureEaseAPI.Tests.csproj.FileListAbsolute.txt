@@ -70,6 +70,10 @@ C:\Sites\ProcureEase-API\ProcureEaseAPI.Tests\obj\Debug\ProcureEaseAPI.Tests.dll
 C:\Sites\ProcureEase-API\ProcureEaseAPI.Tests\obj\Debug\ProcureEaseAPI.Tests.pdb
 C:\Sites\ProcureEase-API\ProcureEaseAPI.Tests\bin\Debug\Microsoft.Owin.Host.SystemWeb.dll
 C:\Sites\ProcureEase-API\ProcureEaseAPI.Tests\bin\Debug\Microsoft.Owin.Host.SystemWeb.xml
+C:\Sites\ProcureEase-API\ProcureEaseAPI.Tests\bin\Debug\roslyn\csc.rsp
+C:\Sites\ProcureEase-API\ProcureEaseAPI.Tests\bin\Debug\roslyn\csi.rsp
+C:\Sites\ProcureEase-API\ProcureEaseAPI.Tests\bin\Debug\roslyn\vbc.rsp
+C:\Sites\ProcureEase-API\ProcureEaseAPI.Tests\bin\Debug\roslyn\VBCSCompiler.exe.config
 C:\Sites\ProcureEase-API\ProcureEaseAPI.Tests\bin\Debug\roslyn\csc.exe
 C:\Sites\ProcureEase-API\ProcureEaseAPI.Tests\bin\Debug\roslyn\csc.exe.config
 C:\Sites\ProcureEase-API\ProcureEaseAPI.Tests\bin\Debug\roslyn\csi.exe
@@ -92,7 +96,3 @@ C:\Sites\ProcureEase-API\ProcureEaseAPI.Tests\bin\Debug\roslyn\System.Reflection
 C:\Sites\ProcureEase-API\ProcureEaseAPI.Tests\bin\Debug\roslyn\vbc.exe
 C:\Sites\ProcureEase-API\ProcureEaseAPI.Tests\bin\Debug\roslyn\vbc.exe.config
 C:\Sites\ProcureEase-API\ProcureEaseAPI.Tests\bin\Debug\roslyn\VBCSCompiler.exe
-C:\Sites\ProcureEase-API\ProcureEaseAPI.Tests\bin\Debug\roslyn\VBCSCompiler.exe.config
-C:\Sites\ProcureEase-API\ProcureEaseAPI.Tests\bin\Debug\roslyn\csc.rsp
-C:\Sites\ProcureEase-API\ProcureEaseAPI.Tests\bin\Debug\roslyn\csi.rsp
-C:\Sites\ProcureEase-API\ProcureEaseAPI.Tests\bin\Debug\roslyn\vbc.rsp

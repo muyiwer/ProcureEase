@@ -100,3 +100,5 @@ C:\Sites\ProcureEase-API\ProcureEaseAPI\bin\Microsoft.Azure.KeyVault.Core.xml
 C:\Sites\ProcureEase-API\ProcureEaseAPI\obj\Debug\ProcureEaseAPI.csprojResolveAssemblyReference.cache
 C:\Sites\ProcureEase-API\ProcureEaseAPI\obj\Debug\ProcureEaseAPI.dll
 C:\Sites\ProcureEase-API\ProcureEaseAPI\obj\Debug\ProcureEaseAPI.pdb
+C:\Sites\ProcureEase-API\ProcureEaseAPI\bin\System.Web.Http.Cors.dll
+C:\Sites\ProcureEase-API\ProcureEaseAPI\bin\System.Web.Http.Cors.xml

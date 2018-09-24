@@ -540,8 +540,7 @@ namespace ProcureEaseAPI.Controllers
                     }
                     if (findDepartment.DepartmentName != "Procurement" && findDepartment.DepartmentHeadUserID != userProfile.UserID)
                     {
-                        EditToEmployeeRole(userProfile, Id);
-                        return Json("good", JsonRequestBehavior.AllowGet);
+                        EditToEmployeeRole(userProfile, Id);                    
                     }
                     if (findDepartment.DepartmentName != "Procurement" && findDepartment.DepartmentHeadUserID == userProfile.UserID)
                     {
@@ -549,6 +548,7 @@ namespace ProcureEaseAPI.Controllers
                     }
                     Response.StatusCode = (int)HttpStatusCode.OK;                  
                 }
+                Response.StatusCode = (int)HttpStatusCode.OK;
                 return Json(new
                 {
                     success = true,

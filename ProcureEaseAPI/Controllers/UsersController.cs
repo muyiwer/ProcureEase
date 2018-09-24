@@ -194,20 +194,15 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = true,
                     message = "User added successfully.",
-                    data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
+                    data = db.UserProfile.Where(x => x.Catalog.TenantID == tenantId).Select(x => new
                     {
-                        User = new
-                        {
-                            x.UserID,
-                            FullName = x.FirstName + " " + x.LastName
-                        },
-                        Department = new
-                        {
-                            x.DepartmentID,
-                            x.Department1.DepartmentName
-                        }
-
-                    }),
+                        x.UserID,
+                        FullName = x.FirstName + " " + x.LastName,
+                        x.Department1.DepartmentName,
+                        x.DepartmentID,
+                        x.UserEmail,
+                        DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
+                    })
                 }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -269,18 +264,13 @@ namespace ProcureEaseAPI.Controllers
                     message = "Please check your email to reset password.",
                     data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                     {
-                        User = new
-                        {
-                            x.UserID,
-                            FullName = x.FirstName + " " + x.LastName
-                        },
-                        Department = new
-                        {
-                            x.DepartmentID,
-                            x.Department1.DepartmentName
-                        }
-
-                    }),
+                        x.UserID,
+                        FullName = x.FirstName + " " + x.LastName,
+                        x.Department1.DepartmentName,
+                        x.DepartmentID,
+                        x.UserEmail,
+                        DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
+                    })
                 }, JsonRequestBehavior.AllowGet);
             }
             catch(Exception ex)
@@ -330,20 +320,15 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = true,
                     message = "Password reset successful.",
-                    data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
+                    data = db.UserProfile.Where(x =>x.Catalog.SubDomain == SubDomain).Select(x => new
                     {
-                        User = new
-                        {
-                            x.UserID,
-                            FullName = x.FirstName + " " + x.LastName
-                        },
-                        Department = new
-                        {
-                            x.DepartmentID,
-                            x.Department1.DepartmentName
-                        }
-
-                    }),
+                        x.UserID,
+                        FullName = x.FirstName + " " + x.LastName,
+                        x.Department1.DepartmentName,
+                        x.DepartmentID,
+                        x.UserEmail,
+                        DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
+                    })
                 }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -425,18 +410,13 @@ namespace ProcureEaseAPI.Controllers
                     message = "Sign up successful.",
                     data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                     {
-                        User = new
-                        {
-                            x.UserID,
-                            FullName = x.FirstName + " " + x.LastName
-                        },
-                        Department = new
-                        {
-                            x.DepartmentID,
-                            x.Department1.DepartmentName
-                        }
-
-                    }),
+                        x.UserID,
+                        FullName = x.FirstName + " " + x.LastName,
+                        x.Department1.DepartmentName,
+                        x.DepartmentID,
+                        x.UserEmail,
+                        DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
+                    })
                 }, JsonRequestBehavior.AllowGet);
             }
             catch(Exception ex)
@@ -560,7 +540,7 @@ namespace ProcureEaseAPI.Controllers
                         x.Department1.DepartmentName,
                         x.DepartmentID,
                         x.UserEmail,
-                        DepartmentHeadUserID = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
+                        DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
                     })
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -775,7 +755,7 @@ namespace ProcureEaseAPI.Controllers
                         x.Department1.DepartmentName,
                         x.DepartmentID,
                         x.UserEmail,
-                        DepartmentHeadUserID = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
+                        DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
                     })
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -942,7 +922,7 @@ namespace ProcureEaseAPI.Controllers
                         x.Department1.DepartmentName,
                         x.DepartmentID,
                         x.UserEmail,
-                        DepartmentHeadUserID = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
+                        DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
                     })
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -1087,7 +1067,7 @@ namespace ProcureEaseAPI.Controllers
                             x.Department1.DepartmentName,
                             x.DepartmentID,
                             x.UserEmail,
-                            DepartmentHeadUserID = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
+                            DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
                         })
                     }, JsonRequestBehavior.AllowGet);
                 }
@@ -1120,7 +1100,7 @@ namespace ProcureEaseAPI.Controllers
                             x.Department1.DepartmentName,
                             x.DepartmentID,
                             x.UserEmail,
-                            DepartmentHeadUserID = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
+                            DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
                         })
                     }, JsonRequestBehavior.AllowGet);
                 }

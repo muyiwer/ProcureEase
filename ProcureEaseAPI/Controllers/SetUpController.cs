@@ -28,7 +28,8 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                var SubDomain = catalog.GetSubDomain();
+                string email = Request.Headers["Email"];
+                var SubDomain = catalog.GetSubDomainFromClientURL(email);
                 return Json(new
                 {
                     success = true,
@@ -59,7 +60,8 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                var SubDomain = catalog.GetSubDomain();
+                string email = Request.Headers["Email"];
+                var SubDomain = catalog.GetSubDomainFromClientURL(email);
                 return Json(new
                 {
                     success = true,
@@ -90,7 +92,8 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                var SubDomain = catalog.GetSubDomain();
+                string email = Request.Headers["Email"];
+                var SubDomain = catalog.GetSubDomainFromClientURL(email);
                 return Json(new
                 {
                     success = true,
@@ -217,7 +220,8 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                var SubDomain = catalog.GetSubDomain();
+                string email = Request.Headers["Email"];
+                var SubDomain = catalog.GetSubDomainFromClientURL(email);
                 var BasicDetails = db.OrganizationSettings.Where(x=>x.Catalog.SubDomain==SubDomain).Select(x => new
                 {
                     x.OrganizationID,

@@ -226,6 +226,7 @@
     <Compile Include="Controllers\ProcurementsController.cs" />
     <Compile Include="Controllers\RequestForDemoController.cs" />
     <Compile Include="Controllers\SetUpController.cs" />
+    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -330,6 +331,9 @@
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SourceOfFundsOrganizationSettings.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\sysdiagrams.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\TelephoneNumbers.cs">
@@ -438,6 +442,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Procurments\" />
+    <Folder Include="Views\Test\" />
     <Folder Include="Views\Users\" />
   </ItemGroup>
   <ItemGroup>

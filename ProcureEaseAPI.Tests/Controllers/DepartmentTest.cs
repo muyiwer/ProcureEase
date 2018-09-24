@@ -15,7 +15,6 @@ namespace ProcureEaseAPI.Tests.Controllers
     [TestClass]
     public class DepartmentTest
     {
-        public string LOCAL_SERVER = "http://localhosts.procureease.ng.com";
         [TestMethod]
             public void TestGetAllDepartments()
             {

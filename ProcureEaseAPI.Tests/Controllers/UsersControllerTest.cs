@@ -17,6 +17,8 @@ namespace ProcureEaseAPI.Tests.Controllers
     [TestClass]
    public class UsersControllerTest
     {
+      public  string LOCAL_SERVER = "http://localhosts.procureease.ng.com";
+
         [TestMethod]
         public async Task TestLogin_WithInvalidLoginDetails()
         {

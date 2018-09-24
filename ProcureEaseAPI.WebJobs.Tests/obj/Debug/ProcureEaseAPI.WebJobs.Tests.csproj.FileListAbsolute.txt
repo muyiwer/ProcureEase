@@ -9,3 +9,4 @@ C:\Sites\ProcureEase-API\ProcureEaseAPI.WebJobs.Tests\bin\Debug\Microsoft.Visual
 C:\Sites\ProcureEase-API\ProcureEaseAPI.WebJobs.Tests\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.xml
 C:\Sites\ProcureEase-API\ProcureEaseAPI.WebJobs.Tests\obj\Debug\ProcureEaseAPI.WebJobs.Tests.dll
 C:\Sites\ProcureEase-API\ProcureEaseAPI.WebJobs.Tests\obj\Debug\ProcureEaseAPI.WebJobs.Tests.pdb
+C:\Sites\ProcureEase-API\ProcureEaseAPI.WebJobs.Tests\obj\Debug\ProcureEaseAPI.WebJobs.Tests.csprojResolveAssemblyReference.cache

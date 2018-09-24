@@ -646,7 +646,7 @@ namespace ProcureEaseAPI.Controllers
                             x.ProcurementStatusID,
                             x.Status
                         }),
-                        ProcureMentMethod = db.ProcurementMethodOrganizationsettings.Where(x => x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
+                        ProcureMentMethod = db.ProcurementMethodOrganizationSettings.Where(x => x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
                         {
                             x.ProcurementMethodID,
                             x.ProcurementMethod.Name
@@ -764,7 +764,7 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementStatusID,
                         x.Status
                     }),
-                    ProcureMentMethod = db.ProcurementMethodOrganizationsettings.Where(x => x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
+                    ProcureMentMethod = db.ProcurementMethodOrganizationSettings.Where(x => x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
                     {
                         x.ProcurementMethodID,
                         x.ProcurementMethod.Name
@@ -818,7 +818,7 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementStatusID,
                         x.Status
                     }),
-                    ProcureMentMethod = db.ProcurementMethodOrganizationsettings.Where(x=> x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
+                    ProcureMentMethod = db.ProcurementMethodOrganizationSettings.Where(x=> x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
                     {
                         x.ProcurementMethodID,
                         x.ProcurementMethod.Name
@@ -1358,7 +1358,7 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementStatusID,
                         x.Status
                     }),
-                    ProcureMentMethod = db.ProcurementMethodOrganizationsettings.Where(x=> x.TenantID == tenantId && x.EnableProcurementMethod==true).Select(x => new
+                    ProcureMentMethod = db.ProcurementMethodOrganizationSettings.Where(x=> x.TenantID == tenantId && x.EnableProcurementMethod==true).Select(x => new
                     {
                         x.ProcurementMethodID,
                         x.ProcurementMethod.Name
@@ -1435,7 +1435,7 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementStatusID,
                         x.Status
                     }),
-                    ProcureMentMethod = db.ProcurementMethodOrganizationsettings.Where(x => x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
+                    ProcureMentMethod = db.ProcurementMethodOrganizationSettings.Where(x => x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
                     {
                         x.ProcurementMethodID,
                         x.ProcurementMethod.Name
@@ -1494,15 +1494,15 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementStatusID,
                         x.Status
                     }),
-                    ProcureMentMethod = db.ProcurementMethodOrganizationsettings.Where(x => x.TenantID == tenantId).Select(x => new
+                    ProcureMentMethod = db.ProcurementMethodOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
                     {
                         x.ProcurementMethodID,
                         x.ProcurementMethod.Name
                     }),
-                    ProjectCategory = db.ProjectCategory.Where(x => x.TenantID == tenantId).Select(x => new
+                    ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
                     {
                         x.ProjectCategoryID,
-                        x.Name
+                        x.ProjectCategory.Name
                     }),
                     BudgetYear = db.BudgetYear.Where(x => x.TenantID == tenantId).Select(x => new
                     {
@@ -1569,15 +1569,15 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementStatusID,
                         x.Status
                     }),
-                    ProcureMentMethod = db.ProcurementMethodOrganizationsettings.Where(x => x.TenantID == tenantId).Select(x => new
+                    ProcureMentMethod = db.ProcurementMethodOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
                     {
                         x.ProcurementMethodID,
                         x.ProcurementMethod.Name
                     }),
-                    ProjectCategory = db.ProjectCategory.Where(x => x.TenantID == tenantId).Select(x => new
+                    ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
                     {
                         x.ProjectCategoryID,
-                        x.Name
+                        x.ProjectCategory.Name
                     }),
                     BudgetYear = db.BudgetYear.Where(x => x.TenantID == tenantId).Select(x => new
                     {

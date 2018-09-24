@@ -585,16 +585,32 @@ namespace ProcureEaseAPI.Controllers
             UserProfile EditProfile = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).FirstOrDefault();
             EditProfile.UserEmail = UserProfile.UserEmail;
             EditProfile.DepartmentID = UserProfile.DepartmentID;
-            AspNetUserRoles role = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == Id);
-            db.AspNetUserRoles.Remove(role);
-            db.SaveChanges();
-            AspNetUserRoles userRole = new AspNetUserRoles();
-            userRole.UserId = Id;
-            userRole.RoleId = RoleId;
-            db.AspNetUserRoles.Add(userRole);
-            AspNetUsers EditUser = db.AspNetUsers.Where(x => x.Id == Id).FirstOrDefault();
-            EditUser.UserName = UserProfile.UserEmail;
-            db.SaveChanges();
+            var getUserRoleId = db.AspNetUserRoles.Where(x => x.UserId == Id).Select(x => x.RoleId);
+            AspNetUserRoles role = db.AspNetUserRoles.Find(Id, getUserRoleId);
+            if (role == null)
+            {
+                AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
+                EditUser.UserName = UserProfile.UserEmail;
+                EditUser.Email = UserProfile.UserEmail;
+                AspNetUserRoles userRole = new AspNetUserRoles();
+                userRole.UserId = Id;
+                userRole.RoleId = RoleId;
+                db.AspNetUserRoles.Add(userRole);
+                db.SaveChanges();
+            }
+            else
+            {
+                AspNetUserRoles roles = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == Id);
+                db.AspNetUserRoles.Remove(role);
+                AspNetUserRoles userRole = new AspNetUserRoles();
+                userRole.UserId = Id;
+                userRole.RoleId = RoleId;
+                db.AspNetUserRoles.Add(userRole);
+                AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
+                EditUser.UserName = UserProfile.UserEmail;
+                EditUser.Email = UserProfile.UserEmail;
+                db.SaveChanges();
+            }
         }
 
         protected void EditToHeadOfProcumentRole(UserProfile UserProfile, string Id)
@@ -603,16 +619,32 @@ namespace ProcureEaseAPI.Controllers
             UserProfile EditProfile = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).FirstOrDefault();
             EditProfile.UserEmail = UserProfile.UserEmail;
             EditProfile.DepartmentID = UserProfile.DepartmentID;
-            AspNetUserRoles role = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == Id);
-            db.AspNetUserRoles.Remove(role);
-            db.SaveChanges();
-            AspNetUserRoles userRole = new AspNetUserRoles();
-            userRole.UserId = Id;
-            userRole.RoleId = RoleId;
-            db.AspNetUserRoles.Add(userRole);
-            AspNetUsers EditUser = db.AspNetUsers.Where(x => x.Id == Id).FirstOrDefault();
-            EditUser.UserName = UserProfile.UserEmail;            
-            db.SaveChanges();
+            var getUserRoleId = db.AspNetUserRoles.Where(x => x.UserId == Id).Select(x => x.RoleId);
+            AspNetUserRoles role = db.AspNetUserRoles.Find(Id, getUserRoleId);
+            if (role == null)
+            {
+                AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
+                EditUser.UserName = UserProfile.UserEmail;
+                EditUser.Email = UserProfile.UserEmail;
+                AspNetUserRoles userRole = new AspNetUserRoles();
+                userRole.UserId = Id;
+                userRole.RoleId = RoleId;
+                db.AspNetUserRoles.Add(userRole);
+                db.SaveChanges();
+            }
+            else
+            {
+                AspNetUserRoles roles = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == Id);
+                db.AspNetUserRoles.Remove(role);
+                AspNetUserRoles userRole = new AspNetUserRoles();
+                userRole.UserId = Id;
+                userRole.RoleId = RoleId;
+                db.AspNetUserRoles.Add(userRole);
+                AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
+                EditUser.UserName = UserProfile.UserEmail;
+                EditUser.Email = UserProfile.UserEmail;
+                db.SaveChanges();
+            }
         }
 
         protected void EditToEmployeeRole(UserProfile UserProfile, string Id)
@@ -621,17 +653,34 @@ namespace ProcureEaseAPI.Controllers
             UserProfile EditProfile = db.UserProfile.SingleOrDefault(x => x.UserID == UserProfile.UserID);
             EditProfile.UserEmail = UserProfile.UserEmail;
             EditProfile.DepartmentID = UserProfile.DepartmentID;
-            //AspNetUserRoles role = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == Id);
-            //db.AspNetUserRoles.Remove(role);
-            //db.SaveChanges();
-            AspNetUserRoles userRole = new AspNetUserRoles();
-            userRole.UserId = Id;
-            userRole.RoleId = RoleId;
-            db.AspNetUserRoles.Add(userRole);
-            AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
-            EditUser.UserName = UserProfile.UserEmail;
-            EditUser.Email = UserProfile.UserEmail;
+            var getUserRoleId = db.AspNetUserRoles.Where(x => x.UserId == Id).Select(x => x.RoleId);
+            AspNetUserRoles role = db.AspNetUserRoles.Find(Id,getUserRoleId);
+            if(role==null)
+            {
+                AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
+                EditUser.UserName = UserProfile.UserEmail;
+                EditUser.Email = UserProfile.UserEmail;
+                AspNetUserRoles userRole = new AspNetUserRoles();
+                userRole.UserId = Id;
+                userRole.RoleId = RoleId;
+                db.AspNetUserRoles.Add(userRole);
+                db.SaveChanges();
+            }
+            else
+            {
+                AspNetUserRoles roles = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == Id);
+                db.AspNetUserRoles.Remove(role);
+                AspNetUserRoles userRole = new AspNetUserRoles();
+                userRole.UserId = Id;
+                userRole.RoleId = RoleId;
+                db.AspNetUserRoles.Add(userRole);
+                AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
+                EditUser.UserName = UserProfile.UserEmail;
+                EditUser.Email = UserProfile.UserEmail;
+                db.SaveChanges();
+            }
             db.SaveChanges();
+        
         }
 
         protected void EditToHeadOfDepartmentRole(UserProfile UserProfile, string Id)
@@ -640,15 +689,32 @@ namespace ProcureEaseAPI.Controllers
             UserProfile EditProfile = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).FirstOrDefault();
             EditProfile.UserEmail = UserProfile.UserEmail;
             EditProfile.DepartmentID = UserProfile.DepartmentID;
-            AspNetUserRoles role = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == Id);
-            db.AspNetUserRoles.Remove(role);
-            db.SaveChanges();
-            AspNetUserRoles userRole = new AspNetUserRoles();
-            userRole.UserId = Id;
-            userRole.RoleId = RoleId;
-            AspNetUsers EditUser = db.AspNetUsers.Where(x => x.Id == Id).FirstOrDefault();
-            EditUser.UserName = UserProfile.UserEmail;
-            db.SaveChanges();
+            var getUserRoleId = db.AspNetUserRoles.Where(x => x.UserId == Id).Select(x => x.RoleId);
+            AspNetUserRoles role = db.AspNetUserRoles.Find(Id, getUserRoleId);
+            if (role == null)
+            {
+                AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
+                EditUser.UserName = UserProfile.UserEmail;
+                EditUser.Email = UserProfile.UserEmail;
+                AspNetUserRoles userRole = new AspNetUserRoles();
+                userRole.UserId = Id;
+                userRole.RoleId = RoleId;
+                db.AspNetUserRoles.Add(userRole);
+                db.SaveChanges();
+            }
+            else
+            {
+                AspNetUserRoles roles = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == Id);
+                db.AspNetUserRoles.Remove(role);
+                AspNetUserRoles userRole = new AspNetUserRoles();
+                userRole.UserId = Id;
+                userRole.RoleId = RoleId;
+                db.AspNetUserRoles.Add(userRole);
+                AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
+                EditUser.UserName = UserProfile.UserEmail;
+                EditUser.Email = UserProfile.UserEmail;
+                db.SaveChanges();
+            }
         }
 
         //PUT: Users/UpdateUserProfile

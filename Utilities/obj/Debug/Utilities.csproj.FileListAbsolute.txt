@@ -16,4 +16,3 @@ C:\Sites\ProcureEase-API\Utilities\bin\Debug\System.Threading.Tasks.Extensions.x
 C:\Sites\ProcureEase-API\Utilities\bin\Debug\System.ValueTuple.xml
 C:\Sites\ProcureEase-API\Utilities\obj\Debug\Utilities.dll
 C:\Sites\ProcureEase-API\Utilities\obj\Debug\Utilities.pdb
-C:\Sites\ProcureEase-API\Utilities\obj\Debug\Utilities.csprojResolveAssemblyReference.cache

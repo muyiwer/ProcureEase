@@ -41,9 +41,7 @@ namespace ProcureEaseAPI.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        // GET: SetUp/SourceOfFunds
-        [AllowAnonymous]
-        [HttpGet]
+        [Providers.Authorize]
         public ActionResult SourceOfFunds()
         {
             string email = Request.Headers["Email"];
@@ -78,8 +76,7 @@ namespace ProcureEaseAPI.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        // GET: SetUp/ProcurementMethod
-        [HttpGet]
+        [Providers.Authorize]
         public ActionResult ProcurementMethod()
         {
             string email = Request.Headers["Email"];
@@ -114,8 +111,7 @@ namespace ProcureEaseAPI.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        // GET: SetUp/ProjectCategory
-        [HttpGet]
+        [Providers.Authorize]
         public ActionResult ProjectCategory()
         {
             string email = Request.Headers["Email"];
@@ -150,7 +146,7 @@ namespace ProcureEaseAPI.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        // PUT: SetUp/UpdateBasicDetails
+        [Providers.Authorize]
         [HttpPut]
         public async Task<ActionResult> UpdateBasicDetails(OrganizationSettings organizationSettings, HttpPostedFileBase image, params string[] TelephoneNumbers)
         {
@@ -254,8 +250,7 @@ namespace ProcureEaseAPI.Controllers
             }
         }
 
-        // GET: SetUp/OrganizationSettings
-        [HttpGet]
+        [Providers.Authorize]
         public ActionResult OrganizationSettings()
         {
             string email = Request.Headers["Email"];
@@ -310,7 +305,7 @@ namespace ProcureEaseAPI.Controllers
                 User =  new
                 {
                     x.UserID,
-                    FullName = db.UserProfile.Where(z => z.UserID == x.Department1.DepartmentHeadUserID).Select(y => y.FirstName + " " + y.LastName).FirstOrDefault()
+                    FullName =  x.FirstName + " " + x.LastName
                 },
                 Department =  new
                 {

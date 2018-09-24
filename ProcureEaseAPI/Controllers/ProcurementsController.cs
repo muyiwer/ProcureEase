@@ -24,7 +24,8 @@ namespace ProcureEaseAPI.Controllers
         [HttpGet]
         public ActionResult DraftNeedsSummary(string id = "")
         {
-            Guid? tenantId = catalog.GetTenantID();
+            string email = Request.Headers["Email"];
+            Guid? tenantId = catalog.GetTenantIDFromClientURL(email);
             if (tenantId == null)
             {
                 return Json(new
@@ -101,7 +102,8 @@ namespace ProcureEaseAPI.Controllers
                             LogHelper.Log(Log.Event.ALL_DRAFT_PROCUREMENT_NEEDS, "Guid format exeception");
                             return Error(ex.Message);
                         }
-                         Guid? tenantId = catalog.GetTenantID();
+                        string email = Request.Headers["Email"];
+                        Guid? tenantId = catalog.GetTenantIDFromClientURL(email);
                         if (tenantId == null)
                         {
                             return Json(new
@@ -140,7 +142,8 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                Guid? tenantId = catalog.GetTenantID();
+                string email = Request.Headers["Email"];
+                Guid? tenantId = catalog.GetTenantIDFromClientURL(email);
                 if (tenantId == null)
                 {
                     return Json(new
@@ -427,7 +430,8 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                Guid? tenantId = catalog.GetTenantID();
+                string email = Request.Headers["Email"];
+                Guid? tenantId = catalog.GetTenantIDFromClientURL(email);
                 if (tenantId == null)
                 {
                     return Json(new
@@ -572,7 +576,8 @@ namespace ProcureEaseAPI.Controllers
         [Providers.Authorize]
         public ActionResult SentProcurement(string id = "")
         {
-            Guid? tenantId = catalog.GetTenantID();
+            string email = Request.Headers["Email"];
+            Guid? tenantId = catalog.GetTenantIDFromClientURL(email);
             if (tenantId == null)
             {
                 return Json(new
@@ -671,7 +676,8 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                Guid? tenantId = catalog.GetTenantID();
+                string email = Request.Headers["Email"];
+                Guid? tenantId = catalog.GetTenantIDFromClientURL(email);
                 if (tenantId == null)
                 {
                     return Json(new
@@ -850,7 +856,8 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                Guid? tenantId = catalog.GetTenantID();
+                string email = Request.Headers["Email"];
+                Guid? tenantId = catalog.GetTenantIDFromClientURL(email);
                 if (tenantId == null)
                 {
                     return Json(new
@@ -896,7 +903,8 @@ namespace ProcureEaseAPI.Controllers
         [Providers.Authorize]
         public ActionResult ProcurementNeeds(string id = "", string id2 = "")
         {
-            Guid? tenantId = catalog.GetTenantID();
+            string email = Request.Headers["Email"];
+            Guid? tenantId = catalog.GetTenantIDFromClientURL(email);
             if (tenantId == null)
             {
                 return Json(new
@@ -942,7 +950,8 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                Guid? tenantId = catalog.GetTenantID();
+                string email = Request.Headers["Email"];
+                Guid? tenantId = catalog.GetTenantIDFromClientURL(email);
                 if (tenantId == null)
                 {
                     return Json(new
@@ -1272,7 +1281,8 @@ namespace ProcureEaseAPI.Controllers
         [Providers.Authorize]
         public ActionResult ProcurementPlan(string id = "", string id2 = "")
         {
-            Guid? tenantId = catalog.GetTenantID();
+            string email = Request.Headers["Email"];
+            Guid? tenantId = catalog.GetTenantIDFromClientURL(email);
             if (tenantId == null)
             {
                 return Json(new
@@ -1379,7 +1389,8 @@ namespace ProcureEaseAPI.Controllers
 
         private ActionResult AllProcurementNeedsJson()
         {
-            Guid? tenantId = catalog.GetTenantID();
+            string email = Request.Headers["Email"];
+            Guid? tenantId = catalog.GetTenantIDFromClientURL(email);
             if (tenantId == null)
             {
                 return Json(new
@@ -1520,7 +1531,8 @@ namespace ProcureEaseAPI.Controllers
 
         private ActionResult AllProcurementPlanJson()
         {
-            Guid? tenantId = catalog.GetTenantID();
+            string email = Request.Headers["Email"];
+            Guid? tenantId = catalog.GetTenantIDFromClientURL(email);
             if (tenantId == null)
             {
                 return Json(new
@@ -1607,7 +1619,8 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                Guid? tenantId = catalog.GetTenantID();
+                string email = Request.Headers["Email"];
+                Guid? tenantId = catalog.GetTenantIDFromClientURL(email);
                 if (tenantId == null)
                 {
                     return Json(new
@@ -1655,7 +1668,8 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                Guid? tenantId = catalog.GetTenantID();
+                string email = Request.Headers["Email"];
+                Guid? tenantId = catalog.GetTenantIDFromClientURL(email);
                 if (tenantId == null)
                 {
                     return Json(new
@@ -1935,7 +1949,8 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                Guid? tenantId = catalog.GetTenantID();
+                string email = Request.Headers["Email"];
+                Guid? tenantId = catalog.GetTenantIDFromClientURL(email);
                 if (tenantId == null)
                 {
                     return Json(new

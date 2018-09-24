@@ -121,7 +121,8 @@ namespace ProcureEaseAPI.Controllers
         [HttpPost]
         public ActionResult Edit(SourceOfFundsOrganizationSettings sourceOfFundsOrganizationSettings, bool EnableSourceOFFund)
         {
-            Guid? tenantId = catalog.GetTenantID();
+            string email = Request.Headers["Email"];
+            var tenantId = catalog.GetTenantIDFromClientURL(email);
             try
             {
                 if (tenantId == null)

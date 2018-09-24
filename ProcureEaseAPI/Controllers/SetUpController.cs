@@ -46,7 +46,8 @@ namespace ProcureEaseAPI.Controllers
         [HttpGet]
         public ActionResult SourceOfFunds()
         {
-            Guid? tenantId = catalog.GetTenantID();
+            string email = Request.Headers["Email"];
+            var tenantId = catalog.GetTenantIDFromClientURL(email);
             try
             {
                 if (tenantId == null)
@@ -81,7 +82,8 @@ namespace ProcureEaseAPI.Controllers
         [HttpGet]
         public ActionResult ProcurementMethod()
         {
-            Guid? tenantId = catalog.GetTenantID();
+            string email = Request.Headers["Email"];
+            var tenantId = catalog.GetTenantIDFromClientURL(email);
             try
             {
                 if (tenantId == null)
@@ -116,7 +118,8 @@ namespace ProcureEaseAPI.Controllers
         [HttpGet]
         public ActionResult ProjectCategory()
         {
-            Guid? tenantId = catalog.GetTenantID();
+            string email = Request.Headers["Email"];
+            var tenantId = catalog.GetTenantIDFromClientURL(email);
             try
             {
                 if (tenantId == null)
@@ -151,7 +154,8 @@ namespace ProcureEaseAPI.Controllers
         [HttpPut]
         public async Task<ActionResult> UpdateBasicDetails(OrganizationSettings organizationSettings, HttpPostedFileBase image, params string[] TelephoneNumbers)
         {
-            Guid? tenantId = catalog.GetTenantID();
+            string email = Request.Headers["Email"];
+            var tenantId = catalog.GetTenantIDFromClientURL(email);
             var OrganizationSettingsTenantID = db.OrganizationSettings.Where(x => x.OrganizationID == organizationSettings.OrganizationID).Select(x => x.TenantID).FirstOrDefault();
             try
             {
@@ -253,7 +257,8 @@ namespace ProcureEaseAPI.Controllers
         [HttpGet]
         public ActionResult OrganizationSettings()
         {
-            Guid? tenantId = catalog.GetTenantID();
+            string email = Request.Headers["Email"];
+            var tenantId = catalog.GetTenantIDFromClientURL(email);
             try
             {
                 if (tenantId == null)
@@ -300,18 +305,18 @@ namespace ProcureEaseAPI.Controllers
                 })
             });
 
-            var UserManagement = db.UserProfile.Select(x => new
+            var UserManagement = db.UserProfile.Where(y => y.TenantID == tenantId && x.UserID == x.UserID).Select(x => new
             {
-                User = db.UserProfile.Where(y => y.TenantID == tenantId && x.UserID == x.UserID).Select(y => new
+                User =  new
                 {
                     y.UserID,
                     FullName = x.FirstName + " " + x.LastName,
-                }),
-                Department = db.UserProfile.Where(z => z.UserID == x.UserID && z.TenantID == tenantId).Select(z => new
+                },
+                Department =  new
                 {
                     x.DepartmentID,
                     z.Department1.DepartmentName
-                })
+                }
 
             });
 

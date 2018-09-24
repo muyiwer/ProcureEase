@@ -11,6 +11,8 @@ using System.Net.Http;
 using System.Web.Script.Serialization;
 using ProcureEaseAPI.Providers;
 using ProcureEaseAPI.Controllers;
+using System.Data.Entity;
+
 namespace ProcureEaseAPI.Controllers
 {
     public class UsersController : Controller
@@ -25,15 +27,15 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                var SubDomain = catalog.GetSubDomain();
-                var tenantId = catalog.GetTenantID();
-                if (tenantId == null)
+                var subDomain = GetSubDomainForUser(UserName);
+                var tenantId = GetTenantIDForUser(UserName);
+                if (tenantId == null || subDomain == null)
                 {
                     Response.StatusCode = (int)HttpStatusCode.NotFound;
                     return Json(new
                     {
                         success = false,
-                        message = "TenantId is null",
+                        message = ((tenantId==null) ? "TenantID" : "SubDomain") + " is null",
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
@@ -78,7 +80,7 @@ namespace ProcureEaseAPI.Controllers
                             DepartmentID = db.UserProfile.Where(x => x.UserEmail == UserName).Select(x => x.DepartmentID).FirstOrDefault(),
                             Role = db.AspNetUserRoles.Where(x => x.UserId == User.Id).Select(x => x.AspNetRoles.Name).FirstOrDefault(),
                             BudgetYear = DateTimeSettings.CurrentYear(),
-                            SubDomain = SubDomain,
+                            SubDomain = subDomain,
                             OrganizationName = db.UserProfile.Where(x => x.UserEmail == UserName).Select(x => x.OrganizationSettings.OrganizationNameAbbreviation).FirstOrDefault(),
                             OrganizationID = db.UserProfile.Where(x => x.UserEmail == UserName).Select(x => x.OrganizationID).FirstOrDefault(),
                             token = token
@@ -92,14 +94,37 @@ namespace ProcureEaseAPI.Controllers
             }
         }
 
+        public Guid? GetTenantIDForUser(string email)
+        {
+            List<UserProfile> users = db.UserProfile.Where(x => x.UserEmail == email).ToList();
+            if (users != null && users.Count != 0)
+            {
+                return users[0].TenantID;
+            }
+            return null;
+        }
+
+        public string GetSubDomainForUser(string email)
+        {
+            List<UserProfile> users = db.UserProfile.Where(x => x.UserEmail == email).ToList();
+            if (users != null && users.Count != 0 && users[0].Catalog != null)
+            {
+                return users[0].Catalog.SubDomain;
+            }
+            return null;
+        }
+
         // POST: Users/Add
-       [HttpPost]
-     //  [Providers.Authorize]
+        [HttpPost]
+       [Providers.Authorize]
        public async Task<ActionResult> Add(UserProfile UserProfile)
         {
+            // TODO: Muyiwa, add implementation to get the authorized user's email from the request header using Request.Headers["email"]
+            // TODO: Muyiwa, change the GetTenantIDFromClientURL() implementation to GetTenantIDForUser(email)
             try
             {
-               var tenantId = catalog.GetTenantID();
+                string email = Request.Headers["Email"];
+                var tenantId = catalog.GetTenantIDFromClientURL(email); 
                 if (tenantId == null)
                 {
                     return Json(new
@@ -109,7 +134,7 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                var organizationId = catalog.GetOrganizationID();
+                var organizationId = catalog.GetOrganizationID(email);
                 if (organizationId == null)
                 {
                     return Json(new
@@ -202,8 +227,9 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                var SubDomain = catalog.GetSubDomain();
-                var tenantId = catalog.GetTenantID();
+                string email = Request.Headers["Email"];
+                var SubDomain = catalog.GetSubDomainFromClientURL(email);
+                var tenantId = catalog.GetTenantIDFromClientURL(email);
                 if (tenantId == null)
                 {
                     Response.StatusCode = (int)HttpStatusCode.NotFound;
@@ -272,8 +298,9 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                var SubDomain = catalog.GetSubDomain();
-                var tenantId = catalog.GetTenantID();
+                string email = Request.Headers["Email"];
+                var SubDomain = catalog.GetSubDomainFromClientURL(email);
+                var tenantId = catalog.GetTenantIDFromClientURL(email);
                 if (tenantId == null)
                 {
                     Response.StatusCode = (int)HttpStatusCode.NotFound;
@@ -334,8 +361,9 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                var SubDomain = catalog.GetSubDomain();
-                var tenantId = catalog.GetTenantID();
+                string email = Request.Headers["Email"];
+                var SubDomain = catalog.GetSubDomainFromClientURL(email);
+                var tenantId = catalog.GetTenantIDFromClientURL(email);
                 if (tenantId == null)
                 {
                     Response.StatusCode = (int)HttpStatusCode.NotFound;
@@ -346,7 +374,7 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                var organizationId = catalog.GetOrganizationID();                
+                var organizationId = catalog.GetOrganizationID(email);                
                 var CheckIfUserHasSignedUp = db.AspNetUsers.Where(x => x.UserName == UserProfile.UserEmail).Select(x => x.UserName).FirstOrDefault();
                 if (CheckIfUserHasSignedUp != null)
                 {
@@ -423,12 +451,13 @@ namespace ProcureEaseAPI.Controllers
         //PUT: Users/EditUser
         [HttpPut]
         [Providers.Authorize]
-        public ActionResult EditUser(UserProfile UserProfile)
+        public ActionResult EditUser(UserProfile userProfile)
         {
             try
             {
-                var SubDomain = catalog.GetSubDomain();
-                var tenantId = catalog.GetTenantID();
+                string email = Request.Headers["Email"];
+                var SubDomain = catalog.GetSubDomainFromClientURL(email);
+                var tenantId = catalog.GetTenantIDFromClientURL(email);
                 if (tenantId == null)
                 {
                     Response.StatusCode = (int)HttpStatusCode.NotFound;
@@ -439,7 +468,7 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                if (UserProfile.DepartmentID == null)
+                if (userProfile.DepartmentID == null)
                 {
                     Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     LogHelper.Log(Log.Event.EDIT_USER, "Department ID is null");
@@ -452,7 +481,7 @@ namespace ProcureEaseAPI.Controllers
                         { }
                     }, JsonRequestBehavior.AllowGet);
                 }             
-                if (UserProfile.UserID == null)
+                if (userProfile.UserID == null)
                 {
                     Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     LogHelper.Log(Log.Event.EDIT_USER, "UserID is Null");
@@ -465,11 +494,11 @@ namespace ProcureEaseAPI.Controllers
                     }, JsonRequestBehavior.AllowGet);
                 }
 
-                var Id= db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
+                var Id= db.UserProfile.Where(x => x.UserID == userProfile.UserID).Select(x => x.Id).FirstOrDefault();
                 var CheckIfIdIsNull = db.UserProfile.Where(x => x.Id == Id).ToList();
-                if (CheckIfIdIsNull == null || CheckIfIdIsNull.Count < 0)
+                if (CheckIfIdIsNull == null && CheckIfIdIsNull.Count < 0)
                 {
-                    EditUserWithoutID(UserProfile);
+                    EditUserWithoutID(userProfile);
                     Response.StatusCode = (int)HttpStatusCode.OK;
                     return Json(new
                     {
@@ -488,41 +517,54 @@ namespace ProcureEaseAPI.Controllers
                 }
                 else
                 {
-                    var CheckUserDepartmentName = db.Department.Where(x => x.DepartmentID == UserProfile.DepartmentID).Select(x => x.DepartmentName).FirstOrDefault();
-                    var CheckIfUserIsHeadOfDepartment = db.Department.Where(x => x.DepartmentHeadUserID == UserProfile.UserID).Select(x => x.DepartmentHeadUserID).FirstOrDefault();
-                    if (CheckUserDepartmentName == "Procurement" && CheckIfUserIsHeadOfDepartment == null)
+                    var findDepartment = db.Department.Find(userProfile.DepartmentID);
+                    if(findDepartment == null)
                     {
-                        EditToProcurementOfficerRole(UserProfile, Id);
-                    }
-                    if (CheckUserDepartmentName == "Procurement" && CheckIfUserIsHeadOfDepartment != null)
-                    {
-                        EditToHeadOfProcumentRole(UserProfile, Id);
-                    }
-                    if (CheckUserDepartmentName != "Procurement" && CheckIfUserIsHeadOfDepartment == null)
-                    {
-                        EditToEmployeeRole(UserProfile, Id);
-                    }
-                    if (CheckUserDepartmentName != "Procurement" && CheckIfUserIsHeadOfDepartment != null)
-                    {
-                        EditToHeadOfDepartmentRole(UserProfile, Id);
-                    }
-                    Response.StatusCode = (int)HttpStatusCode.OK;
-                    return Json(new
-                    {
-                        success = true,
-                        message = "Edited Successfully.",
-                        data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
+                        Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                        LogHelper.Log(Log.Event.EDIT_USER, "Invalid Department with ID:" + " " + userProfile.DepartmentID);
+                        return Json(new
                         {
-                            x.UserID,
-                            FullName = x.FirstName + " " + x.LastName,
-                            x.Department1.DepartmentName,
-                            x.DepartmentID,
-                            x.UserEmail,
-                            DepartmentHeadUserID = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
-                        })
-                    }, JsonRequestBehavior.AllowGet);
+                            success = false,
+                            message = "UserID is Null",
+                            data = new
+                            { }
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+                    if (findDepartment.DepartmentName == "Procurement" && findDepartment.DepartmentHeadUserID != userProfile.UserID)
+                    {
+                        EditToProcurementOfficerRole(userProfile, Id);
+                    }
+                    if (findDepartment.DepartmentName == "Procurement" && findDepartment.DepartmentHeadUserID == userProfile.UserID)
+                    {
+                        EditToHeadOfProcumentRole(userProfile, Id);
+                    }
+                    if (findDepartment.DepartmentName != "Procurement" && findDepartment.DepartmentHeadUserID != userProfile.UserID)
+                    {
+                        EditToEmployeeRole(userProfile, Id);
+                        return Json("good", JsonRequestBehavior.AllowGet);
+                    }
+                    if (findDepartment.DepartmentName != "Procurement" && findDepartment.DepartmentHeadUserID == userProfile.UserID)
+                    {
+                        EditToHeadOfDepartmentRole(userProfile, Id);
+                    }
+                    Response.StatusCode = (int)HttpStatusCode.OK;                  
                 }
-            }catch(Exception ex)
+                return Json(new
+                {
+                    success = true,
+                    message = "Edited Successfully.",
+                    data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
+                    {
+                        x.UserID,
+                        FullName = x.FirstName + " " + x.LastName,
+                        x.Department1.DepartmentName,
+                        x.DepartmentID,
+                        x.UserEmail,
+                        DepartmentHeadUserID = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
+                    })
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch(Exception ex)
             {
                 LogHelper.Log(Log.Event.SIGN_UP, ex.Message);
                 return ExceptionError(ex.Message, ex.StackTrace);
@@ -567,6 +609,7 @@ namespace ProcureEaseAPI.Controllers
             AspNetUserRoles userRole = new AspNetUserRoles();
             userRole.UserId = Id;
             userRole.RoleId = RoleId;
+            db.AspNetUserRoles.Add(userRole);
             AspNetUsers EditUser = db.AspNetUsers.Where(x => x.Id == Id).FirstOrDefault();
             EditUser.UserName = UserProfile.UserEmail;            
             db.SaveChanges();
@@ -575,17 +618,19 @@ namespace ProcureEaseAPI.Controllers
         protected void EditToEmployeeRole(UserProfile UserProfile, string Id)
         {
             var RoleId = db.AspNetRoles.Where(x => x.Name == "Employee").Select(x => x.Id).FirstOrDefault();
-            UserProfile EditProfile = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).FirstOrDefault();
+            UserProfile EditProfile = db.UserProfile.SingleOrDefault(x => x.UserID == UserProfile.UserID);
             EditProfile.UserEmail = UserProfile.UserEmail;
             EditProfile.DepartmentID = UserProfile.DepartmentID;
-            AspNetUserRoles role = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == Id);
-            db.AspNetUserRoles.Remove(role);
-            db.SaveChanges();
+            //AspNetUserRoles role = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == Id);
+            //db.AspNetUserRoles.Remove(role);
+            //db.SaveChanges();
             AspNetUserRoles userRole = new AspNetUserRoles();
             userRole.UserId = Id;
             userRole.RoleId = RoleId;
-            AspNetUsers EditUser = db.AspNetUsers.Where(x => x.Id == Id).FirstOrDefault();
+            db.AspNetUserRoles.Add(userRole);
+            AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
             EditUser.UserName = UserProfile.UserEmail;
+            EditUser.Email = UserProfile.UserEmail;
             db.SaveChanges();
         }
 
@@ -613,8 +658,9 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                var SubDomain = catalog.GetSubDomain();
-                var tenantId = catalog.GetTenantID();
+                string email = Request.Headers["Email"];
+                var SubDomain = catalog.GetSubDomainFromClientURL(email);
+                var tenantId = catalog.GetTenantIDFromClientURL(email);
                 if (tenantId == null)
                 {
                     Response.StatusCode = (int)HttpStatusCode.NotFound;
@@ -681,8 +727,9 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                var SubDomain = catalog.GetSubDomain();
-                var tenantId = catalog.GetTenantID();
+                string email = Request.Headers["Email"];
+                var SubDomain = catalog.GetSubDomainFromClientURL(email);
+                var tenantId = catalog.GetTenantIDFromClientURL(email);
                 if (tenantId == null)
                 {
                     Response.StatusCode = (int)HttpStatusCode.NotFound;
@@ -693,70 +740,131 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
+                UserProfile users = db.UserProfile.Find(UserProfile.UserID);
                 Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                if (UserProfile.UserID == null)
+                if (users.UserID == null)
                 {
                     LogHelper.Log(Log.Event.UPDATE_DEPARTMENT_HEAD, "UserID is Null");
                     return Json(new
                     {
                         success = false,
-                        message = "Input UserID",
+                        message = "Invalid user with UserID:" + " " + UserProfile.UserID,
                         data = new
                         { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                var CheckDepartmentHead = db.Department.Where(x => x.DepartmentHeadUserID == UserProfile.UserID).ToList();
-                if (CheckDepartmentHead != null || CheckDepartmentHead.Count > 0)
+                Department getUserDepartment = db.Department.Find(UserProfile.DepartmentID);
+                if (getUserDepartment == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Invalid department with DepartmentID:" + " " + UserProfile.DepartmentID,
+                        data = new
+                        { }
+                    }, JsonRequestBehavior.AllowGet);
+                }               
+                if (getUserDepartment.DepartmentHeadUserID == UserProfile.UserID)
                 {
                     Response.StatusCode = (int)HttpStatusCode.Conflict;
                     return Json(new
                     {
                         success = false,
-                        message = "User already head of department",
+                        message = "User already head of department" ,
                         data = new
                         { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                var CheckUserDepartmentName = db.Department.Where(x => x.DepartmentID == UserProfile.DepartmentID).Select(x => x.DepartmentName).FirstOrDefault();
+                var CheckUserDepartmentName = db.Department.Where(x => x.DepartmentID == UserProfile.DepartmentID).Select(x => x.DepartmentName).FirstOrDefault();               
                 var Id = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
-                var GetId = db.UserProfile.Where(x => x.Id == Id).ToList();
-                if (Id != null || GetId.Count > 0)
+                if (users.Id != null)
                 {
                     if (CheckUserDepartmentName == "Procurement")
                     {
-                        var RoleId = db.AspNetRoles.Where(x => x.Name == "Procurement Head").Select(x => x.Id).FirstOrDefault();
-                        Department UpdateDepartmentHead = db.Department.Where(x => x.DepartmentID == UserProfile.DepartmentID).FirstOrDefault();
-                        UpdateDepartmentHead.DepartmentHeadUserID = UserProfile.UserID;
-                        AspNetUserRoles role = db.AspNetUserRoles.SingleOrDefault(x => x.UserId== Id);
-                        db.AspNetUserRoles.Remove(role);
-                        db.SaveChanges();
-                        AspNetUserRoles userRole = new AspNetUserRoles();
-                        userRole.UserId = Id;
-                        userRole.RoleId = RoleId;
+                       
+                        var getFormerHeadOfDepartmentId = db.UserProfile.Where(x => x.UserID== getUserDepartment.DepartmentHeadUserID).Select(x => x.Id).FirstOrDefault();                                           
+                        //change former head of department to procurement officer role
+                        var procurementOfficerRoleId = db.AspNetRoles.Where(x => x.Name == "Procurement Officer").Select(x => x.Id).FirstOrDefault();
+                        var getFormerHeadOfProcurementId = db.UserProfile.Where(x => x.UserID == getUserDepartment.DepartmentHeadUserID).Select(x => x.Id).FirstOrDefault();
+                        var getFormerHeadOfProcurementRoleId = db.AspNetUserRoles.Where(x => x.UserId == getFormerHeadOfDepartmentId).Select(x => x.RoleId).FirstOrDefault();
+                        AspNetUserRoles deleteFormerHeadOfProcurementRole = db.AspNetUserRoles.FirstOrDefault(x => x.RoleId == getFormerHeadOfProcurementRoleId);
+                        db.AspNetUserRoles.Remove(deleteFormerHeadOfProcurementRole);
+                        AspNetUserRoles createRole = new AspNetUserRoles();
+                        createRole.RoleId = procurementOfficerRoleId;
+                        createRole.UserId = getFormerHeadOfDepartmentId;
+                        db.AspNetUserRoles.Add(createRole);
+                        //set user to head of procurement
+                        var roleId = db.AspNetRoles.Where(x => x.Name == "Procurement Head").Select(x => x.Id).FirstOrDefault();
+                        getUserDepartment.DepartmentHeadUserID = UserProfile.UserID;
+                        db.Entry(getUserDepartment).State = EntityState.Modified;
+                        AspNetUserRoles userRoles = db.AspNetUserRoles.Find(Id, procurementOfficerRoleId);
+                        if (userRoles == null)
+                        {
+                            AspNetUserRoles userRole = new AspNetUserRoles();
+                            userRole.UserId = Id;
+                            userRole.RoleId = roleId;
+                            db.AspNetUserRoles.Add(userRole);
+                            db.SaveChanges();
+                        }
+                        else
+                        {
+                            AspNetUserRoles removeRole = db.AspNetUserRoles.FirstOrDefault(x => x.UserId == Id);
+                            db.AspNetUserRoles.Remove(removeRole);
+                            AspNetUserRoles userRole = new AspNetUserRoles();
+                            userRole.UserId = Id;
+                            userRole.RoleId = roleId;
+                            db.AspNetUserRoles.Add(userRole);
+                            db.SaveChanges();                           
+                        }
                         db.SaveChanges();
                     }
                     else
-                    {
-                        var RoleId = db.AspNetRoles.Where(x => x.Name == "Head of Department").Select(x => x.Id).FirstOrDefault();
-                        Department UpdateDepartmentHead = db.Department.Where(x => x.DepartmentID == UserProfile.DepartmentID).FirstOrDefault();
-                        UpdateDepartmentHead.DepartmentHeadUserID = UserProfile.UserID;
-                        AspNetUserRoles role = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == Id);
-                        db.AspNetUserRoles.Remove(role);
-                        db.SaveChanges();
-                        AspNetUserRoles userRole = new AspNetUserRoles();
-                        userRole.UserId = Id;
-                        userRole.RoleId = RoleId;
+                    {                      
+                        //change former head of department to employee role
+                        var getFormerHeadOfDepartmentUserId = db.UserProfile.Where(x => x.UserID == getUserDepartment.DepartmentHeadUserID).Select(x => x.Id).FirstOrDefault();
+                        var employeeRoleId = db.AspNetRoles.Where(x => x.Name == "Employee").Select(x => x.Id).FirstOrDefault();
+                        AspNetUserRoles removeFormerHeadOfDepartmentRole = db.AspNetUserRoles.FirstOrDefault(x=>x.UserId== getFormerHeadOfDepartmentUserId);
+                        db.AspNetUserRoles.Remove(removeFormerHeadOfDepartmentRole);
+                        AspNetUserRoles createRole = new AspNetUserRoles();
+                        createRole.RoleId = employeeRoleId;
+                        createRole.UserId = getFormerHeadOfDepartmentUserId;
+                        db.AspNetUserRoles.Add(createRole);
+
+                        //set user to head of department role
+                        getUserDepartment.DepartmentHeadUserID = UserProfile.UserID;
+                        db.Entry(getUserDepartment).State = EntityState.Modified;
+                        var roleId = db.AspNetRoles.Where(x => x.Name == "Head of Department").Select(x => x.Id).FirstOrDefault();
+                        AspNetUserRoles userRoles = db.AspNetUserRoles.Find(Id,employeeRoleId);
+                        if(userRoles == null)
+                        {
+                            AspNetUserRoles userRole = new AspNetUserRoles();
+                            userRole.UserId = Id;
+                            userRole.RoleId = roleId;
+                            db.AspNetUserRoles.Add(userRole);
+                            db.SaveChanges();
+                        }
+                        else
+                        {
+                            AspNetUserRoles removeHeadOfDepartmentRole = db.AspNetUserRoles.FirstOrDefault(x => x.UserId == Id);
+                            db.AspNetUserRoles.Remove(removeHeadOfDepartmentRole);
+                            db.SaveChanges();
+                            AspNetUserRoles userRole = new AspNetUserRoles();
+                            userRole.UserId = Id;
+                            userRole.RoleId = roleId;
+                            db.AspNetUserRoles.Add(userRole);
+                            db.SaveChanges();
+                        }
                         db.SaveChanges();
                     }
                 }
-                if (Id == null)
+                else
                 {
                         Department UpdateDepartmentHead = db.Department.Where(x => x.DepartmentID == UserProfile.DepartmentID).FirstOrDefault();
                         UpdateDepartmentHead.DepartmentHeadUserID = UserProfile.UserID;
                         db.SaveChanges();
                     
                 }
-               
+                Response.StatusCode = (int)HttpStatusCode.OK;
                 return Json(new
                 {
                     success = true,
@@ -775,16 +883,18 @@ namespace ProcureEaseAPI.Controllers
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.UPDATE_DEPARTMENT_HEAD, ex.Message);
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 return ExceptionError(ex.Message, ex.StackTrace);
             }
         }
 
         [HttpGet]
-      //  [Providers.Authorize]
+         [Providers.Authorize]
         public ActionResult GetAllUsers(string departmentId = "")
         {
-            var SubDomain = catalog.GetSubDomain();
-            var tenantId = catalog.GetTenantID();
+            string email = Request.Headers["Email"];
+            var SubDomain = catalog.GetSubDomainFromClientURL(email);
+            var tenantId = catalog.GetTenantIDFromClientURL(email);
             if (tenantId == null)
             {
                 Response.StatusCode = (int)HttpStatusCode.NotFound;
@@ -847,12 +957,13 @@ namespace ProcureEaseAPI.Controllers
 
         [HttpDelete]
         [Providers.Authorize]
-        public ActionResult Delete(UserProfile UserProfile)
+        public ActionResult Delete(UserProfile userProfile)
         {
             try
             {
-                var SubDomain = catalog.GetSubDomain();
-                var tenantId = catalog.GetTenantID();
+                string email = Request.Headers["Email"];
+                var SubDomain = catalog.GetSubDomainFromClientURL(email);
+                var tenantId = catalog.GetTenantIDFromClientURL(email);
                 if (tenantId == null)
                 {
                     Response.StatusCode = (int)HttpStatusCode.NotFound;
@@ -863,7 +974,7 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                if (UserProfile.UserID==null)
+                if (userProfile.UserID==null)
             {
                 LogHelper.Log(Log.Event.DELETE_USER, "UserID is Null");
                 Response.StatusCode = (int)HttpStatusCode.BadRequest;
@@ -875,18 +986,28 @@ namespace ProcureEaseAPI.Controllers
                         {}
                     }, JsonRequestBehavior.AllowGet);
                 }
-                var userAspNetID = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
-                var getUserAspNetID = db.UserProfile.Where(x => x.Id == userAspNetID).ToList();
-                if (getUserAspNetID == null || getUserAspNetID.Count < 0)
+                var findUser = db.UserProfile.Find(userProfile.UserID);
+                if(findUser == null)
                 {
-                    var checkIfUserIsHeadOfDepartment = db.Department.Where(x => x.DepartmentHeadUserID == UserProfile.UserID).ToList();
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Invalid User with Id:" + " " + userProfile.UserID,
+                        data = new
+                        { }
+                    }, JsonRequestBehavior.AllowGet);
+                }           
+                if (findUser.Id == null)
+                {
+                    var checkIfUserIsHeadOfDepartment = db.Department.Where(x => x.DepartmentHeadUserID == userProfile.UserID).ToList();
                     if (checkIfUserIsHeadOfDepartment != null && checkIfUserIsHeadOfDepartment.Count > 0) 
                     {
-                        Department RemoveUserFromHeadOfDepartment = db.Department.SingleOrDefault(x => x.DepartmentHeadUserID == UserProfile.UserID);
+                        Department RemoveUserFromHeadOfDepartment = db.Department.SingleOrDefault(x => x.DepartmentHeadUserID == userProfile.UserID);
                         RemoveUserFromHeadOfDepartment.DepartmentHeadUserID = null;
                         db.SaveChanges();
                     }
-                    UserProfile profile = db.UserProfile.SingleOrDefault(x => x.UserID == UserProfile.UserID);
+                    UserProfile profile = db.UserProfile.SingleOrDefault(x => x.UserID == userProfile.UserID);
                     db.UserProfile.Remove(profile);
                     db.SaveChanges();                   
                     return Json(new
@@ -906,13 +1027,22 @@ namespace ProcureEaseAPI.Controllers
                 }
                 else
                 {                  
-                    UserProfile profile = db.UserProfile.SingleOrDefault(x => x.UserID == UserProfile.UserID);
+                    UserProfile profile = db.UserProfile.SingleOrDefault(x => x.UserID == findUser.UserID);
                     db.UserProfile.Remove(profile);
-                    AspNetUserRoles role = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == userAspNetID);
-                    db.AspNetUserRoles.Remove(role);
-                    AspNetUsers users = db.AspNetUsers.SingleOrDefault(x => x.Id == userAspNetID);
-                    db.AspNetUsers.Remove(users);
-                    db.SaveChanges();                   
+                    AspNetUserRoles role = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == findUser.Id);
+                    if(role == null)
+                    {
+                        AspNetUsers user = db.AspNetUsers.SingleOrDefault(x => x.Id == findUser.Id);
+                        db.AspNetUsers.Remove(user);
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+                        db.AspNetUserRoles.Remove(role);
+                        AspNetUsers users = db.AspNetUsers.SingleOrDefault(x => x.Id == findUser.Id);
+                        db.AspNetUsers.Remove(users);
+                        db.SaveChanges();
+                    }                                
                     return Json(new
                     {
                         success = true,

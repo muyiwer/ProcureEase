@@ -22,7 +22,7 @@ namespace ProcureEaseAPI.Models
         public Nullable<System.Guid> OrganizationID { get; set; }
         public Nullable<System.Guid> TenantID { get; set; }
     
-        public virtual OrganizationSettings OrganizationSettings { get; set; }
         public virtual Catalog Catalog { get; set; }
+        public virtual OrganizationSettings OrganizationSettings { get; set; }
     }
 }

@@ -22,193 +22,37 @@ namespace ProcureEaseAPI.Controllers
             return View(catalog.ToList());
         }
 
-        public Guid? GetTenantID()
-        {
-            try
+        public Guid? GetTenantIDFromClientURL(string email)
+        {         
+            List<UserProfile> users = db.UserProfile.Where(x => x.UserEmail == email).ToList();
+            if (users != null && users.Count != 0)
             {
-                string backendUrl = Request.Url.Host;               
+                return users[0].TenantID;
             }
-            catch(NullReferenceException)
-            {
-                string backendUrl = "localhost";
-                string[] hostbackendUrlParts = backendUrl.Split('.');// extract sub domain from URL
-                string backendSubDomain = hostbackendUrlParts[0];
-                List<Catalog> records = db.Catalog.Where(x => x.SubDomain == backendSubDomain).ToList();
-                if (records == null || records.Count == 0)
-                {
-                    return null;
-                }
-                else
-                {
-                    return records.Select(x => x.TenantID).First();
-                }
-            }
-           
-          
-            try
-            {
-                string checkIfClientUrl = (Request.UrlReferrer == null) ? "" : Request.UrlReferrer.ToString();
-                if (checkIfClientUrl != "")
-                {
-                    string url = Request.UrlReferrer.Host;
-                    string[] hostUrlParts = url.Split('.');// extract sub domain from URL
-                    string subDomain = hostUrlParts[0];
-                    List<Catalog> record = db.Catalog.Where(x => x.SubDomain == subDomain).ToList();
-                    if (record == null || record.Count == 0)
-                    {
-                        return null;
-                    }
-                    else
-                    {
-                        return record.Select(x => x.TenantID).First();
-                    }
-                }
-                else
-                {
-                    string backendUrl = Request.Url.Host;
-                    string[] hostbackendUrlParts = backendUrl.Split('.');// extract sub domain from URL
-                    string backendSubDomain = hostbackendUrlParts[0];
-                    List<Catalog> records = db.Catalog.Where(x => x.SubDomain == backendSubDomain).ToList();
-                    if (records == null || records.Count == 0)
-                    {
-                        return null;
-                    }
-                    else
-                    {
-                        return records.Select(x => x.TenantID).First();
-                    }
-                }
-            }
-            catch (NullReferenceException)
-            {
-                string backendUrl = Request.Url.Host;
-                string[] hostbackendUrlParts = backendUrl.Split('.');// extract sub domain from URL
-                string backendSubDomain = hostbackendUrlParts[0];
-                List<Catalog> records = db.Catalog.Where(x => x.SubDomain == backendSubDomain).ToList();
-
-                if (records == null || records.Count == 0)
-                {
-                    return null;
-                }
-                else
-                {
-                    return records.Select(x => x.TenantID).First();
-                }
-            }
-  
+            return null;
         }
 
-        public Guid? GetOrganizationID()
+
+        public Guid? GetOrganizationID(string email)
         {
-            try
+            List<UserProfile> users = db.UserProfile.Where(x => x.UserEmail == email).ToList();
+            if (users != null && users.Count != 0)
             {
-                string backendUrl = Request.Url.Host;
+                return users[0].OrganizationID;
             }
-            catch (NullReferenceException)
-            {
-                string backendUrl = "localhost";
-                string[] hostbackendUrlParts = backendUrl.Split('.');// extract sub domain from URL
-                string backendSubDomain = hostbackendUrlParts[0];
-                List<Catalog> records = db.Catalog.Where(x => x.SubDomain == backendSubDomain).ToList();
-                if (records == null || records.Count == 0)
-                {
-                    return null;
-                }
-                else
-                {
-                    return records.Select(x => x.OrganizationID).First();
-                }
-            }
-
-
-            try
-            {
-                string checkIfClientUrl = (Request.UrlReferrer == null) ? "" : Request.UrlReferrer.ToString();
-                if (checkIfClientUrl != "")
-                {
-                    string url = Request.UrlReferrer.Host;
-                    string[] hostUrlParts = url.Split('.');// extract sub domain from URL
-                    string subDomain = hostUrlParts[0];
-                    List<Catalog> record = db.Catalog.Where(x => x.SubDomain == subDomain).ToList();
-                    if (record == null || record.Count == 0)
-                    {
-                        return null;
-                    }
-                    else
-                    {
-                        return record.Select(x => x.OrganizationID).First();
-                    }
-                }
-                else
-                {
-                    string backendUrl = Request.Url.Host;
-                    string[] hostbackendUrlParts = backendUrl.Split('.');// extract sub domain from URL
-                    string backendSubDomain = hostbackendUrlParts[0];
-                    List<Catalog> records = db.Catalog.Where(x => x.SubDomain == backendSubDomain).ToList();
-                    if (records == null || records.Count == 0)
-                    {
-                        return null;
-                    }
-                    else
-                    {
-                        return records.Select(x => x.OrganizationID).First();
-                    }
-                }
-            }
-            catch (NullReferenceException)
-            {
-                string backendUrl = Request.Url.Host;
-                string[] hostbackendUrlParts = backendUrl.Split('.');// extract sub domain from URL
-                string backendSubDomain = hostbackendUrlParts[0];
-                List<Catalog> records = db.Catalog.Where(x => x.SubDomain == backendSubDomain).ToList();
-
-                if (records == null || records.Count == 0)
-                {
-                    return null;
-                }
-                else
-                {
-                    return records.Select(x => x.OrganizationID).First();
-                }
-            }
+            return null;
         }
 
 
         [HttpPost]
-        public string GetSubDomain()
+        public string GetSubDomainFromClientURL(string email)
         {
-            try
+            List<UserProfile> users = db.UserProfile.Where(x => x.UserEmail == email).ToList();
+            if (users != null && users.Count != 0 && users[0].Catalog != null)
             {
-                string Baackendurl = Request.Url.Host;
-                string[] hostUrlParts = Baackendurl.Split('.');// extract sub domain from URL
-                string backendSubDomain = hostUrlParts[0];
+                return users[0].Catalog.SubDomain;
             }
-            catch (NullReferenceException)
-            {
-                return "localhost";
-            }
-           
-            try
-            {
-                string urll = (Request.UrlReferrer == null) ? "" : Request.UrlReferrer.ToString();
-                if (urll != "")
-                {
-                    string url = Request.UrlReferrer.Host;
-                    string[] hostBackendUrlParts = url.Split('.');// extract sub domain from URL
-                    string subDomain = hostBackendUrlParts[0];
-
-                    return subDomain;
-                }
-            }
-            catch (NullReferenceException)
-            {
-                string Baackendurl = Request.Url.Host;
-                string[] hostUrlParts = Baackendurl.Split('.');// extract sub domain from URL
-                string backendSubDomain = hostUrlParts[0];
-                return backendSubDomain;
-            }
-
-            return "localhost";
+            return null;
         }
 
         public ActionResult CheckForNullTenantID(Guid? tenantId)
@@ -239,18 +83,6 @@ namespace ProcureEaseAPI.Controllers
             }
             else
                 return null;
-        }
-
-        
-        public ActionResult AddOrganization(OrganizationSettings organizationSettings)
-        {
-            Guid? GettenantId = GetTenantID();
-            var tenantId = GettenantId.Value;
-            organizationSettings.OrganizationID = Guid.NewGuid();
-            organizationSettings.TenantID = tenantId;
-            db.OrganizationSettings.Add(organizationSettings);
-            db.SaveChanges();
-            return Json(tenantId, JsonRequestBehavior.AllowGet);
         }
 
         protected override void Dispose(bool disposing)

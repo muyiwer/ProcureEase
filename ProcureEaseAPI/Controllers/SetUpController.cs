@@ -310,7 +310,7 @@ namespace ProcureEaseAPI.Controllers
                 User =  new
                 {
                     x.UserID,
-                    FullName = db.UserProfile.Where(z => z.UserID == x.DepartmentHeadUserID).Select(y => y.FirstName + " " + y.LastName).FirstOrDefault()
+                    FullName = db.UserProfile.Where(z => z.UserID == x.Department1.DepartmentHeadUserID).Select(y => y.FirstName + " " + y.LastName).FirstOrDefault()
                 },
                 Department =  new
                 {

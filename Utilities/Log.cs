@@ -61,7 +61,7 @@ namespace Utilities
             ADD_PROJECTCATEGORY,
             UPDATE_PROJECTCATEGORY,
             EDIT_DEPARTMENT,
-            DELETE_TELEPHONENUMBER,
+            ONBOARDING,
         };
     }
 }

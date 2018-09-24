@@ -232,7 +232,8 @@ namespace ProcureEaseAPI.Controllers
         public void AddTelephone(OrganizationSettings organizationSettings, params string[] TelephoneNumbers)
         {
             // TODO: Anita. check if this telephone number has already been added for this organization
-            var tenantID = catalog.GetTenantID();
+            string email = Request.Headers["Email"];
+            var tenantId = catalog.GetTenantIDFromClientURL(email);
             var TelephoneNumbersFromDB = db.TelephoneNumbers.Select(x => x.TelephoneNumber).ToList();
             var DistinctTelephoneNumbers = TelephoneNumbers.Except(TelephoneNumbersFromDB);
             foreach (var telephone in DistinctTelephoneNumbers)
@@ -241,7 +242,7 @@ namespace ProcureEaseAPI.Controllers
                 db.TelephoneNumbers.Add(new TelephoneNumbers
                 {
                     TelephoneNumberID = Guid.NewGuid(),
-                    TenantID = tenantID,
+                    TenantID = tenantId,
                     OrganizationID = organizationSettings.OrganizationID,
                     TelephoneNumber = telephone,
                     DateCreated = dt,
@@ -290,32 +291,33 @@ namespace ProcureEaseAPI.Controllers
                 TelephoneNumbers = db.TelephoneNumbers.Where(y => y.OrganizationID == x.OrganizationID).Select(y => y.TelephoneNumber)
             });
 
-            var DepartmentSetup = db.Department.Select(x => new
+            var DepartmentSetup = db.UserProfile.Where(y => y.TenantID == tenantId).Select(x => new
             {
-                Department = db.Department.Where(y => y.TenantID == tenantId).Select(y => new
+                Department = new
                 {
-                    y.DepartmentID,
-                    y.DepartmentName
-                }),
+                    x.DepartmentID,
+                    x.Department1.DepartmentName
+                },
 
-                Head = db.UserProfile.Where(y =>x.DepartmentID == x.DepartmentID && x.TenantID == tenantId).Select(y => new
+                Head = new
                 {
-                    x.DepartmentHeadUserID,
-                    FullName = y.FirstName + " " + y.LastName
-                })
+                    x.Department1.DepartmentHeadUserID,
+                    FullName = x.FirstName + " " + x.LastName
+
+                }
             });
 
-            var UserManagement = db.UserProfile.Where(y => y.TenantID == tenantId && x.UserID == x.UserID).Select(x => new
+            var UserManagement = db.UserProfile.Where(y => y.TenantID == tenantId && y.UserID == y.UserID).Select(x => new
             {
                 User =  new
                 {
-                    y.UserID,
+                    x.UserID,
                     FullName = x.FirstName + " " + x.LastName,
                 },
                 Department =  new
                 {
                     x.DepartmentID,
-                    z.Department1.DepartmentName
+                    x.Department1.DepartmentName
                 }
 
             });

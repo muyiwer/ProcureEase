@@ -22,77 +22,67 @@ namespace ProcureEaseAPI.Controllers
             return View(catalog.ToList());
         }
 
-        public Guid? GetTenantID()
-        {
-            string url = System.Web.HttpContext.Current.Request.Url.Host; // expecting format nitda.procureease.ng
-            string[] hostUrlParts = url.Split('.');// extract sub domain from URL
-            string subDomain = hostUrlParts[0];
-            List<Catalog> records = db.Catalog.Where(x => x.SubDomain == subDomain).ToList();
-            if (records == null || records.Count == 0)
+        public Guid? GetTenantIDFromClientURL(string email)
+        {         
+            List<UserProfile> users = db.UserProfile.Where(x => x.UserEmail == email).ToList();
+            if (users != null && users.Count != 0)
             {
-                CheckForNullTenantID(records);
-                return null;
+                return users[0].TenantID;
             }
-            else
-            {
-                return records.Select(x => x.TenantID).First();
-            }
+            return null;
         }
 
-        public Guid? GetOrganizationID()
-        {
 
-            string url = System.Web.HttpContext.Current.Request.Url.Host; // expecting format nitda.procureease.ng
-            string[] hostUrlParts = url.Split('.');// extract sub domain from URL
-            string subDomain = hostUrlParts[0];
-            List<Catalog> records = db.Catalog.Where(x => x.SubDomain == subDomain).ToList();
-            if (records == null || records.Count == 0)
-            {
-                CheckForNullTenantID(records);
-                return null;
-            }
-            else
-            {
-                return records.Select(x => x.OrganizationID).First();
-            }
-        }
-
-        public ActionResult CheckForNullTenantID(List<Catalog> records)
+        public Guid? GetOrganizationID(string email)
         {
-            if(records == null)
+            List<UserProfile> users = db.UserProfile.Where(x => x.UserEmail == email).ToList();
+            if (users != null && users.Count != 0)
             {
-                return Json(new
-                {
-                    success = false,
-                    message = "TenantId is null",
-                    data = new { }   
-                }, JsonRequestBehavior.AllowGet);
+                return users[0].OrganizationID;
             }
             return null;
         }
 
 
         [HttpPost]
-        public ActionResult Add(Catalog catalog)
+        public string GetSubDomainFromClientURL(string email)
         {
-            string url = System.Web.HttpContext.Current.Request.Url.Host; // expecting format nitda.procureease.ng
-            string[] hostUrlParts = url.Split('.');// extract sub domain from URL
-            string subDomain = hostUrlParts[0];
-            catalog.TenantID = Guid.NewGuid();
-            catalog.SubDomain = subDomain;
-            db.Catalog.Add(catalog);
-            db.SaveChanges();
-            return Json(subDomain, JsonRequestBehavior.AllowGet);
+            List<UserProfile> users = db.UserProfile.Where(x => x.UserEmail == email).ToList();
+            if (users != null && users.Count != 0 && users[0].Catalog != null)
+            {
+                return users[0].Catalog.SubDomain;
+            }
+            return null;
         }
-        public ActionResult AddOrganization(OrganizationSettings organizationSettings)
+
+        public ActionResult CheckForNullTenantID(Guid? tenantId)
         {
-            Guid? GettenantId = GetTenantID();
-            var tenantId = GettenantId.Value;
-            organizationSettings.OrganizationID = Guid.NewGuid();
-            organizationSettings.TenantID = tenantId;
-            db.OrganizationSettings.Add(organizationSettings);
-            db.SaveChanges();
-            return Json(tenantId, JsonRequestBehavior.AllowGet);
+            if (tenantId == null)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "TenantId is null",
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
+            else
+                return null;
+        }
+
+        public ActionResult CheckForNullOrganizationID(Guid? OrganizationId)
+        {
+            if (OrganizationId == null)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "OrganizationId is null",
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
+            else
+                return null;
         }
 
         protected override void Dispose(bool disposing)

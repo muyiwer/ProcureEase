@@ -59,7 +59,19 @@ namespace ProcureEaseAPI
                 _userManager = value;
             }
         }
-        public async Task<ApplicationUser> RegisterUser(AddUserModel userModel, string UserDepartment)
+        public async Task<ApplicationUser> RegisterAdmin(AddUserModel userModel)
+        {
+            var _userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_ctx));
+            ApplicationUser user = new ApplicationUser
+            {
+                UserName = userModel.UserName,
+                Email = userModel.Email,
+                EmailConfirmed = true
+            };
+            var result = await _userManager.CreateAsync(user, userModel.Password);
+            return user;
+        }
+            public async Task<ApplicationUser> RegisterUser(AddUserModel userModel, string UserDepartment)
         {
             var _userManager =  new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_ctx));
             ApplicationUser user = new ApplicationUser

@@ -291,19 +291,17 @@ namespace ProcureEaseAPI.Controllers
                 TelephoneNumbers = db.TelephoneNumbers.Where(y => y.OrganizationID == x.OrganizationID).Select(y => y.TelephoneNumber)
             });
 
-            var DepartmentSetup = db.UserProfile.Where(y => y.TenantID == tenantId).Select(x => new
+            var DepartmentSetup = db.Department.Where(x => x.TenantID == tenantId).Select(x => new
             {
                 Department = new
                 {
                     x.DepartmentID,
-                    x.Department1.DepartmentName
+                    x.DepartmentName
                 },
-
                 Head = new
                 {
-                    x.Department1.DepartmentHeadUserID,
-                    FullName = x.FirstName + " " + x.LastName
-
+                    DepartmentHeadStatus = db.UserProfile.Where(y => x.DepartmentHeadUserID == y.UserID).Select(y => (true) || (false)).FirstOrDefault(),
+                    FullName = db.UserProfile.Where(z => z.UserID == x.DepartmentHeadUserID).Select(y => y.FirstName + " " + y.LastName).FirstOrDefault()
                 }
             });
 
@@ -312,7 +310,7 @@ namespace ProcureEaseAPI.Controllers
                 User =  new
                 {
                     x.UserID,
-                    FullName = x.FirstName + " " + x.LastName,
+                    FullName = db.UserProfile.Where(z => z.UserID == x.DepartmentHeadUserID).Select(y => y.FirstName + " " + y.LastName).FirstOrDefault()
                 },
                 Department =  new
                 {

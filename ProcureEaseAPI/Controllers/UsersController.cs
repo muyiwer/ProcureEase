@@ -984,7 +984,7 @@ namespace ProcureEaseAPI.Controllers
                         x.Department1.DepartmentName,
                         x.DepartmentID,
                         x.UserEmail,
-                        HeadOfDepartment = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
+                        DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
                     })
                 }, JsonRequestBehavior.AllowGet);
             } else
@@ -1015,7 +1015,7 @@ namespace ProcureEaseAPI.Controllers
                         x.Department1.DepartmentName,
                         x.DepartmentID,
                         x.UserEmail,
-                        HeadOfDepartment = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
+                        DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
                     })
                 }, JsonRequestBehavior.AllowGet);
             }

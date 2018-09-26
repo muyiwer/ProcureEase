@@ -119,8 +119,6 @@ namespace ProcureEaseAPI.Controllers
        [Providers.Authorize]
        public async Task<ActionResult> Add(UserProfile UserProfile)
         {
-            // TODO: Muyiwa, add implementation to get the authorized user's email from the request header using Request.Headers["email"]
-            // TODO: Muyiwa, change the GetTenantIDFromClientURL() implementation to GetTenantIDForUser(email)
             try
             {
                 string email = Request.Headers["Email"];

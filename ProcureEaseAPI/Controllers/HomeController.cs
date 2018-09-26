@@ -206,6 +206,12 @@ namespace ProcureEaseAPI.Controllers
                 AuthRepository Repository = new AuthRepository();
                 ApplicationUser User = await Repository.RegisterAdmin(UserModel);
 
+                var RoleId = db.AspNetRoles.Where(x => x.Name == "MDA Administrator").Select(x => x.Id).FirstOrDefault();
+                AspNetUserRoles userRole = new AspNetUserRoles();
+                userRole.UserId = User.Id;
+                userRole.RoleId = RoleId;
+                db.AspNetUserRoles.Add(userRole);
+
                 var GetAdministratorFirstName = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.AdministratorFirstName).FirstOrDefault();
                 var GetAdministratorLastName = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.AdministratorLastName).FirstOrDefault();
                 UserProfile userProfile = new UserProfile();

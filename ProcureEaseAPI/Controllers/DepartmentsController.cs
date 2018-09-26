@@ -41,6 +41,7 @@ namespace ProcureEaseAPI.Controllers
         [Providers.Authorize]
         public ActionResult Index()
         {
+
             string email = Request.Headers["Email"];
             var tenantId = catalog.GetTenantIDFromClientURL(email);
             try

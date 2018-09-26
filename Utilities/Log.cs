@@ -63,6 +63,7 @@ namespace Utilities
             EDIT_DEPARTMENT,
             ONBOARDING,
             DELETE_DEPARTMENT,
+            DELETE_TELEPHONENUMBER,
         };
     }
 }

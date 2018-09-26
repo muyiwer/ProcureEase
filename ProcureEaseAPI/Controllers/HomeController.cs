@@ -178,7 +178,7 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 DateTime dt = DateTime.Now;
-                var CurrentTime = dt.AddYears(1);
+                var CurrentTime = DateTime.Now.AddYears(1);
                 Guid TenantID = Guid.NewGuid();
                 var GetEmail = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.AdministratorEmail).FirstOrDefault();
                 var GetRequestID = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.RequestID).FirstOrDefault();
@@ -203,32 +203,33 @@ namespace ProcureEaseAPI.Controllers
                     Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     return Error("Onboarding has been done for" + " " + OrganizationNameInFull + " " + "by the Email" + " " + AdministratorEmail);
                 }
+
                 else
                 {
                     Catalog Tenant = new Catalog();
                     Tenant.TenantID = TenantID;
                     Tenant.RequestID = GetRequestID;
                     Tenant.IsDemo = true;
-                    Tenant.IsActive = true;
+                    Tenant.IsActive = false;
                     Tenant.DateCreated = dt;
                     Tenant.DateModified = dt;
                     db.Catalog.Add(Tenant);
                     db.SaveChanges();
                 }
 
-                var UpdateRequestForDemo = db.RequestForDemo.FirstOrDefault(o => o.RequestID == GetRequestID);
-                UpdateRequestForDemo.DemoStartDate = dt;
-                UpdateRequestForDemo.DemoEndDate = CurrentTime;
-                db.RequestForDemo.Add(UpdateRequestForDemo);
-
                 Guid OrganizationID = Guid.NewGuid();
                 SaveTenantsRequestOnOrganizationSettings(GetRequestID, TenantID, OrganizationID);
 
                 var SubDomain = db.RequestForDemo.Where(x=> x.RequestID == GetRequestID).Select(x => x.OrganizationShortName).FirstOrDefault();
-                var UpdateCatalog = db.Catalog.FirstOrDefault(o => o.TenantID == TenantID);
+                var UpdateCatalog = db.Catalog.Find(TenantID);
                 UpdateCatalog.OrganizationID = OrganizationID;
                 UpdateCatalog.SubDomain = SubDomain;
                 UpdateCatalog.DateModified = dt;
+
+                var UpdateRequestForDemo = db.RequestForDemo.Find(GetRequestID);
+                UpdateRequestForDemo.DemoStartDate = dt;
+                UpdateRequestForDemo.DemoEndDate = CurrentTime;
+                db.SaveChanges();
 
                 AddUserModel UserModel = new AddUserModel
                 {
@@ -258,7 +259,6 @@ namespace ProcureEaseAPI.Controllers
                 userProfile.LastName = GetAdministratorLastName;
                 userProfile.DateCreated = dt;
                 db.UserProfile.Add(userProfile);
-
                 db.SaveChanges();
 
                 SaveDefaultSouceOfFundRecord(TenantID, OrganizationID);
@@ -451,7 +451,7 @@ namespace ProcureEaseAPI.Controllers
         }
         #endregion
 
-        #region ProcessOnboarding
+        #region ProcessActivatateMDAAccount
         [HttpPost]
         public ActionResult Activate(string AdministratorEmail)
         {
@@ -459,63 +459,149 @@ namespace ProcureEaseAPI.Controllers
             {
                 DateTime dt = DateTime.Now;
                 var CurrentTime = dt.AddYears(1);
-                Guid TenantID = Guid.NewGuid();
-                var GetEmail = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.AdministratorEmail).FirstOrDefault();
+
+                string email = Request.Headers["Email"];
+                var tenantId = catalog.GetTenantIDFromClientURL(email);
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+
+                var GetOrganizationID = db.OrganizationSettings.Where(x => x.OrganizationEmail == AdministratorEmail).Select(x => x.OrganizationID);
+                var Tenant = db.Catalog.Find(GetOrganizationID);
+                Tenant.IsDemo = false;
+                Tenant.IsActive = true;
+                Tenant.DateModified = dt;
+
                 var GetRequestID = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.RequestID).FirstOrDefault();
-
-                if (AdministratorEmail == null)
-                {
-                    LogHelper.Log(Log.Event.ONBOARDING, "AdministratorEmail is null");
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    return Error("Please Input AdministratorEmail");
-                }
-                if (GetEmail == null)
-                {
-                    LogHelper.Log(Log.Event.ONBOARDING, AdministratorEmail + "has not requested for a demo," + " " + "Email does not exist.");
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    return Error(AdministratorEmail + " " + "has not requested for a Demo");
-                }
-                var OrganizationNameInFull = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.OrganizationFullName).FirstOrDefault();
-                var ThisTenant = db.Catalog.Where(x => x.RequestID == GetRequestID).Select(x => x.RequestID).FirstOrDefault();
-                if (ThisTenant != null)
-                {
-                    LogHelper.Log(Log.Event.ONBOARDING, "Onboarding has been done for" + " " + OrganizationNameInFull + " " + "by the Email" + " " + AdministratorEmail);
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    return Error("Onboarding has been done for" + " " + OrganizationNameInFull + " " + "by the Email" + " " + AdministratorEmail);
-                }
-                else
-                {
-                    Catalog Tenant = new Catalog();
-                    Tenant.TenantID = TenantID;
-                    Tenant.RequestID = GetRequestID;
-                    Tenant.IsDemo = true;
-                    Tenant.IsActive = true;
-                    Tenant.DateCreated = dt;
-                    Tenant.DateModified = dt;
-                    db.Catalog.Add(Tenant);
-                    db.SaveChanges();
-                }
-
-                var UpdateRequestForDemo = db.RequestForDemo.FirstOrDefault(o => o.RequestID == GetRequestID);
-                UpdateRequestForDemo.DemoStartDate = dt;
+                var UpdateRequestForDemo = db.RequestForDemo.Find(GetRequestID);
                 UpdateRequestForDemo.DemoEndDate = CurrentTime;
-                db.RequestForDemo.Add(UpdateRequestForDemo);
-
-                Guid OrganizationID = Guid.NewGuid();
-                SaveTenantsRequestOnOrganizationSettings(GetRequestID, TenantID, OrganizationID);
-
-                var SubDomain = db.RequestForDemo.Where(x => x.RequestID == GetRequestID).Select(x => x.OrganizationShortName).FirstOrDefault();
-                var UpdateCatalog = db.Catalog.FirstOrDefault(o => o.TenantID == TenantID);
-                UpdateCatalog.OrganizationID = OrganizationID;
-                UpdateCatalog.SubDomain = SubDomain;
-                UpdateCatalog.DateModified = dt;
+                db.SaveChanges();
 
                 return Json(new
                 {
                     success = true,
-                    message = "Organization Onboarded Successfully",
-                    data = new { }
+                    message = "Organization Account has been Activated Successfully",
+                    data = db.Catalog.Select(x => new
+                    {
+                        x.IsDemo,
+                        x.IsActive
+                    })
                 });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(Log.Event.ONBOARDING, ex.Message);
+                return Json(new
+                {
+                    success = false,
+                    message = "" + ex.Message,
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        #endregion
+
+        #region ProcessDeActivatateMDAAccount
+        [HttpPost]
+        public ActionResult DeActivate(string AdministratorEmail)
+        {
+            try
+            {
+                DateTime dt = DateTime.Now;
+                var CurrentTime = dt.AddYears(1);
+                string email = Request.Headers["Email"];
+                var tenantId = catalog.GetTenantIDFromClientURL(email);
+
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+
+                var GetOrganizationID = db.OrganizationSettings.Where(x => x.OrganizationEmail == AdministratorEmail).Select(x => x.OrganizationID);
+                var Tenant = db.Catalog.Find(GetOrganizationID);
+                Tenant.IsActive = false;
+                Tenant.DateModified = dt;
+
+                db.SaveChanges();
+
+                return Json(new
+                {
+                    success = true,
+                    message = "Organization Account has been Deactivated",
+                    data = db.Catalog.Select(x => new
+                    {
+                        x.IsDemo,
+                        x.IsActive
+                    })
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(Log.Event.ONBOARDING, ex.Message);
+                return Json(new
+                {
+                    success = false,
+                    message = "" + ex.Message,
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        #endregion
+
+        #region ProcessGetMDA_AccountStatus
+        public ActionResult MDA_AccountStatus()
+        {
+            try
+            {
+                DateTime CurrentTimeNow = new DateTime();
+                CurrentTimeNow = DateTime.Now;
+                string email = Request.Headers["Email"];
+                var tenantId = catalog.GetTenantIDFromClientURL(email);
+                //if (tenantId == null)
+                //{
+                //    return Json(new
+                //    {
+                //        success = false,
+                //        message = "TenantId is null",
+                //        data = new { }
+                //    }, JsonRequestBehavior.AllowGet);
+                //}
+                RequestForDemo request = new RequestForDemo();
+                var GetRequestID = db.RequestForDemo.Where(x => x.DemoEndDate <= CurrentTimeNow).Select(x => x.RequestID).FirstOrDefault();
+                //var DemoEndDate = db.RequestForDemo.Where(z=> z.OrganizationFullName == z.OrganizationNameInFull).Select(z=> z.DemoEndDate - EndDate).FirstOrDefault()
+                DateTime StartDate = new DateTime();
+                //StartDate = DemoEndDate.Value;
+                DateTime EndDate = CurrentTimeNow;
+                //DateTime StartDate = new DateTime(2019, 6, 14);
+                //DateTime EndDate = new DateTime(2009, 12, 14);
+                TimeSpan difference = StartDate - EndDate;
+                var diii = difference.Days;
+                return Json(new
+                {
+                    success = true,
+                    message = "Ok",
+                    data = db.OrganizationSettings.Select(x => new
+                    {
+                        x.OrganizationID,
+                        x.OrganizationNameInFull,
+                        x.OrganizationNameAbbreviation,
+                        IsDemo = db.Catalog.Where(y=> y.OrganizationID == x.OrganizationID).Select(y=> y.IsDemo).FirstOrDefault(),
+                        IsActive = db.Catalog.Where(y => y.OrganizationID == x.OrganizationID).Select(y => y.IsActive).FirstOrDefault(),
+                        DemoDaysLeft = DbFunctions.DiffDays(EndDate, db.RequestForDemo.Where(z=> z.OrganizationFullName == x.OrganizationNameInFull).Select(z=> z.DemoEndDate).FirstOrDefault()) + " days left",
+                        DemoDaysStatus = DbFunctions.DiffDays(EndDate, db.RequestForDemo.Where(z => z.OrganizationFullName == x.OrganizationNameInFull).Select(z => z.DemoEndDate).FirstOrDefault())
+                    })
+                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {

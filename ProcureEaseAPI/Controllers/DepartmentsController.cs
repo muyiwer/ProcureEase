@@ -15,43 +15,12 @@ namespace ProcureEaseAPI.Controllers
     public class DepartmentsController : Controller
     {
         private ProcureEaseEntities db = new ProcureEaseEntities();
-        
-
-        private ActionResult Error(string message)
-        {
-            return Json(new
-            {
-                success = false,
-                message = message,
-                data = new { }
-            }, JsonRequestBehavior.AllowGet);
-        }
-
-        private ActionResult ExceptionError(string message, string StackTrace)
-        {
-            return Json(new
-            {
-                success = false,
-                message = message,
-                data = new { InternalError = StackTrace }
-            }, JsonRequestBehavior.AllowGet);
-        }
 
         // GET: Departments
         public ActionResult Index()
         {
-            Guid? tenantId = catalog.GetTenantID();
             try
             {
-                if (tenantId == null)
-                {
-                    return Json(new
-                    {
-                        success = false,
-                        message = "TenantId is null",
-                        data = new { }
-                    }, JsonRequestBehavior.AllowGet);
-                }
                 Department department = new Department();
                 var Departments = db.Department.Select(x => new
                 {

@@ -14,6 +14,7 @@ namespace ProcureEaseAPI.Controllers
     public class ProjectCategoriesController : Controller
     {
         private ProcureEaseEntities db = new ProcureEaseEntities();
+        CatalogsController catalog = new CatalogsController();
 
         // GET: ProjectCategories
         public ActionResult Index()
@@ -122,7 +123,8 @@ namespace ProcureEaseAPI.Controllers
         [HttpPost]
         public ActionResult Edit(ProjectCategoryOrganizationSettings projectCategoryOrganizationSettings, bool EnableProjectCategory)
         {
-            Guid? tenantId = catalog.GetTenantID();
+            string email = Request.Headers["Email"];
+            var tenantId = catalog.GetTenantIDFromClientURL(email);
             try
             {
                 if (tenantId == null)

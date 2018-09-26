@@ -118,10 +118,10 @@ namespace ProcureEaseAPI.Controllers
         #region ProcessSendMailToTechspecialist
         public async Task SendMailToTechspecialist(RequestForDemo requestForDemo)
         {
-            var RecipientEmail = requestForDemo.AdministratorEmail;
+            var RecipientEmail = "annieajeks@gmail.com";
             string Subject = "Request For Demo";
-            string Body = new EmailTemplateHelper().GetTemplateContent("RequestForDemoTemplate_User");
-            string newTemplateContent = string.Format(Body, "annieajeks@gmail.com");
+            string Body = new EmailTemplateHelper().GetTemplateContent("RequestForDemoTemplate_Techspecialist");
+            string newTemplateContent = string.Format(Body, requestForDemo.AdministratorEmail);
             //newTemplateContent = newTemplateContent.Replace("[RecipientEmail]", RecipientEmail.Trim());
             Message message = new Message(RecipientEmail, Subject, newTemplateContent);
             EmailHelper emailHelper = new EmailHelper();
@@ -133,13 +133,41 @@ namespace ProcureEaseAPI.Controllers
         public async Task SendMailToUser(RequestForDemo requestForDemo)
         {
             var RecipientEmail = requestForDemo.AdministratorEmail;
-            string Subject = "Request For Demo";
-            string Body = new EmailTemplateHelper().GetTemplateContent("RequestForDemoTemplate_Techspecialist");
-            string newTemplateContent = string.Format(Body, requestForDemo.AdministratorEmail);
+            string Subject = "Techspecialist - ProcureEase App";
+            string Body = new EmailTemplateHelper().GetTemplateContent("RequestForDemoTemplate_User");
+            string newTemplateContent = string.Format(Body, requestForDemo.AdministratorFirstName);
             //newTemplateContent = newTemplateContent.Replace("[RecipientEmail]", RecipientEmail.Trim());
             Message message = new Message(RecipientEmail, Subject, newTemplateContent);
             EmailHelper emailHelper = new EmailHelper();
             await emailHelper.AddEmailToQueue(message);
+        }
+        #endregion
+
+        #region SendMailToAdministrator
+        public async Task SendMailToAdministrator(string AdministratorEmail, string Password)
+        {
+            var AdministratorFirstName = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.AdministratorFirstName).FirstOrDefault();
+            var OrganizationFullName = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.OrganizationFullName).FirstOrDefault();
+            var OrganizationShortName = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.OrganizationShortName).FirstOrDefault();
+            var GetAdministratorPhoneNumber = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.AdministratorPhoneNumber).FirstOrDefault();
+            string Subject = "Techspecialist - ProcureEase App";
+            string Body = new EmailTemplateHelper().GetTemplateContent("AdministratorSignUpTemplate");
+            try
+            {
+                var clientUrl = Request.UrlReferrer.ToString();
+                string newTemplateContent = string.Format(Body, "http://" + clientUrl + ".procureease.com.ng", AdministratorFirstName, OrganizationFullName, Password);
+                Message message = new Message(AdministratorEmail, Subject, newTemplateContent);
+                EmailHelper emailHelper = new EmailHelper();
+                await emailHelper.AddEmailToQueue(message);
+            }
+            catch (NullReferenceException)
+            {
+                var backendUrl = System.Web.HttpContext.Current.Request.Url.Host;
+                string newTemplateContent = string.Format(Body, "http://" + backendUrl + ".procureease.com.ng", AdministratorFirstName, OrganizationFullName, Password);
+                Message message = new Message(AdministratorEmail, Subject, newTemplateContent);
+                EmailHelper emailHelper = new EmailHelper();
+                await emailHelper.AddEmailToQueue(message);
+            }
         }
         #endregion
 
@@ -153,6 +181,7 @@ namespace ProcureEaseAPI.Controllers
                 Guid TenantID = Guid.NewGuid();
                 var GetEmail = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.AdministratorEmail).FirstOrDefault();
                 var GetRequestID = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.RequestID).FirstOrDefault();
+                await SendMailToAdministrator(AdministratorEmail, Password);
                 if (AdministratorEmail == null)
                 {
                     LogHelper.Log(Log.Event.ONBOARDING, "AdministratorEmail is null");
@@ -226,6 +255,7 @@ namespace ProcureEaseAPI.Controllers
                 userProfile.DateCreated = dt;
                 db.UserProfile.Add(userProfile);
                 db.SaveChanges();
+
 
                 return Json(new
                 {

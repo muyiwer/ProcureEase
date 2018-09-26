@@ -185,11 +185,23 @@ namespace ProcureEaseAPI.Controllers
                 string RecipientEmail = UserProfile.UserEmail;
                 string Subject = "ProcureEase SignUp Invitation";
                 string Body = new EmailTemplateHelper().GetTemplateContent("SignUpTemplate");
-                var url = System.Web.HttpContext.Current.Request.Url.Host;
-                string newTemplateContent = string.Format(Body," " + "http://" + url + "/#/signup/" + UserProfile.UserEmail);
-                Message message = new Message( RecipientEmail,Subject, newTemplateContent);
-                EmailHelper emailHelper = new EmailHelper();
-                await emailHelper.AddEmailToQueue(message);
+                try
+                {
+                   var clientUrl = Request.UrlReferrer.ToString();
+                    string newTemplateContent = string.Format(Body, " " + "http://" + clientUrl + ".procureease.com.ng" + "/#/signup/" + UserProfile.UserEmail);
+                    Message message = new Message(RecipientEmail, Subject, newTemplateContent);
+                    EmailHelper emailHelper = new EmailHelper();
+                    await emailHelper.AddEmailToQueue(message);
+                }
+                catch (NullReferenceException)
+                {
+                    var backendUrl = System.Web.HttpContext.Current.Request.Url.Host;
+                    string newTemplateContent = string.Format(Body, " " + "http://" + backendUrl + ".procureease.com.ng" + "/#/signup/" + UserProfile.UserEmail);
+                    Message message = new Message(RecipientEmail, Subject, newTemplateContent);
+                    EmailHelper emailHelper = new EmailHelper();
+                    await emailHelper.AddEmailToQueue(message);
+                }              
+                
                 return Json(new
                 {
                     success = true,
@@ -253,12 +265,24 @@ namespace ProcureEaseAPI.Controllers
                 string RecipientEmail = UserEmail;
                 string Subject = "Password Reset";
                 string Body = new EmailTemplateHelper().GetTemplateContent("PasswordResetTemplate");
-                var url = System.Web.HttpContext.Current.Request.Url.Host;
-                string newTemplateContent = string.Format(Body,"http://"+ url + "/#/resetpassword/"+UserEmail +"/"+ PasswordToken);
-                Message message = new Message(RecipientEmail, Subject, newTemplateContent);
-                EmailHelper emailHelper = new EmailHelper();
-                await emailHelper.AddEmailToQueue(message);
-                return Json(new
+                try
+                {
+                    var clientUrl = Request.UrlReferrer.ToString();
+                    string newTemplateContent = string.Format(Body, "http://" + clientUrl + ".procureease.com.ng" + "/#/resetpassword/" + UserEmail + "/" + PasswordToken);
+                    Message message = new Message(RecipientEmail, Subject, newTemplateContent);
+                    EmailHelper emailHelper = new EmailHelper();
+                    await emailHelper.AddEmailToQueue(message);
+                }
+                catch (NullReferenceException)
+                {
+                    var backendUrl = System.Web.HttpContext.Current.Request.Url.Host;
+                    string newTemplateContent = string.Format(Body, "http://" + backendUrl + "/#/resetpassword/" + UserEmail + "/" + PasswordToken);
+                    Message message = new Message(RecipientEmail, Subject, newTemplateContent);
+                    EmailHelper emailHelper = new EmailHelper();
+                    await emailHelper.AddEmailToQueue(message);
+                }
+
+                 return Json(new
                 {
                     success = true,
                     message = "Please check your email to reset password.",

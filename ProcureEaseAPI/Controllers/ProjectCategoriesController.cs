@@ -14,6 +14,7 @@ namespace ProcureEaseAPI.Controllers
     public class ProjectCategoriesController : Controller
     {
         private ProcureEaseEntities db = new ProcureEaseEntities();
+        private CatalogsController catalog = new CatalogsController();
 
         // GET: ProjectCategories
         public ActionResult Index()

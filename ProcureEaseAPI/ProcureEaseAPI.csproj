@@ -222,7 +222,6 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\OrganizationSettingsController.cs" />
     <Compile Include="Controllers\ProcureController.cs" />
-    <Compile Include="Controllers\ProcurementMethodsController.cs" />
     <Compile Include="Controllers\ProcurementsController.cs" />
     <Compile Include="Controllers\RequestForDemoController.cs" />
     <Compile Include="Controllers\SetUpController.cs" />

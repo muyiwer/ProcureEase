@@ -123,7 +123,7 @@ namespace ProcureEaseAPI.Controllers
         public ActionResult Edit(ProcurementMethodOrganizationSettings procurementMethodOrganizationSettings, bool EnableProcurementMethod)
         {
             string email = Request.Headers["Email"];
-            Guid? tenantId = catalog.GetTenantIDFromClientURL(email);
+            var tenantId = catalog.GetTenantIDFromClientURL(email);
             try
             {
                 if (tenantId == null)

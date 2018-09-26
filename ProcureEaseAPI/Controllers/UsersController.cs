@@ -206,15 +206,20 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = true,
                     message = "User added successfully.",
-                    data = db.UserProfile.Where(x => x.Catalog.TenantID == tenantId).Select(x => new
+                    data = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
                     {
-                        x.UserID,
-                        FullName = x.FirstName + " " + x.LastName,
-                        x.Department1.DepartmentName,
-                        x.DepartmentID,
-                        x.UserEmail,
-                        DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
-                    })
+                        User = new
+                        {
+                            x.UserID,
+                            FullName = x.FirstName + " " + x.LastName
+                        },
+                        Department = new
+                        {
+                            x.DepartmentID,
+                            x.Department1.DepartmentName
+                        }
+
+                    }),
                 }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -288,13 +293,18 @@ namespace ProcureEaseAPI.Controllers
                     message = "Please check your email to reset password.",
                     data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                     {
-                        x.UserID,
-                        FullName = x.FirstName + " " + x.LastName,
-                        x.Department1.DepartmentName,
-                        x.DepartmentID,
-                        x.UserEmail,
-                        DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
-                    })
+                        User = new
+                        {
+                            x.UserID,
+                            FullName = x.FirstName + " " + x.LastName
+                        },
+                        Department = new
+                        {
+                            x.DepartmentID,
+                            x.Department1.DepartmentName
+                        }
+
+                    }),
                 }, JsonRequestBehavior.AllowGet);
             }
             catch(Exception ex)
@@ -344,15 +354,20 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = true,
                     message = "Password reset successful.",
-                    data = db.UserProfile.Where(x =>x.Catalog.SubDomain == SubDomain).Select(x => new
+                    data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                     {
-                        x.UserID,
-                        FullName = x.FirstName + " " + x.LastName,
-                        x.Department1.DepartmentName,
-                        x.DepartmentID,
-                        x.UserEmail,
-                        DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
-                    })
+                        User = new
+                        {
+                            x.UserID,
+                            FullName = x.FirstName + " " + x.LastName
+                        },
+                        Department = new
+                        {
+                            x.DepartmentID,
+                            x.Department1.DepartmentName
+                        }
+
+                    }),
                 }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -434,13 +449,18 @@ namespace ProcureEaseAPI.Controllers
                     message = "Sign up successful.",
                     data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                     {
-                        x.UserID,
-                        FullName = x.FirstName + " " + x.LastName,
-                        x.Department1.DepartmentName,
-                        x.DepartmentID,
-                        x.UserEmail,
-                        DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
-                    })
+                        User = new
+                        {
+                            x.UserID,
+                            FullName = x.FirstName + " " + x.LastName
+                        },
+                        Department = new
+                        {
+                            x.DepartmentID,
+                            x.Department1.DepartmentName
+                        }
+
+                    }),
                 }, JsonRequestBehavior.AllowGet);
             }
             catch(Exception ex)
@@ -544,7 +564,8 @@ namespace ProcureEaseAPI.Controllers
                     }
                     if (findDepartment.DepartmentName != "Procurement" && findDepartment.DepartmentHeadUserID != userProfile.UserID)
                     {
-                        EditToEmployeeRole(userProfile, Id);                    
+                        EditToEmployeeRole(userProfile, Id);
+                        return Json("good", JsonRequestBehavior.AllowGet);
                     }
                     if (findDepartment.DepartmentName != "Procurement" && findDepartment.DepartmentHeadUserID == userProfile.UserID)
                     {
@@ -552,7 +573,6 @@ namespace ProcureEaseAPI.Controllers
                     }
                     Response.StatusCode = (int)HttpStatusCode.OK;                  
                 }
-                Response.StatusCode = (int)HttpStatusCode.OK;
                 return Json(new
                 {
                     success = true,
@@ -564,7 +584,7 @@ namespace ProcureEaseAPI.Controllers
                         x.Department1.DepartmentName,
                         x.DepartmentID,
                         x.UserEmail,
-                        DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
+                        DepartmentHeadUserID = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
                     })
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -589,32 +609,16 @@ namespace ProcureEaseAPI.Controllers
             UserProfile EditProfile = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).FirstOrDefault();
             EditProfile.UserEmail = UserProfile.UserEmail;
             EditProfile.DepartmentID = UserProfile.DepartmentID;
-            var getUserRoleId = db.AspNetUserRoles.Where(x => x.UserId == Id).Select(x => x.RoleId);
-            AspNetUserRoles role = db.AspNetUserRoles.Find(Id, getUserRoleId);
-            if (role == null)
-            {
-                AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
-                EditUser.UserName = UserProfile.UserEmail;
-                EditUser.Email = UserProfile.UserEmail;
-                AspNetUserRoles userRole = new AspNetUserRoles();
-                userRole.UserId = Id;
-                userRole.RoleId = RoleId;
-                db.AspNetUserRoles.Add(userRole);
-                db.SaveChanges();
-            }
-            else
-            {
-                AspNetUserRoles roles = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == Id);
-                db.AspNetUserRoles.Remove(role);
-                AspNetUserRoles userRole = new AspNetUserRoles();
-                userRole.UserId = Id;
-                userRole.RoleId = RoleId;
-                db.AspNetUserRoles.Add(userRole);
-                AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
-                EditUser.UserName = UserProfile.UserEmail;
-                EditUser.Email = UserProfile.UserEmail;
-                db.SaveChanges();
-            }
+            AspNetUserRoles role = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == Id);
+            db.AspNetUserRoles.Remove(role);
+            db.SaveChanges();
+            AspNetUserRoles userRole = new AspNetUserRoles();
+            userRole.UserId = Id;
+            userRole.RoleId = RoleId;
+            db.AspNetUserRoles.Add(userRole);
+            AspNetUsers EditUser = db.AspNetUsers.Where(x => x.Id == Id).FirstOrDefault();
+            EditUser.UserName = UserProfile.UserEmail;
+            db.SaveChanges();
         }
 
         protected void EditToHeadOfProcumentRole(UserProfile UserProfile, string Id)
@@ -623,32 +627,16 @@ namespace ProcureEaseAPI.Controllers
             UserProfile EditProfile = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).FirstOrDefault();
             EditProfile.UserEmail = UserProfile.UserEmail;
             EditProfile.DepartmentID = UserProfile.DepartmentID;
-            var getUserRoleId = db.AspNetUserRoles.Where(x => x.UserId == Id).Select(x => x.RoleId);
-            AspNetUserRoles role = db.AspNetUserRoles.Find(Id, getUserRoleId);
-            if (role == null)
-            {
-                AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
-                EditUser.UserName = UserProfile.UserEmail;
-                EditUser.Email = UserProfile.UserEmail;
-                AspNetUserRoles userRole = new AspNetUserRoles();
-                userRole.UserId = Id;
-                userRole.RoleId = RoleId;
-                db.AspNetUserRoles.Add(userRole);
-                db.SaveChanges();
-            }
-            else
-            {
-                AspNetUserRoles roles = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == Id);
-                db.AspNetUserRoles.Remove(role);
-                AspNetUserRoles userRole = new AspNetUserRoles();
-                userRole.UserId = Id;
-                userRole.RoleId = RoleId;
-                db.AspNetUserRoles.Add(userRole);
-                AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
-                EditUser.UserName = UserProfile.UserEmail;
-                EditUser.Email = UserProfile.UserEmail;
-                db.SaveChanges();
-            }
+            AspNetUserRoles role = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == Id);
+            db.AspNetUserRoles.Remove(role);
+            db.SaveChanges();
+            AspNetUserRoles userRole = new AspNetUserRoles();
+            userRole.UserId = Id;
+            userRole.RoleId = RoleId;
+            db.AspNetUserRoles.Add(userRole);
+            AspNetUsers EditUser = db.AspNetUsers.Where(x => x.Id == Id).FirstOrDefault();
+            EditUser.UserName = UserProfile.UserEmail;            
+            db.SaveChanges();
         }
 
         protected void EditToEmployeeRole(UserProfile UserProfile, string Id)
@@ -657,34 +645,17 @@ namespace ProcureEaseAPI.Controllers
             UserProfile EditProfile = db.UserProfile.SingleOrDefault(x => x.UserID == UserProfile.UserID);
             EditProfile.UserEmail = UserProfile.UserEmail;
             EditProfile.DepartmentID = UserProfile.DepartmentID;
-            var getUserRoleId = db.AspNetUserRoles.Where(x => x.UserId == Id).Select(x => x.RoleId);
-            AspNetUserRoles role = db.AspNetUserRoles.Find(Id,getUserRoleId);
-            if(role==null)
-            {
-                AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
-                EditUser.UserName = UserProfile.UserEmail;
-                EditUser.Email = UserProfile.UserEmail;
-                AspNetUserRoles userRole = new AspNetUserRoles();
-                userRole.UserId = Id;
-                userRole.RoleId = RoleId;
-                db.AspNetUserRoles.Add(userRole);
-                db.SaveChanges();
-            }
-            else
-            {
-                AspNetUserRoles roles = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == Id);
-                db.AspNetUserRoles.Remove(role);
-                AspNetUserRoles userRole = new AspNetUserRoles();
-                userRole.UserId = Id;
-                userRole.RoleId = RoleId;
-                db.AspNetUserRoles.Add(userRole);
-                AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
-                EditUser.UserName = UserProfile.UserEmail;
-                EditUser.Email = UserProfile.UserEmail;
-                db.SaveChanges();
-            }
+            //AspNetUserRoles role = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == Id);
+            //db.AspNetUserRoles.Remove(role);
+            //db.SaveChanges();
+            AspNetUserRoles userRole = new AspNetUserRoles();
+            userRole.UserId = Id;
+            userRole.RoleId = RoleId;
+            db.AspNetUserRoles.Add(userRole);
+            AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
+            EditUser.UserName = UserProfile.UserEmail;
+            EditUser.Email = UserProfile.UserEmail;
             db.SaveChanges();
-        
         }
 
         protected void EditToHeadOfDepartmentRole(UserProfile UserProfile, string Id)
@@ -693,32 +664,15 @@ namespace ProcureEaseAPI.Controllers
             UserProfile EditProfile = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).FirstOrDefault();
             EditProfile.UserEmail = UserProfile.UserEmail;
             EditProfile.DepartmentID = UserProfile.DepartmentID;
-            var getUserRoleId = db.AspNetUserRoles.Where(x => x.UserId == Id).Select(x => x.RoleId);
-            AspNetUserRoles role = db.AspNetUserRoles.Find(Id, getUserRoleId);
-            if (role == null)
-            {
-                AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
-                EditUser.UserName = UserProfile.UserEmail;
-                EditUser.Email = UserProfile.UserEmail;
-                AspNetUserRoles userRole = new AspNetUserRoles();
-                userRole.UserId = Id;
-                userRole.RoleId = RoleId;
-                db.AspNetUserRoles.Add(userRole);
-                db.SaveChanges();
-            }
-            else
-            {
-                AspNetUserRoles roles = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == Id);
-                db.AspNetUserRoles.Remove(role);
-                AspNetUserRoles userRole = new AspNetUserRoles();
-                userRole.UserId = Id;
-                userRole.RoleId = RoleId;
-                db.AspNetUserRoles.Add(userRole);
-                AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
-                EditUser.UserName = UserProfile.UserEmail;
-                EditUser.Email = UserProfile.UserEmail;
-                db.SaveChanges();
-            }
+            AspNetUserRoles role = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == Id);
+            db.AspNetUserRoles.Remove(role);
+            db.SaveChanges();
+            AspNetUserRoles userRole = new AspNetUserRoles();
+            userRole.UserId = Id;
+            userRole.RoleId = RoleId;
+            AspNetUsers EditUser = db.AspNetUsers.Where(x => x.Id == Id).FirstOrDefault();
+            EditUser.UserName = UserProfile.UserEmail;
+            db.SaveChanges();
         }
 
         //PUT: Users/UpdateUserProfile
@@ -779,7 +733,7 @@ namespace ProcureEaseAPI.Controllers
                         x.Department1.DepartmentName,
                         x.DepartmentID,
                         x.UserEmail,
-                        DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
+                        DepartmentHeadUserID = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
                     })
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -946,7 +900,7 @@ namespace ProcureEaseAPI.Controllers
                         x.Department1.DepartmentName,
                         x.DepartmentID,
                         x.UserEmail,
-                        DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
+                        DepartmentHeadUserID = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
                     })
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -988,7 +942,7 @@ namespace ProcureEaseAPI.Controllers
                         x.Department1.DepartmentName,
                         x.DepartmentID,
                         x.UserEmail,
-                        DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
+                        DepartmentHeadUserID = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
                     })
                 }, JsonRequestBehavior.AllowGet);
             } else
@@ -1019,7 +973,7 @@ namespace ProcureEaseAPI.Controllers
                         x.Department1.DepartmentName,
                         x.DepartmentID,
                         x.UserEmail,
-                        DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
+                        DepartmentHeadUserID = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
                     })
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -1091,7 +1045,7 @@ namespace ProcureEaseAPI.Controllers
                             x.Department1.DepartmentName,
                             x.DepartmentID,
                             x.UserEmail,
-                            DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
+                            DepartmentHeadUserID = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
                         })
                     }, JsonRequestBehavior.AllowGet);
                 }
@@ -1124,7 +1078,7 @@ namespace ProcureEaseAPI.Controllers
                             x.Department1.DepartmentName,
                             x.DepartmentID,
                             x.UserEmail,
-                            DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
+                            DepartmentHeadUserID = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
                         })
                     }, JsonRequestBehavior.AllowGet);
                 }

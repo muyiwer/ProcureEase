@@ -13,7 +13,7 @@ namespace Utilities
             {"PasswordResetTemplate", "Please click the link to reset password {0}"},
             {"RequestForDemoTemplate_User", "Hello {0}, <br> Your request For Demo has been recieved, you will be contacted shortly, <br> Thanks."},
             {"RequestForDemoTemplate_Techspecialist", "{0} sent a request for demo "},
-            {"AdministratorSignUpTemplate", "ProcureEase Login link: {0} <br> <br> Hello {1}, <br>Your organization - {2} has been Onboarded Successfully, please click the link above to login using the your default Password - {3}, which can be changed to a preferred one after login <br> <br> Thanks."},
+            {"AdministratorSignUpTemplate", "ProcureEase Login link: {0} <br> <br> Hello {1}, <br>Your organization - {2} has been Onboarded Successfully, please click the link above to login using your default Password - {3}, you can reset your password after login. <br> <br> Thanks."},
             // the last two templates will serve as a guide. please do not remove them.
             { "SampleTemplate", "This template contains two variables. The value of the first variable is {0}. And the value of the second variable is {1}."},
             {"TemplateName", "TemplateContent{0}{1}"},

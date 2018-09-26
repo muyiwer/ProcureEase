@@ -178,10 +178,11 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 DateTime dt = DateTime.Now;
+                var CurrentTime = dt.AddYears(1);
                 Guid TenantID = Guid.NewGuid();
                 var GetEmail = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.AdministratorEmail).FirstOrDefault();
                 var GetRequestID = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.RequestID).FirstOrDefault();
-                await SendMailToAdministrator(AdministratorEmail, Password);
+
                 if (AdministratorEmail == null)
                 {
                     LogHelper.Log(Log.Event.ONBOARDING, "AdministratorEmail is null");
@@ -207,24 +208,27 @@ namespace ProcureEaseAPI.Controllers
                     Catalog Tenant = new Catalog();
                     Tenant.TenantID = TenantID;
                     Tenant.RequestID = GetRequestID;
+                    Tenant.IsDemo = true;
+                    Tenant.IsActive = true;
                     Tenant.DateCreated = dt;
                     Tenant.DateModified = dt;
                     db.Catalog.Add(Tenant);
                     db.SaveChanges();
                 }
+
+                var UpdateRequestForDemo = db.RequestForDemo.FirstOrDefault(o => o.RequestID == GetRequestID);
+                UpdateRequestForDemo.DemoStartDate = dt;
+                UpdateRequestForDemo.DemoEndDate = CurrentTime;
+                db.RequestForDemo.Add(UpdateRequestForDemo);
+
                 Guid OrganizationID = Guid.NewGuid();
                 SaveTenantsRequestOnOrganizationSettings(GetRequestID, TenantID, OrganizationID);
 
                 var SubDomain = db.RequestForDemo.Where(x=> x.RequestID == GetRequestID).Select(x => x.OrganizationShortName).FirstOrDefault();
-                var UpdateTenantRecord = db.Catalog.FirstOrDefault(o => o.TenantID == TenantID);
-                UpdateTenantRecord.OrganizationID = OrganizationID;
-                UpdateTenantRecord.SubDomain = SubDomain;
-                UpdateTenantRecord.DateModified = dt;
-                db.SaveChanges();
-
-                SaveDefaultSouceOfFundRecord(TenantID, OrganizationID);
-                SaveDefaultProcurementMethodRecord(TenantID, OrganizationID);
-                SaveDefaultProjectCategoryRecord(TenantID, OrganizationID);
+                var UpdateCatalog = db.Catalog.FirstOrDefault(o => o.TenantID == TenantID);
+                UpdateCatalog.OrganizationID = OrganizationID;
+                UpdateCatalog.SubDomain = SubDomain;
+                UpdateCatalog.DateModified = dt;
 
                 AddUserModel UserModel = new AddUserModel
                 {
@@ -254,8 +258,14 @@ namespace ProcureEaseAPI.Controllers
                 userProfile.LastName = GetAdministratorLastName;
                 userProfile.DateCreated = dt;
                 db.UserProfile.Add(userProfile);
+
                 db.SaveChanges();
 
+                SaveDefaultSouceOfFundRecord(TenantID, OrganizationID);
+                SaveDefaultProcurementMethodRecord(TenantID, OrganizationID);
+                SaveDefaultProjectCategoryRecord(TenantID, OrganizationID);
+
+                await SendMailToAdministrator(AdministratorEmail, Password);
 
                 return Json(new
                 {
@@ -438,6 +448,85 @@ namespace ProcureEaseAPI.Controllers
             projectCategoryOrganizationSettings.DateModified = dt;
 
             db.SaveChanges();
+        }
+        #endregion
+
+        #region ProcessOnboarding
+        [HttpPost]
+        public ActionResult Activate(string AdministratorEmail)
+        {
+            try
+            {
+                DateTime dt = DateTime.Now;
+                var CurrentTime = dt.AddYears(1);
+                Guid TenantID = Guid.NewGuid();
+                var GetEmail = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.AdministratorEmail).FirstOrDefault();
+                var GetRequestID = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.RequestID).FirstOrDefault();
+
+                if (AdministratorEmail == null)
+                {
+                    LogHelper.Log(Log.Event.ONBOARDING, "AdministratorEmail is null");
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Error("Please Input AdministratorEmail");
+                }
+                if (GetEmail == null)
+                {
+                    LogHelper.Log(Log.Event.ONBOARDING, AdministratorEmail + "has not requested for a demo," + " " + "Email does not exist.");
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Error(AdministratorEmail + " " + "has not requested for a Demo");
+                }
+                var OrganizationNameInFull = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.OrganizationFullName).FirstOrDefault();
+                var ThisTenant = db.Catalog.Where(x => x.RequestID == GetRequestID).Select(x => x.RequestID).FirstOrDefault();
+                if (ThisTenant != null)
+                {
+                    LogHelper.Log(Log.Event.ONBOARDING, "Onboarding has been done for" + " " + OrganizationNameInFull + " " + "by the Email" + " " + AdministratorEmail);
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Error("Onboarding has been done for" + " " + OrganizationNameInFull + " " + "by the Email" + " " + AdministratorEmail);
+                }
+                else
+                {
+                    Catalog Tenant = new Catalog();
+                    Tenant.TenantID = TenantID;
+                    Tenant.RequestID = GetRequestID;
+                    Tenant.IsDemo = true;
+                    Tenant.IsActive = true;
+                    Tenant.DateCreated = dt;
+                    Tenant.DateModified = dt;
+                    db.Catalog.Add(Tenant);
+                    db.SaveChanges();
+                }
+
+                var UpdateRequestForDemo = db.RequestForDemo.FirstOrDefault(o => o.RequestID == GetRequestID);
+                UpdateRequestForDemo.DemoStartDate = dt;
+                UpdateRequestForDemo.DemoEndDate = CurrentTime;
+                db.RequestForDemo.Add(UpdateRequestForDemo);
+
+                Guid OrganizationID = Guid.NewGuid();
+                SaveTenantsRequestOnOrganizationSettings(GetRequestID, TenantID, OrganizationID);
+
+                var SubDomain = db.RequestForDemo.Where(x => x.RequestID == GetRequestID).Select(x => x.OrganizationShortName).FirstOrDefault();
+                var UpdateCatalog = db.Catalog.FirstOrDefault(o => o.TenantID == TenantID);
+                UpdateCatalog.OrganizationID = OrganizationID;
+                UpdateCatalog.SubDomain = SubDomain;
+                UpdateCatalog.DateModified = dt;
+
+                return Json(new
+                {
+                    success = true,
+                    message = "Organization Onboarded Successfully",
+                    data = new { }
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(Log.Event.ONBOARDING, ex.Message);
+                return Json(new
+                {
+                    success = false,
+                    message = "" + ex.Message,
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
         #endregion
 

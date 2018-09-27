@@ -42,8 +42,8 @@ namespace ProcureEaseAPI.Models
         public virtual ICollection<AdvertCategoryNumber> AdvertCategoryNumber { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AdvertLotNumber> AdvertLotNumber { get; set; }
-        public virtual AdvertStatus AdvertStatus { get; set; }
         public virtual BudgetYear BudgetYear { get; set; }
+        public virtual AdvertStatus AdvertStatus { get; set; }
         public virtual Catalog Catalog { get; set; }
     }
 }

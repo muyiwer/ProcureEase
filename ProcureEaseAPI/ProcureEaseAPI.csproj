@@ -230,7 +230,6 @@
     <Compile Include="Controllers\SetUpController.cs" />
     <Compile Include="Controllers\SourceOfFundsController.cs" />
     <Compile Include="Controllers\TelephoneNumbersController.cs" />
-    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -402,7 +401,6 @@
     <Content Include="Models\ProcureEaseModel.edmx.diagram">
       <DependentUpon>ProcureEaseModel.edmx</DependentUpon>
     </Content>
-    <Content Include="DatabaseConnectionStrings.config" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -447,7 +445,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Procurments\" />
-    <Folder Include="Views\Test\" />
     <Folder Include="Views\Users\" />
   </ItemGroup>
   <ItemGroup>

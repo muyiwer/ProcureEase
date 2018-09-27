@@ -70,7 +70,7 @@ namespace ProcureEaseAPI.Controllers
                 data = db.SourceOfFundsOrganizationSettings.Where(y => y.TenantID == tenantId).Select(x => new
                 {
                     x.SourceOfFundID,
-                    x.SourceOfFunds.SourceOfFund,
+                    Name = x.SourceOfFunds.SourceOfFund,
                     Enabled = x.EnableSourceOFFund
                 })
             }, JsonRequestBehavior.AllowGet);
@@ -122,7 +122,7 @@ namespace ProcureEaseAPI.Controllers
                 data = db.SourceOfFundsOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
                 {
                     x.SourceOfFundID,
-                    x.SourceOfFunds.SourceOfFund,
+                    Name = x.SourceOfFunds.SourceOfFund,
                     Enabled = x.EnableSourceOFFund
                 })
             }, JsonRequestBehavior.AllowGet);
@@ -408,7 +408,7 @@ namespace ProcureEaseAPI.Controllers
             }
         }
 
-        [Providers.Authorize]
+       // [Providers.Authorize]
         public ActionResult OrganizationSettings()
         {
             string email = Request.Headers["Email"];
@@ -430,96 +430,79 @@ namespace ProcureEaseAPI.Controllers
                 LogHelper.Log(Log.Event.GET_ORGANIZATIONSETTINGS, ex.Message);
                 ExceptionError(ex.Message, ex.StackTrace);
             }
-            var BasicDetails = db.OrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
-            {
-                x.OrganizationID,
-                x.OrganizationEmail,
-                OrganizationName =  x.OrganizationNameInFull,
-                x.OrganizationNameAbbreviation,
-                x.State,
-                x.Country,
-                x.AboutOrganization,
-                x.OrganizationLogoPath,
-                x.CreatedBy,
-                TelephoneNumbers = db.TelephoneNumbers.Where(y => y.OrganizationID == x.OrganizationID).Select(y => y.TelephoneNumber)
-            });
 
-            var DepartmentSetUp = db.Department.Where(x => x.TenantID == tenantId).Select(x => new
-            {
-                Department = new
-                {
-                    x.DepartmentID,
-                    x.DepartmentName
-                },
-                Head = new
-                {
-                    DepartmentHeadUserID = db.UserProfile.Where(y => x.DepartmentHeadUserID == y.UserID).Select(y => (true) || (false)).FirstOrDefault(),
-                    FullName = db.UserProfile.Where(z => z.UserID == x.DepartmentHeadUserID).Select(y => y.FirstName + " " + y.LastName).FirstOrDefault()
-                }
-            });     
-
-            var UserManagement = db.UserProfile.Where(y => y.TenantID == tenantId && y.UserID == y.UserID).Select(x => new
-            {
-                User =  new
-                {
-                    x.UserID,
-                    FullName =  x.FirstName + " " + x.LastName
-                },
-                Department =  new
-                {
-                    x.DepartmentID,
-                    x.Department1.DepartmentName
-                }
-
-            });
-
-            var SourceOfFunds = db.SourceOfFundsOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
-            {
-                x.SourceOfFundID,
-                Name = x.SourceOfFunds.SourceOfFund,
-                Enabled = x.EnableSourceOFFund,
-            });
-
-            var ProcurementMethod = db.ProcurementMethodOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
-            {
-                x.ProcurementMethodID,
-                x.ProcurementMethod.Name,
-                Enabled = x.EnableProcurementMethod,
-            });
-
-            var ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
-            {
-                x.ProjectCategoryID,
-                x.ProjectCategory.Name,
-                Enabled = x.EnableProjectCategory,
-            });
-
-            var Users = db.UserProfile.Where(x => x.TenantID == tenantId).Select(x => new
-            {
-                x.UserID,
-                FullName = x.FirstName + " " + x.LastName
-            });
-
-            var Departments = db.Department.Where(x => x.TenantID == tenantId).Select(x => new
-            {
-                x.DepartmentID,
-                x.DepartmentName
-            });
             return Json(new
             {
                 success = true,
                 message = "OK",
-                data = new
+                data = db.OrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
                 {
-                    BasicDetails = BasicDetails,
-                    DepartmentSetup = DepartmentSetUp,
-                    UserManagement = UserManagement,
-                    SourceOfFunds = SourceOfFunds,
-                    ProcurementMethod = ProcurementMethod,
-                    ProjectCategory = ProjectCategory,
-                    Users = Users,
-                    Departments = Departments
-                }
+                    x.OrganizationID,
+                    x.OrganizationEmail,
+                    OrganizationName = x.OrganizationNameInFull,
+                    x.OrganizationNameAbbreviation,
+                    x.State,
+                    x.Country,
+                    x.AboutOrganization,
+                    x.OrganizationLogoPath,
+                    x.CreatedBy,
+                    TelephoneNumbers = db.TelephoneNumbers.Where(y => y.OrganizationID == x.OrganizationID).Select(y => y.TelephoneNumber),
+                    DepartmentSetup = db.Department.Where(y => y.OrganisationID == x.OrganizationID).Select(y => new
+                    {
+                        Department = new
+                        {
+                            y.DepartmentID,
+                            y.DepartmentName
+                        },
+                        Head = new
+                        {
+                            DepartmentHeadUserID = db.UserProfile.Where(z => y.DepartmentHeadUserID == z.UserID).Select(z => (true) || (false)).FirstOrDefault(),
+                            FullName = db.UserProfile.Where(z => z.UserID == y.DepartmentHeadUserID).Select(z => z.FirstName + " " + z.LastName).FirstOrDefault()
+                        }
+                    }),
+                    UserManagement = db.UserProfile.Where(y => y.OrganizationID == x.OrganizationID && y.UserID == y.UserID).Select(y => new
+                    {
+                        User = new
+                        {
+                            y.UserID,
+                            FullName = y.FirstName + " " + y.LastName
+                        },
+                        Department = new
+                        {
+                            y.DepartmentID,
+                            y.Department1.DepartmentName
+                        }
+
+                    }),
+                    SourceOfFunds = db.SourceOfFundsOrganizationSettings.Where(y => y.OrganizationID == x.OrganizationID).Select(y => new
+                    {
+                        y.SourceOfFundID,
+                        Name = y.SourceOfFunds.SourceOfFund,
+                        Enabled = y.EnableSourceOFFund,
+                    }),
+                    ProcurementMethod = db.ProcurementMethodOrganizationSettings.Where(y => y.OrganizationID == x.OrganizationID).Select(y => new
+                    {
+                        y.ProcurementMethodID,
+                        y.ProcurementMethod.Name,
+                        Enabled = y.EnableProcurementMethod,
+                    }),
+                    ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(y => y.OrganizationID == x.OrganizationID).Select(y => new
+                    {
+                        y.ProjectCategoryID,
+                        y.ProjectCategory.Name,
+                        Enabled = y.EnableProjectCategory,
+                    }),
+                    Users = db.UserProfile.Where(y => y.OrganizationID == x.OrganizationID).Select(y => new
+                    {
+                        y.UserID,
+                        FullName = y.FirstName + " " + y.LastName
+                    }),
+                    Departments = db.Department.Where(y => y.OrganisationID == x.OrganizationID).Select(y => new
+                    {
+                        y. DepartmentID,
+                        y.DepartmentName
+                    })
+                })
             }, JsonRequestBehavior.AllowGet);
         }
     }

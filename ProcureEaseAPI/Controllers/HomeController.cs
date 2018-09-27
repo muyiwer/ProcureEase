@@ -458,29 +458,19 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 DateTime dt = DateTime.Now;
-                var CurrentTime = dt.AddYears(1);
-
-                string email = Request.Headers["Email"];
-                var tenantId = catalog.GetTenantIDFromClientURL(email);
-                if (tenantId == null)
-                {
-                    return Json(new
-                    {
-                        success = false,
-                        message = "TenantId is null",
-                        data = new { }
-                    }, JsonRequestBehavior.AllowGet);
-                }
-
-                var GetOrganizationID = db.OrganizationSettings.Where(x => x.OrganizationEmail == AdministratorEmail).Select(x => x.OrganizationID);
-                var Tenant = db.Catalog.Find(GetOrganizationID);
-                Tenant.IsDemo = false;
-                Tenant.IsActive = true;
-                Tenant.DateModified = dt;
+                var CurrentTime = DateTime.Now.AddYears(1);
 
                 var GetRequestID = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.RequestID).FirstOrDefault();
+                var GetTenantID = db.Catalog.Where(x => x.RequestID == GetRequestID).Select(x => x.TenantID).FirstOrDefault();
+
+                var Tenant = db.Catalog.Find(GetTenantID);
+                Tenant.IsDemo = false;
+                Tenant.IsActive = true;
+                Tenant.ActiveEndDate = CurrentTime;
+                Tenant.DateModified = dt;
+
                 var UpdateRequestForDemo = db.RequestForDemo.Find(GetRequestID);
-                UpdateRequestForDemo.DemoEndDate = CurrentTime;
+                UpdateRequestForDemo.DemoEndDate = null;
                 db.SaveChanges();
 
                 return Json(new
@@ -489,6 +479,8 @@ namespace ProcureEaseAPI.Controllers
                     message = "Organization Account has been Activated Successfully",
                     data = db.Catalog.Select(x => new
                     {
+                        x.OrganizationID,
+                        OrganizationName = db.OrganizationSettings.Where(y => x.OrganizationID == y.OrganizationID).Select(y => y.OrganizationNameInFull).FirstOrDefault(),
                         x.IsDemo,
                         x.IsActive
                     })
@@ -509,30 +501,26 @@ namespace ProcureEaseAPI.Controllers
 
         #region ProcessDeActivatateMDAAccount
         [HttpPost]
-        public ActionResult DeActivate(string AdministratorEmail)
+        public ActionResult Deactivate(string AdministratorEmail)
         {
             try
             {
-                DateTime dt = DateTime.Now;
-                var CurrentTime = dt.AddYears(1);
-                string email = Request.Headers["Email"];
-                var tenantId = catalog.GetTenantIDFromClientURL(email);
+                DateTime CurrentTimeNow = new DateTime();
+                CurrentTimeNow = DateTime.Now;
 
-                if (tenantId == null)
+                var GetRequestID = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.RequestID).FirstOrDefault();
+                var GetTenantID = db.Catalog.Where(x => x.RequestID == GetRequestID).Select(x => x.TenantID).FirstOrDefault();
+                var CheckActiveEndDate = db.Catalog.Where(x => x.RequestID == GetRequestID).Select(x => x.ActiveEndDate).FirstOrDefault();
+                var NumberOfActiveDaysLeft =  (CheckActiveEndDate - CurrentTimeNow).Value.Days;  
+                if (CheckActiveEndDate >= CurrentTimeNow)
                 {
-                    return Json(new
-                    {
-                        success = false,
-                        message = "TenantId is null",
-                        data = new { }
-                    }, JsonRequestBehavior.AllowGet);
+                    LogHelper.Log(Log.Event.DEACTIVATE, "This Account has" + " "  + NumberOfActiveDaysLeft + " active days left before deactivation" );
+                    Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                    return Error("This Account has" + " " + NumberOfActiveDaysLeft + " active days left before deactivation");
                 }
-
-                var GetOrganizationID = db.OrganizationSettings.Where(x => x.OrganizationEmail == AdministratorEmail).Select(x => x.OrganizationID);
-                var Tenant = db.Catalog.Find(GetOrganizationID);
+                var Tenant = db.Catalog.Find(GetTenantID);
                 Tenant.IsActive = false;
-                Tenant.DateModified = dt;
-
+                Tenant.DateModified = CurrentTimeNow;
                 db.SaveChanges();
 
                 return Json(new
@@ -541,6 +529,8 @@ namespace ProcureEaseAPI.Controllers
                     message = "Organization Account has been Deactivated",
                     data = db.Catalog.Select(x => new
                     {
+                        x.OrganizationID,
+                        OrganizationName = db.OrganizationSettings.Where(y => x.OrganizationID == y.OrganizationID).Select(y => y.OrganizationNameInFull).FirstOrDefault(),
                         x.IsDemo,
                         x.IsActive
                     })
@@ -559,34 +549,15 @@ namespace ProcureEaseAPI.Controllers
         }
         #endregion
 
-        #region ProcessGetMDA_AccountStatus
-        public ActionResult MDA_AccountStatus()
+        #region ProcessGetListOfMDAs
+        public ActionResult ListOfMDAs()
         {
             try
             {
                 DateTime CurrentTimeNow = new DateTime();
                 CurrentTimeNow = DateTime.Now;
-                string email = Request.Headers["Email"];
-                var tenantId = catalog.GetTenantIDFromClientURL(email);
-                //if (tenantId == null)
-                //{
-                //    return Json(new
-                //    {
-                //        success = false,
-                //        message = "TenantId is null",
-                //        data = new { }
-                //    }, JsonRequestBehavior.AllowGet);
-                //}
-                RequestForDemo request = new RequestForDemo();
-                var GetRequestID = db.RequestForDemo.Where(x => x.DemoEndDate <= CurrentTimeNow).Select(x => x.RequestID).FirstOrDefault();
-                //var DemoEndDate = db.RequestForDemo.Where(z=> z.OrganizationFullName == z.OrganizationNameInFull).Select(z=> z.DemoEndDate - EndDate).FirstOrDefault()
-                DateTime StartDate = new DateTime();
-                //StartDate = DemoEndDate.Value;
                 DateTime EndDate = CurrentTimeNow;
-                //DateTime StartDate = new DateTime(2019, 6, 14);
-                //DateTime EndDate = new DateTime(2009, 12, 14);
-                TimeSpan difference = StartDate - EndDate;
-                var diii = difference.Days;
+
                 return Json(new
                 {
                     success = true,
@@ -595,11 +566,45 @@ namespace ProcureEaseAPI.Controllers
                     {
                         x.OrganizationID,
                         x.OrganizationNameInFull,
-                        x.OrganizationNameAbbreviation,
+                        Subdomain = db.Catalog.Where(y => y.OrganizationID == x.OrganizationID).Select(y => y.SubDomain).FirstOrDefault(),
+                    })
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(Log.Event.ONBOARDING, ex.Message);
+                return Json(new
+                {
+                    success = false,
+                    message = "" + ex.Message,
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        #endregion
+
+        #region ProcessManageOrganizationAccounts
+        public ActionResult ManageOrganizationAccounts()
+        {
+            try
+            {
+                DateTime CurrentTimeNow = new DateTime();
+                CurrentTimeNow = DateTime.Now;
+                DateTime EndDate = CurrentTimeNow;
+                return Json(new
+                {
+                    success = true,
+                    message = "Ok",
+                    data = db.OrganizationSettings.Select(x => new
+                    {
+                        x.OrganizationID,
+                        x.OrganizationNameInFull,
+                        Subdomain = db.Catalog.Where(y => y.OrganizationID == x.OrganizationID).Select(y => y.SubDomain).FirstOrDefault(),
                         IsDemo = db.Catalog.Where(y=> y.OrganizationID == x.OrganizationID).Select(y=> y.IsDemo).FirstOrDefault(),
                         IsActive = db.Catalog.Where(y => y.OrganizationID == x.OrganizationID).Select(y => y.IsActive).FirstOrDefault(),
-                        DemoDaysLeft = DbFunctions.DiffDays(EndDate, db.RequestForDemo.Where(z=> z.OrganizationFullName == x.OrganizationNameInFull).Select(z=> z.DemoEndDate).FirstOrDefault()) + " days left",
-                        DemoDaysStatus = DbFunctions.DiffDays(EndDate, db.RequestForDemo.Where(z => z.OrganizationFullName == x.OrganizationNameInFull).Select(z => z.DemoEndDate).FirstOrDefault())
+                        AccountStatus = db.Catalog.Where(y => y.OrganizationID == x.OrganizationID && (y.IsDemo == true || y.IsActive == true)).Select(y => (true) || (false)).FirstOrDefault(),
+                        NumberOfDemoDaysLeft = DbFunctions.DiffDays(CurrentTimeNow, db.RequestForDemo.Where(z => z.OrganizationFullName == x.OrganizationNameInFull).Select(z => z.DemoEndDate).FirstOrDefault()),
+                        NumberOfActiveDaysLeft = DbFunctions.DiffDays(CurrentTimeNow, db.Catalog.Where(z => z.OrganizationID == x.OrganizationID).Select(z => z.ActiveEndDate).FirstOrDefault())
                     })
                 }, JsonRequestBehavior.AllowGet);
             }

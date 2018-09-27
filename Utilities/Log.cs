@@ -64,6 +64,7 @@ namespace Utilities
             ONBOARDING,
             DELETE_DEPARTMENT,
             DELETE_TELEPHONENUMBER,
+            DEACTIVATE,
         };
     }
 }

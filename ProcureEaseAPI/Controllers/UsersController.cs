@@ -120,8 +120,6 @@ namespace ProcureEaseAPI.Controllers
        [Providers.Authorize]
        public async Task<ActionResult> Add(UserProfile UserProfile)
         {
-            // TODO: Muyiwa, add implementation to get the authorized user's email from the request header using Request.Headers["email"]
-            // TODO: Muyiwa, change the GetTenantIDFromClientURL() implementation to GetTenantIDForUser(email)
             try
             {
                 string email = Request.Headers["Email"];
@@ -135,17 +133,7 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                var organizationId = catalog.GetOrganizationID(email);
-                if (organizationId == null)
-                {
-                    return Json(new
-                    {
-                        success = false,
-                        message = "OrganizationId is null",
-                        data = new { }
-                    }, JsonRequestBehavior.AllowGet);
-                }
-                UserProfile.TenantID = tenantId;
+                var organizationId = catalog.GetOrganizationID(email);                             
                 if (UserProfile.UserEmail == null)
                 {
                     LogHelper.Log(Log.Event.ADD_USER, "User email is null");
@@ -179,7 +167,8 @@ namespace ProcureEaseAPI.Controllers
                         { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-               
+                UserProfile.OrganizationID = organizationId;
+                UserProfile.TenantID = tenantId;
                 UserProfile.UserID = Guid.NewGuid();
                 db.UserProfile.Add(UserProfile);
                 db.SaveChanges();             
@@ -201,8 +190,8 @@ namespace ProcureEaseAPI.Controllers
                     Message message = new Message(RecipientEmail, Subject, newTemplateContent);
                     EmailHelper emailHelper = new EmailHelper();
                     await emailHelper.AddEmailToQueue(message);
-                }              
-                
+                }
+                Response.StatusCode = (int)HttpStatusCode.OK;
                 return Json(new
                 {
                     success = true,

@@ -21,7 +21,7 @@ namespace ProcureEaseAPI
         //    _ctx = new ApplicationDbContext();
         //    _userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_ctx));           
         //}
-
+        private ProcureEaseEntities db = new ProcureEaseEntities();
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         ApplicationDbContext _ctx;
@@ -120,7 +120,120 @@ namespace ProcureEaseAPI
             return PasswordToken;
         }
 
-    public void Dispose()
+        public void EditUserIdentity(UserProfile userProfile, string Id)
+        {
+            AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
+            EditUser.UserName = userProfile.UserEmail;
+            EditUser.Email = userProfile.UserEmail;
+        }
+
+        public void RemoveUserIdentity(string Id)
+        {
+            AspNetUsers user = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
+            db.AspNetUsers.Remove(user);
+        }
+
+        public void CreateRole(string Id, string RoleId)
+        {
+            AspNetUserRoles userRole = new AspNetUserRoles();
+            userRole.UserId = Id;
+            userRole.RoleId = RoleId;
+            db.AspNetUserRoles.Add(userRole);
+        }
+
+        public void RemoveUserFromCurrentRole(string Id)
+        {
+            AspNetUserRoles roles = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == Id);
+            db.AspNetUserRoles.Remove(roles);
+        }
+
+        public void EditToProcurementOfficerRole(UserProfile userProfile,string Id)
+        {
+            var RoleId = db.AspNetRoles.Where(x => x.Name == "Procurement Officer").Select(x => x.Id).FirstOrDefault();
+            var getUserRoleId = db.AspNetUserRoles.Where(x => x.UserId == Id).Select(x => x.RoleId).FirstOrDefault();
+            AspNetUserRoles findUserRole = db.AspNetUserRoles.Find(Id, getUserRoleId);
+            if (findUserRole == null)
+            {
+                EditUserIdentity(userProfile, Id);
+                CreateRole(Id, RoleId);
+                db.SaveChanges();
+            }
+            else
+            {
+                RemoveUserFromCurrentRole(Id);
+                CreateRole(Id,RoleId);
+                EditUserIdentity(userProfile, Id);
+                db.SaveChanges();
+            }
+            db.SaveChanges();
+        }
+
+        public void EditToHeadOfProcumentRole(UserProfile userProfile, string Id)
+        {
+            var RoleId = db.AspNetRoles.Where(x => x.Name == "Procurement Head").Select(x => x.Id).FirstOrDefault();
+            var getUserRoleId = db.AspNetUserRoles.Where(x => x.UserId == Id).Select(x => x.RoleId).FirstOrDefault();
+            AspNetUserRoles findUserRole = db.AspNetUserRoles.Find(Id, getUserRoleId);
+            if (findUserRole == null)
+            {
+                EditUserIdentity(userProfile, Id);
+                CreateRole(Id, RoleId);
+                db.SaveChanges();
+            }
+            else
+            {
+                RemoveUserFromCurrentRole(Id);
+                CreateRole(Id, RoleId);
+                EditUserIdentity(userProfile, Id);
+                db.SaveChanges();
+            }
+        }
+
+
+        public void EditToEmployeeRole(UserProfile userProfile, string Id)
+        {
+            var RoleId = db.AspNetRoles.Where(x => x.Name == "Employee").Select(x => x.Id).FirstOrDefault();
+            var getUserRoleId = db.AspNetUserRoles.Where(x => x.UserId == Id).Select(x => x.RoleId).FirstOrDefault();
+            AspNetUserRoles findUserRole = db.AspNetUserRoles.Find(Id, getUserRoleId);
+            if (findUserRole == null)
+            {
+                EditUserIdentity(userProfile, Id);
+                CreateRole(Id, RoleId);
+                db.SaveChanges();
+            }
+            else
+            {
+                RemoveUserFromCurrentRole(Id);
+                CreateRole(Id, RoleId);
+                EditUserIdentity(userProfile, Id);
+                db.SaveChanges();
+            }
+            db.SaveChanges();
+
+        }
+
+        public void EditToHeadOfDepartmentRole(UserProfile userProfile, string Id)
+        {
+            var RoleId = db.AspNetRoles.Where(x => x.Name == "Head of Department").Select(x => x.Id).FirstOrDefault();
+            var getUserRoleId = db.AspNetUserRoles.Where(x => x.UserId == Id).Select(x => x.RoleId).FirstOrDefault();
+            AspNetUserRoles findUserRole = db.AspNetUserRoles.Find(Id, getUserRoleId);
+            if (findUserRole == null)
+            {
+                EditUserIdentity(userProfile, Id);
+                CreateRole(Id, RoleId);
+                db.SaveChanges();
+            }
+            else
+            {
+                RemoveUserFromCurrentRole(Id);
+                CreateRole(Id, RoleId);
+                EditUserIdentity(userProfile, Id);
+                db.SaveChanges();
+            }
+            db.SaveChanges();
+        }
+
+
+        public void Dispose()
         {
             _ctx.Dispose();
             UserManager.Dispose();

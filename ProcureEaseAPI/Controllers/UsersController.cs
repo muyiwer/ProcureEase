@@ -19,7 +19,7 @@ namespace ProcureEaseAPI.Controllers
     {
         private ProcureEaseEntities db = new ProcureEaseEntities();
         private CatalogsController catalog = new CatalogsController();
-
+        AuthRepository authRepository = new AuthRepository();
         //POST: Users/Login
         [HttpPost]
         [AllowAnonymous]
@@ -78,6 +78,7 @@ namespace ProcureEaseAPI.Controllers
                             User.Id,
                             Email = User.UserName,
                             DepartmentID = db.UserProfile.Where(x => x.UserEmail == UserName).Select(x => x.DepartmentID).FirstOrDefault(),
+                            DepartmentName = db.UserProfile.Where(x => x.UserEmail == UserName).Select(x => x.Department1.DepartmentName).FirstOrDefault(),
                             Role = db.AspNetUserRoles.Where(x => x.UserId == User.Id).Select(x => x.AspNetRoles.Name).FirstOrDefault(),
                             BudgetYear = DateTimeSettings.CurrentYear(),
                             SubDomain = subDomain,
@@ -165,7 +166,7 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                var CheckIfEmailExist = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.UserEmail).FirstOrDefault();
+                var CheckIfEmailExist = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).ToList();
                 if(CheckIfEmailExist != null)
                 {
                     LogHelper.Log(Log.Event.ADD_USER, "User email already exists");
@@ -247,8 +248,8 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                AuthRepository Repository = new AuthRepository();
-                ApplicationUser user = await Repository.FindEmail(UserEmail);
+               
+                ApplicationUser user = await authRepository.FindEmail(UserEmail);
                 if (user == null)
                 {
                     LogHelper.Log(Log.Event.INITIATE_PASSWORD_RESET, "Email does not exist");
@@ -261,7 +262,7 @@ namespace ProcureEaseAPI.Controllers
                         { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                var PasswordToken =  await Repository.GeneratePasswordToken(user.Id);
+                var PasswordToken =  await authRepository.GeneratePasswordToken(user.Id);
                 string RecipientEmail = UserEmail;
                 string Subject = "Password Reset";
                 string Body = new EmailTemplateHelper().GetTemplateContent("PasswordResetTemplate");
@@ -325,8 +326,7 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                AuthRepository Repository = new AuthRepository();
-                ApplicationUser user = await Repository.FindEmail(ResetPassword.UserEmail);
+                ApplicationUser user = await authRepository.FindEmail(ResetPassword.UserEmail);
                 if (user == null)
                 {
                     LogHelper.Log(Log.Event.RESET_PASSWORD, "Email does not exist");
@@ -339,7 +339,7 @@ namespace ProcureEaseAPI.Controllers
                         { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                var result = await Repository.ResetPassword(ResetPassword.ResetToken,ResetPassword.NewPassword, user.Id);
+                var result = await authRepository.ResetPassword(ResetPassword.ResetToken,ResetPassword.NewPassword, user.Id);
                 return Json(new
                 {
                     success = true,
@@ -397,6 +397,18 @@ namespace ProcureEaseAPI.Controllers
                         { }
                     }, JsonRequestBehavior.AllowGet);
                 }
+                if (Password == null)
+                {
+                    LogHelper.Log(Log.Event.SIGN_UP, "This" + " " + Password + "(Password)is null");
+                    Response.StatusCode = (int)HttpStatusCode.Conflict;
+                    return Json(new
+                    {
+                        success = false,
+                        message = "This" + " "  + Password +  "(Password)is null",
+                        data = new
+                        { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 var CheckIfUserHasBeenAddedByAdmin = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.UserEmail).FirstOrDefault();
                 if (UserProfile.UserEmail == null || CheckIfUserHasBeenAddedByAdmin == null)
                 {
@@ -418,12 +430,11 @@ namespace ProcureEaseAPI.Controllers
                 };
                 var CheckUserDepartmentName = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.Department1.DepartmentName).FirstOrDefault();
                 var UserDepartmentName = CheckUserDepartmentName;
-                AuthRepository Repository = new AuthRepository();
-                ApplicationUser User =  await Repository.RegisterUser(UserModel,UserDepartmentName);
+                ApplicationUser User =  await authRepository.RegisterUser(UserModel,UserDepartmentName);
                 var Id = db.AspNetUsers.Where(x => x.Email == UserProfile.UserEmail).Select(x => x.Id).FirstOrDefault();
-                var CheckIfUserIsAddedByAdmin = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.UserID).FirstOrDefault();
-                var UserID = CheckIfUserIsAddedByAdmin;
-                UserProfile EditProfile = db.UserProfile.Where(x => x.UserID == UserID).FirstOrDefault();
+                var getUserId = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.UserID).FirstOrDefault();
+                var userId = getUserId;
+                UserProfile EditProfile = db.UserProfile.Where(x => x.UserID == userId).FirstOrDefault();
                 EditProfile.Id = User.Id;
                 EditProfile.FirstName = UserProfile.FirstName;
                 EditProfile.LastName = UserProfile.LastName;           
@@ -497,30 +508,13 @@ namespace ProcureEaseAPI.Controllers
                         { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-
+                UserProfile editUser = db.UserProfile.Where(x => x.UserID == userProfile.UserID).FirstOrDefault();
+                editUser.UserEmail = userProfile.UserEmail;
+                editUser.DepartmentID = userProfile.DepartmentID;
                 var Id= db.UserProfile.Where(x => x.UserID == userProfile.UserID).Select(x => x.Id).FirstOrDefault();
                 var CheckIfIdIsNull = db.UserProfile.Where(x => x.Id == Id).ToList();
-                if (CheckIfIdIsNull == null && CheckIfIdIsNull.Count < 0)
-                {
-                    EditUserWithoutID(userProfile);
-                    Response.StatusCode = (int)HttpStatusCode.OK;
-                    return Json(new
-                    {
-                        success = true,
-                        message = "Edited successfully.",
-                        data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
-                        {
-                            x.UserID,
-                            FullName = x.FirstName + " " + x.LastName,
-                            x.Department1.DepartmentName,
-                            x.DepartmentID,
-                            x.UserEmail,
-                            DepartmentHeadUserID = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
-                        })
-                    }, JsonRequestBehavior.AllowGet);
-                }
-                else
-                {
+                if (CheckIfIdIsNull != null && CheckIfIdIsNull.Count > 0)
+                {                                
                     var findDepartment = db.Department.Find(userProfile.DepartmentID);
                     if(findDepartment == null)
                     {
@@ -536,22 +530,23 @@ namespace ProcureEaseAPI.Controllers
                     }
                     if (findDepartment.DepartmentName == "Procurement" && findDepartment.DepartmentHeadUserID != userProfile.UserID)
                     {
-                        EditToProcurementOfficerRole(userProfile, Id);
+                        authRepository.EditToProcurementOfficerRole(userProfile, Id);
                     }
                     if (findDepartment.DepartmentName == "Procurement" && findDepartment.DepartmentHeadUserID == userProfile.UserID)
                     {
-                        EditToHeadOfProcumentRole(userProfile, Id);
+                        authRepository.EditToHeadOfProcumentRole(userProfile, Id);
                     }
                     if (findDepartment.DepartmentName != "Procurement" && findDepartment.DepartmentHeadUserID != userProfile.UserID)
                     {
-                        EditToEmployeeRole(userProfile, Id);                    
+                        authRepository.EditToEmployeeRole(userProfile, Id);                    
                     }
                     if (findDepartment.DepartmentName != "Procurement" && findDepartment.DepartmentHeadUserID == userProfile.UserID)
                     {
-                        EditToHeadOfDepartmentRole(userProfile, Id);
+                        authRepository.EditToHeadOfDepartmentRole(userProfile, Id);
                     }
                     Response.StatusCode = (int)HttpStatusCode.OK;                  
                 }
+                db.SaveChanges();
                 Response.StatusCode = (int)HttpStatusCode.OK;
                 return Json(new
                 {
@@ -574,153 +569,7 @@ namespace ProcureEaseAPI.Controllers
                 return ExceptionError(ex.Message, ex.StackTrace);
             }
         }
-
-        protected void EditUserWithoutID(UserProfile UserProfile)
-        {
-            UserProfile EditProfile = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).FirstOrDefault();          
-            EditProfile.UserEmail = UserProfile.UserEmail;
-            EditProfile.DepartmentID = UserProfile.DepartmentID;
-            db.SaveChanges();
-        }
-        
-        protected void EditToProcurementOfficerRole(UserProfile UserProfile, string Id)
-        {
-            var RoleId = db.AspNetRoles.Where(x => x.Name == "Procurement Officer").Select(x => x.Id).FirstOrDefault();
-            UserProfile EditProfile = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).FirstOrDefault();
-            EditProfile.UserEmail = UserProfile.UserEmail;
-            EditProfile.DepartmentID = UserProfile.DepartmentID;
-            var getUserRoleId = db.AspNetUserRoles.Where(x => x.UserId == Id).Select(x => x.RoleId);
-            AspNetUserRoles role = db.AspNetUserRoles.Find(Id, getUserRoleId);
-            if (role == null)
-            {
-                AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
-                EditUser.UserName = UserProfile.UserEmail;
-                EditUser.Email = UserProfile.UserEmail;
-                AspNetUserRoles userRole = new AspNetUserRoles();
-                userRole.UserId = Id;
-                userRole.RoleId = RoleId;
-                db.AspNetUserRoles.Add(userRole);
-                db.SaveChanges();
-            }
-            else
-            {
-                AspNetUserRoles roles = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == Id);
-                db.AspNetUserRoles.Remove(role);
-                AspNetUserRoles userRole = new AspNetUserRoles();
-                userRole.UserId = Id;
-                userRole.RoleId = RoleId;
-                db.AspNetUserRoles.Add(userRole);
-                AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
-                EditUser.UserName = UserProfile.UserEmail;
-                EditUser.Email = UserProfile.UserEmail;
-                db.SaveChanges();
-            }
-        }
-
-        protected void EditToHeadOfProcumentRole(UserProfile UserProfile, string Id)
-        {
-            var RoleId = db.AspNetRoles.Where(x => x.Name == "Procurement Head").Select(x => x.Id).FirstOrDefault();
-            UserProfile EditProfile = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).FirstOrDefault();
-            EditProfile.UserEmail = UserProfile.UserEmail;
-            EditProfile.DepartmentID = UserProfile.DepartmentID;
-            var getUserRoleId = db.AspNetUserRoles.Where(x => x.UserId == Id).Select(x => x.RoleId);
-            AspNetUserRoles role = db.AspNetUserRoles.Find(Id, getUserRoleId);
-            if (role == null)
-            {
-                AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
-                EditUser.UserName = UserProfile.UserEmail;
-                EditUser.Email = UserProfile.UserEmail;
-                AspNetUserRoles userRole = new AspNetUserRoles();
-                userRole.UserId = Id;
-                userRole.RoleId = RoleId;
-                db.AspNetUserRoles.Add(userRole);
-                db.SaveChanges();
-            }
-            else
-            {
-                AspNetUserRoles roles = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == Id);
-                db.AspNetUserRoles.Remove(role);
-                AspNetUserRoles userRole = new AspNetUserRoles();
-                userRole.UserId = Id;
-                userRole.RoleId = RoleId;
-                db.AspNetUserRoles.Add(userRole);
-                AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
-                EditUser.UserName = UserProfile.UserEmail;
-                EditUser.Email = UserProfile.UserEmail;
-                db.SaveChanges();
-            }
-        }
-
-        protected void EditToEmployeeRole(UserProfile UserProfile, string Id)
-        {
-            var RoleId = db.AspNetRoles.Where(x => x.Name == "Employee").Select(x => x.Id).FirstOrDefault();
-            UserProfile EditProfile = db.UserProfile.SingleOrDefault(x => x.UserID == UserProfile.UserID);
-            EditProfile.UserEmail = UserProfile.UserEmail;
-            EditProfile.DepartmentID = UserProfile.DepartmentID;
-            var getUserRoleId = db.AspNetUserRoles.Where(x => x.UserId == Id).Select(x => x.RoleId);
-            AspNetUserRoles role = db.AspNetUserRoles.Find(Id,getUserRoleId);
-            if(role==null)
-            {
-                AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
-                EditUser.UserName = UserProfile.UserEmail;
-                EditUser.Email = UserProfile.UserEmail;
-                AspNetUserRoles userRole = new AspNetUserRoles();
-                userRole.UserId = Id;
-                userRole.RoleId = RoleId;
-                db.AspNetUserRoles.Add(userRole);
-                db.SaveChanges();
-            }
-            else
-            {
-                AspNetUserRoles roles = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == Id);
-                db.AspNetUserRoles.Remove(role);
-                AspNetUserRoles userRole = new AspNetUserRoles();
-                userRole.UserId = Id;
-                userRole.RoleId = RoleId;
-                db.AspNetUserRoles.Add(userRole);
-                AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
-                EditUser.UserName = UserProfile.UserEmail;
-                EditUser.Email = UserProfile.UserEmail;
-                db.SaveChanges();
-            }
-            db.SaveChanges();
-        
-        }
-
-        protected void EditToHeadOfDepartmentRole(UserProfile UserProfile, string Id)
-        {
-            var RoleId = db.AspNetRoles.Where(x => x.Name == "Head of Department").Select(x => x.Id).FirstOrDefault();
-            UserProfile EditProfile = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).FirstOrDefault();
-            EditProfile.UserEmail = UserProfile.UserEmail;
-            EditProfile.DepartmentID = UserProfile.DepartmentID;
-            var getUserRoleId = db.AspNetUserRoles.Where(x => x.UserId == Id).Select(x => x.RoleId);
-            AspNetUserRoles role = db.AspNetUserRoles.Find(Id, getUserRoleId);
-            if (role == null)
-            {
-                AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
-                EditUser.UserName = UserProfile.UserEmail;
-                EditUser.Email = UserProfile.UserEmail;
-                AspNetUserRoles userRole = new AspNetUserRoles();
-                userRole.UserId = Id;
-                userRole.RoleId = RoleId;
-                db.AspNetUserRoles.Add(userRole);
-                db.SaveChanges();
-            }
-            else
-            {
-                AspNetUserRoles roles = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == Id);
-                db.AspNetUserRoles.Remove(role);
-                AspNetUserRoles userRole = new AspNetUserRoles();
-                userRole.UserId = Id;
-                userRole.RoleId = RoleId;
-                db.AspNetUserRoles.Add(userRole);
-                AspNetUsers EditUser = db.AspNetUsers.SingleOrDefault(x => x.Id == Id);
-                EditUser.UserName = UserProfile.UserEmail;
-                EditUser.Email = UserProfile.UserEmail;
-                db.SaveChanges();
-            }
-        }
-
+     
         //PUT: Users/UpdateUserProfile
         [HttpPut]
         [Providers.Authorize]
@@ -793,7 +642,7 @@ namespace ProcureEaseAPI.Controllers
         //PUT: Users/UpdateDepartmentHead
         [Providers.Authorize]
         [HttpPut]
-        public ActionResult UpdateDepartmentHead(UserProfile UserProfile)
+        public ActionResult UpdateDepartmentHead(UserProfile userProfile)
         {
             try
             {
@@ -810,7 +659,7 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                UserProfile users = db.UserProfile.Find(UserProfile.UserID);
+                UserProfile users = db.UserProfile.Find(userProfile.UserID);
                 Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 if (users.UserID == null)
                 {
@@ -818,143 +667,215 @@ namespace ProcureEaseAPI.Controllers
                     return Json(new
                     {
                         success = false,
-                        message = "Invalid user with UserID:" + " " + UserProfile.UserID,
+                        message = "Invalid user with UserID:" + " " + userProfile.UserID,
                         data = new
                         { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                Department getUserDepartment = db.Department.Find(UserProfile.DepartmentID);
+                Department getUserDepartment = db.Department.Find(userProfile.DepartmentID);
                 if (getUserDepartment == null)
                 {
                     return Json(new
                     {
                         success = false,
-                        message = "Invalid department with DepartmentID:" + " " + UserProfile.DepartmentID,
-                        data = new
-                        { }
-                    }, JsonRequestBehavior.AllowGet);
-                }               
-                if (getUserDepartment.DepartmentHeadUserID == UserProfile.UserID)
-                {
-                    Response.StatusCode = (int)HttpStatusCode.Conflict;
-                    return Json(new
-                    {
-                        success = false,
-                        message = "User already head of department" ,
+                        message = "Invalid department with DepartmentID:" + " " + userProfile.DepartmentID,
                         data = new
                         { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                var CheckUserDepartmentName = db.Department.Where(x => x.DepartmentID == UserProfile.DepartmentID).Select(x => x.DepartmentName).FirstOrDefault();               
-                var Id = db.UserProfile.Where(x => x.UserID == UserProfile.UserID).Select(x => x.Id).FirstOrDefault();
-                if (users.Id != null)
+                var CheckUserDepartmentName = db.Department.Where(x => x.DepartmentID == userProfile.DepartmentID).Select(x => x.DepartmentName).FirstOrDefault();
+                var Id = db.UserProfile.Where(x => x.UserID == userProfile.UserID).Select(x => x.Id).FirstOrDefault();
+                if (getUserDepartment.DepartmentHeadUserID == userProfile.UserID)
                 {
-                    if (CheckUserDepartmentName == "Procurement")
+                    RemoveUserFromHeadOfDepartment(userProfile, users, getUserDepartment, CheckUserDepartmentName, Id);
+                    db.SaveChanges();
+                    Response.StatusCode = (int)HttpStatusCode.OK;
+                    return Json(new
                     {
-                       
-                        var getFormerHeadOfDepartmentId = db.UserProfile.Where(x => x.UserID== getUserDepartment.DepartmentHeadUserID).Select(x => x.Id).FirstOrDefault();                                           
-                        //change former head of department to procurement officer role
-                        var procurementOfficerRoleId = db.AspNetRoles.Where(x => x.Name == "Procurement Officer").Select(x => x.Id).FirstOrDefault();
-                        var getFormerHeadOfProcurementId = db.UserProfile.Where(x => x.UserID == getUserDepartment.DepartmentHeadUserID).Select(x => x.Id).FirstOrDefault();
-                        var getFormerHeadOfProcurementRoleId = db.AspNetUserRoles.Where(x => x.UserId == getFormerHeadOfDepartmentId).Select(x => x.RoleId).FirstOrDefault();
-                        AspNetUserRoles deleteFormerHeadOfProcurementRole = db.AspNetUserRoles.FirstOrDefault(x => x.RoleId == getFormerHeadOfProcurementRoleId);
-                        db.AspNetUserRoles.Remove(deleteFormerHeadOfProcurementRole);
-                        AspNetUserRoles createRole = new AspNetUserRoles();
-                        createRole.RoleId = procurementOfficerRoleId;
-                        createRole.UserId = getFormerHeadOfDepartmentId;
-                        db.AspNetUserRoles.Add(createRole);
-                        //set user to head of procurement
-                        var roleId = db.AspNetRoles.Where(x => x.Name == "Procurement Head").Select(x => x.Id).FirstOrDefault();
-                        getUserDepartment.DepartmentHeadUserID = UserProfile.UserID;
-                        db.Entry(getUserDepartment).State = EntityState.Modified;
-                        AspNetUserRoles userRoles = db.AspNetUserRoles.Find(Id, procurementOfficerRoleId);
-                        if (userRoles == null)
+                        success = true,
+                        message = "User removed from department head successful.",
+                        data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
                         {
-                            AspNetUserRoles userRole = new AspNetUserRoles();
-                            userRole.UserId = Id;
-                            userRole.RoleId = roleId;
-                            db.AspNetUserRoles.Add(userRole);
-                            db.SaveChanges();
-                        }
-                        else
-                        {
-                            AspNetUserRoles removeRole = db.AspNetUserRoles.FirstOrDefault(x => x.UserId == Id);
-                            db.AspNetUserRoles.Remove(removeRole);
-                            AspNetUserRoles userRole = new AspNetUserRoles();
-                            userRole.UserId = Id;
-                            userRole.RoleId = roleId;
-                            db.AspNetUserRoles.Add(userRole);
-                            db.SaveChanges();                           
-                        }
-                        db.SaveChanges();
-                    }
-                    else
-                    {                      
-                        //change former head of department to employee role
-                        var getFormerHeadOfDepartmentUserId = db.UserProfile.Where(x => x.UserID == getUserDepartment.DepartmentHeadUserID).Select(x => x.Id).FirstOrDefault();
-                        var employeeRoleId = db.AspNetRoles.Where(x => x.Name == "Employee").Select(x => x.Id).FirstOrDefault();
-                        AspNetUserRoles removeFormerHeadOfDepartmentRole = db.AspNetUserRoles.FirstOrDefault(x=>x.UserId== getFormerHeadOfDepartmentUserId);
-                        db.AspNetUserRoles.Remove(removeFormerHeadOfDepartmentRole);
-                        AspNetUserRoles createRole = new AspNetUserRoles();
-                        createRole.RoleId = employeeRoleId;
-                        createRole.UserId = getFormerHeadOfDepartmentUserId;
-                        db.AspNetUserRoles.Add(createRole);
-
-                        //set user to head of department role
-                        getUserDepartment.DepartmentHeadUserID = UserProfile.UserID;
-                        db.Entry(getUserDepartment).State = EntityState.Modified;
-                        var roleId = db.AspNetRoles.Where(x => x.Name == "Head of Department").Select(x => x.Id).FirstOrDefault();
-                        AspNetUserRoles userRoles = db.AspNetUserRoles.Find(Id,employeeRoleId);
-                        if(userRoles == null)
-                        {
-                            AspNetUserRoles userRole = new AspNetUserRoles();
-                            userRole.UserId = Id;
-                            userRole.RoleId = roleId;
-                            db.AspNetUserRoles.Add(userRole);
-                            db.SaveChanges();
-                        }
-                        else
-                        {
-                            AspNetUserRoles removeHeadOfDepartmentRole = db.AspNetUserRoles.FirstOrDefault(x => x.UserId == Id);
-                            db.AspNetUserRoles.Remove(removeHeadOfDepartmentRole);
-                            db.SaveChanges();
-                            AspNetUserRoles userRole = new AspNetUserRoles();
-                            userRole.UserId = Id;
-                            userRole.RoleId = roleId;
-                            db.AspNetUserRoles.Add(userRole);
-                            db.SaveChanges();
-                        }
-                        db.SaveChanges();
-                    }
+                            x.UserID,
+                            FullName = x.FirstName + " " + x.LastName,
+                            x.Department1.DepartmentName,
+                            x.DepartmentID,
+                            x.UserEmail,
+                            DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
+                        })
+                    }, JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
-                        Department UpdateDepartmentHead = db.Department.Where(x => x.DepartmentID == UserProfile.DepartmentID).FirstOrDefault();
-                        UpdateDepartmentHead.DepartmentHeadUserID = UserProfile.UserID;
-                        db.SaveChanges();
-                    
-                }
-                Response.StatusCode = (int)HttpStatusCode.OK;
-                return Json(new
-                {
-                    success = true,
-                    message = "User added as department head successful.",
-                    data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
+                    AddUserToHeadOfDepartment(userProfile, users, getUserDepartment, CheckUserDepartmentName, Id);
+                    db.SaveChanges();
+                    Response.StatusCode = (int)HttpStatusCode.OK;
+                    return Json(new
                     {
-                        x.UserID,
-                        FullName = x.FirstName + " " + x.LastName,
-                        x.Department1.DepartmentName,
-                        x.DepartmentID,
-                        x.UserEmail,
-                        DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
-                    })
-                }, JsonRequestBehavior.AllowGet);
+                        success = true,
+                        message = "User added as department head successful.",
+                        data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
+                        {
+                            x.UserID,
+                            FullName = x.FirstName + " " + x.LastName,
+                            x.Department1.DepartmentName,
+                            x.DepartmentID,
+                            x.UserEmail,
+                            DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
+                        })
+                    }, JsonRequestBehavior.AllowGet);
+                }
+               
             }
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.UPDATE_DEPARTMENT_HEAD, ex.Message);
                 Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 return ExceptionError(ex.Message, ex.StackTrace);
+            }
+        }
+
+        private void AddUserToHeadOfDepartment(UserProfile userProfile, UserProfile users, Department getUserDepartment, string CheckUserDepartmentName, string Id)
+        {
+            if (users.Id != null)
+            {
+                var getFormerHeadOfDepartmentAspNetId = db.UserProfile.Where(x => x.UserID == getUserDepartment.DepartmentHeadUserID).Select(x => x.Id).FirstOrDefault();
+                if (CheckUserDepartmentName == "Procurement")
+                {
+                    //change former head of department to procurement officer role
+                    var roleId = db.AspNetRoles.Where(x => x.Name == "Procurement Head").Select(x => x.Id).FirstOrDefault();
+                    var procurementOfficerRoleId = db.AspNetRoles.Where(x => x.Name == "Procurement Officer").Select(x => x.Id).FirstOrDefault();
+                    AspNetUserRoles findFormerHeadOfDepartmentRoles = db.AspNetUserRoles.Find(getFormerHeadOfDepartmentAspNetId, roleId);
+                    if (findFormerHeadOfDepartmentRoles == null)
+                    {
+                        authRepository.CreateRole(getFormerHeadOfDepartmentAspNetId, procurementOfficerRoleId);
+                    }
+                    else
+                    {
+                        authRepository.RemoveUserFromCurrentRole(getFormerHeadOfDepartmentAspNetId);
+                        authRepository.CreateRole(getFormerHeadOfDepartmentAspNetId, procurementOfficerRoleId);
+                    }
+
+                    //set user to head of procurement                    
+                    AspNetUserRoles userRoles = db.AspNetUserRoles.Find(Id, procurementOfficerRoleId);
+                    if (userRoles == null)
+                    {
+                        authRepository.CreateRole(Id, roleId);
+                    }
+                    else
+                    {
+                        authRepository.RemoveUserFromCurrentRole(Id);
+                        authRepository.CreateRole(Id, roleId);
+                    }
+                }
+                else
+                {
+                    //change former head of department to employee role     
+                    var roleId = db.AspNetRoles.Where(x => x.Name == "Head of Department").Select(x => x.Id).FirstOrDefault();
+                    var employeeRoleId = db.AspNetRoles.Where(x => x.Name == "Employee").Select(x => x.Id).FirstOrDefault();
+                    AspNetUserRoles findFormerHeadOfDepartmentRoles = db.AspNetUserRoles.Find(getFormerHeadOfDepartmentAspNetId, roleId);
+                    if (findFormerHeadOfDepartmentRoles == null)
+                    {
+                        authRepository.CreateRole(getFormerHeadOfDepartmentAspNetId, employeeRoleId);
+                    }
+                    else
+                    {
+                        authRepository.RemoveUserFromCurrentRole(getFormerHeadOfDepartmentAspNetId);
+                        authRepository.CreateRole(getFormerHeadOfDepartmentAspNetId, employeeRoleId);
+                    }
+
+                    //set user to head of department role                   
+                    AspNetUserRoles userRoles = db.AspNetUserRoles.Find(Id, employeeRoleId);
+                    if (userRoles == null)
+                    {
+                        authRepository.CreateRole(Id, roleId);
+                    }
+                    else
+                    {
+                        authRepository.RemoveUserFromCurrentRole(Id);
+                        authRepository.CreateRole(Id, roleId);
+                    }
+                    db.SaveChanges();
+                }
+                getUserDepartment.DepartmentHeadUserID = userProfile.UserID;
+                db.Entry(getUserDepartment).State = EntityState.Modified;
+            }
+            else
+            {
+                Department UpdateDepartmentHead = db.Department.Where(x => x.DepartmentID == userProfile.DepartmentID).FirstOrDefault();
+                UpdateDepartmentHead.DepartmentHeadUserID = userProfile.UserID;            
+            }          
+        }
+
+        private void RemoveUserFromHeadOfDepartment(UserProfile userProfile, UserProfile users, Department getUserDepartment, string CheckUserDepartmentName, string Id)
+        {
+            if (users.Id != null)
+            {
+                var getFormerHeadOfDepartmentAspNetId = db.UserProfile.Where(x => x.UserID == getUserDepartment.DepartmentHeadUserID).Select(x => x.Id).FirstOrDefault();
+                if (CheckUserDepartmentName == "Procurement")
+                {
+                    //change former head of department to procurement officer role
+                    var roleId = db.AspNetRoles.Where(x => x.Name == "Procurement Head").Select(x => x.Id).FirstOrDefault();
+                    var procurementOfficerRoleId = db.AspNetRoles.Where(x => x.Name == "Procurement Officer").Select(x => x.Id).FirstOrDefault();
+                    AspNetUserRoles findFormerHeadOfDepartmentRoles = db.AspNetUserRoles.Find(getFormerHeadOfDepartmentAspNetId, roleId);
+                    if(findFormerHeadOfDepartmentRoles == null)
+                    {
+                        authRepository.CreateRole(getFormerHeadOfDepartmentAspNetId, procurementOfficerRoleId);
+                    }
+                    else
+                    {
+                        authRepository.RemoveUserFromCurrentRole(getFormerHeadOfDepartmentAspNetId);
+                        authRepository.CreateRole(getFormerHeadOfDepartmentAspNetId, procurementOfficerRoleId);
+                    }
+
+                    //set user to head of procurement                    
+                    AspNetUserRoles userRoles = db.AspNetUserRoles.Find(Id, procurementOfficerRoleId);
+                    if (userRoles == null)
+                    {
+                        authRepository.CreateRole(Id, roleId);
+                    }
+                    else
+                    {
+                        authRepository.RemoveUserFromCurrentRole(Id);
+                        authRepository.CreateRole(Id, roleId);
+                    }
+                }
+                else
+                {
+                    //change former head of department to employee role     
+                    var roleId = db.AspNetRoles.Where(x => x.Name == "Head of Department").Select(x => x.Id).FirstOrDefault();
+                    var employeeRoleId = db.AspNetRoles.Where(x => x.Name == "Employee").Select(x => x.Id).FirstOrDefault();
+                    AspNetUserRoles findFormerHeadOfDepartmentRoles = db.AspNetUserRoles.Find(getFormerHeadOfDepartmentAspNetId, roleId);
+                    if (findFormerHeadOfDepartmentRoles == null)
+                    {
+                        authRepository.CreateRole(getFormerHeadOfDepartmentAspNetId, employeeRoleId);
+                    }
+                    else
+                    {
+                        authRepository.RemoveUserFromCurrentRole(getFormerHeadOfDepartmentAspNetId);
+                        authRepository.CreateRole(getFormerHeadOfDepartmentAspNetId, employeeRoleId);
+                    }
+
+                    //set user to head of department role                   
+                    AspNetUserRoles userRoles = db.AspNetUserRoles.Find(Id, employeeRoleId);
+                    if (userRoles == null)
+                    {
+                        authRepository.CreateRole(Id, roleId);
+                    }
+                    else
+                    {
+                        authRepository.RemoveUserFromCurrentRole(Id);
+                        authRepository.CreateRole(Id, roleId);
+                    }
+                    db.SaveChanges();
+                }
+                getUserDepartment.DepartmentHeadUserID = null;
+                db.Entry(getUserDepartment).State = EntityState.Modified;
+            }
+            else
+            {
+                Department UpdateDepartmentHead = db.Department.Where(x => x.DepartmentID == userProfile.DepartmentID).FirstOrDefault();
+                UpdateDepartmentHead.DepartmentHeadUserID = null;
             }
         }
 
@@ -1025,7 +946,7 @@ namespace ProcureEaseAPI.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpPost]
         [Providers.Authorize]
         public ActionResult Delete(UserProfile userProfile)
         {
@@ -1067,68 +988,51 @@ namespace ProcureEaseAPI.Controllers
                         data = new
                         { }
                     }, JsonRequestBehavior.AllowGet);
-                }           
-                if (findUser.Id == null)
+                }
+                var checkIfUserIsHeadOfDepartment = db.Department.Where(x => x.DepartmentHeadUserID == userProfile.UserID).ToList();
+                if (checkIfUserIsHeadOfDepartment != null && checkIfUserIsHeadOfDepartment.Count > 0)
                 {
-                    var checkIfUserIsHeadOfDepartment = db.Department.Where(x => x.DepartmentHeadUserID == userProfile.UserID).ToList();
-                    if (checkIfUserIsHeadOfDepartment != null && checkIfUserIsHeadOfDepartment.Count > 0) 
-                    {
-                        Department RemoveUserFromHeadOfDepartment = db.Department.SingleOrDefault(x => x.DepartmentHeadUserID == userProfile.UserID);
-                        RemoveUserFromHeadOfDepartment.DepartmentHeadUserID = null;
-                        db.SaveChanges();
-                    }
+                    Department RemoveUserFromHeadOfDepartment = db.Department.SingleOrDefault(x => x.DepartmentHeadUserID == userProfile.UserID);
+                    RemoveUserFromHeadOfDepartment.DepartmentHeadUserID = null;
+                }
+                if (findUser.Id == null)
+                {             
                     UserProfile profile = db.UserProfile.SingleOrDefault(x => x.UserID == userProfile.UserID);
-                    db.UserProfile.Remove(profile);
-                    db.SaveChanges();                   
-                    return Json(new
-                    {
-                        success = true,
-                        message = "User is deleted successfully",
-                        data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
-                        {
-                            x.UserID,
-                            FullName = x.FirstName + " " + x.LastName,
-                            x.Department1.DepartmentName,
-                            x.DepartmentID,
-                            x.UserEmail,
-                            DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
-                        })
-                    }, JsonRequestBehavior.AllowGet);
+                    db.UserProfile.Remove(profile);                   
                 }
                 else
-                {                  
-                    UserProfile profile = db.UserProfile.SingleOrDefault(x => x.UserID == findUser.UserID);
-                    db.UserProfile.Remove(profile);
+                {                                     
                     AspNetUserRoles role = db.AspNetUserRoles.SingleOrDefault(x => x.UserId == findUser.Id);
                     if(role == null)
                     {
-                        AspNetUsers user = db.AspNetUsers.SingleOrDefault(x => x.Id == findUser.Id);
-                        db.AspNetUsers.Remove(user);
-                        db.SaveChanges();
+                        authRepository.RemoveUserIdentity(findUser.Id);
                     }
                     else
                     {
-                        db.AspNetUserRoles.Remove(role);
-                        AspNetUsers users = db.AspNetUsers.SingleOrDefault(x => x.Id == findUser.Id);
-                        db.AspNetUsers.Remove(users);
-                        db.SaveChanges();
-                    }                                
-                    return Json(new
-                    {
-                        success = true,
-                        message = "User is deleted suessfully",
-                        data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
-                        {
-                            x.UserID,
-                            FullName = x.FirstName + " " + x.LastName,
-                            x.Department1.DepartmentName,
-                            x.DepartmentID,
-                            x.UserEmail,
-                            DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
-                        })
-                    }, JsonRequestBehavior.AllowGet);
+                        authRepository.RemoveUserFromCurrentRole(findUser.Id);
+                        authRepository.RemoveUserIdentity(findUser.Id);       
+                    }
+                    UserProfile profile = db.UserProfile.SingleOrDefault(x => x.UserID == findUser.UserID);
+                    db.UserProfile.Remove(profile);
                 }
-            }catch(Exception ex)
+                db.SaveChanges();
+                Response.StatusCode = (int)HttpStatusCode.OK;
+                return Json(new
+                {
+                    success = true,
+                    message = "User is deleted successfully",
+                    data = db.UserProfile.Where(x => x.Catalog.SubDomain == SubDomain).Select(x => new
+                    {
+                        x.UserID,
+                        FullName = x.FirstName + " " + x.LastName,
+                        x.Department1.DepartmentName,
+                        x.DepartmentID,
+                        x.UserEmail,
+                        DepartmentHeadStatus = db.UserProfile.Where(y => y.Department1.DepartmentHeadUserID == x.UserID).Select(y => (true) || (false)).FirstOrDefault()
+                    })
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch(Exception ex)
             {
                 LogHelper.Log(Log.Event.UPDATE_DEPARTMENT_HEAD, ex.Message);
                 return ExceptionError(ex.Message, ex.StackTrace);

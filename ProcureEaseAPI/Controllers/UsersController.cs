@@ -69,6 +69,7 @@ namespace ProcureEaseAPI.Controllers
                 else
                 {
                     var User = db.AspNetUsers.Where(x => x.UserName == UserName).FirstOrDefault();
+                    Response.StatusCode = (int)HttpStatusCode.OK;
                     return Json(new
                     {
                         success = true,
@@ -91,6 +92,7 @@ namespace ProcureEaseAPI.Controllers
             }catch(Exception ex)
             {
                 LogHelper.Log(Log.Event.LOGIN, ex.Message);
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 return ExceptionError(ex.Message, ex.StackTrace);
             }
         }

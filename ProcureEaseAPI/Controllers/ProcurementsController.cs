@@ -221,9 +221,10 @@ namespace ProcureEaseAPI.Controllers
                             }
                             else
                             {
-                                dbItem.UnitPrice = item.UnitPrice;
-                                dbItem.Quantity = item.Quantity;
-                                dbItem.ItemCodeID = item.ItemCodeID;
+                                var itemCodeId = db.ItemCode.Where(x => x.ItemCode1 == item.ItemCode).Select(x => x.ItemCodeID).FirstOrDefault();
+                                dbItem.UnitPrice = Convert.ToDouble(item.UnitPrice);
+                                dbItem.Quantity = Convert.ToDouble(item.Quantity);
+                                dbItem.ItemCodeID = itemCodeId;
                                 dbItem.ItemName = item.ItemName;
                                 dbItem.Description = item.Description;
                                 dbItem.TenantID = tenantId;
@@ -249,7 +250,25 @@ namespace ProcureEaseAPI.Controllers
                                 db.Entry(dbProcurement).State = EntityState.Modified;
                             }
                         }
-
+                        var newItem = items.Where(x => x.ItemID == Guid.Empty && x.Deleted == false);
+                        foreach (DepartmentItems item in newItem)
+                        {
+                            var itemCodeId = db.ItemCode.Where(x => x.ItemCode1 == item.ItemCode).Select(x => x.ItemCodeID).FirstOrDefault();
+                            // insert items
+                            db.Items.Add(new Items()
+                            {
+                                ItemID = Guid.NewGuid(),
+                                ProcurementID = project.ProcurementID,
+                                UnitPrice = Convert.ToDouble(item.UnitPrice),
+                                Quantity = Convert.ToDouble(item.Quantity),
+                                ItemCodeID= itemCodeId,
+                                ItemName = item.ItemName,
+                                Description = item.Description,
+                                TenantID = tenantId,
+                                DateCreated = DateTimeSettings.CurrentDate()
+                            });
+                            
+                        }
                     }
 
                 }
@@ -304,13 +323,14 @@ namespace ProcureEaseAPI.Controllers
                     foreach (DepartmentItems item in items)
                     {
                         // insert items
+                        var itemCodeId = db.ItemCode.Where(x => x.ItemCode1 == item.ItemCode).Select(x => x.ItemCodeID).FirstOrDefault();
                         db.Items.Add(new Items()
                         {
                             ItemID = Guid.NewGuid(),
                             ProcurementID = ProcurementID,
-                            UnitPrice = item.UnitPrice,
-                            Quantity = item.Quantity,
-                            ItemCodeID = item.ItemCodeID,
+                            UnitPrice = Convert.ToDouble(item.UnitPrice),
+                            Quantity = Convert.ToDouble(item.Quantity),
+                            ItemCodeID = itemCodeId,
                             ItemName = item.ItemName,
                             Description = item.Description,
                             TenantID = tenantId,
@@ -374,8 +394,8 @@ namespace ProcureEaseAPI.Controllers
                         {
                             ItemID = Guid.NewGuid(),
                             ProcurementID = ProcurementID,
-                            UnitPrice = item.UnitPrice,
-                            Quantity = item.Quantity,
+                            UnitPrice = Convert.ToDouble(item.UnitPrice),
+                            Quantity = Convert.ToDouble(item.Quantity),
                             ItemCodeID = item.ItemCodeID,
                             ItemName = item.ItemName,
                             Description = item.Description,
@@ -390,7 +410,6 @@ namespace ProcureEaseAPI.Controllers
                         ProjectName = project.ProjectName,
                         DateCreated = DateTimeSettings.CurrentDate(),
                         ProjectCategoryID = project.ProjectCategoryID,
-                        ProcurementMethodID = project.ProcurementMethodID,
                         DepartmentID = DepartmentID,
                         BudgetYearID = BudgetyearID,
                         ProcurementStatusID = ProcurementStatusID,
@@ -407,7 +426,6 @@ namespace ProcureEaseAPI.Controllers
                         ProjectName = project.ProjectName,
                         DateCreated = DateTimeSettings.CurrentDate(),
                         ProjectCategoryID = project.ProjectCategoryID,
-                        ProcurementMethodID = project.ProcurementMethodID,
                         DepartmentID = DepartmentID,
                         BudgetYearID = BudgetyearID,
                         ProcurementStatusID = ProcurementStatusID,
@@ -499,9 +517,10 @@ namespace ProcureEaseAPI.Controllers
                             }
                             else
                             {
-                                dbItem.UnitPrice = item.UnitPrice;
-                                dbItem.Quantity = item.Quantity;
-                                dbItem.ItemCodeID = item.ItemCodeID;
+                                var itemCodeId = db.ItemCode.Where(x => x.ItemCode1 == item.ItemCode).Select(x => x.ItemCodeID).FirstOrDefault();
+                                dbItem.UnitPrice = Convert.ToDouble(item.UnitPrice);
+                                dbItem.Quantity = Convert.ToDouble(item.Quantity);
+                                dbItem.ItemCodeID = itemCodeId;
                                 dbItem.ItemName = item.ItemName;
                                 dbItem.Description = item.Description;
                                 dbItem.TenantID = tenantId;
@@ -526,6 +545,26 @@ namespace ProcureEaseAPI.Controllers
                                 dbProcurement.ProcurementStatusID = ProcurementStatusID;
                                 db.Entry(dbProcurement).State = EntityState.Modified;
                             }
+                        }
+
+                        var newItem = items.Where(x => x.ItemID == Guid.Empty && x.Deleted == false);
+                        foreach (DepartmentItems item in newItem)
+                        {
+                            var itemCodeId = db.ItemCode.Where(x => x.ItemCode1 == item.ItemCode).Select(x => x.ItemCodeID).FirstOrDefault();
+                            // insert items
+                            db.Items.Add(new Items()
+                            {
+                                ItemID = Guid.NewGuid(),
+                                ProcurementID = project.ProcurementID,
+                                UnitPrice = Convert.ToDouble(item.UnitPrice),
+                                Quantity = Convert.ToDouble(item.Quantity),
+                                ItemCodeID = itemCodeId,
+                                ItemName = item.ItemName,
+                                Description = item.Description,
+                                TenantID = tenantId,
+                                DateCreated = DateTimeSettings.CurrentDate()
+                            });
+
                         }
 
                     }
@@ -1000,7 +1039,6 @@ namespace ProcureEaseAPI.Controllers
                         {
                             dbProcurement.ProjectName = project.ProjectName;
                             dbProcurement.ProjectCategoryID = project.ProjectCategoryID;
-                            dbProcurement.ProcurementMethodID = project.ProcurementMethodID;
                             dbProcurement.DepartmentID = DepartmentID;
                             dbProcurement.BudgetYearID = BudgetyearID;
                             dbProcurement.DateModified = DateTimeSettings.CurrentDate();
@@ -1023,9 +1061,10 @@ namespace ProcureEaseAPI.Controllers
                             }
                             else
                             {
-                                dbItem.UnitPrice = item.UnitPrice;
-                                dbItem.Quantity = item.Quantity;
-                                dbItem.ItemCodeID = item.ItemCodeID;
+                                var itemCodeId = db.ItemCode.Where(x => x.ItemCode1 == item.ItemCode).Select(x => x.ItemCodeID).FirstOrDefault();
+                                dbItem.UnitPrice = Convert.ToDouble(item.UnitPrice);
+                                dbItem.Quantity = Convert.ToDouble(item.Quantity);
+                                dbItem.ItemCodeID = itemCodeId;
                                 dbItem.ItemName = item.ItemName;
                                 dbItem.Description = item.Description;
                                 dbItem.DateModified = DateTimeSettings.CurrentDate();
@@ -1042,13 +1081,32 @@ namespace ProcureEaseAPI.Controllers
                             {
                                 dbProcurement.ProjectName = project.ProjectName;
                                 dbProcurement.ProjectCategoryID = project.ProjectCategoryID;
-                                dbProcurement.ProcurementMethodID = project.ProcurementMethodID;
                                 dbProcurement.DepartmentID = DepartmentID;
                                 dbProcurement.BudgetYearID = BudgetyearID;
                                 dbProcurement.DateModified = DateTimeSettings.CurrentDate();
                                 dbProcurement.ProcurementStatusID = ProcurementStatusID;
                                 db.Entry(dbProcurement).State = EntityState.Modified;
                             }
+                        }
+
+                        var newItem = items.Where(x => x.ItemID == Guid.Empty && x.Deleted == false);
+                        foreach (DepartmentItems item in newItem)
+                        {
+                            var itemCodeId = db.ItemCode.Where(x => x.ItemCode1 == item.ItemCode).Select(x => x.ItemCodeID).FirstOrDefault();
+                            // insert items
+                            db.Items.Add(new Items()
+                            {
+                                ItemID = Guid.NewGuid(),
+                                ProcurementID = project.ProcurementID,
+                                UnitPrice = Convert.ToDouble(item.UnitPrice),
+                                Quantity = Convert.ToDouble(item.Quantity),
+                                ItemCodeID = itemCodeId,
+                                ItemName = item.ItemName,
+                                Description = item.Description,
+                                TenantID = tenantId,
+                                DateCreated = DateTimeSettings.CurrentDate()
+                            });
+
                         }
 
                     }
@@ -1079,7 +1137,6 @@ namespace ProcureEaseAPI.Controllers
                         {
                             dbProcurement.ProjectName = project.ProjectName;
                             dbProcurement.ProjectCategoryID = project.ProjectCategoryID;
-                            dbProcurement.ProcurementMethodID = project.ProcurementMethodID;
                             dbProcurement.DepartmentID = DepartmentID;
                             dbProcurement.BudgetYearID = BudgetyearID;
                             dbProcurement.DateModified = DateTimeSettings.CurrentDate();
@@ -1103,9 +1160,10 @@ namespace ProcureEaseAPI.Controllers
                             }
                             else
                             {
-                                dbItem.UnitPrice = item.UnitPrice;
-                                dbItem.Quantity = item.Quantity;
-                                dbItem.ItemCodeID = item.ItemCodeID;
+                                var itemCodeId = db.ItemCode.Where(x => x.ItemCode1 == item.ItemCode).Select(x => x.ItemCodeID).FirstOrDefault();
+                                dbItem.UnitPrice = Convert.ToDouble(item.UnitPrice);
+                                dbItem.Quantity = Convert.ToDouble(item.Quantity);
+                                dbItem.ItemCodeID = itemCodeId;
                                 dbItem.ItemName = item.ItemName;
                                 dbItem.Description = item.Description;
                                 dbItem.TenantID = tenantId;
@@ -1123,13 +1181,32 @@ namespace ProcureEaseAPI.Controllers
                             {
                                 dbProcurement.ProjectName = project.ProjectName;
                                 dbProcurement.ProjectCategoryID = project.ProjectCategoryID;
-                                dbProcurement.ProcurementMethodID = project.ProcurementMethodID;
                                 dbProcurement.DepartmentID = DepartmentID;
                                 dbProcurement.BudgetYearID = BudgetyearID;
                                 dbProcurement.DateModified = DateTimeSettings.CurrentDate();
                                 dbProcurement.ProcurementStatusID = approvedProcurementStatusID;
                                 dbProcurement.TenantID = tenantId;
                                 db.Entry(dbProcurement).State = EntityState.Modified;
+                            }
+
+                            var newItem = items.Where(x => x.ItemID == Guid.Empty && x.Deleted == false);
+                            foreach (DepartmentItems newItems in newItem)
+                            {
+                                var itemCodeId = db.ItemCode.Where(x => x.ItemCode1 == newItems.ItemCode).Select(x => x.ItemCodeID).FirstOrDefault();
+                                // insert items
+                                db.Items.Add(new Items()
+                                {
+                                    ItemID = Guid.NewGuid(),
+                                    ProcurementID = project.ProcurementID,
+                                    UnitPrice = Convert.ToDouble(newItems.UnitPrice),
+                                    Quantity = Convert.ToDouble(newItems.Quantity),
+                                    ItemCodeID = itemCodeId,
+                                    ItemName = newItems.ItemName,
+                                    Description = newItems.Description,
+                                    TenantID = tenantId,
+                                    DateCreated = DateTimeSettings.CurrentDate()
+                                });
+
                             }
                         }
 
@@ -1145,8 +1222,7 @@ namespace ProcureEaseAPI.Controllers
                         ProcurementID = procurementID,
                         ProjectName = projects.ProjectName,
                         DateCreated = DateTimeSettings.CurrentDate(),
-                        ProjectCategoryID = projects.ProjectCategoryID,
-                        ProcurementMethodID = projects.ProcurementMethodID,
+                        ProjectCategoryID = projects.ProjectCategoryID,                        
                         ProcurementStatusID = approvedProcurementStatusID,
                         DepartmentID = DepartmentID,
                         BudgetYearID = BudgetyearID,
@@ -1158,13 +1234,14 @@ namespace ProcureEaseAPI.Controllers
                         foreach (DepartmentItems item in items)
                         {
                             // insert items
+                            var itemCodeId = db.ItemCode.Where(x => x.ItemCode1 == item.ItemCode).Select(x => x.ItemCodeID).FirstOrDefault();
                             db.Items.Add(new Items()
                             {
                                 ItemID = Guid.NewGuid(),
                                 ProcurementID = procurementID,
-                                UnitPrice = item.UnitPrice,
-                                Quantity = item.Quantity,
-                                ItemCodeID = item.ItemCodeID,
+                                UnitPrice = Convert.ToDouble(item.UnitPrice),
+                                Quantity = Convert.ToDouble(item.Quantity),
+                                ItemCodeID = itemCodeId,
                                 ItemName = item.ItemName,
                                 Description = item.Description,
                                 TenantID = tenantId,
@@ -1222,13 +1299,14 @@ namespace ProcureEaseAPI.Controllers
                     foreach (DepartmentItems item in items)
                     {
                         // insert items
+                        var itemCodeId = db.ItemCode.Where(x => x.ItemCode1 == item.ItemCode).Select(x => x.ItemCodeID).FirstOrDefault();
                         db.Items.Add(new Items()
                         {
                             ItemID = Guid.NewGuid(),
                             ProcurementID = ProcurementID,
-                            UnitPrice = item.UnitPrice,
-                            Quantity = item.Quantity,
-                            ItemCodeID = item.ItemCodeID,
+                            UnitPrice = Convert.ToDouble(item.UnitPrice),
+                            Quantity = Convert.ToDouble(item.Quantity),
+                            ItemCodeID = itemCodeId,
                             ItemName = item.ItemName,
                             Description = item.Description,
                             TenantID = tenantId,
@@ -1244,7 +1322,6 @@ namespace ProcureEaseAPI.Controllers
                         ProjectName = project.ProjectName,
                         DateCreated = DateTimeSettings.CurrentDate(),
                         ProjectCategoryID = project.ProjectCategoryID,
-                        ProcurementMethodID = project.ProcurementMethodID,
                         ProcurementStatusID = ProcurementStatusID,
                         DepartmentID = DepartmentID,
                         BudgetYearID = BudgetyearID,
@@ -1262,7 +1339,6 @@ namespace ProcureEaseAPI.Controllers
                         ProjectName = project.ProjectName,
                         DateCreated = DateTimeSettings.CurrentDate(),
                         ProjectCategoryID = project.ProjectCategoryID,
-                        ProcurementMethodID = project.ProcurementMethodID,
                         DepartmentID = DepartmentID,
                         BudgetYearID = BudgetyearID,
                         TenantID = tenantId
@@ -1506,6 +1582,11 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementMethodID,
                         x.ProcurementMethod.Name
                     }),
+                    SourceOfFunds = db.SourceOfFundsOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        x.SourceOfFundID,
+                        Name = x.SourceOfFunds.SourceOfFund
+                    }),
                     ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
                     {
                         x.ProjectCategoryID,
@@ -1581,6 +1662,11 @@ namespace ProcureEaseAPI.Controllers
                     {
                         x.ProcurementMethodID,
                         x.ProcurementMethod.Name
+                    }),
+                    SourceOfFunds = db.SourceOfFundsOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        x.SourceOfFundID,
+                        Name = x.SourceOfFunds.SourceOfFund
                     }),
                     ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
                     {
@@ -1719,6 +1805,7 @@ namespace ProcureEaseAPI.Controllers
                             dbProcurement.ProjectName = project.ProjectName;
                             dbProcurement.ProjectCategoryID = project.ProjectCategoryID;
                             dbProcurement.ProcurementMethodID = project.ProcurementMethodID;
+                            dbProcurement.SourceOfFundID = project.SourceOfFundID;
                             dbProcurement.DepartmentID = DepartmentID;
                             dbProcurement.BudgetYearID = BudgetyearID;
                             dbProcurement.DateModified = DateTimeSettings.CurrentDate();
@@ -1742,8 +1829,9 @@ namespace ProcureEaseAPI.Controllers
                             }
                             else
                             {
-                                dbItem.UnitPrice = item.UnitPrice;
-                                dbItem.Quantity = item.Quantity;
+                                var itemCodeId = db.ItemCode.Where(x => x.ItemCode1 == item.ItemCode).Select(x => x.ItemCodeID).FirstOrDefault();
+                                dbItem.UnitPrice = Convert.ToDouble(item.UnitPrice);
+                                dbItem.Quantity = Convert.ToDouble(item.Quantity);
                                 dbItem.ItemCodeID = item.ItemCodeID;
                                 dbItem.ItemName = item.ItemName;
                                 dbItem.Description = item.Description;
@@ -1763,6 +1851,7 @@ namespace ProcureEaseAPI.Controllers
                                 dbProcurement.ProjectName = project.ProjectName;
                                 dbProcurement.ProjectCategoryID = project.ProjectCategoryID;
                                 dbProcurement.ProcurementMethodID = project.ProcurementMethodID;
+                                dbProcurement.SourceOfFundID = project.SourceOfFundID;
                                 dbProcurement.DepartmentID = DepartmentID;
                                 dbProcurement.BudgetYearID = BudgetyearID;
                                 dbProcurement.DateModified = DateTimeSettings.CurrentDate();
@@ -1770,6 +1859,26 @@ namespace ProcureEaseAPI.Controllers
                                 dbProcurement.TenantID= tenantId;
                                 db.Entry(dbProcurement).State = EntityState.Modified;
                             }
+                        }
+
+                        var newItem = items.Where(x => x.ItemID == Guid.Empty && x.Deleted == false);
+                        foreach (DepartmentItems item in newItem)
+                        {
+                            var itemCodeId = db.ItemCode.Where(x => x.ItemCode1 == item.ItemCode).Select(x => x.ItemCodeID).FirstOrDefault();
+                            // insert items
+                            db.Items.Add(new Items()
+                            {
+                                ItemID = Guid.NewGuid(),
+                                ProcurementID = project.ProcurementID,
+                                UnitPrice = Convert.ToDouble(item.UnitPrice),
+                                Quantity = Convert.ToDouble(item.Quantity),
+                                ItemCodeID = itemCodeId,
+                                ItemName = item.ItemName,
+                                Description = item.Description,
+                                TenantID = tenantId,
+                                DateCreated = DateTimeSettings.CurrentDate()
+                            });
+
                         }
 
                     }
@@ -1827,13 +1936,14 @@ namespace ProcureEaseAPI.Controllers
                     foreach (DepartmentItems item in items)
                     {
                         // insert items
+                        var itemCodeId = db.ItemCode.Where(x => x.ItemCode1 == item.ItemCode).Select(x => x.ItemCodeID).FirstOrDefault();
                         db.Items.Add(new Items()
                         {
                             ItemID = Guid.NewGuid(),
                             ProcurementID = ProcurementID,
-                            UnitPrice = item.UnitPrice,
-                            Quantity = item.Quantity,
-                            ItemCodeID = item.ItemCodeID,
+                            UnitPrice = Convert.ToDouble(item.UnitPrice),
+                            Quantity = Convert.ToDouble(item.Quantity),
+                            ItemCodeID = itemCodeId,
                             ItemName = item.ItemName,
                             Description = item.Description,
                             TenantID = tenantId,
@@ -1850,6 +1960,7 @@ namespace ProcureEaseAPI.Controllers
                         DateCreated = DateTimeSettings.CurrentDate(),
                         ProjectCategoryID = project.ProjectCategoryID,
                         ProcurementMethodID = project.ProcurementMethodID,
+                        SourceOfFundID = project.SourceOfFundID,
                         ProcurementStatusID = ProcurementStatusID,
                         DepartmentID = DepartmentID,
                         BudgetYearID = BudgetyearID,
@@ -1868,6 +1979,7 @@ namespace ProcureEaseAPI.Controllers
                         DateCreated = DateTimeSettings.CurrentDate(),
                         ProjectCategoryID = project.ProjectCategoryID,
                         ProcurementMethodID = project.ProcurementMethodID,
+                        SourceOfFundID = project.SourceOfFundID,
                         DepartmentID = DepartmentID,
                         TenantID = tenantId,
                         BudgetYearID = BudgetyearID
@@ -1886,13 +1998,14 @@ namespace ProcureEaseAPI.Controllers
                     foreach (DepartmentItems item in items)
                     {
                         // insert items
+                        var itemCodeId = db.ItemCode.Where(x => x.ItemCode1 == item.ItemCode).Select(x => x.ItemCodeID).FirstOrDefault();
                         db.Items.Add(new Items()
                         {
                             ItemID = Guid.NewGuid(),
                             ProcurementID = ProcurementID,
-                            UnitPrice = item.UnitPrice,
-                            Quantity = item.Quantity,
-                            ItemCodeID = item.ItemCodeID,
+                            UnitPrice = Convert.ToDouble(item.UnitPrice),
+                            Quantity = Convert.ToDouble(item.Quantity),
+                            ItemCodeID = itemCodeId,
                             ItemName = item.ItemName,
                             Description = item.Description,
                             TenantID = tenantId,
@@ -1909,6 +2022,7 @@ namespace ProcureEaseAPI.Controllers
                         DateCreated = DateTimeSettings.CurrentDate(),
                         ProjectCategoryID = project.ProjectCategoryID,
                         ProcurementMethodID = project.ProcurementMethodID,
+                        SourceOfFundID = project.SourceOfFundID,
                         ProcurementStatusID = ProcurementStatusID,
                         TenantID = tenantId,
                         DepartmentID = DepartmentID,
@@ -1927,6 +2041,7 @@ namespace ProcureEaseAPI.Controllers
                         DateCreated = DateTimeSettings.CurrentDate(),
                         ProjectCategoryID = project.ProjectCategoryID,
                         ProcurementMethodID = project.ProcurementMethodID,
+                        SourceOfFundID = project.SourceOfFundID,
                         TenantID = tenantId,
                         DepartmentID = DepartmentID,
                         BudgetYearID = BudgetyearID
@@ -1938,8 +2053,8 @@ namespace ProcureEaseAPI.Controllers
         #endregion
 
 
-        //POST: Procurement/UpdateProcurementPlan
-        [HttpPost]
+        //POST: Procurement/ApproveProcurementPlan
+        [HttpPut]
         [Providers.Authorize]
         public ActionResult ApproveProcurementPlan(Guid DepartmentID, int BudgetYear, List<DepartmentProject> Projects)
         {
@@ -2000,6 +2115,7 @@ namespace ProcureEaseAPI.Controllers
                             dbProcurement.ProjectName = project.ProjectName;
                             dbProcurement.ProjectCategoryID = project.ProjectCategoryID;
                             dbProcurement.ProcurementMethodID = project.ProcurementMethodID;
+                            dbProcurement.SourceOfFundID = project.SourceOfFundID;
                             dbProcurement.DepartmentID = DepartmentID;
                             dbProcurement.BudgetYearID = BudgetyearID;
                             dbProcurement.DateModified = DateTimeSettings.CurrentDate();
@@ -2021,9 +2137,10 @@ namespace ProcureEaseAPI.Controllers
                             }
                             else
                             {
-                                dbItem.UnitPrice = item.UnitPrice;
-                                dbItem.Quantity = item.Quantity;
-                                dbItem.ItemCodeID = item.ItemCodeID;
+                                var itemCodeId = db.ItemCode.Where(x => x.ItemCode1 == item.ItemCode).Select(x => x.ItemCodeID).FirstOrDefault();
+                                dbItem.UnitPrice = Convert.ToDouble(item.UnitPrice);
+                                dbItem.Quantity = Convert.ToDouble(item.Quantity);
+                                dbItem.ItemCodeID = itemCodeId;
                                 dbItem.ItemName = item.ItemName;
                                 dbItem.Description = item.Description;
                                 dbItem.DateModified = DateTimeSettings.CurrentDate();
@@ -2041,14 +2158,34 @@ namespace ProcureEaseAPI.Controllers
                                 dbProcurement.ProjectName = project.ProjectName;
                                 dbProcurement.ProjectCategoryID = project.ProjectCategoryID;
                                 dbProcurement.ProcurementMethodID = project.ProcurementMethodID;
+                                dbProcurement.SourceOfFundID = project.SourceOfFundID;
                                 dbProcurement.DepartmentID = DepartmentID;
                                 dbProcurement.BudgetYearID = BudgetyearID;
                                 dbProcurement.DateModified = DateTimeSettings.CurrentDate();
                                 db.Entry(dbProcurement).State = EntityState.Modified;
                             }
                         }
+                        var newItem = items.Where(x => x.ItemID == Guid.Empty && x.Deleted == false);
+                        foreach (DepartmentItems item in newItem)
+                        {
+                            var itemCodeId = db.ItemCode.Where(x => x.ItemCode1 == item.ItemCode).Select(x => x.ItemCodeID).FirstOrDefault();
+                            // insert items
+                            db.Items.Add(new Items()
+                            {
+                                ItemID = Guid.NewGuid(),
+                                ProcurementID = project.ProcurementID,
+                                UnitPrice = Convert.ToDouble(item.UnitPrice),
+                                Quantity = Convert.ToDouble(item.Quantity),
+                                ItemCodeID = itemCodeId,
+                                ItemName = item.ItemName,
+                                Description = item.Description,
+                                TenantID = tenantId,
+                                DateCreated = DateTimeSettings.CurrentDate()
+                            });
 
-                    }
+                        }
+
+             }
 
                 }
 
@@ -2102,13 +2239,14 @@ namespace ProcureEaseAPI.Controllers
                     foreach (DepartmentItems item in items)
                     {
                         // insert items
+                        var itemCodeId = db.ItemCode.Where(x => x.ItemCode1 == item.ItemCode).Select(x => x.ItemCodeID).FirstOrDefault();
                         db.Items.Add(new Items()
                         {
                             ItemID = Guid.NewGuid(),
                             ProcurementID = ProcurementID,
-                            UnitPrice = item.UnitPrice,
-                            Quantity = item.Quantity,
-                            ItemCodeID = item.ItemCodeID,
+                            UnitPrice = Convert.ToDouble(item.UnitPrice),
+                            Quantity = Convert.ToDouble(item.Quantity),
+                            ItemCodeID = itemCodeId,
                             ItemName = item.ItemName,
                             Description = item.Description,
                             TenantID = tenantId,
@@ -2125,6 +2263,7 @@ namespace ProcureEaseAPI.Controllers
                         DateCreated = DateTimeSettings.CurrentDate(),
                         ProjectCategoryID = project.ProjectCategoryID,
                         ProcurementMethodID = project.ProcurementMethodID,
+                        SourceOfFundID = project.SourceOfFundID,
                         ProcurementStatusID = ProcurementStatusID,
                         DepartmentID = DepartmentID,
                         BudgetYearID = BudgetyearID,
@@ -2143,6 +2282,7 @@ namespace ProcureEaseAPI.Controllers
                         DateCreated = DateTimeSettings.CurrentDate(),
                         ProjectCategoryID = project.ProjectCategoryID,
                         ProcurementMethodID = project.ProcurementMethodID,
+                        SourceOfFundID = project.SourceOfFundID,
                         DepartmentID = DepartmentID,
                         BudgetYearID = BudgetyearID,
                         TenantID=tenantId
@@ -2161,13 +2301,14 @@ namespace ProcureEaseAPI.Controllers
                     foreach (DepartmentItems item in items)
                     {
                         // insert items
+                        var itemCodeId = db.ItemCode.Where(x => x.ItemCode1 == item.ItemCode).Select(x => x.ItemCodeID).FirstOrDefault();
                         db.Items.Add(new Items()
                         {
                             ItemID = Guid.NewGuid(),
                             ProcurementID = ProcurementID,
-                            UnitPrice = item.UnitPrice,
-                            Quantity = item.Quantity,
-                            ItemCodeID = item.ItemCodeID,
+                            UnitPrice = Convert.ToDouble(item.UnitPrice),
+                            Quantity = Convert.ToDouble(item.Quantity),
+                            ItemCodeID = itemCodeId,
                             ItemName = item.ItemName,
                             Description = item.Description,
                             TenantID = tenantId,
@@ -2184,6 +2325,7 @@ namespace ProcureEaseAPI.Controllers
                         DateCreated = DateTimeSettings.CurrentDate(),
                         ProjectCategoryID = project.ProjectCategoryID,
                         ProcurementMethodID = project.ProcurementMethodID,
+                        SourceOfFundID = project.SourceOfFundID,
                         ProcurementStatusID = ProcurementStatusID,
                         DepartmentID = DepartmentID,
                         BudgetYearID = BudgetyearID,
@@ -2202,6 +2344,7 @@ namespace ProcureEaseAPI.Controllers
                         DateCreated = DateTimeSettings.CurrentDate(),
                         ProjectCategoryID = project.ProjectCategoryID,
                         ProcurementMethodID = project.ProcurementMethodID,
+                        SourceOfFundID = project.SourceOfFundID,
                         DepartmentID = DepartmentID,
                         BudgetYearID = BudgetyearID,
                         TenantID = tenantId

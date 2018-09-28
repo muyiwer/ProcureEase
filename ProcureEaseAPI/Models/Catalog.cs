@@ -47,7 +47,6 @@ namespace ProcureEaseAPI.Models
         public Nullable<System.DateTime> DateModified { get; set; }
         public Nullable<bool> IsDemo { get; set; }
         public Nullable<bool> IsActive { get; set; }
-        public Nullable<System.DateTime> ActiveEndDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AdvertCategory> AdvertCategory { get; set; }

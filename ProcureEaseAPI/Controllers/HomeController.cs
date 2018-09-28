@@ -466,7 +466,6 @@ namespace ProcureEaseAPI.Controllers
                 var Tenant = db.Catalog.Find(GetTenantID);
                 Tenant.IsDemo = false;
                 Tenant.IsActive = true;
-                Tenant.ActiveEndDate = CurrentTime;
                 Tenant.DateModified = dt;
 
                 var UpdateRequestForDemo = db.RequestForDemo.Find(GetRequestID);
@@ -510,14 +509,14 @@ namespace ProcureEaseAPI.Controllers
 
                 var GetRequestID = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.RequestID).FirstOrDefault();
                 var GetTenantID = db.Catalog.Where(x => x.RequestID == GetRequestID).Select(x => x.TenantID).FirstOrDefault();
-                var CheckActiveEndDate = db.Catalog.Where(x => x.RequestID == GetRequestID).Select(x => x.ActiveEndDate).FirstOrDefault();
-                var NumberOfActiveDaysLeft =  (CheckActiveEndDate - CurrentTimeNow).Value.Days;  
-                if (CheckActiveEndDate >= CurrentTimeNow)
-                {
-                    LogHelper.Log(Log.Event.DEACTIVATE, "This Account has" + " "  + NumberOfActiveDaysLeft + " active days left before deactivation" );
-                    Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                    return Error("This Account has" + " " + NumberOfActiveDaysLeft + " active days left before deactivation");
-                }
+                //var CheckActiveEndDate = db.Catalog.Where(x => x.RequestID == GetRequestID).Select(x => x.ActiveEndDate).FirstOrDefault();
+                //var NumberOfActiveDaysLeft =  (CheckActiveEndDate - CurrentTimeNow).Value.Days;  
+                //if (CheckActiveEndDate >= CurrentTimeNow)
+                //{
+                //    LogHelper.Log(Log.Event.DEACTIVATE, "This Account has" + " "  + NumberOfActiveDaysLeft + " active days left before deactivation" );
+                //    Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                //    return Error("This Account has" + " " + NumberOfActiveDaysLeft + " active days left before deactivation");
+                //}
                 var Tenant = db.Catalog.Find(GetTenantID);
                 Tenant.IsActive = false;
                 Tenant.DateModified = CurrentTimeNow;
@@ -604,7 +603,7 @@ namespace ProcureEaseAPI.Controllers
                         IsActive = db.Catalog.Where(y => y.OrganizationID == x.OrganizationID).Select(y => y.IsActive).FirstOrDefault(),
                         AccountStatus = db.Catalog.Where(y => y.OrganizationID == x.OrganizationID && (y.IsDemo == true || y.IsActive == true)).Select(y => (true) || (false)).FirstOrDefault(),
                         NumberOfDemoDaysLeft = DbFunctions.DiffDays(CurrentTimeNow, db.RequestForDemo.Where(z => z.OrganizationFullName == x.OrganizationNameInFull).Select(z => z.DemoEndDate).FirstOrDefault()),
-                        NumberOfActiveDaysLeft = DbFunctions.DiffDays(CurrentTimeNow, db.Catalog.Where(z => z.OrganizationID == x.OrganizationID).Select(z => z.ActiveEndDate).FirstOrDefault())
+                       // NumberOfActiveDaysLeft = DbFunctions.DiffDays(CurrentTimeNow, db.Catalog.Where(z => z.OrganizationID == x.OrganizationID).Select(z => z.ActiveEndDate).FirstOrDefault())
                     })
                 }, JsonRequestBehavior.AllowGet);
             }

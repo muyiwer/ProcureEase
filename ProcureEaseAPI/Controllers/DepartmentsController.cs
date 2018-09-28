@@ -149,7 +149,7 @@ namespace ProcureEaseAPI.Controllers
 
         // PUT: Departments/Edit
         [HttpPut]
-        //[Providers.Authorize]
+        [Providers.Authorize]
         public ActionResult Edit (Guid DepartmentID, Guid UserID, string DepartmentName)
         {
             string email = Request.Headers["Email"];

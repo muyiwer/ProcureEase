@@ -67,9 +67,9 @@
         <AssociationConnector Association="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_SourceOfFunds" ManuallyRouted="false" />
         <EntityTypeShape EntityType="ProcureEaseModel.AdvertStatus" Width="1.5" PointX="5.25" PointY="15.375" />
         <AssociationConnector Association="ProcureEaseModel.FK__Adverts__AdvertS__0F624AF8" />
-        <EntityTypeShape EntityType="ProcureEaseModel.Catalog" Width="1.5" PointX="3" PointY="35.125" />
         <EntityTypeShape EntityType="ProcureEaseModel.RequestForDemo" Width="1.5" PointX="0.75" PointY="36.875" />
         <EntityTypeShape EntityType="ProcureEaseModel.sysdiagrams" Width="1.5" PointX="3.375" PointY="0.75" />
+        <EntityTypeShape EntityType="ProcureEaseModel.Catalog" Width="1.5" PointX="3" PointY="35.125" />
         <AssociationConnector Association="ProcureEaseModel.FK_AdvertCategory_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_AdvertCategoryNumber_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_AdvertisedItems_Catalog" />

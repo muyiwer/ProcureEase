@@ -89,6 +89,7 @@ namespace ProcureEaseAPI.Controllers
         {
             string email = Request.Headers["Email"];
             var tenantId = catalog.GetTenantIDFromClientURL(email);
+
             try
             {
                 if (tenantId == null)
@@ -153,11 +154,11 @@ namespace ProcureEaseAPI.Controllers
         {
             string email = Request.Headers["Email"];
             var tenantId = catalog.GetTenantIDFromClientURL(email);
+            AuthRepository authRepository = new AuthRepository();
             try
             {
                 DateTime dt = DateTime.Now;
-                var currentDepartmentDetail = db.Department.FirstOrDefault(d => d.DepartmentID == DepartmentID);
-                var departmentID = db.Department.Find(DepartmentID);
+                var FindDepartment = db.Department.Find(DepartmentID);
                 var DepartmentHeadUserID = db.UserProfile.Where(x => x.UserID == UserID).Select(x => x.UserID).FirstOrDefault();
                 if (tenantId == null)
                 {
@@ -168,7 +169,7 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                if (departmentID == null)
+                if (FindDepartment == null)
                 {
                     LogHelper.Log(Log.Event.EDIT_DEPARTMENT, "DepartmentID not found");
                     return Json(new
@@ -178,9 +179,40 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     });
                 }
-                currentDepartmentDetail.DepartmentHeadUserID = DepartmentHeadUserID;
-                currentDepartmentDetail.DepartmentName = DepartmentName;
-                currentDepartmentDetail.DateModified = dt;
+                var Id = db.UserProfile.Where(x => x.UserID == UserID).Select(x => x.Id).FirstOrDefault();
+                if(Id == null)
+                {
+                    FindDepartment.DepartmentHeadUserID = DepartmentHeadUserID;
+                    FindDepartment.DepartmentName = DepartmentName;
+                    FindDepartment.DateModified = dt;
+                    db.Entry(FindDepartment).State = EntityState.Modified;
+                }
+                else
+                {
+                    UserProfile userProfile = new UserProfile();
+                    userProfile.UserID = UserID;
+                    if (FindDepartment.DepartmentName == "Procurement" && FindDepartment.DepartmentHeadUserID != UserID)
+                    {
+                        authRepository.EditToProcurementOfficerRole(userProfile, Id);
+                    }
+                    if (FindDepartment.DepartmentName == "Procurement" && FindDepartment.DepartmentHeadUserID == UserID)
+                    {
+                        authRepository.EditToHeadOfProcumentRole(userProfile, Id);
+                    }
+                    if (FindDepartment.DepartmentName != "Procurement" && FindDepartment.DepartmentHeadUserID != UserID)
+                    {
+                        authRepository.EditToEmployeeRole(userProfile, Id);
+                    }
+                    if (FindDepartment.DepartmentName != "Procurement" && FindDepartment.DepartmentHeadUserID == UserID)
+                    {
+                        authRepository.EditToHeadOfDepartmentRole(userProfile, Id);
+                    }
+                    FindDepartment.DepartmentHeadUserID = DepartmentHeadUserID;
+                    FindDepartment.DepartmentName = DepartmentName;
+                    FindDepartment.DateModified = dt;
+                    db.Entry(FindDepartment).State = EntityState.Modified;
+                }
+                
                 db.SaveChanges();
             }
             catch (Exception ex)

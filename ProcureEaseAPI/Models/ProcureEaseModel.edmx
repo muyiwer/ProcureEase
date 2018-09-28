@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="ProcureEaseModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="ProcureEaseModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="__MigrationHistory">
           <Key>
             <PropertyRef Name="MigrationId" />
@@ -183,7 +183,6 @@
           <Property Name="DateModified" Type="datetime" />
           <Property Name="IsDemo" Type="bit" />
           <Property Name="IsActive" Type="bit" />
-          <Property Name="ActiveEndDate" Type="datetime" />
         </EntityType>
         <EntityType Name="Department">
           <Key>
@@ -1936,9 +1935,9 @@
             <End Role="AdvertStatus" EntitySet="AdvertStatus" />
             <End Role="Adverts" EntitySet="Adverts" />
           </AssociationSet>
-          <EntitySet Name="Catalog" EntityType="ProcureEaseModel.Catalog" />
           <EntitySet Name="RequestForDemo" EntityType="ProcureEaseModel.RequestForDemo" />
           <EntitySet Name="sysdiagrams" EntityType="ProcureEaseModel.sysdiagrams" />
+          <EntitySet Name="Catalog" EntityType="ProcureEaseModel.Catalog" />
           <AssociationSet Name="FK_AdvertCategory_Catalog" Association="ProcureEaseModel.FK_AdvertCategory_Catalog">
             <End Role="Catalog" EntitySet="Catalog" />
             <End Role="AdvertCategory" EntitySet="AdvertCategory" />
@@ -2394,41 +2393,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="Catalog">
-          <Key>
-            <PropertyRef Name="TenantID" />
-          </Key>
-          <Property Name="TenantID" Type="Guid" Nullable="false" />
-          <Property Name="RequestID" Type="Guid" />
-          <Property Name="SubDomain" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Name="OrganizationID" Type="Guid" />
-          <Property Name="DateCreated" Type="DateTime" Precision="3" />
-          <Property Name="DateModified" Type="DateTime" Precision="3" />
-          <Property Name="IsDemo" Type="Boolean" />
-          <Property Name="IsActive" Type="Boolean" />
-          <Property Name="ActiveEndDate" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="AdvertCategory" Relationship="ProcureEaseModel.FK_AdvertCategory_Catalog" FromRole="Catalog" ToRole="AdvertCategory" />
-          <NavigationProperty Name="AdvertCategoryNumber" Relationship="ProcureEaseModel.FK_AdvertCategoryNumber_Catalog" FromRole="Catalog" ToRole="AdvertCategoryNumber" />
-          <NavigationProperty Name="AdvertisedItems" Relationship="ProcureEaseModel.FK_AdvertisedItems_Catalog" FromRole="Catalog" ToRole="AdvertisedItems" />
-          <NavigationProperty Name="AdvertLotNumber" Relationship="ProcureEaseModel.FK_AdvertLotNumber_Catalog" FromRole="Catalog" ToRole="AdvertLotNumber" />
-          <NavigationProperty Name="Adverts" Relationship="ProcureEaseModel.FK_Adverts_Catalog" FromRole="Catalog" ToRole="Adverts" />
-          <NavigationProperty Name="AdvertStatus" Relationship="ProcureEaseModel.FK_AdvertStatus_Catalog" FromRole="Catalog" ToRole="AdvertStatus" />
-          <NavigationProperty Name="ApprovedItems" Relationship="ProcureEaseModel.FK_ApprovedItems_Catalog" FromRole="Catalog" ToRole="ApprovedItems" />
-          <NavigationProperty Name="AspNetUsers" Relationship="ProcureEaseModel.FK_AspNetUsers_Catalog" FromRole="Catalog" ToRole="AspNetUsers" />
-          <NavigationProperty Name="BudgetYear" Relationship="ProcureEaseModel.FK_BudgetYear_Catalog" FromRole="Catalog" ToRole="BudgetYear" />
-          <NavigationProperty Name="RequestForDemo" Relationship="ProcureEaseModel.FK_Catalog_RequestForDemo" FromRole="Catalog" ToRole="RequestForDemo" />
-          <NavigationProperty Name="Department" Relationship="ProcureEaseModel.FK_Department_Catalog" FromRole="Catalog" ToRole="Department" />
-          <NavigationProperty Name="ItemCode" Relationship="ProcureEaseModel.FK_ItemCode_Catalog" FromRole="Catalog" ToRole="ItemCode" />
-          <NavigationProperty Name="Items" Relationship="ProcureEaseModel.FK_Items_Catalog" FromRole="Catalog" ToRole="Items" />
-          <NavigationProperty Name="OrganizationSettings" Relationship="ProcureEaseModel.FK_OrganizationSettings_Catalog" FromRole="Catalog" ToRole="OrganizationSettings" />
-          <NavigationProperty Name="ProcurementMethodOrganizationSettings" Relationship="ProcureEaseModel.FK_ProcurementMethodOrganizationSettings_Catalog" FromRole="Catalog" ToRole="ProcurementMethodOrganizationSettings" />
-          <NavigationProperty Name="Procurements" Relationship="ProcureEaseModel.FK_Procurements_Catalog" FromRole="Catalog" ToRole="Procurements" />
-          <NavigationProperty Name="ProcurementStatus" Relationship="ProcureEaseModel.FK_ProcurementStatus_Catalog" FromRole="Catalog" ToRole="ProcurementStatus" />
-          <NavigationProperty Name="ProjectCategoryOrganizationSettings" Relationship="ProcureEaseModel.FK_ProjectCategoryOrganizationSettings_Catalog" FromRole="Catalog" ToRole="ProjectCategoryOrganizationSettings" />
-          <NavigationProperty Name="SourceOfFundsOrganizationSettings" Relationship="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_Catalog" FromRole="Catalog" ToRole="SourceOfFundsOrganizationSettings" />
-          <NavigationProperty Name="TelephoneNumbers" Relationship="ProcureEaseModel.FK_TelephoneNumbers_Catalog" FromRole="Catalog" ToRole="TelephoneNumbers" />
-          <NavigationProperty Name="UserProfile" Relationship="ProcureEaseModel.FK_UserProfile_Catalog" FromRole="Catalog" ToRole="UserProfile" />
-        </EntityType>
         <EntityType Name="RequestForDemo">
           <Key>
             <PropertyRef Name="RequestID" />
@@ -2454,6 +2418,40 @@
           <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="version" Type="Int32" />
           <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="Catalog">
+          <Key>
+            <PropertyRef Name="TenantID" />
+          </Key>
+          <Property Name="TenantID" Type="Guid" Nullable="false" />
+          <Property Name="RequestID" Type="Guid" />
+          <Property Name="SubDomain" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="OrganizationID" Type="Guid" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="DateModified" Type="DateTime" Precision="3" />
+          <Property Name="IsDemo" Type="Boolean" />
+          <Property Name="IsActive" Type="Boolean" />
+          <NavigationProperty Name="AdvertCategory" Relationship="ProcureEaseModel.FK_AdvertCategory_Catalog" FromRole="Catalog" ToRole="AdvertCategory" />
+          <NavigationProperty Name="AdvertCategoryNumber" Relationship="ProcureEaseModel.FK_AdvertCategoryNumber_Catalog" FromRole="Catalog" ToRole="AdvertCategoryNumber" />
+          <NavigationProperty Name="AdvertisedItems" Relationship="ProcureEaseModel.FK_AdvertisedItems_Catalog" FromRole="Catalog" ToRole="AdvertisedItems" />
+          <NavigationProperty Name="AdvertLotNumber" Relationship="ProcureEaseModel.FK_AdvertLotNumber_Catalog" FromRole="Catalog" ToRole="AdvertLotNumber" />
+          <NavigationProperty Name="Adverts" Relationship="ProcureEaseModel.FK_Adverts_Catalog" FromRole="Catalog" ToRole="Adverts" />
+          <NavigationProperty Name="AdvertStatus" Relationship="ProcureEaseModel.FK_AdvertStatus_Catalog" FromRole="Catalog" ToRole="AdvertStatus" />
+          <NavigationProperty Name="ApprovedItems" Relationship="ProcureEaseModel.FK_ApprovedItems_Catalog" FromRole="Catalog" ToRole="ApprovedItems" />
+          <NavigationProperty Name="AspNetUsers" Relationship="ProcureEaseModel.FK_AspNetUsers_Catalog" FromRole="Catalog" ToRole="AspNetUsers" />
+          <NavigationProperty Name="BudgetYear" Relationship="ProcureEaseModel.FK_BudgetYear_Catalog" FromRole="Catalog" ToRole="BudgetYear" />
+          <NavigationProperty Name="RequestForDemo" Relationship="ProcureEaseModel.FK_Catalog_RequestForDemo" FromRole="Catalog" ToRole="RequestForDemo" />
+          <NavigationProperty Name="Department" Relationship="ProcureEaseModel.FK_Department_Catalog" FromRole="Catalog" ToRole="Department" />
+          <NavigationProperty Name="ItemCode" Relationship="ProcureEaseModel.FK_ItemCode_Catalog" FromRole="Catalog" ToRole="ItemCode" />
+          <NavigationProperty Name="Items" Relationship="ProcureEaseModel.FK_Items_Catalog" FromRole="Catalog" ToRole="Items" />
+          <NavigationProperty Name="OrganizationSettings" Relationship="ProcureEaseModel.FK_OrganizationSettings_Catalog" FromRole="Catalog" ToRole="OrganizationSettings" />
+          <NavigationProperty Name="ProcurementMethodOrganizationSettings" Relationship="ProcureEaseModel.FK_ProcurementMethodOrganizationSettings_Catalog" FromRole="Catalog" ToRole="ProcurementMethodOrganizationSettings" />
+          <NavigationProperty Name="Procurements" Relationship="ProcureEaseModel.FK_Procurements_Catalog" FromRole="Catalog" ToRole="Procurements" />
+          <NavigationProperty Name="ProcurementStatus" Relationship="ProcureEaseModel.FK_ProcurementStatus_Catalog" FromRole="Catalog" ToRole="ProcurementStatus" />
+          <NavigationProperty Name="ProjectCategoryOrganizationSettings" Relationship="ProcureEaseModel.FK_ProjectCategoryOrganizationSettings_Catalog" FromRole="Catalog" ToRole="ProjectCategoryOrganizationSettings" />
+          <NavigationProperty Name="SourceOfFundsOrganizationSettings" Relationship="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_Catalog" FromRole="Catalog" ToRole="SourceOfFundsOrganizationSettings" />
+          <NavigationProperty Name="TelephoneNumbers" Relationship="ProcureEaseModel.FK_TelephoneNumbers_Catalog" FromRole="Catalog" ToRole="TelephoneNumbers" />
+          <NavigationProperty Name="UserProfile" Relationship="ProcureEaseModel.FK_UserProfile_Catalog" FromRole="Catalog" ToRole="UserProfile" />
         </EntityType>
         <Association Name="FK_AdvertCategory_Catalog">
           <End Type="ProcureEaseModel.Catalog" Role="Catalog" Multiplicity="0..1" />
@@ -3082,21 +3080,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Catalog">
-            <EntityTypeMapping TypeName="ProcureEaseModel.Catalog">
-              <MappingFragment StoreEntitySet="Catalog">
-                <ScalarProperty Name="ActiveEndDate" ColumnName="ActiveEndDate" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="IsDemo" ColumnName="IsDemo" />
-                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="OrganizationID" ColumnName="OrganizationID" />
-                <ScalarProperty Name="SubDomain" ColumnName="SubDomain" />
-                <ScalarProperty Name="RequestID" ColumnName="RequestID" />
-                <ScalarProperty Name="TenantID" ColumnName="TenantID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="RequestForDemo">
             <EntityTypeMapping TypeName="ProcureEaseModel.RequestForDemo">
               <MappingFragment StoreEntitySet="RequestForDemo">
@@ -3121,6 +3104,20 @@
                 <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
                 <ScalarProperty Name="principal_id" ColumnName="principal_id" />
                 <ScalarProperty Name="name" ColumnName="name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Catalog">
+            <EntityTypeMapping TypeName="ProcureEaseModel.Catalog">
+              <MappingFragment StoreEntitySet="Catalog">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="IsDemo" ColumnName="IsDemo" />
+                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="OrganizationID" ColumnName="OrganizationID" />
+                <ScalarProperty Name="SubDomain" ColumnName="SubDomain" />
+                <ScalarProperty Name="RequestID" ColumnName="RequestID" />
+                <ScalarProperty Name="TenantID" ColumnName="TenantID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

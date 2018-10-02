@@ -390,13 +390,14 @@ namespace ProcureEaseAPI.Controllers
                     foreach (DepartmentItems item in items)
                     {
                         // insert items
+                        var itemCodeId = db.ItemCode.Where(x => x.ItemCode1 == item.ItemCode).Select(x => x.ItemCodeID).FirstOrDefault();
                         db.Items.Add(new Items()
                         {
                             ItemID = Guid.NewGuid(),
                             ProcurementID = ProcurementID,
                             UnitPrice = Convert.ToDouble(item.UnitPrice),
                             Quantity = Convert.ToDouble(item.Quantity),
-                            ItemCodeID = item.ItemCodeID,
+                            ItemCodeID = itemCodeId,
                             ItemName = item.ItemName,
                             Description = item.Description,
                             TenantID = tenantId,
@@ -782,7 +783,6 @@ namespace ProcureEaseAPI.Controllers
                     {
                         x.ProcurementID,
                         x.ProjectName,
-                        x.ProcurementMethodID,
                         x.ProjectCategoryID,
                         TotalProjectCost = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(z => z.UnitPrice).Sum()
                                      * db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(z => z.Quantity).Sum(),
@@ -837,7 +837,6 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementID,
                         x.ProjectName,
                         DateCreated = x.DateCreated.Value.ToString(),
-                        x.ProcurementMethodID,
                         x.ProjectCategoryID,
                         x.ProcurementStatusID,
                         TotalProjectCost = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(z => z.UnitPrice).Sum()

@@ -206,67 +206,66 @@ namespace ProcureEaseAPI.Controllers
 
                 else
                 {
-                    Catalog Tenant = new Catalog();
-                    Tenant.TenantID = TenantID;
-                    Tenant.RequestID = GetRequestID;
-                    Tenant.IsDemo = true;
-                    Tenant.IsActive = false;
-                    Tenant.DateCreated = dt;
-                    Tenant.DateModified = dt;
-                    db.Catalog.Add(Tenant);
+                    db.Catalog.Add(new Catalog()
+                    {
+                    TenantID = TenantID,
+                    RequestID = GetRequestID,
+                    IsDemo = true,
+                    IsActive = false,
+                    DateCreated = dt,
+                    DateModified = dt
+                });
+                    Guid OrganizationID = Guid.NewGuid();
+                    SaveTenantsRequestOnOrganizationSettings(GetRequestID, TenantID, OrganizationID);
+
+                    var SubDomain = db.RequestForDemo.Where(x => x.RequestID == GetRequestID).Select(x => x.OrganizationShortName).FirstOrDefault();
+                    var UpdateCatalog = db.Catalog.Find(TenantID);
+                    UpdateCatalog.OrganizationID = OrganizationID;
+                    UpdateCatalog.SubDomain = SubDomain;
+                    UpdateCatalog.DateModified = dt;
+
+                    var UpdateRequestForDemo = db.RequestForDemo.Find(GetRequestID);
+                    UpdateRequestForDemo.DemoStartDate = dt;
+                    UpdateRequestForDemo.DemoEndDate = CurrentTime;
+
+                    AddUserModel UserModel = new AddUserModel
+                    {
+                        Email = AdministratorEmail,
+                        Password = Password,
+                        UserName = AdministratorEmail
+                    };
+                    AuthRepository Repository = new AuthRepository();
+                    ApplicationUser User = await Repository.RegisterAdmin(UserModel);
+
+                    var RoleId = db.AspNetRoles.Where(x => x.Name == "MDA Administrator").Select(x => x.Id).FirstOrDefault();
+                    AspNetUserRoles userRole = new AspNetUserRoles();
+                    userRole.UserId = User.Id;
+                    userRole.RoleId = RoleId;
+                    db.AspNetUserRoles.Add(userRole);
+
+                    var GetAdministratorFirstName = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.AdministratorFirstName).FirstOrDefault();
+                    var GetAdministratorLastName = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.AdministratorLastName).FirstOrDefault();
+                    UserProfile userProfile = new UserProfile();
+                    userProfile.UserID = Guid.NewGuid();
+                    userProfile.Id = User.Id;
+                    userProfile.DepartmentID = null;
+                    userProfile.OrganizationID = OrganizationID;
+                    userProfile.TenantID = TenantID;
+                    userProfile.UserEmail = User.Email;
+                    userProfile.FirstName = GetAdministratorFirstName;
+                    userProfile.LastName = GetAdministratorLastName;
+                    userProfile.DateCreated = dt;
+                    db.UserProfile.Add(userProfile);
+
                     db.SaveChanges();
+
+                    SaveDefaultSouceOfFundRecord(TenantID, OrganizationID);
+                    SaveDefaultProcurementMethodRecord(TenantID, OrganizationID);
+                    SaveDefaultProjectCategoryRecord(TenantID, OrganizationID);
+
+                    await SendMailToAdministrator(AdministratorEmail, Password);
+
                 }
-
-                Guid OrganizationID = Guid.NewGuid();
-                SaveTenantsRequestOnOrganizationSettings(GetRequestID, TenantID, OrganizationID);
-
-                var SubDomain = db.RequestForDemo.Where(x=> x.RequestID == GetRequestID).Select(x => x.OrganizationShortName).FirstOrDefault();
-                var UpdateCatalog = db.Catalog.Find(TenantID);
-                UpdateCatalog.OrganizationID = OrganizationID;
-                UpdateCatalog.SubDomain = SubDomain;
-                UpdateCatalog.DateModified = dt;
-
-                var UpdateRequestForDemo = db.RequestForDemo.Find(GetRequestID);
-                UpdateRequestForDemo.DemoStartDate = dt;
-                UpdateRequestForDemo.DemoEndDate = CurrentTime;
-                db.SaveChanges();
-
-                AddUserModel UserModel = new AddUserModel
-                {
-                    Email = AdministratorEmail,
-                    Password = Password,
-                    UserName = AdministratorEmail
-                };
-                AuthRepository Repository = new AuthRepository();
-                ApplicationUser User = await Repository.RegisterAdmin(UserModel);
-
-                var RoleId = db.AspNetRoles.Where(x => x.Name == "MDA Administrator").Select(x => x.Id).FirstOrDefault();
-                AspNetUserRoles userRole = new AspNetUserRoles();
-                userRole.UserId = User.Id;
-                userRole.RoleId = RoleId;
-                db.AspNetUserRoles.Add(userRole);
-
-                var GetAdministratorFirstName = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.AdministratorFirstName).FirstOrDefault();
-                var GetAdministratorLastName = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.AdministratorLastName).FirstOrDefault();
-                UserProfile userProfile = new UserProfile();
-                userProfile.UserID = Guid.NewGuid();
-                userProfile.Id = User.Id;
-                userProfile.DepartmentID = null;
-                userProfile.OrganizationID = OrganizationID;
-                userProfile.TenantID = TenantID;
-                userProfile.UserEmail = User.Email;
-                userProfile.FirstName = GetAdministratorFirstName;
-                userProfile.LastName = GetAdministratorLastName;
-                userProfile.DateCreated = dt;
-                db.UserProfile.Add(userProfile);
-                db.SaveChanges();
-
-                SaveDefaultSouceOfFundRecord(TenantID, OrganizationID);
-                SaveDefaultProcurementMethodRecord(TenantID, OrganizationID);
-                SaveDefaultProjectCategoryRecord(TenantID, OrganizationID);
-
-                await SendMailToAdministrator(AdministratorEmail, Password);
-
                 return Json(new
                 {
                     success = true,
@@ -303,7 +302,6 @@ namespace ProcureEaseAPI.Controllers
                     DateCreated = dt,
                     CreatedBy = "Techspecialist"
                 });
-                db.SaveChanges();
             }
         }
         #endregion

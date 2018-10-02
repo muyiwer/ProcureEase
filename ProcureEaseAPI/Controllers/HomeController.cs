@@ -31,7 +31,6 @@ namespace ProcureEaseAPI.Controllers
             }
         }
 
-
         public ActionResult Index()
         {
             ViewBag.Title = "Home Page";

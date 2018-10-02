@@ -18,5 +18,18 @@ namespace ProcureEaseAPI.Tests.Controllers
             var requestContext = new RequestContext(context.Object, new RouteData());
             controller.ControllerContext = new ControllerContext(requestContext, controller);
         }
+
+        public static void MockContextHeader(Controller controller)
+        {
+            string email = "oaro@techspecialistlimited.com";
+            var request = new Mock<HttpRequestBase>();
+            request.SetupGet(x => x.Headers).Returns(
+                new System.Net.WebHeaderCollection {
+              {"Email", email}
+                });
+            var context = new Mock<HttpContextBase>();
+            context.SetupGet(x => x.Request).Returns(request.Object);
+            controller.ControllerContext = new ControllerContext(context.Object, new RouteData(), controller);
+        }
     }
 }

@@ -226,7 +226,7 @@ namespace ProcureEaseAPI.Controllers
                                 dbItem.Quantity = Convert.ToDouble(item.Quantity);
                                 dbItem.ItemCodeID = itemCodeId;
                                 dbItem.ItemName = item.ItemName;
-                                dbItem.Description = item.Description;
+                                dbItem.Description = item.ItemDescription;
                                 dbItem.TenantID = tenantId;
                                 dbItem.DateModified = DateTimeSettings.CurrentDate();
                                 db.Entry(dbItem).State = EntityState.Modified;
@@ -263,7 +263,7 @@ namespace ProcureEaseAPI.Controllers
                                 Quantity = Convert.ToDouble(item.Quantity),
                                 ItemCodeID= itemCodeId,
                                 ItemName = item.ItemName,
-                                Description = item.Description,
+                                Description = item.ItemDescription,
                                 TenantID = tenantId,
                                 DateCreated = DateTimeSettings.CurrentDate()
                             });
@@ -332,7 +332,7 @@ namespace ProcureEaseAPI.Controllers
                             Quantity = Convert.ToDouble(item.Quantity),
                             ItemCodeID = itemCodeId,
                             ItemName = item.ItemName,
-                            Description = item.Description,
+                            Description = item.ItemDescription,
                             TenantID = tenantId,
                             DateCreated = DateTimeSettings.CurrentDate()
                         });
@@ -399,7 +399,7 @@ namespace ProcureEaseAPI.Controllers
                             Quantity = Convert.ToDouble(item.Quantity),
                             ItemCodeID = itemCodeId,
                             ItemName = item.ItemName,
-                            Description = item.Description,
+                            Description = item.ItemDescription,
                             TenantID = tenantId,
                             DateCreated = DateTimeSettings.CurrentDate()
                         });
@@ -523,7 +523,7 @@ namespace ProcureEaseAPI.Controllers
                                 dbItem.Quantity = Convert.ToDouble(item.Quantity);
                                 dbItem.ItemCodeID = itemCodeId;
                                 dbItem.ItemName = item.ItemName;
-                                dbItem.Description = item.Description;
+                                dbItem.Description = item.ItemDescription;
                                 dbItem.TenantID = tenantId;
                                 dbItem.DateModified = DateTimeSettings.CurrentDate();
                                 db.Entry(dbItem).State = EntityState.Modified;
@@ -561,11 +561,153 @@ namespace ProcureEaseAPI.Controllers
                                 Quantity = Convert.ToDouble(item.Quantity),
                                 ItemCodeID = itemCodeId,
                                 ItemName = item.ItemName,
-                                Description = item.Description,
+                                Description = item.ItemDescription,
                                 TenantID = tenantId,
                                 DateCreated = DateTimeSettings.CurrentDate()
                             });
 
+                        }
+
+                    }
+
+                }
+
+                #endregion
+
+                #region ProcessDeletedProjects
+                var deletedProjects = Projects.Where(x => x.Deleted == true);
+                foreach (DepartmentProject project in deletedProjects)
+                {
+                    db.Items.RemoveRange(db.Items.Where(c => c.ProcurementID == project.ProcurementID));
+                    Procurements dbProcurement = db.Procurements.Find(project.ProcurementID);
+                    if (dbProcurement == null)
+                    {
+                        LogHelper.Log(Log.Event.SEND_PROCUREMENTS_NEEDS, "Project with ID: " + project.ProcurementID + " could not be found.");
+                        Response.StatusCode = (int)HttpStatusCode.NotFound;
+                        return Error("Project with ID: " + project.ProcurementID + " could not be found.");
+                    }
+                    else
+                    {
+                        db.Procurements.Remove(dbProcurement);
+                    }
+                }
+                #endregion
+
+                db.SaveChanges();
+                Response.StatusCode = (int)HttpStatusCode.Created;
+                return DraftNeedsJson(DepartmentID, BudgetYear, tenantId);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(Log.Event.SEND_PROCUREMENTS_NEEDS, ex.Message);
+                return Error("" + ex.Message + ex.StackTrace);
+            }
+
+        }
+
+        //POST: Procurements/SendProcurementNeeds
+        [HttpPost]
+        [Providers.Authorize]
+        public ActionResult SentProcurement(Guid DepartmentID, int BudgetYear, List<DepartmentProject> Projects)
+        {
+            try
+            {
+                string email = Request.Headers["Email"];
+                Guid? tenantId = catalog.GetTenantIDFromClientURL(email);
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }               
+                DateTimeSettings DateTimeSettings = new DateTimeSettings();
+                var CheckIfDepartmentIsValid = db.Department.Where(x => x.DepartmentID == DepartmentID && x.TenantID == tenantId).Select(x => x.DepartmentName).FirstOrDefault();
+                if (CheckIfDepartmentIsValid == null)
+                {
+                    LogHelper.Log(Log.Event.SEND_PROCUREMENTS_NEEDS, "DepartmentID is Null or Department is not valid.");
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    return Error("DepartmentID is Null or Department is not valid.");
+                }
+                var BudgetyearID = db.BudgetYear.Where(x => x.BudgetYear1.Value.Year == BudgetYear && x.TenantID == tenantId).Select(x => x.BudgetYearID).FirstOrDefault();
+                if (BudgetyearID == null)
+                {
+                    LogHelper.Log(Log.Event.SEND_PROCUREMENTS_NEEDS, "BudgetYear is Null.");
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    return Error("BudgetYear is Null.");
+                }
+                #region ProcessUpdatedProjects
+                // process updated projects
+                var updatedProjects = Projects.Where(x => x.ProcurementID != Guid.Empty && x.Deleted == false);
+                foreach (DepartmentProject project in updatedProjects)
+                {
+                    // process items
+                    var items = project.Items;
+                    if (items == null)
+                    {
+                        // update project
+                        Procurements dbProcurement = db.Procurements.Find(project.ProcurementID);
+                        if (dbProcurement == null)
+                        {
+                            LogHelper.Log(Log.Event.SEND_PROCUREMENTS_NEEDS, "Project with ID: " + project.ProcurementID + " could not be found.");
+                            Response.StatusCode = (int)HttpStatusCode.NotFound;
+                            return Error("Project with ID: " + project.ProcurementID + " could not be found.");
+                        }
+                        else
+                        {
+                            dbProcurement.ProjectName = project.ProjectName;
+                            dbProcurement.ProjectCategoryID = project.ProjectCategoryID;
+                            dbProcurement.DepartmentID = DepartmentID;
+                            dbProcurement.BudgetYearID = BudgetyearID;
+                            dbProcurement.DateModified = DateTimeSettings.CurrentDate();
+                            dbProcurement.TenantID = tenantId;
+                            db.Entry(dbProcurement).State = EntityState.Modified;
+                        }
+                    }
+                    else
+                    {
+                        var UpdatedItem = items.Where(x => x.ItemID != Guid.Empty && x.Deleted == false);
+                        foreach (DepartmentItems item in UpdatedItem)
+                        {
+                            // update items
+                            Items dbItem = db.Items.Find(item.ItemID);
+                            if (dbItem == null)
+                            {
+                                LogHelper.Log(Log.Event.SEND_PROCUREMENTS_NEEDS, "Item with ID: " + item.ItemID + " could not be found.");
+                                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                                return Error("Item with ID: " + item.ItemID + " could not be found.");
+                            }
+                            else
+                            {
+                                var itemCodeId = db.ItemCode.Where(x => x.ItemCode1 == item.ItemCode).Select(x => x.ItemCodeID).FirstOrDefault();
+                                dbItem.UnitPrice = Convert.ToDouble(item.UnitPrice);
+                                dbItem.Quantity = Convert.ToDouble(item.Quantity);
+                                dbItem.ItemCodeID = itemCodeId;
+                                dbItem.ItemName = item.ItemName;
+                                dbItem.Description = item.ItemDescription;
+                                dbItem.TenantID = tenantId;
+                                dbItem.DateModified = DateTimeSettings.CurrentDate();
+                                db.Entry(dbItem).State = EntityState.Modified;
+                            }
+                            Procurements dbProcurement = db.Procurements.Find(project.ProcurementID);
+                            if (dbProcurement == null)
+                            {
+                                LogHelper.Log(Log.Event.SEND_PROCUREMENTS_NEEDS, "Project with ID: " + project.ProcurementID + " could not be found.");
+                                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                                return Error("Project with ID: " + project.ProcurementID + " could not be found.");
+                            }
+                            else
+                            {
+                                dbProcurement.ProjectName = project.ProjectName;
+                                dbProcurement.ProjectCategoryID = project.ProjectCategoryID;
+                                dbProcurement.DepartmentID = DepartmentID;
+                                dbProcurement.BudgetYearID = BudgetyearID;
+                                dbProcurement.TenantID = tenantId;
+                                dbProcurement.DateModified = DateTimeSettings.CurrentDate();
+                                db.Entry(dbProcurement).State = EntityState.Modified;
+                            }
                         }
 
                     }
@@ -669,15 +811,18 @@ namespace ProcureEaseAPI.Controllers
                             TotalProjectCost = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == guidID &&  z.ProcurementID == x.ProcurementID && x.ProcurementStatusID == PendingProcurementStatusID && x.ProcurementStatusID == ApprovedProcurementStatusID).Select(z => z.UnitPrice).Sum()
                                          * db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == guidID && z.ProcurementID == x.ProcurementID && x.ProcurementStatusID == PendingProcurementStatusID || x.ProcurementStatusID == ApprovedProcurementStatusID).Select(z => z.Quantity).Sum(),
                             ProjectTotalCostStatus = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == guidID &&  z.ProcurementID == x.ProcurementID && x.ProcurementStatusID == PendingProcurementStatusID || x.TenantID == tenantId && x.ProcurementStatusID == ApprovedProcurementStatusID).Select(y => y.UnitPrice != null == true || false).FirstOrDefault(),
+                            Deleted = false,
                             Items = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == guidID && z.ProcurementID == x.ProcurementID && x.ProcurementStatusID == PendingProcurementStatusID || x.TenantID == tenantId && x.ProcurementStatusID == ApprovedProcurementStatusID).Select(z => new
                             {
                                 z.ItemID,
                                 z.ItemName,
+                                ItemDescription = z.Description,
                                 z.ItemCodeID,
                                 ItemCode = z.ItemCode.ItemCode1,
                                 z.Quantity,
                                 z.UnitPrice,
-                                EstimatedCost = z.UnitPrice * z.Quantity
+                                EstimatedCost = z.UnitPrice * z.Quantity,
+                                Deleted = false
                             })
                         }),
                         ProcureMentStatus = db.ProcurementStatus.Where(x=>x.ProcurementStatusID==PendingProcurementStatusID || x.ProcurementStatusID==ApprovedProcurementStatusID).Select(x => new
@@ -792,6 +937,7 @@ namespace ProcureEaseAPI.Controllers
                         {
                             z.ItemID,
                             z.ItemName,
+                            ItemDescription = z.Description,
                             z.ItemCodeID,
                             ItemCode = z.ItemCode.ItemCode1,
                             z.Quantity,
@@ -842,15 +988,18 @@ namespace ProcureEaseAPI.Controllers
                         TotalProjectCost = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(z => z.UnitPrice).Sum()
                                      * db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(z => z.Quantity).Sum(),
                         ProjectTotalCostStatus = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(y => y.UnitPrice != null == true || false).FirstOrDefault(),
+                        Deleted = false,
                         Items = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(z => new
                         {
                             z.ItemID,
                             z.ItemName,
+                            ItemDescription = z.Description,
                             z.ItemCodeID,
                             ItemCode = z.ItemCode.ItemCode1,
                             z.Quantity,
                             z.UnitPrice,
-                            EstimatedCost = z.UnitPrice * z.Quantity
+                            EstimatedCost = z.UnitPrice * z.Quantity,
+                            Deleted = false
                         })
                     }),
                     ProcureMentStatus = db.ProcurementStatus.Select(x => new
@@ -1065,7 +1214,7 @@ namespace ProcureEaseAPI.Controllers
                                 dbItem.Quantity = Convert.ToDouble(item.Quantity);
                                 dbItem.ItemCodeID = itemCodeId;
                                 dbItem.ItemName = item.ItemName;
-                                dbItem.Description = item.Description;
+                                dbItem.Description = item.ItemDescription;
                                 dbItem.DateModified = DateTimeSettings.CurrentDate();
                                 db.Entry(dbItem).State = EntityState.Modified;
                             }
@@ -1101,7 +1250,7 @@ namespace ProcureEaseAPI.Controllers
                                 Quantity = Convert.ToDouble(item.Quantity),
                                 ItemCodeID = itemCodeId,
                                 ItemName = item.ItemName,
-                                Description = item.Description,
+                                Description = item.ItemDescription,
                                 TenantID = tenantId,
                                 DateCreated = DateTimeSettings.CurrentDate()
                             });
@@ -1164,7 +1313,7 @@ namespace ProcureEaseAPI.Controllers
                                 dbItem.Quantity = Convert.ToDouble(item.Quantity);
                                 dbItem.ItemCodeID = itemCodeId;
                                 dbItem.ItemName = item.ItemName;
-                                dbItem.Description = item.Description;
+                                dbItem.Description = item.ItemDescription;
                                 dbItem.TenantID = tenantId;
                                 dbItem.DateModified = DateTimeSettings.CurrentDate();
                                 db.Entry(dbItem).State = EntityState.Modified;
@@ -1201,7 +1350,7 @@ namespace ProcureEaseAPI.Controllers
                                     Quantity = Convert.ToDouble(newItems.Quantity),
                                     ItemCodeID = itemCodeId,
                                     ItemName = newItems.ItemName,
-                                    Description = newItems.Description,
+                                    Description = newItems.ItemDescription,
                                     TenantID = tenantId,
                                     DateCreated = DateTimeSettings.CurrentDate()
                                 });
@@ -1242,7 +1391,7 @@ namespace ProcureEaseAPI.Controllers
                                 Quantity = Convert.ToDouble(item.Quantity),
                                 ItemCodeID = itemCodeId,
                                 ItemName = item.ItemName,
-                                Description = item.Description,
+                                Description = item.ItemDescription,
                                 TenantID = tenantId,
                                 DateCreated = DateTimeSettings.CurrentDate()
                             });
@@ -1307,7 +1456,7 @@ namespace ProcureEaseAPI.Controllers
                             Quantity = Convert.ToDouble(item.Quantity),
                             ItemCodeID = itemCodeId,
                             ItemName = item.ItemName,
-                            Description = item.Description,
+                            Description = item.ItemDescription,
                             TenantID = tenantId,
                             DateCreated = DateTimeSettings.CurrentDate()
                         });
@@ -1426,6 +1575,7 @@ namespace ProcureEaseAPI.Controllers
                         {
                             z.ItemID,
                             z.ItemName,
+                            ItemDescription = z.Description,
                             z.ItemCodeID,
                             ItemCode = z.ItemCode.ItemCode1,
                             z.Quantity,
@@ -1504,6 +1654,7 @@ namespace ProcureEaseAPI.Controllers
                         {
                             z.ItemID,
                             z.ItemName,
+                            ItemDescription = z.Description,
                             z.ItemCodeID,
                             ItemCode = z.ItemCode.ItemCode1,
                             z.Quantity,
@@ -1563,6 +1714,7 @@ namespace ProcureEaseAPI.Controllers
                         {
                             z.ItemID,
                             z.ItemName,
+                            ItemDescription = z.Description,
                             z.ItemCodeID,
                             ItemCode = z.ItemCode.ItemCode1,
                             z.Quantity,
@@ -1644,6 +1796,7 @@ namespace ProcureEaseAPI.Controllers
                         {
                             z.ItemID,
                             z.ItemName,
+                            ItemDescription = z.Description,
                             z.ItemCodeID,
                             ItemCode = z.ItemCode.ItemCode1,
                             z.Quantity,
@@ -1687,7 +1840,6 @@ namespace ProcureEaseAPI.Controllers
         }
 
         #endregion
-
 
 
 
@@ -1833,7 +1985,7 @@ namespace ProcureEaseAPI.Controllers
                                 dbItem.Quantity = Convert.ToDouble(item.Quantity);
                                 dbItem.ItemCodeID = item.ItemCodeID;
                                 dbItem.ItemName = item.ItemName;
-                                dbItem.Description = item.Description;
+                                dbItem.Description = item.ItemDescription;
                                 dbItem.TenantID = tenantId;
                                 dbItem.DateModified = DateTimeSettings.CurrentDate();
                                 db.Entry(dbItem).State = EntityState.Modified;
@@ -1873,7 +2025,7 @@ namespace ProcureEaseAPI.Controllers
                                 Quantity = Convert.ToDouble(item.Quantity),
                                 ItemCodeID = itemCodeId,
                                 ItemName = item.ItemName,
-                                Description = item.Description,
+                                Description = item.ItemDescription,
                                 TenantID = tenantId,
                                 DateCreated = DateTimeSettings.CurrentDate()
                             });
@@ -1944,7 +2096,7 @@ namespace ProcureEaseAPI.Controllers
                             Quantity = Convert.ToDouble(item.Quantity),
                             ItemCodeID = itemCodeId,
                             ItemName = item.ItemName,
-                            Description = item.Description,
+                            Description = item.ItemDescription,
                             TenantID = tenantId,
                             DateCreated = DateTimeSettings.CurrentDate()
                         });
@@ -2006,7 +2158,7 @@ namespace ProcureEaseAPI.Controllers
                             Quantity = Convert.ToDouble(item.Quantity),
                             ItemCodeID = itemCodeId,
                             ItemName = item.ItemName,
-                            Description = item.Description,
+                            Description = item.ItemDescription,
                             TenantID = tenantId,
                             DateCreated = DateTimeSettings.CurrentDate()
                         });
@@ -2141,7 +2293,7 @@ namespace ProcureEaseAPI.Controllers
                                 dbItem.Quantity = Convert.ToDouble(item.Quantity);
                                 dbItem.ItemCodeID = itemCodeId;
                                 dbItem.ItemName = item.ItemName;
-                                dbItem.Description = item.Description;
+                                dbItem.Description = item.ItemDescription;
                                 dbItem.DateModified = DateTimeSettings.CurrentDate();
                                 db.Entry(dbItem).State = EntityState.Modified;
                             }
@@ -2177,7 +2329,7 @@ namespace ProcureEaseAPI.Controllers
                                 Quantity = Convert.ToDouble(item.Quantity),
                                 ItemCodeID = itemCodeId,
                                 ItemName = item.ItemName,
-                                Description = item.Description,
+                                Description = item.ItemDescription,
                                 TenantID = tenantId,
                                 DateCreated = DateTimeSettings.CurrentDate()
                             });
@@ -2247,7 +2399,7 @@ namespace ProcureEaseAPI.Controllers
                             Quantity = Convert.ToDouble(item.Quantity),
                             ItemCodeID = itemCodeId,
                             ItemName = item.ItemName,
-                            Description = item.Description,
+                            Description = item.ItemDescription,
                             TenantID = tenantId,
                             DateCreated = DateTimeSettings.CurrentDate()
                         });
@@ -2309,7 +2461,7 @@ namespace ProcureEaseAPI.Controllers
                             Quantity = Convert.ToDouble(item.Quantity),
                             ItemCodeID = itemCodeId,
                             ItemName = item.ItemName,
-                            Description = item.Description,
+                            Description = item.ItemDescription,
                             TenantID = tenantId,
                             DateCreated = DateTimeSettings.CurrentDate()
                         });

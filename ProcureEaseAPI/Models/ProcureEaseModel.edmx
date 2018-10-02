@@ -355,16 +355,6 @@
           <Property Name="DateCreated" Type="datetime" />
           <Property Name="DateModified" Type="datetime" />
         </EntityType>
-        <EntityType Name="sysdiagrams">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="principal_id" Type="int" Nullable="false" />
-          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="version" Type="int" />
-          <Property Name="definition" Type="varbinary(max)" />
-        </EntityType>
         <EntityType Name="TelephoneNumbers">
           <Key>
             <PropertyRef Name="TelephoneNumberID" />
@@ -394,7 +384,7 @@
           <Property Name="OrganizationID" Type="uniqueidentifier" />
           <Property Name="TenantID" Type="uniqueidentifier" />
         </EntityType>
-        <Association Name="FK__AdvertCat__Adver__73BA3083">
+        <Association Name="FK__AdvertCat__Adver__4E88ABD4">
           <End Role="Adverts" Type="Self.Adverts" Multiplicity="0..1" />
           <End Role="AdvertCategoryNumber" Type="Self.AdvertCategoryNumber" Multiplicity="*" />
           <ReferentialConstraint>
@@ -406,7 +396,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__AdvertCat__Adver__74AE54BC">
+        <Association Name="FK__AdvertCat__Adver__4F7CD00D">
           <End Role="AdvertCategory" Type="Self.AdvertCategory" Multiplicity="0..1" />
           <End Role="AdvertCategoryNumber" Type="Self.AdvertCategoryNumber" Multiplicity="*" />
           <ReferentialConstraint>
@@ -418,7 +408,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__AdvertCat__Proje__75A278F5">
+        <Association Name="FK__AdvertCat__Proje__5070F446">
           <End Role="ProjectCategory" Type="Self.ProjectCategory" Multiplicity="0..1" />
           <End Role="AdvertCategoryNumber" Type="Self.AdvertCategoryNumber" Multiplicity="*" />
           <ReferentialConstraint>
@@ -430,7 +420,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__AdvertLot__Adver__76969D2E">
+        <Association Name="FK__AdvertLot__Adver__534D60F1">
           <End Role="Adverts" Type="Self.Adverts" Multiplicity="0..1" />
           <End Role="AdvertLotNumber" Type="Self.AdvertLotNumber" Multiplicity="*" />
           <ReferentialConstraint>
@@ -454,7 +444,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Adverts__AdvertS__787EE5A0">
+        <Association Name="FK__Adverts__AdvertS__5629CD9C">
           <End Role="AdvertStatus" Type="Self.AdvertStatus" Multiplicity="0..1" />
           <End Role="Adverts" Type="Self.Adverts" Multiplicity="*" />
           <ReferentialConstraint>
@@ -466,7 +456,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Adverts__BudgetY__797309D9">
+        <Association Name="FK__Adverts__BudgetY__571DF1D5">
           <End Role="BudgetYear" Type="Self.BudgetYear" Multiplicity="0..1" />
           <End Role="Adverts" Type="Self.Adverts" Multiplicity="*" />
           <ReferentialConstraint>
@@ -478,7 +468,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Departmen__Depar__00200768">
+        <Association Name="FK__Departmen__Depar__619B8048">
           <End Role="UserProfile" Type="Self.UserProfile" Multiplicity="0..1" />
           <End Role="Department" Type="Self.Department" Multiplicity="*" />
           <ReferentialConstraint>
@@ -490,7 +480,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Items__Advertise__02FC7413">
+        <Association Name="FK__Items__Advertise__656C112C">
           <End Role="AdvertisedItems" Type="Self.AdvertisedItems" Multiplicity="0..1" />
           <End Role="Items" Type="Self.Items" Multiplicity="*" />
           <ReferentialConstraint>
@@ -502,7 +492,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Items__ApprovedI__03F0984C">
+        <Association Name="FK__Items__ApprovedI__66603565">
           <End Role="ApprovedItems" Type="Self.ApprovedItems" Multiplicity="0..1" />
           <End Role="Items" Type="Self.Items" Multiplicity="*" />
           <ReferentialConstraint>
@@ -514,7 +504,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Items__ItemCodeI__04E4BC85">
+        <Association Name="FK__Items__ItemCodeI__6754599E">
           <End Role="ItemCode" Type="Self.ItemCode" Multiplicity="0..1" />
           <End Role="Items" Type="Self.Items" Multiplicity="*" />
           <ReferentialConstraint>
@@ -586,7 +576,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Telephone__Organ__114A936A">
+        <Association Name="FK__Telephone__Organ__7B5B524B">
           <End Role="OrganizationSettings" Type="Self.OrganizationSettings" Multiplicity="0..1" />
           <End Role="TelephoneNumbers" Type="Self.TelephoneNumbers" Multiplicity="*" />
           <ReferentialConstraint>
@@ -598,7 +588,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__UserProfi__Depar__123EB7A3">
+        <Association Name="FK__UserProfi__Depar__7D439ABD">
           <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
           <End Role="UserProfile" Type="Self.UserProfile" Multiplicity="*" />
           <ReferentialConstraint>
@@ -610,7 +600,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__UserProfi__Organ__1332DBDC">
+        <Association Name="FK__UserProfi__Organ__7E37BEF6">
           <End Role="OrganizationSettings" Type="Self.OrganizationSettings" Multiplicity="0..1" />
           <End Role="UserProfile" Type="Self.UserProfile" Multiplicity="*" />
           <ReferentialConstraint>
@@ -622,7 +612,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__UserProfile__Id__14270015">
+        <Association Name="FK__UserProfile__Id__7F2BE32F">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
           <End Role="UserProfile" Type="Self.UserProfile" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1079,22 +1069,21 @@
           <EntitySet Name="RequestForDemo" EntityType="Self.RequestForDemo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SourceOfFunds" EntityType="Self.SourceOfFunds" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SourceOfFundsOrganizationSettings" EntityType="Self.SourceOfFundsOrganizationSettings" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TelephoneNumbers" EntityType="Self.TelephoneNumbers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserProfile" EntityType="Self.UserProfile" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK__AdvertCat__Adver__73BA3083" Association="Self.FK__AdvertCat__Adver__73BA3083">
+          <AssociationSet Name="FK__AdvertCat__Adver__4E88ABD4" Association="Self.FK__AdvertCat__Adver__4E88ABD4">
             <End Role="Adverts" EntitySet="Adverts" />
             <End Role="AdvertCategoryNumber" EntitySet="AdvertCategoryNumber" />
           </AssociationSet>
-          <AssociationSet Name="FK__AdvertCat__Adver__74AE54BC" Association="Self.FK__AdvertCat__Adver__74AE54BC">
+          <AssociationSet Name="FK__AdvertCat__Adver__4F7CD00D" Association="Self.FK__AdvertCat__Adver__4F7CD00D">
             <End Role="AdvertCategory" EntitySet="AdvertCategory" />
             <End Role="AdvertCategoryNumber" EntitySet="AdvertCategoryNumber" />
           </AssociationSet>
-          <AssociationSet Name="FK__AdvertCat__Proje__75A278F5" Association="Self.FK__AdvertCat__Proje__75A278F5">
+          <AssociationSet Name="FK__AdvertCat__Proje__5070F446" Association="Self.FK__AdvertCat__Proje__5070F446">
             <End Role="ProjectCategory" EntitySet="ProjectCategory" />
             <End Role="AdvertCategoryNumber" EntitySet="AdvertCategoryNumber" />
           </AssociationSet>
-          <AssociationSet Name="FK__AdvertLot__Adver__76969D2E" Association="Self.FK__AdvertLot__Adver__76969D2E">
+          <AssociationSet Name="FK__AdvertLot__Adver__534D60F1" Association="Self.FK__AdvertLot__Adver__534D60F1">
             <End Role="Adverts" EntitySet="Adverts" />
             <End Role="AdvertLotNumber" EntitySet="AdvertLotNumber" />
           </AssociationSet>
@@ -1102,27 +1091,27 @@
             <End Role="Procurements" EntitySet="Procurements" />
             <End Role="AdvertLotNumber" EntitySet="AdvertLotNumber" />
           </AssociationSet>
-          <AssociationSet Name="FK__Adverts__AdvertS__787EE5A0" Association="Self.FK__Adverts__AdvertS__787EE5A0">
+          <AssociationSet Name="FK__Adverts__AdvertS__5629CD9C" Association="Self.FK__Adverts__AdvertS__5629CD9C">
             <End Role="AdvertStatus" EntitySet="AdvertStatus" />
             <End Role="Adverts" EntitySet="Adverts" />
           </AssociationSet>
-          <AssociationSet Name="FK__Adverts__BudgetY__797309D9" Association="Self.FK__Adverts__BudgetY__797309D9">
+          <AssociationSet Name="FK__Adverts__BudgetY__571DF1D5" Association="Self.FK__Adverts__BudgetY__571DF1D5">
             <End Role="BudgetYear" EntitySet="BudgetYear" />
             <End Role="Adverts" EntitySet="Adverts" />
           </AssociationSet>
-          <AssociationSet Name="FK__Departmen__Depar__00200768" Association="Self.FK__Departmen__Depar__00200768">
+          <AssociationSet Name="FK__Departmen__Depar__619B8048" Association="Self.FK__Departmen__Depar__619B8048">
             <End Role="UserProfile" EntitySet="UserProfile" />
             <End Role="Department" EntitySet="Department" />
           </AssociationSet>
-          <AssociationSet Name="FK__Items__Advertise__02FC7413" Association="Self.FK__Items__Advertise__02FC7413">
+          <AssociationSet Name="FK__Items__Advertise__656C112C" Association="Self.FK__Items__Advertise__656C112C">
             <End Role="AdvertisedItems" EntitySet="AdvertisedItems" />
             <End Role="Items" EntitySet="Items" />
           </AssociationSet>
-          <AssociationSet Name="FK__Items__ApprovedI__03F0984C" Association="Self.FK__Items__ApprovedI__03F0984C">
+          <AssociationSet Name="FK__Items__ApprovedI__66603565" Association="Self.FK__Items__ApprovedI__66603565">
             <End Role="ApprovedItems" EntitySet="ApprovedItems" />
             <End Role="Items" EntitySet="Items" />
           </AssociationSet>
-          <AssociationSet Name="FK__Items__ItemCodeI__04E4BC85" Association="Self.FK__Items__ItemCodeI__04E4BC85">
+          <AssociationSet Name="FK__Items__ItemCodeI__6754599E" Association="Self.FK__Items__ItemCodeI__6754599E">
             <End Role="ItemCode" EntitySet="ItemCode" />
             <End Role="Items" EntitySet="Items" />
           </AssociationSet>
@@ -1146,19 +1135,19 @@
             <End Role="SourceOfFunds" EntitySet="SourceOfFunds" />
             <End Role="Procurements" EntitySet="Procurements" />
           </AssociationSet>
-          <AssociationSet Name="FK__Telephone__Organ__114A936A" Association="Self.FK__Telephone__Organ__114A936A">
+          <AssociationSet Name="FK__Telephone__Organ__7B5B524B" Association="Self.FK__Telephone__Organ__7B5B524B">
             <End Role="OrganizationSettings" EntitySet="OrganizationSettings" />
             <End Role="TelephoneNumbers" EntitySet="TelephoneNumbers" />
           </AssociationSet>
-          <AssociationSet Name="FK__UserProfi__Depar__123EB7A3" Association="Self.FK__UserProfi__Depar__123EB7A3">
+          <AssociationSet Name="FK__UserProfi__Depar__7D439ABD" Association="Self.FK__UserProfi__Depar__7D439ABD">
             <End Role="Department" EntitySet="Department" />
             <End Role="UserProfile" EntitySet="UserProfile" />
           </AssociationSet>
-          <AssociationSet Name="FK__UserProfi__Organ__1332DBDC" Association="Self.FK__UserProfi__Organ__1332DBDC">
+          <AssociationSet Name="FK__UserProfi__Organ__7E37BEF6" Association="Self.FK__UserProfi__Organ__7E37BEF6">
             <End Role="OrganizationSettings" EntitySet="OrganizationSettings" />
             <End Role="UserProfile" EntitySet="UserProfile" />
           </AssociationSet>
-          <AssociationSet Name="FK__UserProfile__Id__14270015" Association="Self.FK__UserProfile__Id__14270015">
+          <AssociationSet Name="FK__UserProfile__Id__7F2BE32F" Association="Self.FK__UserProfile__Id__7F2BE32F">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="UserProfile" EntitySet="UserProfile" />
           </AssociationSet>
@@ -1323,7 +1312,7 @@
           <Property Name="DateCreated" Type="DateTime" Precision="3" />
           <Property Name="DateModified" Type="DateTime" Precision="3" />
           <Property Name="TenantID" Type="Guid" />
-          <NavigationProperty Name="AdvertCategoryNumber" Relationship="Self.FK__AdvertCat__Adver__4D94879B" FromRole="AdvertCategory" ToRole="AdvertCategoryNumber" />
+          <NavigationProperty Name="AdvertCategoryNumber" Relationship="Self.FK__AdvertCat__Adver__4F7CD00D" FromRole="AdvertCategory" ToRole="AdvertCategoryNumber" />
           <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_AdvertCategory_Catalog" FromRole="AdvertCategory" ToRole="Catalog" />
         </EntityType>
         <EntityType Name="AdvertCategoryNumber">
@@ -1339,9 +1328,9 @@
           <Property Name="DateCreated" Type="DateTime" Precision="3" />
           <Property Name="DateModified" Type="DateTime" Precision="3" />
           <Property Name="TenantID" Type="Guid" />
-          <NavigationProperty Name="AdvertCategory" Relationship="Self.FK__AdvertCat__Adver__4D94879B" FromRole="AdvertCategoryNumber" ToRole="AdvertCategory" />
-          <NavigationProperty Name="Adverts" Relationship="Self.FK__AdvertCat__Adver__4CA06362" FromRole="AdvertCategoryNumber" ToRole="Adverts" />
-          <NavigationProperty Name="ProjectCategory" Relationship="ProcureEaseModel.FK__AdvertCat__Proje__75A278F5" FromRole="AdvertCategoryNumber" ToRole="ProjectCategory" />
+          <NavigationProperty Name="AdvertCategory" Relationship="Self.FK__AdvertCat__Adver__4F7CD00D" FromRole="AdvertCategoryNumber" ToRole="AdvertCategory" />
+          <NavigationProperty Name="Adverts" Relationship="Self.FK__AdvertCat__Adver__4E88ABD4" FromRole="AdvertCategoryNumber" ToRole="Adverts" />
+          <NavigationProperty Name="ProjectCategory" Relationship="Self.FK__AdvertCat__Proje__5070F446" FromRole="AdvertCategoryNumber" ToRole="ProjectCategory" />
           <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_AdvertCategoryNumber_Catalog" FromRole="AdvertCategoryNumber" ToRole="Catalog" />
         </EntityType>
         <EntityType Name="AdvertisedItems">
@@ -1354,7 +1343,7 @@
           <Property Name="DateCreated" Type="DateTime" Precision="3" />
           <Property Name="DateModified" Type="DateTime" Precision="3" />
           <Property Name="TenantID" Type="Guid" />
-          <NavigationProperty Name="Items" Relationship="Self.FK__Items__Advertise__5BE2A6F2" FromRole="AdvertisedItems" ToRole="Items" />
+          <NavigationProperty Name="Items" Relationship="Self.FK__Items__Advertise__656C112C" FromRole="AdvertisedItems" ToRole="Items" />
           <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_AdvertisedItems_Catalog" FromRole="AdvertisedItems" ToRole="Catalog" />
         </EntityType>
         <EntityType Name="AdvertLotNumber">
@@ -1369,8 +1358,8 @@
           <Property Name="DateCreated" Type="DateTime" Precision="3" />
           <Property Name="DateModified" Type="DateTime" Precision="3" />
           <Property Name="TenantID" Type="Guid" />
-          <NavigationProperty Name="Adverts" Relationship="Self.FK__AdvertLot__Adver__4F7CD00D" FromRole="AdvertLotNumber" ToRole="Adverts" />
-          <NavigationProperty Name="Procurements" Relationship="ProcureEaseModel.FK__AdvertLot__Procu__403A8C7D" FromRole="AdvertLotNumber" ToRole="Procurements" />
+          <NavigationProperty Name="Adverts" Relationship="Self.FK__AdvertLot__Adver__534D60F1" FromRole="AdvertLotNumber" ToRole="Adverts" />
+          <NavigationProperty Name="Procurements" Relationship="Self.FK__AdvertLot__Procu__403A8C7D" FromRole="AdvertLotNumber" ToRole="Procurements" />
           <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_AdvertLotNumber_Catalog" FromRole="AdvertLotNumber" ToRole="Catalog" />
         </EntityType>
         <EntityType Name="Adverts">
@@ -1393,11 +1382,24 @@
           <Property Name="DateModified" Type="DateTime" Precision="3" />
           <Property Name="AdvertStatusID" Type="Int32" />
           <Property Name="TenantID" Type="Guid" />
-          <NavigationProperty Name="AdvertCategoryNumber" Relationship="Self.FK__AdvertCat__Adver__4CA06362" FromRole="Adverts" ToRole="AdvertCategoryNumber" />
-          <NavigationProperty Name="AdvertLotNumber" Relationship="Self.FK__AdvertLot__Adver__4F7CD00D" FromRole="Adverts" ToRole="AdvertLotNumber" />
-          <NavigationProperty Name="BudgetYear" Relationship="Self.FK__Adverts__BudgetY__52593CB8" FromRole="Adverts" ToRole="BudgetYear" />
-          <NavigationProperty Name="AdvertStatus" Relationship="ProcureEaseModel.FK__Adverts__AdvertS__0F624AF8" FromRole="Adverts" ToRole="AdvertStatus" />
+          <NavigationProperty Name="AdvertCategoryNumber" Relationship="Self.FK__AdvertCat__Adver__4E88ABD4" FromRole="Adverts" ToRole="AdvertCategoryNumber" />
+          <NavigationProperty Name="AdvertLotNumber" Relationship="Self.FK__AdvertLot__Adver__534D60F1" FromRole="Adverts" ToRole="AdvertLotNumber" />
+          <NavigationProperty Name="AdvertStatus" Relationship="Self.FK__Adverts__AdvertS__5629CD9C" FromRole="Adverts" ToRole="AdvertStatus" />
+          <NavigationProperty Name="BudgetYear" Relationship="Self.FK__Adverts__BudgetY__571DF1D5" FromRole="Adverts" ToRole="BudgetYear" />
           <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_Adverts_Catalog" FromRole="Adverts" ToRole="Catalog" />
+        </EntityType>
+        <EntityType Name="AdvertStatus">
+          <Key>
+            <PropertyRef Name="AdvertStatusID" />
+          </Key>
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DateModified" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="AdvertStatusID" Type="Int32" Nullable="false" />
+          <Property Name="TenantID" Type="Guid" />
+          <NavigationProperty Name="Adverts" Relationship="Self.FK__Adverts__AdvertS__5629CD9C" FromRole="AdvertStatus" ToRole="Adverts" />
+          <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_AdvertStatus_Catalog" FromRole="AdvertStatus" ToRole="Catalog" />
         </EntityType>
         <EntityType Name="ApprovedItems">
           <Key>
@@ -1409,7 +1411,7 @@
           <Property Name="DateCreated" Type="DateTime" Precision="3" />
           <Property Name="DateModified" Type="DateTime" Precision="3" />
           <Property Name="TenantID" Type="Guid" />
-          <NavigationProperty Name="Items" Relationship="Self.FK__Items__ApprovedI__5CD6CB2B" FromRole="ApprovedItems" ToRole="Items" />
+          <NavigationProperty Name="Items" Relationship="Self.FK__Items__ApprovedI__66603565" FromRole="ApprovedItems" ToRole="Items" />
           <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_ApprovedItems_Catalog" FromRole="ApprovedItems" ToRole="Catalog" />
         </EntityType>
         <EntityType Name="AspNetRoles">
@@ -1472,7 +1474,7 @@
           <NavigationProperty Name="AspNetUserClaims" Relationship="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserClaims" />
           <NavigationProperty Name="AspNetUserLogins" Relationship="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserLogins" />
           <NavigationProperty Name="AspNetUserRoles" Relationship="Self.FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserRoles" />
-          <NavigationProperty Name="UserProfile" Relationship="Self.FK__UserProfile__Id__6D0D32F4" FromRole="AspNetUsers" ToRole="UserProfile" />
+          <NavigationProperty Name="UserProfile" Relationship="Self.FK__UserProfile__Id__7F2BE32F" FromRole="AspNetUsers" ToRole="UserProfile" />
           <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_AspNetUsers_Catalog" FromRole="AspNetUsers" ToRole="Catalog" />
         </EntityType>
         <EntityType Name="BudgetYear">
@@ -1485,9 +1487,27 @@
           <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="DateCreated" Type="DateTime" Precision="3" />
           <Property Name="TenantID" Type="Guid" />
-          <NavigationProperty Name="Adverts" Relationship="Self.FK__Adverts__BudgetY__52593CB8" FromRole="BudgetYear" ToRole="Adverts" />
-          <NavigationProperty Name="Procurements" Relationship="ProcureEaseModel.FK__Procureme__Budge__4AB81AF0" FromRole="BudgetYear" ToRole="Procurements" />
+          <NavigationProperty Name="Adverts" Relationship="Self.FK__Adverts__BudgetY__571DF1D5" FromRole="BudgetYear" ToRole="Adverts" />
+          <NavigationProperty Name="Procurements" Relationship="Self.FK__Procureme__Budge__4AB81AF0" FromRole="BudgetYear" ToRole="Procurements" />
           <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_BudgetYear_Catalog" FromRole="BudgetYear" ToRole="Catalog" />
+        </EntityType>
+        <EntityType Name="Department">
+          <Key>
+            <PropertyRef Name="DepartmentID" />
+          </Key>
+          <Property Name="DepartmentID" Type="Guid" Nullable="false" />
+          <Property Name="DepartmentName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="DateModified" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="DepartmentHeadUserID" Type="Guid" />
+          <Property Name="TenantID" Type="Guid" />
+          <Property Name="OrganisationID" Type="Guid" />
+          <NavigationProperty Name="UserProfile" Relationship="Self.FK__Departmen__Depar__619B8048" FromRole="Department" ToRole="UserProfile" />
+          <NavigationProperty Name="UserProfile1" Relationship="Self.FK__UserProfi__Depar__7D439ABD" FromRole="Department" ToRole="UserProfile" />
+          <NavigationProperty Name="OrganizationSettings" Relationship="Self.FK_Department_OrganizationSettings" FromRole="Department" ToRole="OrganizationSettings" />
+          <NavigationProperty Name="Procurements" Relationship="Self.FK_Procurements_Department" FromRole="Department" ToRole="Procurements" />
+          <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_Department_Catalog" FromRole="Department" ToRole="Catalog" />
         </EntityType>
         <EntityType Name="ItemCode">
           <Key>
@@ -1497,7 +1517,7 @@
           <Property Name="ItemCode1" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ItemName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="TenantID" Type="Guid" />
-          <NavigationProperty Name="Items" Relationship="Self.FK__Items__ItemCodeI__5DCAEF64" FromRole="ItemCode" ToRole="Items" />
+          <NavigationProperty Name="Items" Relationship="Self.FK__Items__ItemCodeI__6754599E" FromRole="ItemCode" ToRole="Items" />
           <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_ItemCode_Catalog" FromRole="ItemCode" ToRole="Catalog" />
         </EntityType>
         <EntityType Name="Items">
@@ -1517,10 +1537,10 @@
           <Property Name="DateModified" Type="DateTime" Precision="3" />
           <Property Name="ItemCodeID" Type="Guid" />
           <Property Name="TenantID" Type="Guid" />
-          <NavigationProperty Name="AdvertisedItems" Relationship="Self.FK__Items__Advertise__5BE2A6F2" FromRole="Items" ToRole="AdvertisedItems" />
-          <NavigationProperty Name="ApprovedItems" Relationship="Self.FK__Items__ApprovedI__5CD6CB2B" FromRole="Items" ToRole="ApprovedItems" />
-          <NavigationProperty Name="ItemCode" Relationship="Self.FK__Items__ItemCodeI__5DCAEF64" FromRole="Items" ToRole="ItemCode" />
-          <NavigationProperty Name="Procurements" Relationship="ProcureEaseModel.FK__Items__Procureme__49C3F6B7" FromRole="Items" ToRole="Procurements" />
+          <NavigationProperty Name="AdvertisedItems" Relationship="Self.FK__Items__Advertise__656C112C" FromRole="Items" ToRole="AdvertisedItems" />
+          <NavigationProperty Name="ApprovedItems" Relationship="Self.FK__Items__ApprovedI__66603565" FromRole="Items" ToRole="ApprovedItems" />
+          <NavigationProperty Name="ItemCode" Relationship="Self.FK__Items__ItemCodeI__6754599E" FromRole="Items" ToRole="ItemCode" />
+          <NavigationProperty Name="Procurements" Relationship="Self.FK__Items__Procureme__49C3F6B7" FromRole="Items" ToRole="Procurements" />
           <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_Items_Catalog" FromRole="Items" ToRole="Catalog" />
         </EntityType>
         <EntityType Name="OrganizationSettings">
@@ -1540,13 +1560,67 @@
           <Property Name="DateCreated" Type="DateTime" Precision="3" />
           <Property Name="OrganizationLogoPath" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="TenantID" Type="Guid" />
-          <NavigationProperty Name="TelephoneNumbers" Relationship="Self.FK__Telephone__Organ__6A30C649" FromRole="OrganizationSettings" ToRole="TelephoneNumbers" />
-          <NavigationProperty Name="UserProfile" Relationship="Self.FK__UserProfi__Organ__6C190EBB" FromRole="OrganizationSettings" ToRole="UserProfile" />
-          <NavigationProperty Name="Department" Relationship="ProcureEaseModel.FK_Department_OrganizationSettings" FromRole="OrganizationSettings" ToRole="Department" />
-          <NavigationProperty Name="ProcurementMethodOrganizationSettings" Relationship="ProcureEaseModel.FK_ProcurementMethodOrganizationSettings_OrganizationSettings" FromRole="OrganizationSettings" ToRole="ProcurementMethodOrganizationSettings" />
-          <NavigationProperty Name="ProjectCategoryOrganizationSettings" Relationship="ProcureEaseModel.FK_ProjectCategoryOrganizationSettings_OrganizationSettings" FromRole="OrganizationSettings" ToRole="ProjectCategoryOrganizationSettings" />
-          <NavigationProperty Name="SourceOfFundsOrganizationSettings" Relationship="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_OrganizationSettings" FromRole="OrganizationSettings" ToRole="SourceOfFundsOrganizationSettings" />
+          <NavigationProperty Name="Department" Relationship="Self.FK_Department_OrganizationSettings" FromRole="OrganizationSettings" ToRole="Department" />
+          <NavigationProperty Name="TelephoneNumbers" Relationship="Self.FK__Telephone__Organ__7B5B524B" FromRole="OrganizationSettings" ToRole="TelephoneNumbers" />
+          <NavigationProperty Name="UserProfile" Relationship="Self.FK__UserProfi__Organ__7E37BEF6" FromRole="OrganizationSettings" ToRole="UserProfile" />
+          <NavigationProperty Name="ProcurementMethodOrganizationSettings" Relationship="Self.FK_ProcurementMethodOrganizationSettings_OrganizationSettings" FromRole="OrganizationSettings" ToRole="ProcurementMethodOrganizationSettings" />
+          <NavigationProperty Name="ProjectCategoryOrganizationSettings" Relationship="Self.FK_ProjectCategoryOrganizationSettings_OrganizationSettings" FromRole="OrganizationSettings" ToRole="ProjectCategoryOrganizationSettings" />
+          <NavigationProperty Name="SourceOfFundsOrganizationSettings" Relationship="Self.FK_SourceOfFundsOrganizationSettings_OrganizationSettings" FromRole="OrganizationSettings" ToRole="SourceOfFundsOrganizationSettings" />
           <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_OrganizationSettings_Catalog" FromRole="OrganizationSettings" ToRole="Catalog" />
+        </EntityType>
+        <EntityType Name="ProcurementMethod">
+          <Key>
+            <PropertyRef Name="ProcurementMethodID" />
+          </Key>
+          <Property Name="ProcurementMethodID" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="DateModified" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Procurements" Relationship="Self.FK__Procureme__Procu__4D94879B" FromRole="ProcurementMethod" ToRole="Procurements" />
+          <NavigationProperty Name="ProcurementMethodOrganizationSettings" Relationship="Self.FK_ProcurementMethodOrganizationSettings_ProcurementMethod" FromRole="ProcurementMethod" ToRole="ProcurementMethodOrganizationSettings" />
+        </EntityType>
+        <EntityType Name="ProcurementMethodOrganizationSettings">
+          <Key>
+            <PropertyRef Name="ProcurementMethodID" />
+            <PropertyRef Name="TenantID" />
+            <PropertyRef Name="OrganizationID" />
+          </Key>
+          <Property Name="ProcurementMethodID" Type="Guid" Nullable="false" />
+          <Property Name="TenantID" Type="Guid" Nullable="false" />
+          <Property Name="OrganizationID" Type="Guid" Nullable="false" />
+          <Property Name="EnableProcurementMethod" Type="Boolean" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="DateModified" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="OrganizationSettings" Relationship="Self.FK_ProcurementMethodOrganizationSettings_OrganizationSettings" FromRole="ProcurementMethodOrganizationSettings" ToRole="OrganizationSettings" />
+          <NavigationProperty Name="ProcurementMethod" Relationship="Self.FK_ProcurementMethodOrganizationSettings_ProcurementMethod" FromRole="ProcurementMethodOrganizationSettings" ToRole="ProcurementMethod" />
+          <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_ProcurementMethodOrganizationSettings_Catalog" FromRole="ProcurementMethodOrganizationSettings" ToRole="Catalog" />
+        </EntityType>
+        <EntityType Name="Procurements">
+          <Key>
+            <PropertyRef Name="ProcurementID" />
+          </Key>
+          <Property Name="ProcurementID" Type="Guid" Nullable="false" />
+          <Property Name="BudgetYearID" Type="Guid" />
+          <Property Name="DepartmentID" Type="Guid" />
+          <Property Name="ProjectName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="ProjectCategoryID" Type="Guid" />
+          <Property Name="ProcurementStatusID" Type="Int32" />
+          <Property Name="ProcurementMethodID" Type="Guid" />
+          <Property Name="SourceOfFundID" Type="Guid" />
+          <Property Name="DateModified" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="TenantID" Type="Guid" />
+          <NavigationProperty Name="AdvertLotNumber" Relationship="Self.FK__AdvertLot__Procu__403A8C7D" FromRole="Procurements" ToRole="AdvertLotNumber" />
+          <NavigationProperty Name="BudgetYear" Relationship="Self.FK__Procureme__Budge__4AB81AF0" FromRole="Procurements" ToRole="BudgetYear" />
+          <NavigationProperty Name="Department" Relationship="Self.FK_Procurements_Department" FromRole="Procurements" ToRole="Department" />
+          <NavigationProperty Name="Items" Relationship="Self.FK__Items__Procureme__49C3F6B7" FromRole="Procurements" ToRole="Items" />
+          <NavigationProperty Name="ProcurementMethod" Relationship="Self.FK__Procureme__Procu__4D94879B" FromRole="Procurements" ToRole="ProcurementMethod" />
+          <NavigationProperty Name="ProjectCategory" Relationship="Self.FK__Procureme__Proje__4E88ABD4" FromRole="Procurements" ToRole="ProjectCategory" />
+          <NavigationProperty Name="SourceOfFunds" Relationship="Self.FK__Procureme__Sourc__4F7CD00D" FromRole="Procurements" ToRole="SourceOfFunds" />
+          <NavigationProperty Name="ProcurementStatus" Relationship="Self.FK_Procurements_ProcurementStatus" FromRole="Procurements" ToRole="ProcurementStatus" />
+          <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_Procurements_Catalog" FromRole="Procurements" ToRole="Catalog" />
         </EntityType>
         <EntityType Name="ProcurementStatus">
           <Key>
@@ -1559,8 +1633,65 @@
           <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="DateCreated" Type="DateTime" Precision="3" />
           <Property Name="TenantID" Type="Guid" />
-          <NavigationProperty Name="Procurements" Relationship="ProcureEaseModel.FK_Procurements_ProcurementStatus" FromRole="ProcurementStatus" ToRole="Procurements" />
+          <NavigationProperty Name="Procurements" Relationship="Self.FK_Procurements_ProcurementStatus" FromRole="ProcurementStatus" ToRole="Procurements" />
           <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_ProcurementStatus_Catalog" FromRole="ProcurementStatus" ToRole="Catalog" />
+        </EntityType>
+        <EntityType Name="ProjectCategory">
+          <Key>
+            <PropertyRef Name="ProjectCategoryID" />
+          </Key>
+          <Property Name="ProjectCategoryID" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="DateModified" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="AdvertCategoryNumber" Relationship="Self.FK__AdvertCat__Proje__5070F446" FromRole="ProjectCategory" ToRole="AdvertCategoryNumber" />
+          <NavigationProperty Name="Procurements" Relationship="Self.FK__Procureme__Proje__4E88ABD4" FromRole="ProjectCategory" ToRole="Procurements" />
+          <NavigationProperty Name="ProjectCategoryOrganizationSettings" Relationship="Self.FK_ProjectCategoryOrganizationSettings_ProjectCategory" FromRole="ProjectCategory" ToRole="ProjectCategoryOrganizationSettings" />
+        </EntityType>
+        <EntityType Name="ProjectCategoryOrganizationSettings">
+          <Key>
+            <PropertyRef Name="ProjectCategoryID" />
+            <PropertyRef Name="TenantID" />
+            <PropertyRef Name="OrganizationID" />
+          </Key>
+          <Property Name="ProjectCategoryID" Type="Guid" Nullable="false" />
+          <Property Name="TenantID" Type="Guid" Nullable="false" />
+          <Property Name="OrganizationID" Type="Guid" Nullable="false" />
+          <Property Name="EnableProjectCategory" Type="Boolean" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="DateModified" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="OrganizationSettings" Relationship="Self.FK_ProjectCategoryOrganizationSettings_OrganizationSettings" FromRole="ProjectCategoryOrganizationSettings" ToRole="OrganizationSettings" />
+          <NavigationProperty Name="ProjectCategory" Relationship="Self.FK_ProjectCategoryOrganizationSettings_ProjectCategory" FromRole="ProjectCategoryOrganizationSettings" ToRole="ProjectCategory" />
+          <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_ProjectCategoryOrganizationSettings_Catalog" FromRole="ProjectCategoryOrganizationSettings" ToRole="Catalog" />
+        </EntityType>
+        <EntityType Name="SourceOfFunds">
+          <Key>
+            <PropertyRef Name="SourceOfFundID" />
+          </Key>
+          <Property Name="SourceOfFundID" Type="Guid" Nullable="false" />
+          <Property Name="SourceOfFund" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="DateModified" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Procurements" Relationship="Self.FK__Procureme__Sourc__4F7CD00D" FromRole="SourceOfFunds" ToRole="Procurements" />
+          <NavigationProperty Name="SourceOfFundsOrganizationSettings" Relationship="Self.FK_SourceOfFundsOrganizationSettings_SourceOfFunds" FromRole="SourceOfFunds" ToRole="SourceOfFundsOrganizationSettings" />
+        </EntityType>
+        <EntityType Name="SourceOfFundsOrganizationSettings">
+          <Key>
+            <PropertyRef Name="SourceOfFundID" />
+            <PropertyRef Name="TenantID" />
+            <PropertyRef Name="OrganizationID" />
+          </Key>
+          <Property Name="SourceOfFundID" Type="Guid" Nullable="false" />
+          <Property Name="TenantID" Type="Guid" Nullable="false" />
+          <Property Name="OrganizationID" Type="Guid" Nullable="false" />
+          <Property Name="EnableSourceOFFund" Type="Boolean" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="DateModified" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="OrganizationSettings" Relationship="Self.FK_SourceOfFundsOrganizationSettings_OrganizationSettings" FromRole="SourceOfFundsOrganizationSettings" ToRole="OrganizationSettings" />
+          <NavigationProperty Name="SourceOfFunds" Relationship="Self.FK_SourceOfFundsOrganizationSettings_SourceOfFunds" FromRole="SourceOfFundsOrganizationSettings" ToRole="SourceOfFunds" />
+          <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_Catalog" FromRole="SourceOfFundsOrganizationSettings" ToRole="Catalog" />
         </EntityType>
         <EntityType Name="TelephoneNumbers">
           <Key>
@@ -1573,7 +1704,7 @@
           <Property Name="DateCreated" Type="DateTime" Precision="3" />
           <Property Name="OrganizationID" Type="Guid" />
           <Property Name="TenantID" Type="Guid" />
-          <NavigationProperty Name="OrganizationSettings" Relationship="Self.FK__Telephone__Organ__6A30C649" FromRole="TelephoneNumbers" ToRole="OrganizationSettings" />
+          <NavigationProperty Name="OrganizationSettings" Relationship="Self.FK__Telephone__Organ__7B5B524B" FromRole="TelephoneNumbers" ToRole="OrganizationSettings" />
           <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_TelephoneNumbers_Catalog" FromRole="TelephoneNumbers" ToRole="Catalog" />
         </EntityType>
         <EntityType Name="UserProfile">
@@ -1592,13 +1723,13 @@
           <Property Name="DateCreated" Type="DateTime" Precision="3" />
           <Property Name="OrganizationID" Type="Guid" />
           <Property Name="TenantID" Type="Guid" />
-          <NavigationProperty Name="AspNetUsers" Relationship="Self.FK__UserProfile__Id__6D0D32F4" FromRole="UserProfile" ToRole="AspNetUsers" />
-          <NavigationProperty Name="OrganizationSettings" Relationship="Self.FK__UserProfi__Organ__6C190EBB" FromRole="UserProfile" ToRole="OrganizationSettings" />
-          <NavigationProperty Name="Department" Relationship="ProcureEaseModel.FK__Departmen__Depar__59063A47" FromRole="UserProfile" ToRole="Department" />
-          <NavigationProperty Name="Department1" Relationship="ProcureEaseModel.FK__UserProfi__Depar__6B24EA82" FromRole="UserProfile" ToRole="Department" />
+          <NavigationProperty Name="AspNetUsers" Relationship="Self.FK__UserProfile__Id__7F2BE32F" FromRole="UserProfile" ToRole="AspNetUsers" />
+          <NavigationProperty Name="Department" Relationship="Self.FK__Departmen__Depar__619B8048" FromRole="UserProfile" ToRole="Department" />
+          <NavigationProperty Name="Department1" Relationship="Self.FK__UserProfi__Depar__7D439ABD" FromRole="UserProfile" ToRole="Department" />
+          <NavigationProperty Name="OrganizationSettings" Relationship="Self.FK__UserProfi__Organ__7E37BEF6" FromRole="UserProfile" ToRole="OrganizationSettings" />
           <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_UserProfile_Catalog" FromRole="UserProfile" ToRole="Catalog" />
         </EntityType>
-        <Association Name="FK__AdvertCat__Adver__4D94879B">
+        <Association Name="FK__AdvertCat__Adver__4F7CD00D">
           <End Role="AdvertCategory" Type="Self.AdvertCategory" Multiplicity="0..1" />
           <End Role="AdvertCategoryNumber" Type="Self.AdvertCategoryNumber" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1610,7 +1741,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__AdvertCat__Adver__4CA06362">
+        <Association Name="FK__AdvertCat__Adver__4E88ABD4">
           <End Role="Adverts" Type="Self.Adverts" Multiplicity="0..1" />
           <End Role="AdvertCategoryNumber" Type="Self.AdvertCategoryNumber" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1622,7 +1753,19 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Items__Advertise__5BE2A6F2">
+        <Association Name="FK__AdvertCat__Proje__5070F446">
+          <End Role="ProjectCategory" Type="Self.ProjectCategory" Multiplicity="0..1" />
+          <End Role="AdvertCategoryNumber" Type="Self.AdvertCategoryNumber" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProjectCategory">
+              <PropertyRef Name="ProjectCategoryID" />
+            </Principal>
+            <Dependent Role="AdvertCategoryNumber">
+              <PropertyRef Name="ProjectCategoryID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Items__Advertise__656C112C">
           <End Role="AdvertisedItems" Type="Self.AdvertisedItems" Multiplicity="0..1" />
           <End Role="Items" Type="Self.Items" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1634,7 +1777,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__AdvertLot__Adver__4F7CD00D">
+        <Association Name="FK__AdvertLot__Adver__534D60F1">
           <End Role="Adverts" Type="Self.Adverts" Multiplicity="0..1" />
           <End Role="AdvertLotNumber" Type="Self.AdvertLotNumber" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1646,7 +1789,31 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Adverts__BudgetY__52593CB8">
+        <Association Name="FK__AdvertLot__Procu__403A8C7D">
+          <End Role="Procurements" Type="Self.Procurements" Multiplicity="0..1" />
+          <End Role="AdvertLotNumber" Type="Self.AdvertLotNumber" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Procurements">
+              <PropertyRef Name="ProcurementID" />
+            </Principal>
+            <Dependent Role="AdvertLotNumber">
+              <PropertyRef Name="ProcurementID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Adverts__AdvertS__5629CD9C">
+          <End Role="AdvertStatus" Type="Self.AdvertStatus" Multiplicity="0..1" />
+          <End Role="Adverts" Type="Self.Adverts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AdvertStatus">
+              <PropertyRef Name="AdvertStatusID" />
+            </Principal>
+            <Dependent Role="Adverts">
+              <PropertyRef Name="AdvertStatusID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Adverts__BudgetY__571DF1D5">
           <End Role="BudgetYear" Type="Self.BudgetYear" Multiplicity="0..1" />
           <End Role="Adverts" Type="Self.Adverts" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1658,7 +1825,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Items__ApprovedI__5CD6CB2B">
+        <Association Name="FK__Items__ApprovedI__66603565">
           <End Role="ApprovedItems" Type="Self.ApprovedItems" Multiplicity="0..1" />
           <End Role="Items" Type="Self.Items" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1726,7 +1893,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__UserProfile__Id__6D0D32F4">
+        <Association Name="FK__UserProfile__Id__7F2BE32F">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
           <End Role="UserProfile" Type="Self.UserProfile" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1738,7 +1905,67 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Items__ItemCodeI__5DCAEF64">
+        <Association Name="FK__Procureme__Budge__4AB81AF0">
+          <End Role="BudgetYear" Type="Self.BudgetYear" Multiplicity="0..1" />
+          <End Role="Procurements" Type="Self.Procurements" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BudgetYear">
+              <PropertyRef Name="BudgetYearID" />
+            </Principal>
+            <Dependent Role="Procurements">
+              <PropertyRef Name="BudgetYearID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Departmen__Depar__619B8048">
+          <End Role="UserProfile" Type="Self.UserProfile" Multiplicity="0..1" />
+          <End Role="Department" Type="Self.Department" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserProfile">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="Department">
+              <PropertyRef Name="DepartmentHeadUserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__UserProfi__Depar__7D439ABD">
+          <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+          <End Role="UserProfile" Type="Self.UserProfile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="DepartmentID" />
+            </Principal>
+            <Dependent Role="UserProfile">
+              <PropertyRef Name="DepartmentID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Department_OrganizationSettings">
+          <End Role="OrganizationSettings" Type="Self.OrganizationSettings" Multiplicity="0..1" />
+          <End Role="Department" Type="Self.Department" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OrganizationSettings">
+              <PropertyRef Name="OrganizationID" />
+            </Principal>
+            <Dependent Role="Department">
+              <PropertyRef Name="OrganisationID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Procurements_Department">
+          <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+          <End Role="Procurements" Type="Self.Procurements" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="DepartmentID" />
+            </Principal>
+            <Dependent Role="Procurements">
+              <PropertyRef Name="DepartmentID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Items__ItemCodeI__6754599E">
           <End Role="ItemCode" Type="Self.ItemCode" Multiplicity="0..1" />
           <End Role="Items" Type="Self.Items" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1750,7 +1977,19 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Telephone__Organ__6A30C649">
+        <Association Name="FK__Items__Procureme__49C3F6B7">
+          <End Role="Procurements" Type="Self.Procurements" Multiplicity="0..1" />
+          <End Role="Items" Type="Self.Items" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Procurements">
+              <PropertyRef Name="ProcurementID" />
+            </Principal>
+            <Dependent Role="Items">
+              <PropertyRef Name="ProcurementID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Telephone__Organ__7B5B524B">
           <End Role="OrganizationSettings" Type="Self.OrganizationSettings" Multiplicity="0..1" />
           <End Role="TelephoneNumbers" Type="Self.TelephoneNumbers" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1762,7 +2001,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__UserProfi__Organ__6C190EBB">
+        <Association Name="FK__UserProfi__Organ__7E37BEF6">
           <End Role="OrganizationSettings" Type="Self.OrganizationSettings" Multiplicity="0..1" />
           <End Role="UserProfile" Type="Self.UserProfile" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1774,6 +2013,126 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ProcurementMethodOrganizationSettings_OrganizationSettings">
+          <End Role="OrganizationSettings" Type="Self.OrganizationSettings" Multiplicity="1" />
+          <End Role="ProcurementMethodOrganizationSettings" Type="Self.ProcurementMethodOrganizationSettings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OrganizationSettings">
+              <PropertyRef Name="OrganizationID" />
+            </Principal>
+            <Dependent Role="ProcurementMethodOrganizationSettings">
+              <PropertyRef Name="OrganizationID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProjectCategoryOrganizationSettings_OrganizationSettings">
+          <End Role="OrganizationSettings" Type="Self.OrganizationSettings" Multiplicity="1" />
+          <End Role="ProjectCategoryOrganizationSettings" Type="Self.ProjectCategoryOrganizationSettings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OrganizationSettings">
+              <PropertyRef Name="OrganizationID" />
+            </Principal>
+            <Dependent Role="ProjectCategoryOrganizationSettings">
+              <PropertyRef Name="OrganizationID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SourceOfFundsOrganizationSettings_OrganizationSettings">
+          <End Role="OrganizationSettings" Type="Self.OrganizationSettings" Multiplicity="1" />
+          <End Role="SourceOfFundsOrganizationSettings" Type="Self.SourceOfFundsOrganizationSettings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OrganizationSettings">
+              <PropertyRef Name="OrganizationID" />
+            </Principal>
+            <Dependent Role="SourceOfFundsOrganizationSettings">
+              <PropertyRef Name="OrganizationID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Procureme__Procu__4D94879B">
+          <End Role="ProcurementMethod" Type="Self.ProcurementMethod" Multiplicity="0..1" />
+          <End Role="Procurements" Type="Self.Procurements" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProcurementMethod">
+              <PropertyRef Name="ProcurementMethodID" />
+            </Principal>
+            <Dependent Role="Procurements">
+              <PropertyRef Name="ProcurementMethodID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProcurementMethodOrganizationSettings_ProcurementMethod">
+          <End Role="ProcurementMethod" Type="Self.ProcurementMethod" Multiplicity="1" />
+          <End Role="ProcurementMethodOrganizationSettings" Type="Self.ProcurementMethodOrganizationSettings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProcurementMethod">
+              <PropertyRef Name="ProcurementMethodID" />
+            </Principal>
+            <Dependent Role="ProcurementMethodOrganizationSettings">
+              <PropertyRef Name="ProcurementMethodID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Procureme__Proje__4E88ABD4">
+          <End Role="ProjectCategory" Type="Self.ProjectCategory" Multiplicity="0..1" />
+          <End Role="Procurements" Type="Self.Procurements" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProjectCategory">
+              <PropertyRef Name="ProjectCategoryID" />
+            </Principal>
+            <Dependent Role="Procurements">
+              <PropertyRef Name="ProjectCategoryID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Procureme__Sourc__4F7CD00D">
+          <End Role="SourceOfFunds" Type="Self.SourceOfFunds" Multiplicity="0..1" />
+          <End Role="Procurements" Type="Self.Procurements" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SourceOfFunds">
+              <PropertyRef Name="SourceOfFundID" />
+            </Principal>
+            <Dependent Role="Procurements">
+              <PropertyRef Name="SourceOfFundID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Procurements_ProcurementStatus">
+          <End Role="ProcurementStatus" Type="Self.ProcurementStatus" Multiplicity="0..1" />
+          <End Role="Procurements" Type="Self.Procurements" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProcurementStatus">
+              <PropertyRef Name="ProcurementStatusID" />
+            </Principal>
+            <Dependent Role="Procurements">
+              <PropertyRef Name="ProcurementStatusID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProjectCategoryOrganizationSettings_ProjectCategory">
+          <End Role="ProjectCategory" Type="Self.ProjectCategory" Multiplicity="1" />
+          <End Role="ProjectCategoryOrganizationSettings" Type="Self.ProjectCategoryOrganizationSettings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProjectCategory">
+              <PropertyRef Name="ProjectCategoryID" />
+            </Principal>
+            <Dependent Role="ProjectCategoryOrganizationSettings">
+              <PropertyRef Name="ProjectCategoryID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SourceOfFundsOrganizationSettings_SourceOfFunds">
+          <End Role="SourceOfFunds" Type="Self.SourceOfFunds" Multiplicity="1" />
+          <End Role="SourceOfFundsOrganizationSettings" Type="Self.SourceOfFundsOrganizationSettings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SourceOfFunds">
+              <PropertyRef Name="SourceOfFundID" />
+            </Principal>
+            <Dependent Role="SourceOfFundsOrganizationSettings">
+              <PropertyRef Name="SourceOfFundID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="ProcureEaseEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="C__MigrationHistory" EntityType="Self.C__MigrationHistory" />
           <EntitySet Name="AdvertCategory" EntityType="Self.AdvertCategory" />
@@ -1781,6 +2140,7 @@
           <EntitySet Name="AdvertisedItems" EntityType="Self.AdvertisedItems" />
           <EntitySet Name="AdvertLotNumber" EntityType="Self.AdvertLotNumber" />
           <EntitySet Name="Adverts" EntityType="Self.Adverts" />
+          <EntitySet Name="AdvertStatus" EntityType="Self.AdvertStatus" />
           <EntitySet Name="ApprovedItems" EntityType="Self.ApprovedItems" />
           <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" />
           <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaims" />
@@ -1788,33 +2148,53 @@
           <EntitySet Name="AspNetUserRoles" EntityType="Self.AspNetUserRoles" />
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" />
           <EntitySet Name="BudgetYear" EntityType="Self.BudgetYear" />
+          <EntitySet Name="Department" EntityType="Self.Department" />
           <EntitySet Name="ItemCode" EntityType="Self.ItemCode" />
           <EntitySet Name="Items" EntityType="Self.Items" />
           <EntitySet Name="OrganizationSettings" EntityType="Self.OrganizationSettings" />
+          <EntitySet Name="ProcurementMethod" EntityType="Self.ProcurementMethod" />
+          <EntitySet Name="ProcurementMethodOrganizationSettings" EntityType="Self.ProcurementMethodOrganizationSettings" />
+          <EntitySet Name="Procurements" EntityType="Self.Procurements" />
           <EntitySet Name="ProcurementStatus" EntityType="Self.ProcurementStatus" />
+          <EntitySet Name="ProjectCategory" EntityType="Self.ProjectCategory" />
+          <EntitySet Name="ProjectCategoryOrganizationSettings" EntityType="Self.ProjectCategoryOrganizationSettings" />
+          <EntitySet Name="SourceOfFunds" EntityType="Self.SourceOfFunds" />
+          <EntitySet Name="SourceOfFundsOrganizationSettings" EntityType="Self.SourceOfFundsOrganizationSettings" />
           <EntitySet Name="TelephoneNumbers" EntityType="Self.TelephoneNumbers" />
           <EntitySet Name="UserProfile" EntityType="Self.UserProfile" />
-          <AssociationSet Name="FK__AdvertCat__Adver__4D94879B" Association="Self.FK__AdvertCat__Adver__4D94879B">
+          <AssociationSet Name="FK__AdvertCat__Adver__4F7CD00D" Association="Self.FK__AdvertCat__Adver__4F7CD00D">
             <End Role="AdvertCategory" EntitySet="AdvertCategory" />
             <End Role="AdvertCategoryNumber" EntitySet="AdvertCategoryNumber" />
           </AssociationSet>
-          <AssociationSet Name="FK__AdvertCat__Adver__4CA06362" Association="Self.FK__AdvertCat__Adver__4CA06362">
+          <AssociationSet Name="FK__AdvertCat__Adver__4E88ABD4" Association="Self.FK__AdvertCat__Adver__4E88ABD4">
             <End Role="Adverts" EntitySet="Adverts" />
             <End Role="AdvertCategoryNumber" EntitySet="AdvertCategoryNumber" />
           </AssociationSet>
-          <AssociationSet Name="FK__Items__Advertise__5BE2A6F2" Association="Self.FK__Items__Advertise__5BE2A6F2">
+          <AssociationSet Name="FK__AdvertCat__Proje__5070F446" Association="Self.FK__AdvertCat__Proje__5070F446">
+            <End Role="ProjectCategory" EntitySet="ProjectCategory" />
+            <End Role="AdvertCategoryNumber" EntitySet="AdvertCategoryNumber" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Items__Advertise__656C112C" Association="Self.FK__Items__Advertise__656C112C">
             <End Role="AdvertisedItems" EntitySet="AdvertisedItems" />
             <End Role="Items" EntitySet="Items" />
           </AssociationSet>
-          <AssociationSet Name="FK__AdvertLot__Adver__4F7CD00D" Association="Self.FK__AdvertLot__Adver__4F7CD00D">
+          <AssociationSet Name="FK__AdvertLot__Adver__534D60F1" Association="Self.FK__AdvertLot__Adver__534D60F1">
             <End Role="Adverts" EntitySet="Adverts" />
             <End Role="AdvertLotNumber" EntitySet="AdvertLotNumber" />
           </AssociationSet>
-          <AssociationSet Name="FK__Adverts__BudgetY__52593CB8" Association="Self.FK__Adverts__BudgetY__52593CB8">
+          <AssociationSet Name="FK__AdvertLot__Procu__403A8C7D" Association="Self.FK__AdvertLot__Procu__403A8C7D">
+            <End Role="Procurements" EntitySet="Procurements" />
+            <End Role="AdvertLotNumber" EntitySet="AdvertLotNumber" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Adverts__AdvertS__5629CD9C" Association="Self.FK__Adverts__AdvertS__5629CD9C">
+            <End Role="AdvertStatus" EntitySet="AdvertStatus" />
+            <End Role="Adverts" EntitySet="Adverts" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Adverts__BudgetY__571DF1D5" Association="Self.FK__Adverts__BudgetY__571DF1D5">
             <End Role="BudgetYear" EntitySet="BudgetYear" />
             <End Role="Adverts" EntitySet="Adverts" />
           </AssociationSet>
-          <AssociationSet Name="FK__Items__ApprovedI__5CD6CB2B" Association="Self.FK__Items__ApprovedI__5CD6CB2B">
+          <AssociationSet Name="FK__Items__ApprovedI__66603565" Association="Self.FK__Items__ApprovedI__66603565">
             <End Role="ApprovedItems" EntitySet="ApprovedItems" />
             <End Role="Items" EntitySet="Items" />
           </AssociationSet>
@@ -1834,110 +2214,88 @@
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
           </AssociationSet>
-          <AssociationSet Name="FK__UserProfile__Id__6D0D32F4" Association="Self.FK__UserProfile__Id__6D0D32F4">
+          <AssociationSet Name="FK__UserProfile__Id__7F2BE32F" Association="Self.FK__UserProfile__Id__7F2BE32F">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="UserProfile" EntitySet="UserProfile" />
           </AssociationSet>
-          <AssociationSet Name="FK__Items__ItemCodeI__5DCAEF64" Association="Self.FK__Items__ItemCodeI__5DCAEF64">
-            <End Role="ItemCode" EntitySet="ItemCode" />
-            <End Role="Items" EntitySet="Items" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Telephone__Organ__6A30C649" Association="Self.FK__Telephone__Organ__6A30C649">
-            <End Role="OrganizationSettings" EntitySet="OrganizationSettings" />
-            <End Role="TelephoneNumbers" EntitySet="TelephoneNumbers" />
-          </AssociationSet>
-          <AssociationSet Name="FK__UserProfi__Organ__6C190EBB" Association="Self.FK__UserProfi__Organ__6C190EBB">
-            <End Role="OrganizationSettings" EntitySet="OrganizationSettings" />
-            <End Role="UserProfile" EntitySet="UserProfile" />
-          </AssociationSet>
-          <EntitySet Name="Procurements" EntityType="ProcureEaseModel.Procurements" />
-          <AssociationSet Name="FK__AdvertLot__Procu__403A8C7D" Association="ProcureEaseModel.FK__AdvertLot__Procu__403A8C7D">
-            <End Role="Procurements" EntitySet="Procurements" />
-            <End Role="AdvertLotNumber" EntitySet="AdvertLotNumber" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Procureme__Budge__4AB81AF0" Association="ProcureEaseModel.FK__Procureme__Budge__4AB81AF0">
+          <AssociationSet Name="FK__Procureme__Budge__4AB81AF0" Association="Self.FK__Procureme__Budge__4AB81AF0">
             <End Role="BudgetYear" EntitySet="BudgetYear" />
             <End Role="Procurements" EntitySet="Procurements" />
           </AssociationSet>
-          <AssociationSet Name="FK__Items__Procureme__49C3F6B7" Association="ProcureEaseModel.FK__Items__Procureme__49C3F6B7">
+          <AssociationSet Name="FK__Departmen__Depar__619B8048" Association="Self.FK__Departmen__Depar__619B8048">
+            <End Role="UserProfile" EntitySet="UserProfile" />
+            <End Role="Department" EntitySet="Department" />
+          </AssociationSet>
+          <AssociationSet Name="FK__UserProfi__Depar__7D439ABD" Association="Self.FK__UserProfi__Depar__7D439ABD">
+            <End Role="Department" EntitySet="Department" />
+            <End Role="UserProfile" EntitySet="UserProfile" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Department_OrganizationSettings" Association="Self.FK_Department_OrganizationSettings">
+            <End Role="OrganizationSettings" EntitySet="OrganizationSettings" />
+            <End Role="Department" EntitySet="Department" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Procurements_Department" Association="Self.FK_Procurements_Department">
+            <End Role="Department" EntitySet="Department" />
+            <End Role="Procurements" EntitySet="Procurements" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Items__ItemCodeI__6754599E" Association="Self.FK__Items__ItemCodeI__6754599E">
+            <End Role="ItemCode" EntitySet="ItemCode" />
+            <End Role="Items" EntitySet="Items" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Items__Procureme__49C3F6B7" Association="Self.FK__Items__Procureme__49C3F6B7">
             <End Role="Procurements" EntitySet="Procurements" />
             <End Role="Items" EntitySet="Items" />
           </AssociationSet>
-          <AssociationSet Name="FK_Procurements_ProcurementStatus" Association="ProcureEaseModel.FK_Procurements_ProcurementStatus">
+          <AssociationSet Name="FK__Telephone__Organ__7B5B524B" Association="Self.FK__Telephone__Organ__7B5B524B">
+            <End Role="OrganizationSettings" EntitySet="OrganizationSettings" />
+            <End Role="TelephoneNumbers" EntitySet="TelephoneNumbers" />
+          </AssociationSet>
+          <AssociationSet Name="FK__UserProfi__Organ__7E37BEF6" Association="Self.FK__UserProfi__Organ__7E37BEF6">
+            <End Role="OrganizationSettings" EntitySet="OrganizationSettings" />
+            <End Role="UserProfile" EntitySet="UserProfile" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProcurementMethodOrganizationSettings_OrganizationSettings" Association="Self.FK_ProcurementMethodOrganizationSettings_OrganizationSettings">
+            <End Role="OrganizationSettings" EntitySet="OrganizationSettings" />
+            <End Role="ProcurementMethodOrganizationSettings" EntitySet="ProcurementMethodOrganizationSettings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProjectCategoryOrganizationSettings_OrganizationSettings" Association="Self.FK_ProjectCategoryOrganizationSettings_OrganizationSettings">
+            <End Role="OrganizationSettings" EntitySet="OrganizationSettings" />
+            <End Role="ProjectCategoryOrganizationSettings" EntitySet="ProjectCategoryOrganizationSettings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SourceOfFundsOrganizationSettings_OrganizationSettings" Association="Self.FK_SourceOfFundsOrganizationSettings_OrganizationSettings">
+            <End Role="OrganizationSettings" EntitySet="OrganizationSettings" />
+            <End Role="SourceOfFundsOrganizationSettings" EntitySet="SourceOfFundsOrganizationSettings" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Procureme__Procu__4D94879B" Association="Self.FK__Procureme__Procu__4D94879B">
+            <End Role="ProcurementMethod" EntitySet="ProcurementMethod" />
+            <End Role="Procurements" EntitySet="Procurements" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProcurementMethodOrganizationSettings_ProcurementMethod" Association="Self.FK_ProcurementMethodOrganizationSettings_ProcurementMethod">
+            <End Role="ProcurementMethod" EntitySet="ProcurementMethod" />
+            <End Role="ProcurementMethodOrganizationSettings" EntitySet="ProcurementMethodOrganizationSettings" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Procureme__Proje__4E88ABD4" Association="Self.FK__Procureme__Proje__4E88ABD4">
+            <End Role="ProjectCategory" EntitySet="ProjectCategory" />
+            <End Role="Procurements" EntitySet="Procurements" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Procureme__Sourc__4F7CD00D" Association="Self.FK__Procureme__Sourc__4F7CD00D">
+            <End Role="SourceOfFunds" EntitySet="SourceOfFunds" />
+            <End Role="Procurements" EntitySet="Procurements" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Procurements_ProcurementStatus" Association="Self.FK_Procurements_ProcurementStatus">
             <End Role="ProcurementStatus" EntitySet="ProcurementStatus" />
             <End Role="Procurements" EntitySet="Procurements" />
           </AssociationSet>
-          <EntitySet Name="Department" EntityType="ProcureEaseModel.Department" />
-          <AssociationSet Name="FK__Departmen__Depar__59063A47" Association="ProcureEaseModel.FK__Departmen__Depar__59063A47">
-            <End Role="UserProfile" EntitySet="UserProfile" />
-            <End Role="Department" EntitySet="Department" />
-          </AssociationSet>
-          <AssociationSet Name="FK__UserProfi__Depar__6B24EA82" Association="ProcureEaseModel.FK__UserProfi__Depar__6B24EA82">
-            <End Role="Department" EntitySet="Department" />
-            <End Role="UserProfile" EntitySet="UserProfile" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Department_OrganizationSettings" Association="ProcureEaseModel.FK_Department_OrganizationSettings">
-            <End Role="OrganizationSettings" EntitySet="OrganizationSettings" />
-            <End Role="Department" EntitySet="Department" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Procurements_Department" Association="ProcureEaseModel.FK_Procurements_Department">
-            <End Role="Department" EntitySet="Department" />
-            <End Role="Procurements" EntitySet="Procurements" />
-          </AssociationSet>
-          <EntitySet Name="ProcurementMethod" EntityType="ProcureEaseModel.ProcurementMethod" />
-          <EntitySet Name="ProjectCategory" EntityType="ProcureEaseModel.ProjectCategory" />
-          <EntitySet Name="SourceOfFunds" EntityType="ProcureEaseModel.SourceOfFunds" />
-          <AssociationSet Name="FK__AdvertCat__Proje__75A278F5" Association="ProcureEaseModel.FK__AdvertCat__Proje__75A278F5">
-            <End Role="ProjectCategory" EntitySet="ProjectCategory" />
-            <End Role="AdvertCategoryNumber" EntitySet="AdvertCategoryNumber" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Procureme__Procu__4D94879B" Association="ProcureEaseModel.FK__Procureme__Procu__4D94879B">
-            <End Role="ProcurementMethod" EntitySet="ProcurementMethod" />
-            <End Role="Procurements" EntitySet="Procurements" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Procureme__Proje__4E88ABD4" Association="ProcureEaseModel.FK__Procureme__Proje__4E88ABD4">
-            <End Role="ProjectCategory" EntitySet="ProjectCategory" />
-            <End Role="Procurements" EntitySet="Procurements" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Procureme__Sourc__4F7CD00D" Association="ProcureEaseModel.FK__Procureme__Sourc__4F7CD00D">
-            <End Role="SourceOfFunds" EntitySet="SourceOfFunds" />
-            <End Role="Procurements" EntitySet="Procurements" />
-          </AssociationSet>
-          <EntitySet Name="ProcurementMethodOrganizationSettings" EntityType="ProcureEaseModel.ProcurementMethodOrganizationSettings" />
-          <EntitySet Name="ProjectCategoryOrganizationSettings" EntityType="ProcureEaseModel.ProjectCategoryOrganizationSettings" />
-          <EntitySet Name="SourceOfFundsOrganizationSettings" EntityType="ProcureEaseModel.SourceOfFundsOrganizationSettings" />
-          <AssociationSet Name="FK_ProcurementMethodOrganizationSettings_OrganizationSettings" Association="ProcureEaseModel.FK_ProcurementMethodOrganizationSettings_OrganizationSettings">
-            <End Role="OrganizationSettings" EntitySet="OrganizationSettings" />
-            <End Role="ProcurementMethodOrganizationSettings" EntitySet="ProcurementMethodOrganizationSettings" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ProjectCategoryOrganizationSettings_OrganizationSettings" Association="ProcureEaseModel.FK_ProjectCategoryOrganizationSettings_OrganizationSettings">
-            <End Role="OrganizationSettings" EntitySet="OrganizationSettings" />
-            <End Role="ProjectCategoryOrganizationSettings" EntitySet="ProjectCategoryOrganizationSettings" />
-          </AssociationSet>
-          <AssociationSet Name="FK_SourceOfFundsOrganizationSettings_OrganizationSettings" Association="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_OrganizationSettings">
-            <End Role="OrganizationSettings" EntitySet="OrganizationSettings" />
-            <End Role="SourceOfFundsOrganizationSettings" EntitySet="SourceOfFundsOrganizationSettings" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ProcurementMethodOrganizationSettings_ProcurementMethod" Association="ProcureEaseModel.FK_ProcurementMethodOrganizationSettings_ProcurementMethod">
-            <End Role="ProcurementMethod" EntitySet="ProcurementMethod" />
-            <End Role="ProcurementMethodOrganizationSettings" EntitySet="ProcurementMethodOrganizationSettings" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ProjectCategoryOrganizationSettings_ProjectCategory" Association="ProcureEaseModel.FK_ProjectCategoryOrganizationSettings_ProjectCategory">
+          <AssociationSet Name="FK_ProjectCategoryOrganizationSettings_ProjectCategory" Association="Self.FK_ProjectCategoryOrganizationSettings_ProjectCategory">
             <End Role="ProjectCategory" EntitySet="ProjectCategory" />
             <End Role="ProjectCategoryOrganizationSettings" EntitySet="ProjectCategoryOrganizationSettings" />
           </AssociationSet>
-          <AssociationSet Name="FK_SourceOfFundsOrganizationSettings_SourceOfFunds" Association="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_SourceOfFunds">
+          <AssociationSet Name="FK_SourceOfFundsOrganizationSettings_SourceOfFunds" Association="Self.FK_SourceOfFundsOrganizationSettings_SourceOfFunds">
             <End Role="SourceOfFunds" EntitySet="SourceOfFunds" />
             <End Role="SourceOfFundsOrganizationSettings" EntitySet="SourceOfFundsOrganizationSettings" />
           </AssociationSet>
-          <EntitySet Name="AdvertStatus" EntityType="ProcureEaseModel.AdvertStatus" />
-          <AssociationSet Name="FK__Adverts__AdvertS__0F624AF8" Association="ProcureEaseModel.FK__Adverts__AdvertS__0F624AF8">
-            <End Role="AdvertStatus" EntitySet="AdvertStatus" />
-            <End Role="Adverts" EntitySet="Adverts" />
-          </AssociationSet>
-          <EntitySet Name="RequestForDemo" EntityType="ProcureEaseModel.RequestForDemo" />
-          <EntitySet Name="sysdiagrams" EntityType="ProcureEaseModel.sysdiagrams" />
           <EntitySet Name="Catalog" EntityType="ProcureEaseModel.Catalog" />
+          <EntitySet Name="RequestForDemo" EntityType="ProcureEaseModel.RequestForDemo" />
           <AssociationSet Name="FK_AdvertCategory_Catalog" Association="ProcureEaseModel.FK_AdvertCategory_Catalog">
             <End Role="Catalog" EntitySet="Catalog" />
             <End Role="AdvertCategory" EntitySet="AdvertCategory" />
@@ -2022,403 +2380,7 @@
             <End Role="Catalog" EntitySet="Catalog" />
             <End Role="UserProfile" EntitySet="UserProfile" />
           </AssociationSet>
-          </EntityContainer>
-        <EntityType Name="Procurements">
-          <Key>
-            <PropertyRef Name="ProcurementID" />
-          </Key>
-          <Property Name="ProcurementID" Type="Guid" Nullable="false" />
-          <Property Name="BudgetYearID" Type="Guid" />
-          <Property Name="DepartmentID" Type="Guid" />
-          <Property Name="ProjectName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
-          <Property Name="ProjectCategoryID" Type="Guid" />
-          <Property Name="ProcurementStatusID" Type="Int32" />
-          <Property Name="ProcurementMethodID" Type="Guid" />
-          <Property Name="SourceOfFundID" Type="Guid" />
-          <Property Name="DateModified" Type="DateTime" Precision="3" />
-          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="DateCreated" Type="DateTime" Precision="3" />
-          <Property Name="TenantID" Type="Guid" />
-          <NavigationProperty Name="AdvertLotNumber" Relationship="ProcureEaseModel.FK__AdvertLot__Procu__403A8C7D" FromRole="Procurements" ToRole="AdvertLotNumber" />
-          <NavigationProperty Name="BudgetYear" Relationship="ProcureEaseModel.FK__Procureme__Budge__4AB81AF0" FromRole="Procurements" ToRole="BudgetYear" />
-          <NavigationProperty Name="Items" Relationship="ProcureEaseModel.FK__Items__Procureme__49C3F6B7" FromRole="Procurements" ToRole="Items" />
-          <NavigationProperty Name="ProcurementStatus" Relationship="ProcureEaseModel.FK_Procurements_ProcurementStatus" FromRole="Procurements" ToRole="ProcurementStatus" />
-          <NavigationProperty Name="Department" Relationship="ProcureEaseModel.FK_Procurements_Department" FromRole="Procurements" ToRole="Department" />
-          <NavigationProperty Name="ProcurementMethod" Relationship="ProcureEaseModel.FK__Procureme__Procu__4D94879B" FromRole="Procurements" ToRole="ProcurementMethod" />
-          <NavigationProperty Name="ProjectCategory" Relationship="ProcureEaseModel.FK__Procureme__Proje__4E88ABD4" FromRole="Procurements" ToRole="ProjectCategory" />
-          <NavigationProperty Name="SourceOfFunds" Relationship="ProcureEaseModel.FK__Procureme__Sourc__4F7CD00D" FromRole="Procurements" ToRole="SourceOfFunds" />
-          <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_Procurements_Catalog" FromRole="Procurements" ToRole="Catalog" />
-        </EntityType>
-        <Association Name="FK__AdvertLot__Procu__403A8C7D">
-          <End Type="ProcureEaseModel.Procurements" Role="Procurements" Multiplicity="0..1" />
-          <End Type="ProcureEaseModel.AdvertLotNumber" Role="AdvertLotNumber" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Procurements">
-              <PropertyRef Name="ProcurementID" />
-            </Principal>
-            <Dependent Role="AdvertLotNumber">
-              <PropertyRef Name="ProcurementID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Procureme__Budge__4AB81AF0">
-          <End Type="ProcureEaseModel.BudgetYear" Role="BudgetYear" Multiplicity="0..1" />
-          <End Type="ProcureEaseModel.Procurements" Role="Procurements" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="BudgetYear">
-              <PropertyRef Name="BudgetYearID" />
-            </Principal>
-            <Dependent Role="Procurements">
-              <PropertyRef Name="BudgetYearID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Items__Procureme__49C3F6B7">
-          <End Type="ProcureEaseModel.Procurements" Role="Procurements" Multiplicity="0..1" />
-          <End Type="ProcureEaseModel.Items" Role="Items" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Procurements">
-              <PropertyRef Name="ProcurementID" />
-            </Principal>
-            <Dependent Role="Items">
-              <PropertyRef Name="ProcurementID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Procurements_ProcurementStatus">
-          <End Type="ProcureEaseModel.ProcurementStatus" Role="ProcurementStatus" Multiplicity="0..1" />
-          <End Type="ProcureEaseModel.Procurements" Role="Procurements" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ProcurementStatus">
-              <PropertyRef Name="ProcurementStatusID" />
-            </Principal>
-            <Dependent Role="Procurements">
-              <PropertyRef Name="ProcurementStatusID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="Department">
-          <Key>
-            <PropertyRef Name="DepartmentID" />
-          </Key>
-          <Property Name="DepartmentID" Type="Guid" Nullable="false" />
-          <Property Name="DepartmentName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="DateModified" Type="DateTime" Precision="3" />
-          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="DateCreated" Type="DateTime" Precision="3" />
-          <Property Name="DepartmentHeadUserID" Type="Guid" />
-          <Property Name="TenantID" Type="Guid" />
-          <Property Name="OrganisationID" Type="Guid" />
-          <NavigationProperty Name="UserProfile" Relationship="ProcureEaseModel.FK__Departmen__Depar__59063A47" FromRole="Department" ToRole="UserProfile" />
-          <NavigationProperty Name="UserProfile1" Relationship="ProcureEaseModel.FK__UserProfi__Depar__6B24EA82" FromRole="Department" ToRole="UserProfile" />
-          <NavigationProperty Name="OrganizationSettings" Relationship="ProcureEaseModel.FK_Department_OrganizationSettings" FromRole="Department" ToRole="OrganizationSettings" />
-          <NavigationProperty Name="Procurements" Relationship="ProcureEaseModel.FK_Procurements_Department" FromRole="Department" ToRole="Procurements" />
-          <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_Department_Catalog" FromRole="Department" ToRole="Catalog" />
-        </EntityType>
-        <Association Name="FK__Departmen__Depar__59063A47">
-          <End Type="ProcureEaseModel.UserProfile" Role="UserProfile" Multiplicity="0..1" />
-          <End Type="ProcureEaseModel.Department" Role="Department" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="UserProfile">
-              <PropertyRef Name="UserID" />
-            </Principal>
-            <Dependent Role="Department">
-              <PropertyRef Name="DepartmentHeadUserID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__UserProfi__Depar__6B24EA82">
-          <End Type="ProcureEaseModel.Department" Role="Department" Multiplicity="0..1" />
-          <End Type="ProcureEaseModel.UserProfile" Role="UserProfile" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Department">
-              <PropertyRef Name="DepartmentID" />
-            </Principal>
-            <Dependent Role="UserProfile">
-              <PropertyRef Name="DepartmentID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Department_OrganizationSettings">
-          <End Type="ProcureEaseModel.OrganizationSettings" Role="OrganizationSettings" Multiplicity="0..1" />
-          <End Type="ProcureEaseModel.Department" Role="Department" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="OrganizationSettings">
-              <PropertyRef Name="OrganizationID" />
-            </Principal>
-            <Dependent Role="Department">
-              <PropertyRef Name="OrganisationID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Procurements_Department">
-          <End Type="ProcureEaseModel.Department" Role="Department" Multiplicity="0..1" />
-          <End Type="ProcureEaseModel.Procurements" Role="Procurements" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Department">
-              <PropertyRef Name="DepartmentID" />
-            </Principal>
-            <Dependent Role="Procurements">
-              <PropertyRef Name="DepartmentID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="ProcurementMethod">
-          <Key>
-            <PropertyRef Name="ProcurementMethodID" />
-          </Key>
-          <Property Name="ProcurementMethodID" Type="Guid" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
-          <Property Name="DateModified" Type="DateTime" Precision="3" />
-          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="DateCreated" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="Procurements" Relationship="ProcureEaseModel.FK__Procureme__Procu__4D94879B" FromRole="ProcurementMethod" ToRole="Procurements" />
-          <NavigationProperty Name="ProcurementMethodOrganizationSettings" Relationship="ProcureEaseModel.FK_ProcurementMethodOrganizationSettings_ProcurementMethod" FromRole="ProcurementMethod" ToRole="ProcurementMethodOrganizationSettings" />
-        </EntityType>
-        <EntityType Name="ProjectCategory">
-          <Key>
-            <PropertyRef Name="ProjectCategoryID" />
-          </Key>
-          <Property Name="ProjectCategoryID" Type="Guid" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="DateModified" Type="DateTime" Precision="3" />
-          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="DateCreated" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="AdvertCategoryNumber" Relationship="ProcureEaseModel.FK__AdvertCat__Proje__75A278F5" FromRole="ProjectCategory" ToRole="AdvertCategoryNumber" />
-          <NavigationProperty Name="Procurements" Relationship="ProcureEaseModel.FK__Procureme__Proje__4E88ABD4" FromRole="ProjectCategory" ToRole="Procurements" />
-          <NavigationProperty Name="ProjectCategoryOrganizationSettings" Relationship="ProcureEaseModel.FK_ProjectCategoryOrganizationSettings_ProjectCategory" FromRole="ProjectCategory" ToRole="ProjectCategoryOrganizationSettings" />
-        </EntityType>
-        <EntityType Name="SourceOfFunds">
-          <Key>
-            <PropertyRef Name="SourceOfFundID" />
-          </Key>
-          <Property Name="SourceOfFundID" Type="Guid" Nullable="false" />
-          <Property Name="SourceOfFund" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Name="DateModified" Type="DateTime" Precision="3" />
-          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="DateCreated" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="Procurements" Relationship="ProcureEaseModel.FK__Procureme__Sourc__4F7CD00D" FromRole="SourceOfFunds" ToRole="Procurements" />
-          <NavigationProperty Name="SourceOfFundsOrganizationSettings" Relationship="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_SourceOfFunds" FromRole="SourceOfFunds" ToRole="SourceOfFundsOrganizationSettings" />
-        </EntityType>
-        <Association Name="FK__AdvertCat__Proje__75A278F5">
-          <End Type="ProcureEaseModel.ProjectCategory" Role="ProjectCategory" Multiplicity="0..1" />
-          <End Type="ProcureEaseModel.AdvertCategoryNumber" Role="AdvertCategoryNumber" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ProjectCategory">
-              <PropertyRef Name="ProjectCategoryID" />
-            </Principal>
-            <Dependent Role="AdvertCategoryNumber">
-              <PropertyRef Name="ProjectCategoryID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Procureme__Procu__4D94879B">
-          <End Type="ProcureEaseModel.ProcurementMethod" Role="ProcurementMethod" Multiplicity="0..1" />
-          <End Type="ProcureEaseModel.Procurements" Role="Procurements" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ProcurementMethod">
-              <PropertyRef Name="ProcurementMethodID" />
-            </Principal>
-            <Dependent Role="Procurements">
-              <PropertyRef Name="ProcurementMethodID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Procureme__Proje__4E88ABD4">
-          <End Type="ProcureEaseModel.ProjectCategory" Role="ProjectCategory" Multiplicity="0..1" />
-          <End Type="ProcureEaseModel.Procurements" Role="Procurements" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ProjectCategory">
-              <PropertyRef Name="ProjectCategoryID" />
-            </Principal>
-            <Dependent Role="Procurements">
-              <PropertyRef Name="ProjectCategoryID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Procureme__Sourc__4F7CD00D">
-          <End Type="ProcureEaseModel.SourceOfFunds" Role="SourceOfFunds" Multiplicity="0..1" />
-          <End Type="ProcureEaseModel.Procurements" Role="Procurements" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="SourceOfFunds">
-              <PropertyRef Name="SourceOfFundID" />
-            </Principal>
-            <Dependent Role="Procurements">
-              <PropertyRef Name="SourceOfFundID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="ProcurementMethodOrganizationSettings">
-          <Key>
-            <PropertyRef Name="ProcurementMethodID" />
-            <PropertyRef Name="TenantID" />
-            <PropertyRef Name="OrganizationID" />
-          </Key>
-          <Property Name="ProcurementMethodID" Type="Guid" Nullable="false" />
-          <Property Name="TenantID" Type="Guid" Nullable="false" />
-          <Property Name="OrganizationID" Type="Guid" Nullable="false" />
-          <Property Name="EnableProcurementMethod" Type="Boolean" />
-          <Property Name="DateCreated" Type="DateTime" Precision="3" />
-          <Property Name="DateModified" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="OrganizationSettings" Relationship="ProcureEaseModel.FK_ProcurementMethodOrganizationSettings_OrganizationSettings" FromRole="ProcurementMethodOrganizationSettings" ToRole="OrganizationSettings" />
-          <NavigationProperty Name="ProcurementMethod" Relationship="ProcureEaseModel.FK_ProcurementMethodOrganizationSettings_ProcurementMethod" FromRole="ProcurementMethodOrganizationSettings" ToRole="ProcurementMethod" />
-          <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_ProcurementMethodOrganizationSettings_Catalog" FromRole="ProcurementMethodOrganizationSettings" ToRole="Catalog" />
-        </EntityType>
-        <EntityType Name="ProjectCategoryOrganizationSettings">
-          <Key>
-            <PropertyRef Name="ProjectCategoryID" />
-            <PropertyRef Name="TenantID" />
-            <PropertyRef Name="OrganizationID" />
-          </Key>
-          <Property Name="ProjectCategoryID" Type="Guid" Nullable="false" />
-          <Property Name="TenantID" Type="Guid" Nullable="false" />
-          <Property Name="OrganizationID" Type="Guid" Nullable="false" />
-          <Property Name="EnableProjectCategory" Type="Boolean" />
-          <Property Name="DateCreated" Type="DateTime" Precision="3" />
-          <Property Name="DateModified" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="OrganizationSettings" Relationship="ProcureEaseModel.FK_ProjectCategoryOrganizationSettings_OrganizationSettings" FromRole="ProjectCategoryOrganizationSettings" ToRole="OrganizationSettings" />
-          <NavigationProperty Name="ProjectCategory" Relationship="ProcureEaseModel.FK_ProjectCategoryOrganizationSettings_ProjectCategory" FromRole="ProjectCategoryOrganizationSettings" ToRole="ProjectCategory" />
-          <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_ProjectCategoryOrganizationSettings_Catalog" FromRole="ProjectCategoryOrganizationSettings" ToRole="Catalog" />
-        </EntityType>
-        <EntityType Name="SourceOfFundsOrganizationSettings">
-          <Key>
-            <PropertyRef Name="SourceOfFundID" />
-            <PropertyRef Name="TenantID" />
-            <PropertyRef Name="OrganizationID" />
-          </Key>
-          <Property Name="SourceOfFundID" Type="Guid" Nullable="false" />
-          <Property Name="TenantID" Type="Guid" Nullable="false" />
-          <Property Name="OrganizationID" Type="Guid" Nullable="false" />
-          <Property Name="EnableSourceOFFund" Type="Boolean" />
-          <Property Name="DateCreated" Type="DateTime" Precision="3" />
-          <Property Name="DateModified" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="OrganizationSettings" Relationship="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_OrganizationSettings" FromRole="SourceOfFundsOrganizationSettings" ToRole="OrganizationSettings" />
-          <NavigationProperty Name="SourceOfFunds" Relationship="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_SourceOfFunds" FromRole="SourceOfFundsOrganizationSettings" ToRole="SourceOfFunds" />
-          <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_Catalog" FromRole="SourceOfFundsOrganizationSettings" ToRole="Catalog" />
-        </EntityType>
-        <Association Name="FK_ProcurementMethodOrganizationSettings_OrganizationSettings">
-          <End Type="ProcureEaseModel.OrganizationSettings" Role="OrganizationSettings" Multiplicity="1" />
-          <End Type="ProcureEaseModel.ProcurementMethodOrganizationSettings" Role="ProcurementMethodOrganizationSettings" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="OrganizationSettings">
-              <PropertyRef Name="OrganizationID" />
-            </Principal>
-            <Dependent Role="ProcurementMethodOrganizationSettings">
-              <PropertyRef Name="OrganizationID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_ProjectCategoryOrganizationSettings_OrganizationSettings">
-          <End Type="ProcureEaseModel.OrganizationSettings" Role="OrganizationSettings" Multiplicity="1" />
-          <End Type="ProcureEaseModel.ProjectCategoryOrganizationSettings" Role="ProjectCategoryOrganizationSettings" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="OrganizationSettings">
-              <PropertyRef Name="OrganizationID" />
-            </Principal>
-            <Dependent Role="ProjectCategoryOrganizationSettings">
-              <PropertyRef Name="OrganizationID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_SourceOfFundsOrganizationSettings_OrganizationSettings">
-          <End Type="ProcureEaseModel.OrganizationSettings" Role="OrganizationSettings" Multiplicity="1" />
-          <End Type="ProcureEaseModel.SourceOfFundsOrganizationSettings" Role="SourceOfFundsOrganizationSettings" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="OrganizationSettings">
-              <PropertyRef Name="OrganizationID" />
-            </Principal>
-            <Dependent Role="SourceOfFundsOrganizationSettings">
-              <PropertyRef Name="OrganizationID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_ProcurementMethodOrganizationSettings_ProcurementMethod">
-          <End Type="ProcureEaseModel.ProcurementMethod" Role="ProcurementMethod" Multiplicity="1" />
-          <End Type="ProcureEaseModel.ProcurementMethodOrganizationSettings" Role="ProcurementMethodOrganizationSettings" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ProcurementMethod">
-              <PropertyRef Name="ProcurementMethodID" />
-            </Principal>
-            <Dependent Role="ProcurementMethodOrganizationSettings">
-              <PropertyRef Name="ProcurementMethodID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_ProjectCategoryOrganizationSettings_ProjectCategory">
-          <End Type="ProcureEaseModel.ProjectCategory" Role="ProjectCategory" Multiplicity="1" />
-          <End Type="ProcureEaseModel.ProjectCategoryOrganizationSettings" Role="ProjectCategoryOrganizationSettings" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ProjectCategory">
-              <PropertyRef Name="ProjectCategoryID" />
-            </Principal>
-            <Dependent Role="ProjectCategoryOrganizationSettings">
-              <PropertyRef Name="ProjectCategoryID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_SourceOfFundsOrganizationSettings_SourceOfFunds">
-          <End Type="ProcureEaseModel.SourceOfFunds" Role="SourceOfFunds" Multiplicity="1" />
-          <End Type="ProcureEaseModel.SourceOfFundsOrganizationSettings" Role="SourceOfFundsOrganizationSettings" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="SourceOfFunds">
-              <PropertyRef Name="SourceOfFundID" />
-            </Principal>
-            <Dependent Role="SourceOfFundsOrganizationSettings">
-              <PropertyRef Name="SourceOfFundID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="AdvertStatus">
-          <Key>
-            <PropertyRef Name="AdvertStatusID" />
-          </Key>
-          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="DateModified" Type="DateTime" Precision="3" />
-          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="DateCreated" Type="DateTime" Precision="3" />
-          <Property Name="AdvertStatusID" Type="Int32" Nullable="false" />
-          <Property Name="TenantID" Type="Guid" />
-          <NavigationProperty Name="Adverts" Relationship="ProcureEaseModel.FK__Adverts__AdvertS__0F624AF8" FromRole="AdvertStatus" ToRole="Adverts" />
-          <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_AdvertStatus_Catalog" FromRole="AdvertStatus" ToRole="Catalog" />
-        </EntityType>
-        <Association Name="FK__Adverts__AdvertS__0F624AF8">
-          <End Type="ProcureEaseModel.AdvertStatus" Role="AdvertStatus" Multiplicity="0..1" />
-          <End Type="ProcureEaseModel.Adverts" Role="Adverts" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="AdvertStatus">
-              <PropertyRef Name="AdvertStatusID" />
-            </Principal>
-            <Dependent Role="Adverts">
-              <PropertyRef Name="AdvertStatusID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="RequestForDemo">
-          <Key>
-            <PropertyRef Name="RequestID" />
-          </Key>
-          <Property Name="RequestID" Type="Guid" Nullable="false" />
-          <Property Name="OrganizationFullName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
-          <Property Name="OrganizationShortName" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Name="AdministratorEmail" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="AdministratorFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="AdministratorLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="AdministratorPhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="DateCreated" Type="DateTime" Precision="3" />
-          <Property Name="DemoStartDate" Type="DateTime" Precision="3" />
-          <Property Name="DemoEndDate" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_Catalog_RequestForDemo" FromRole="RequestForDemo" ToRole="Catalog" />
-        </EntityType>
-        <EntityType Name="sysdiagrams">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="principal_id" Type="Int32" Nullable="false" />
-          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="version" Type="Int32" />
-          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
-        </EntityType>
+        </EntityContainer>
         <EntityType Name="Catalog">
           <Key>
             <PropertyRef Name="TenantID" />
@@ -2452,6 +2414,22 @@
           <NavigationProperty Name="SourceOfFundsOrganizationSettings" Relationship="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_Catalog" FromRole="Catalog" ToRole="SourceOfFundsOrganizationSettings" />
           <NavigationProperty Name="TelephoneNumbers" Relationship="ProcureEaseModel.FK_TelephoneNumbers_Catalog" FromRole="Catalog" ToRole="TelephoneNumbers" />
           <NavigationProperty Name="UserProfile" Relationship="ProcureEaseModel.FK_UserProfile_Catalog" FromRole="Catalog" ToRole="UserProfile" />
+        </EntityType>
+        <EntityType Name="RequestForDemo">
+          <Key>
+            <PropertyRef Name="RequestID" />
+          </Key>
+          <Property Name="RequestID" Type="Guid" Nullable="false" />
+          <Property Name="OrganizationFullName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="OrganizationShortName" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="AdministratorEmail" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AdministratorFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="AdministratorLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="AdministratorPhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="DemoStartDate" Type="DateTime" Precision="3" />
+          <Property Name="DemoEndDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_Catalog_RequestForDemo" FromRole="RequestForDemo" ToRole="Catalog" />
         </EntityType>
         <Association Name="FK_AdvertCategory_Catalog">
           <End Type="ProcureEaseModel.Catalog" Role="Catalog" Multiplicity="0..1" />
@@ -2705,7 +2683,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        </Schema>
+      </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -2796,6 +2774,18 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="AdvertStatus">
+            <EntityTypeMapping TypeName="ProcureEaseModel.AdvertStatus">
+              <MappingFragment StoreEntitySet="AdvertStatus">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="AdvertStatusID" ColumnName="AdvertStatusID" />
+                <ScalarProperty Name="TenantID" ColumnName="TenantID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="ApprovedItems">
             <EntityTypeMapping TypeName="ProcureEaseModel.ApprovedItems">
               <MappingFragment StoreEntitySet="ApprovedItems">
@@ -2875,6 +2865,20 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Department">
+            <EntityTypeMapping TypeName="ProcureEaseModel.Department">
+              <MappingFragment StoreEntitySet="Department">
+                <ScalarProperty Name="DepartmentID" ColumnName="DepartmentID" />
+                <ScalarProperty Name="DepartmentName" ColumnName="DepartmentName" />
+                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="DepartmentHeadUserID" ColumnName="DepartmentHeadUserID" />
+                <ScalarProperty Name="TenantID" ColumnName="TenantID" />
+                <ScalarProperty Name="OrganisationID" ColumnName="OrganisationID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="ItemCode">
             <EntityTypeMapping TypeName="ProcureEaseModel.ItemCode">
               <MappingFragment StoreEntitySet="ItemCode">
@@ -2923,6 +2927,47 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="ProcurementMethod">
+            <EntityTypeMapping TypeName="ProcureEaseModel.ProcurementMethod">
+              <MappingFragment StoreEntitySet="ProcurementMethod">
+                <ScalarProperty Name="ProcurementMethodID" ColumnName="ProcurementMethodID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProcurementMethodOrganizationSettings">
+            <EntityTypeMapping TypeName="ProcureEaseModel.ProcurementMethodOrganizationSettings">
+              <MappingFragment StoreEntitySet="ProcurementMethodOrganizationSettings">
+                <ScalarProperty Name="ProcurementMethodID" ColumnName="ProcurementMethodID" />
+                <ScalarProperty Name="TenantID" ColumnName="TenantID" />
+                <ScalarProperty Name="OrganizationID" ColumnName="OrganizationID" />
+                <ScalarProperty Name="EnableProcurementMethod" ColumnName="EnableProcurementMethod" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Procurements">
+            <EntityTypeMapping TypeName="ProcureEaseModel.Procurements">
+              <MappingFragment StoreEntitySet="Procurements">
+                <ScalarProperty Name="ProcurementID" ColumnName="ProcurementID" />
+                <ScalarProperty Name="BudgetYearID" ColumnName="BudgetYearID" />
+                <ScalarProperty Name="DepartmentID" ColumnName="DepartmentID" />
+                <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
+                <ScalarProperty Name="ProjectCategoryID" ColumnName="ProjectCategoryID" />
+                <ScalarProperty Name="ProcurementStatusID" ColumnName="ProcurementStatusID" />
+                <ScalarProperty Name="ProcurementMethodID" ColumnName="ProcurementMethodID" />
+                <ScalarProperty Name="SourceOfFundID" ColumnName="SourceOfFundID" />
+                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="TenantID" ColumnName="TenantID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="ProcurementStatus">
             <EntityTypeMapping TypeName="ProcureEaseModel.ProcurementStatus">
               <MappingFragment StoreEntitySet="ProcurementStatus">
@@ -2933,6 +2978,52 @@
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="TenantID" ColumnName="TenantID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProjectCategory">
+            <EntityTypeMapping TypeName="ProcureEaseModel.ProjectCategory">
+              <MappingFragment StoreEntitySet="ProjectCategory">
+                <ScalarProperty Name="ProjectCategoryID" ColumnName="ProjectCategoryID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProjectCategoryOrganizationSettings">
+            <EntityTypeMapping TypeName="ProcureEaseModel.ProjectCategoryOrganizationSettings">
+              <MappingFragment StoreEntitySet="ProjectCategoryOrganizationSettings">
+                <ScalarProperty Name="ProjectCategoryID" ColumnName="ProjectCategoryID" />
+                <ScalarProperty Name="TenantID" ColumnName="TenantID" />
+                <ScalarProperty Name="OrganizationID" ColumnName="OrganizationID" />
+                <ScalarProperty Name="EnableProjectCategory" ColumnName="EnableProjectCategory" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SourceOfFunds">
+            <EntityTypeMapping TypeName="ProcureEaseModel.SourceOfFunds">
+              <MappingFragment StoreEntitySet="SourceOfFunds">
+                <ScalarProperty Name="SourceOfFundID" ColumnName="SourceOfFundID" />
+                <ScalarProperty Name="SourceOfFund" ColumnName="SourceOfFund" />
+                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SourceOfFundsOrganizationSettings">
+            <EntityTypeMapping TypeName="ProcureEaseModel.SourceOfFundsOrganizationSettings">
+              <MappingFragment StoreEntitySet="SourceOfFundsOrganizationSettings">
+                <ScalarProperty Name="SourceOfFundID" ColumnName="SourceOfFundID" />
+                <ScalarProperty Name="TenantID" ColumnName="TenantID" />
+                <ScalarProperty Name="OrganizationID" ColumnName="OrganizationID" />
+                <ScalarProperty Name="EnableSourceOFFund" ColumnName="EnableSourceOFFund" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2967,116 +3058,17 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Procurements">
-            <EntityTypeMapping TypeName="ProcureEaseModel.Procurements">
-              <MappingFragment StoreEntitySet="Procurements">
-                <ScalarProperty Name="TenantID" ColumnName="TenantID" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
-                <ScalarProperty Name="SourceOfFundID" ColumnName="SourceOfFundID" />
-                <ScalarProperty Name="ProcurementMethodID" ColumnName="ProcurementMethodID" />
-                <ScalarProperty Name="ProcurementStatusID" ColumnName="ProcurementStatusID" />
-                <ScalarProperty Name="ProjectCategoryID" ColumnName="ProjectCategoryID" />
-                <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
-                <ScalarProperty Name="DepartmentID" ColumnName="DepartmentID" />
-                <ScalarProperty Name="BudgetYearID" ColumnName="BudgetYearID" />
-                <ScalarProperty Name="ProcurementID" ColumnName="ProcurementID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Department">
-            <EntityTypeMapping TypeName="ProcureEaseModel.Department">
-              <MappingFragment StoreEntitySet="Department">
-                <ScalarProperty Name="OrganisationID" ColumnName="OrganisationID" />
-                <ScalarProperty Name="TenantID" ColumnName="TenantID" />
-                <ScalarProperty Name="DepartmentHeadUserID" ColumnName="DepartmentHeadUserID" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
-                <ScalarProperty Name="DepartmentName" ColumnName="DepartmentName" />
-                <ScalarProperty Name="DepartmentID" ColumnName="DepartmentID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ProcurementMethod">
-            <EntityTypeMapping TypeName="ProcureEaseModel.ProcurementMethod">
-              <MappingFragment StoreEntitySet="ProcurementMethod">
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="ProcurementMethodID" ColumnName="ProcurementMethodID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ProjectCategory">
-            <EntityTypeMapping TypeName="ProcureEaseModel.ProjectCategory">
-              <MappingFragment StoreEntitySet="ProjectCategory">
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="ProjectCategoryID" ColumnName="ProjectCategoryID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="SourceOfFunds">
-            <EntityTypeMapping TypeName="ProcureEaseModel.SourceOfFunds">
-              <MappingFragment StoreEntitySet="SourceOfFunds">
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
-                <ScalarProperty Name="SourceOfFund" ColumnName="SourceOfFund" />
-                <ScalarProperty Name="SourceOfFundID" ColumnName="SourceOfFundID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ProcurementMethodOrganizationSettings">
-            <EntityTypeMapping TypeName="ProcureEaseModel.ProcurementMethodOrganizationSettings">
-              <MappingFragment StoreEntitySet="ProcurementMethodOrganizationSettings">
+          <EntitySetMapping Name="Catalog">
+            <EntityTypeMapping TypeName="ProcureEaseModel.Catalog">
+              <MappingFragment StoreEntitySet="Catalog">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="IsDemo" ColumnName="IsDemo" />
                 <ScalarProperty Name="DateModified" ColumnName="DateModified" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="EnableProcurementMethod" ColumnName="EnableProcurementMethod" />
                 <ScalarProperty Name="OrganizationID" ColumnName="OrganizationID" />
+                <ScalarProperty Name="SubDomain" ColumnName="SubDomain" />
+                <ScalarProperty Name="RequestID" ColumnName="RequestID" />
                 <ScalarProperty Name="TenantID" ColumnName="TenantID" />
-                <ScalarProperty Name="ProcurementMethodID" ColumnName="ProcurementMethodID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ProjectCategoryOrganizationSettings">
-            <EntityTypeMapping TypeName="ProcureEaseModel.ProjectCategoryOrganizationSettings">
-              <MappingFragment StoreEntitySet="ProjectCategoryOrganizationSettings">
-                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="EnableProjectCategory" ColumnName="EnableProjectCategory" />
-                <ScalarProperty Name="OrganizationID" ColumnName="OrganizationID" />
-                <ScalarProperty Name="TenantID" ColumnName="TenantID" />
-                <ScalarProperty Name="ProjectCategoryID" ColumnName="ProjectCategoryID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="SourceOfFundsOrganizationSettings">
-            <EntityTypeMapping TypeName="ProcureEaseModel.SourceOfFundsOrganizationSettings">
-              <MappingFragment StoreEntitySet="SourceOfFundsOrganizationSettings">
-                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="EnableSourceOFFund" ColumnName="EnableSourceOFFund" />
-                <ScalarProperty Name="OrganizationID" ColumnName="OrganizationID" />
-                <ScalarProperty Name="TenantID" ColumnName="TenantID" />
-                <ScalarProperty Name="SourceOfFundID" ColumnName="SourceOfFundID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AdvertStatus">
-            <EntityTypeMapping TypeName="ProcureEaseModel.AdvertStatus">
-              <MappingFragment StoreEntitySet="AdvertStatus">
-                <ScalarProperty Name="TenantID" ColumnName="TenantID" />
-                <ScalarProperty Name="AdvertStatusID" ColumnName="AdvertStatusID" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -3096,32 +3088,7 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="sysdiagrams">
-            <EntityTypeMapping TypeName="ProcureEaseModel.sysdiagrams">
-              <MappingFragment StoreEntitySet="sysdiagrams">
-                <ScalarProperty Name="definition" ColumnName="definition" />
-                <ScalarProperty Name="version" ColumnName="version" />
-                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
-                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
-                <ScalarProperty Name="name" ColumnName="name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Catalog">
-            <EntityTypeMapping TypeName="ProcureEaseModel.Catalog">
-              <MappingFragment StoreEntitySet="Catalog">
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="IsDemo" ColumnName="IsDemo" />
-                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="OrganizationID" ColumnName="OrganizationID" />
-                <ScalarProperty Name="SubDomain" ColumnName="SubDomain" />
-                <ScalarProperty Name="RequestID" ColumnName="RequestID" />
-                <ScalarProperty Name="TenantID" ColumnName="TenantID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          </EntityContainerMapping>
+        </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
   </edmx:Runtime>

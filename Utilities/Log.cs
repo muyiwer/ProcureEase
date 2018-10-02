@@ -65,6 +65,7 @@ namespace Utilities
             DELETE_DEPARTMENT,
             DELETE_TELEPHONENUMBER,
             DEACTIVATE,
+            POST_ITEM_CODE,
         };
     }
 }

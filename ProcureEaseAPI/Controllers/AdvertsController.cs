@@ -15,6 +15,7 @@ namespace ProcureEaseAPI.Controllers
     public class AdvertsController : Controller
     {
         private ProcureEaseEntities db = new ProcureEaseEntities();
+        CatalogsController catalog = new CatalogsController();
 
         // GET: Adverts
         public ActionResult Index()
@@ -64,9 +65,20 @@ namespace ProcureEaseAPI.Controllers
         [HttpPost]
         public ActionResult AddAdvertCategory(AdvertCategory advertCategory)
         {
+            string email = Request.Headers["Email"];
+            var tenantId = catalog.GetTenantIDFromClientURL(email);
             DateTime dt = DateTime.Now;
             try
             {
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 advertCategory.AdvertCategoryID = Guid.NewGuid();
                 advertCategory.CreatedBy = "MDA Administrator";
                 advertCategory.DateCreated = dt;
@@ -91,9 +103,20 @@ namespace ProcureEaseAPI.Controllers
         [HttpPut]
         public ActionResult EditAdvertCategory(AdvertCategory advertCategory)
         {
+            string email = Request.Headers["Email"];
+            var tenantId = catalog.GetTenantIDFromClientURL(email);
+            DateTime dt = DateTime.Now;
             try
             {
-                DateTime dt = DateTime.Now;
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 AdvertCategory EditAdvertCategoryData = db.AdvertCategory.SingleOrDefault(x => x.AdvertCategoryID == advertCategory.AdvertCategoryID);
                 EditAdvertCategoryData.AdvertCategory1 = advertCategory.AdvertCategory1;
                 EditAdvertCategoryData.DateModified = dt;
@@ -117,8 +140,20 @@ namespace ProcureEaseAPI.Controllers
         public ActionResult DeleteAdvertCategory(Guid id)
         {
             AdvertCategory advertCategory = new AdvertCategory();
+            string email = Request.Headers["Email"];
+            var tenantId = catalog.GetTenantIDFromClientURL(email);
+            DateTime dt = DateTime.Now;
             try
             {
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 advertCategory = db.AdvertCategory.Find(id);
                 db.AdvertCategory.Remove(advertCategory);
                 db.SaveChanges();
@@ -139,6 +174,9 @@ namespace ProcureEaseAPI.Controllers
         [HttpPost]
         private ActionResult SentAdvertJson(int BudgetYear, Guid DepartmentID)
         {
+            string email = Request.Headers["Email"];
+            var tenantId = catalog.GetTenantIDFromClientURL(email);
+            DateTime dt = DateTime.Now;
             try
             {
                 int ProcurementStatusID = 0;
@@ -151,7 +189,7 @@ namespace ProcureEaseAPI.Controllers
                     data = new
                     {
                         DepartmentName = db.Department.Where(x => x.DepartmentID == DepartmentID).Select(x => x.DepartmentName).FirstOrDefault(),
-                        BudgetYearID = db.BudgetYear.Where(x => x.BudgetYearID == x.BudgetYearID).Select(x => x.BudgetYearID).FirstOrDefault(),
+                        //BudgetYearID = db.BudgetYear.Where(x => x.BudgetYearID == x.BudgetYearID).Select(x => x.BudgetYearID).FirstOrDefault(),
                         BudgetYear = db.BudgetYear.Where(x => x.BudgetYear1.Value.Year == BudgetYear).Select(x => x.BudgetYear1.Value.Year).FirstOrDefault(),
                         TotalCost = db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == z.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(z => z.UnitPrice).Sum()
                                          * db.Items.Where(z => z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == z.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(z => z.Quantity).Sum(),
@@ -218,13 +256,16 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 AdvertCategory AdvertCategory = new AdvertCategory();
+                string email = Request.Headers["Email"];
+                var tenantId = catalog.GetTenantIDFromClientURL(email);
+
                 return Json(new
                 {
                     success = true,
                     message = "Advert details",
                     data = new
                     {
-                        Adverts = db.Adverts.Where(x => x.AdvertID == x.AdvertID).Select(x => new
+                        Adverts = db.Adverts.Where(x => x.TenantID == tenantId).Select(x => new
                         {
                             x.AdvertID,
                             x.AdvertStatusID,
@@ -509,9 +550,20 @@ namespace ProcureEaseAPI.Controllers
         [HttpPut]
         public ActionResult DraftAdvert(string DepartmentName, List<AdvertPreparation> Adverts)
         {
+            string email = Request.Headers["Email"];
+            var tenantId = catalog.GetTenantIDFromClientURL(email);
+            DateTime dt = DateTime.Now;
             try
             {
-                DateTime dt = DateTime.Now;
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 var DepartmentID = db.Department.Where(x => x.DepartmentName == DepartmentName).Select(x => x.DepartmentID).FirstOrDefault();
                 int AdvertStatusID = 0;
                 int.TryParse(GetConfiguration("DraftAdvertStatusID"), out AdvertStatusID);
@@ -599,9 +651,20 @@ namespace ProcureEaseAPI.Controllers
         [HttpPut]
         public ActionResult PublishAdvert(string DepartmentName, List<AdvertPreparation> Adverts)
         {
+            string email = Request.Headers["Email"];
+            var tenantId = catalog.GetTenantIDFromClientURL(email);
+            DateTime dt = DateTime.Now;
             try
             {
-                DateTime dt = DateTime.Now;
+                if (tenantId == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "TenantId is null",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 var DepartmentID = db.Department.Where(x => x.DepartmentName == DepartmentName).Select(x => x.DepartmentID).FirstOrDefault();
                 int AdvertStatusID = 0;
                 int.TryParse(GetConfiguration("PublishedAdvertStatusID"), out AdvertStatusID);

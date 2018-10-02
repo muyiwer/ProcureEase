@@ -64,5 +64,52 @@ namespace ProcureEaseAPI.Tests.Controllers
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("Duplicate insertion attempt, OrganizationID already exist"));
         }
+
+        [TestMethod]
+        public void TestListOfMDAs()
+        {
+            var testListOfMDAs = new HomeController();
+            JsonResult result = (JsonResult) testListOfMDAs.ListOfMDAs();
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("Ok"));
+        }
+
+        [TestMethod]
+        public void TestActivate()
+        {
+            string AdministatorEmail = "aajekuko@techspecialistlimited.com";
+            var testActivate = new HomeController();
+            JsonResult result = (JsonResult)testActivate.Activate(AdministatorEmail);
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("Organization Account has been Activated Successfully"));
+        }
+        
+        [TestMethod]
+        public void TestDeactivate_successful()
+        {
+            string AdministatorEmail = "annieajek@gmail.com";
+            var testDeactivate = new HomeController();
+            JsonResult result = (JsonResult)testDeactivate.Deactivate(AdministatorEmail);
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("Organization Account has been Deactivated"));
+        }
+        [TestMethod]
+        public void TestDeactivate()
+        {
+            string AdministatorEmail = "aajekuko@techspecialistlimited.com";
+            var testDeactivate = new HomeController();
+            JsonResult result = (JsonResult)testDeactivate.Deactivate(AdministatorEmail);
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("Organization Account has been Deactivated"));
+        }
+
+        [TestMethod]
+        public void TestManageOrganizationAccounts()
+        {
+            var testManageOrganizationAccounts = new HomeController();
+            JsonResult result = (JsonResult)testManageOrganizationAccounts.ManageOrganizationAccounts();
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("Ok"));
+        }
     }
 }

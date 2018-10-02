@@ -94,10 +94,10 @@ namespace ProcureEaseAPI.Controllers
                     }, JsonRequestBehavior.AllowGet);
                 }
                 DateTime dt = DateTime.Now;
-                
-                foreach(SourceOfFundsOrganizationSettings sourceOfFundsOrganizationSettings in sourceOfFunds)
+
+                foreach (SourceOfFundsOrganizationSettings sourceOfFundsOrganizationSettings in sourceOfFunds)
                 {
-                    var CurrentSourceOfFundID = db.SourceOfFundsOrganizationSettings.FirstOrDefault(s => s.SourceOfFundID == sourceOfFundsOrganizationSettings.SourceOfFundID);
+                    var CurrentSourceOfFundID = db.SourceOfFundsOrganizationSettings.FirstOrDefault(s => s.SourceOfFundID == sourceOfFundsOrganizationSettings.SourceOfFundID && s.TenantID == tenantId);
 
                     if (CurrentSourceOfFundID == null)
                     {
@@ -109,12 +109,10 @@ namespace ProcureEaseAPI.Controllers
                             data = new { }
                         }, JsonRequestBehavior.AllowGet);
                     }
-                    db.SourceOfFundsOrganizationSettings.Add(new SourceOfFundsOrganizationSettings() {
-                        SourceOfFundID = sourceOfFundsOrganizationSettings.SourceOfFundID,
-                        EnableSourceOFFund = sourceOfFundsOrganizationSettings.EnableSourceOFFund
-                    });
-                }               
-                db.SaveChanges();
+                    CurrentSourceOfFundID.SourceOfFundID = sourceOfFundsOrganizationSettings.SourceOfFundID;
+                    CurrentSourceOfFundID.EnableSourceOFFund = sourceOfFundsOrganizationSettings.EnableSourceOFFund;
+                    db.SaveChanges();
+                }
             }
             catch (Exception ex)
             {
@@ -189,9 +187,9 @@ namespace ProcureEaseAPI.Controllers
                 DateTime dt = DateTime.Now;
                 foreach (ProcurementMethodOrganizationSettings procurementMethodOrganizationSettings in procurementMethod)
                 {
-                    var CurrentSourceOfFundID = db.ProcurementMethodOrganizationSettings.FirstOrDefault(s => s.ProcurementMethodID == procurementMethodOrganizationSettings.ProcurementMethodID);
+                    var CurrentProcurementMethod = db.ProcurementMethodOrganizationSettings.FirstOrDefault(s => s.ProcurementMethodID == procurementMethodOrganizationSettings.ProcurementMethodID && s.TenantID == tenantId);
 
-                    if (CurrentSourceOfFundID == null)
+                    if (CurrentProcurementMethod == null)
                     {
                         LogHelper.Log(Log.Event.UPDATE_SOURCEOFFUNDS, "ProcurementID not found");
                         return Json(new
@@ -201,11 +199,8 @@ namespace ProcureEaseAPI.Controllers
                             data = new { }
                         }, JsonRequestBehavior.AllowGet);
                     }
-                    db.ProcurementMethodOrganizationSettings.Add(new ProcurementMethodOrganizationSettings()
-                    {
-                        ProcurementMethodID = procurementMethodOrganizationSettings.ProcurementMethodID,
-                        EnableProcurementMethod = procurementMethodOrganizationSettings.EnableProcurementMethod
-                    });
+                    CurrentProcurementMethod.ProcurementMethodID = procurementMethodOrganizationSettings.ProcurementMethodID;
+                    CurrentProcurementMethod.EnableProcurementMethod = procurementMethodOrganizationSettings.EnableProcurementMethod;
                 }
                 db.SaveChanges();
             }
@@ -282,9 +277,9 @@ namespace ProcureEaseAPI.Controllers
                 DateTime dt = DateTime.Now;
                 foreach (ProjectCategoryOrganizationSettings projectCategoryOrganizationSettings in projectCategory)
                 {
-                    var CurrentSourceOfFundID = db.ProjectCategoryOrganizationSettings.FirstOrDefault(s => s.ProjectCategoryID == projectCategoryOrganizationSettings.ProjectCategoryID);
+                    var CurrentProjectCategory = db.ProjectCategoryOrganizationSettings.Where(s => s.ProjectCategoryID == projectCategoryOrganizationSettings.ProjectCategoryID && s.TenantID == tenantId).FirstOrDefault();
 
-                    if (CurrentSourceOfFundID == null)
+                    if (CurrentProjectCategory == null)
                     {
                         LogHelper.Log(Log.Event.UPDATE_SOURCEOFFUNDS, "ProjectCategoryID not found");
                         return Json(new
@@ -294,11 +289,8 @@ namespace ProcureEaseAPI.Controllers
                             data = new { }
                         }, JsonRequestBehavior.AllowGet);
                     }
-                    db.ProjectCategoryOrganizationSettings.Add(new ProjectCategoryOrganizationSettings()
-                    {
-                        ProjectCategoryID = projectCategoryOrganizationSettings.ProjectCategoryID,
-                        EnableProjectCategory = projectCategoryOrganizationSettings.EnableProjectCategory
-                    });
+                    CurrentProjectCategory.ProjectCategoryID = projectCategoryOrganizationSettings.ProjectCategoryID;
+                    CurrentProjectCategory.EnableProjectCategory = projectCategoryOrganizationSettings.EnableProjectCategory;
                 }
 
                 db.SaveChanges();

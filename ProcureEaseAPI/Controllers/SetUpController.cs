@@ -76,8 +76,11 @@ namespace ProcureEaseAPI.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        public class Settings {
-            public Guid ID { get; set; }
+        public class Settings
+        {
+            public Guid SourceOfFundID { get; set; }
+            public Guid ProcurementMethodID { get; set; }
+            public Guid ProjectCategoryID { get; set; }
             public bool Enabled { get; set; } 
 }
 
@@ -102,7 +105,7 @@ namespace ProcureEaseAPI.Controllers
 
                 foreach (Settings item in list)
                 {
-                    var CurrentSourceOfFund = db.SourceOfFundsOrganizationSettings.FirstOrDefault(s => s.SourceOfFundID == item.ID && s.TenantID == tenantId);
+                    var CurrentSourceOfFund = db.SourceOfFundsOrganizationSettings.FirstOrDefault(s => s.SourceOfFundID == item.SourceOfFundID && s.TenantID == tenantId);
 
                     if (CurrentSourceOfFund == null)
                     {
@@ -191,7 +194,7 @@ namespace ProcureEaseAPI.Controllers
                 DateTime dt = DateTime.Now;
                 foreach (Settings item in list)
                 {
-                    var CurrentProcurementMethod = db.ProcurementMethodOrganizationSettings.FirstOrDefault(s => s.ProcurementMethodID == item.ID && s.TenantID == tenantId);
+                    var CurrentProcurementMethod = db.ProcurementMethodOrganizationSettings.FirstOrDefault(s => s.ProcurementMethodID == item.ProcurementMethodID && s.TenantID == tenantId);
 
                     if (CurrentProcurementMethod == null)
                     {
@@ -280,7 +283,7 @@ namespace ProcureEaseAPI.Controllers
                 DateTime dt = DateTime.Now;
                 foreach (Settings item in list)
                 {
-                    var CurrentProjectCategory = db.ProjectCategoryOrganizationSettings.Where(s => s.ProjectCategoryID == item.ID && s.TenantID == tenantId).FirstOrDefault();
+                    var CurrentProjectCategory = db.ProjectCategoryOrganizationSettings.Where(s => s.ProjectCategoryID == item.ProjectCategoryID && s.TenantID == tenantId).FirstOrDefault();
 
                     if (CurrentProjectCategory == null)
                     {

@@ -17,9 +17,9 @@ namespace ProcureEaseAPI.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public OrganizationSettings()
         {
+            this.Department = new HashSet<Department>();
             this.TelephoneNumbers = new HashSet<TelephoneNumbers>();
             this.UserProfile = new HashSet<UserProfile>();
-            this.Department = new HashSet<Department>();
             this.ProcurementMethodOrganizationSettings = new HashSet<ProcurementMethodOrganizationSettings>();
             this.ProjectCategoryOrganizationSettings = new HashSet<ProjectCategoryOrganizationSettings>();
             this.SourceOfFundsOrganizationSettings = new HashSet<SourceOfFundsOrganizationSettings>();
@@ -40,11 +40,11 @@ namespace ProcureEaseAPI.Models
         public Nullable<System.Guid> TenantID { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Department> Department { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TelephoneNumbers> TelephoneNumbers { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserProfile> UserProfile { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Department> Department { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProcurementMethodOrganizationSettings> ProcurementMethodOrganizationSettings { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

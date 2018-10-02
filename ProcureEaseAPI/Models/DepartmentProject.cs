@@ -27,7 +27,7 @@ namespace ProcureEaseAPI.Models
 
             public Guid ItemID { get; set; }
             public string ItemName { get; set; }
-            public string Description { get; set; }
+            public string ItemDescription { get; set; }
             public string ItemCode { get; set; }
             public Guid ItemCodeID { get; set; }
             public string Quantity { get; set; }

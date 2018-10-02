@@ -78,7 +78,7 @@ namespace ProcureEaseAPI.Controllers
 
         // PUT: SetUp/UpdateSourceOfFunds
         [HttpPut]
-        public ActionResult UpdateSourceOfFunds(Guid SourceOfFundID, bool Enabled)
+        public ActionResult UpdateSourceOfFunds(List<SourceOfFundsOrganizationSettings> sourceOfFunds)
         {
             string email = Request.Headers["Email"];
             var tenantId = catalog.GetTenantIDFromClientURL(email);
@@ -94,20 +94,26 @@ namespace ProcureEaseAPI.Controllers
                     }, JsonRequestBehavior.AllowGet);
                 }
                 DateTime dt = DateTime.Now;
-                var CurrentSourceOfFundID = db.SourceOfFundsOrganizationSettings.FirstOrDefault(s => s.SourceOfFundID == SourceOfFundID);
-
-                if (CurrentSourceOfFundID == null)
+                
+                foreach(SourceOfFundsOrganizationSettings sourceOfFundsOrganizationSettings in sourceOfFunds)
                 {
-                    LogHelper.Log(Log.Event.UPDATE_SOURCEOFFUNDS, "SourceOfFundID not found");
-                    return Json(new
+                    var CurrentSourceOfFundID = db.SourceOfFundsOrganizationSettings.FirstOrDefault(s => s.SourceOfFundID == sourceOfFundsOrganizationSettings.SourceOfFundID);
+
+                    if (CurrentSourceOfFundID == null)
                     {
-                        success = false,
-                        message = "SourceOfFundID not found",
-                        data = new { }
-                    }, JsonRequestBehavior.AllowGet);
-                }
-                CurrentSourceOfFundID.EnableSourceOFFund = Enabled;
-                CurrentSourceOfFundID.DateModified = dt;
+                        LogHelper.Log(Log.Event.UPDATE_SOURCEOFFUNDS, "SourceOfFundID not found");
+                        return Json(new
+                        {
+                            success = false,
+                            message = "SourceOfFundID not found",
+                            data = new { }
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+                    db.SourceOfFundsOrganizationSettings.Add(new SourceOfFundsOrganizationSettings() {
+                        SourceOfFundID = sourceOfFundsOrganizationSettings.SourceOfFundID,
+                        EnableSourceOFFund = sourceOfFundsOrganizationSettings.EnableSourceOFFund
+                    });
+                }               
                 db.SaveChanges();
             }
             catch (Exception ex)
@@ -165,7 +171,7 @@ namespace ProcureEaseAPI.Controllers
 
         // PUT: SetUp/UpdateProcurementMethod
         [HttpPut]
-        public ActionResult UpdateProcurementMethod(Guid ProcurementMethodID, bool Enabled)
+        public ActionResult UpdateProcurementMethod(List<ProcurementMethodOrganizationSettings> procurementMethod)
         {
             string email = Request.Headers["Email"];
             var tenantId = catalog.GetTenantIDFromClientURL(email);
@@ -181,21 +187,26 @@ namespace ProcureEaseAPI.Controllers
                     }, JsonRequestBehavior.AllowGet);
                 }
                 DateTime dt = DateTime.Now;
-                var currentProcurementMethodID = db.ProcurementMethodOrganizationSettings.FirstOrDefault(p => p.ProcurementMethodID == ProcurementMethodID);
-
-                if (currentProcurementMethodID == null)
+                foreach (ProcurementMethodOrganizationSettings procurementMethodOrganizationSettings in procurementMethod)
                 {
-                    LogHelper.Log(Log.Event.UPDATE_PROCUREMENTMETHOD, "ProcurementMethodID not found");
-                    return Json(new
-                    {
-                        success = false,
-                        message = "ProcurementMethodID not found",
-                        data = new { }
-                    }, JsonRequestBehavior.AllowGet);
-                }
+                    var CurrentSourceOfFundID = db.ProcurementMethodOrganizationSettings.FirstOrDefault(s => s.ProcurementMethodID == procurementMethodOrganizationSettings.ProcurementMethodID);
 
-                currentProcurementMethodID.EnableProcurementMethod = Enabled;
-                currentProcurementMethodID.DateModified = dt;
+                    if (CurrentSourceOfFundID == null)
+                    {
+                        LogHelper.Log(Log.Event.UPDATE_SOURCEOFFUNDS, "ProcurementID not found");
+                        return Json(new
+                        {
+                            success = false,
+                            message = "ProcurementID not found",
+                            data = new { }
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+                    db.ProcurementMethodOrganizationSettings.Add(new ProcurementMethodOrganizationSettings()
+                    {
+                        ProcurementMethodID = procurementMethodOrganizationSettings.ProcurementMethodID,
+                        EnableProcurementMethod = procurementMethodOrganizationSettings.EnableProcurementMethod
+                    });
+                }
                 db.SaveChanges();
             }
             catch (Exception ex)
@@ -253,7 +264,7 @@ namespace ProcureEaseAPI.Controllers
 
         // PUT: SetUp/UpdateProjectCategory
         [HttpPut]
-        public ActionResult UpdateProjectCategory(Guid ProjectCategoryID, bool Enabled)
+        public ActionResult UpdateProjectCategory(List<ProjectCategoryOrganizationSettings> projectCategory)
         {
             string email = Request.Headers["Email"];
             var tenantId = catalog.GetTenantIDFromClientURL(email);
@@ -269,21 +280,26 @@ namespace ProcureEaseAPI.Controllers
                     }, JsonRequestBehavior.AllowGet);
                 }
                 DateTime dt = DateTime.Now;
-                var currentProjectCategoryID = db.ProjectCategoryOrganizationSettings.FirstOrDefault(p => p.ProjectCategoryID == ProjectCategoryID);
-
-                if (currentProjectCategoryID == null)
+                foreach (ProjectCategoryOrganizationSettings projectCategoryOrganizationSettings in projectCategory)
                 {
-                    LogHelper.Log(Log.Event.UPDATE_PROJECTCATEGORY, "ProjectCategoryID not found");
-                    return Json(new
-                    {
-                        success = false,
-                        message = "ProjectCategoryID not found",
-                        data = new { }
-                    }, JsonRequestBehavior.AllowGet);
-                }
+                    var CurrentSourceOfFundID = db.ProjectCategoryOrganizationSettings.FirstOrDefault(s => s.ProjectCategoryID == projectCategoryOrganizationSettings.ProjectCategoryID);
 
-                currentProjectCategoryID.EnableProjectCategory = Enabled;
-                currentProjectCategoryID.DateModified = dt;
+                    if (CurrentSourceOfFundID == null)
+                    {
+                        LogHelper.Log(Log.Event.UPDATE_SOURCEOFFUNDS, "ProjectCategoryID not found");
+                        return Json(new
+                        {
+                            success = false,
+                            message = "ProjectCategoryID not found",
+                            data = new { }
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+                    db.ProjectCategoryOrganizationSettings.Add(new ProjectCategoryOrganizationSettings()
+                    {
+                        ProjectCategoryID = projectCategoryOrganizationSettings.ProjectCategoryID,
+                        EnableProjectCategory = projectCategoryOrganizationSettings.EnableProjectCategory
+                    });
+                }
 
                 db.SaveChanges();
             }

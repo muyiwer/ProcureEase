@@ -110,6 +110,7 @@
   <ItemGroup>
     <Compile Include="Controllers\AdvertControllerTest.cs" />
     <Compile Include="Controllers\DepartmentTest.cs" />
+    <Compile Include="Controllers\ItemCodeControllerTest.cs" />
     <Compile Include="Controllers\MDA_OnboardingTestcs.cs" />
     <Compile Include="Controllers\Mocker.cs" />
     <Compile Include="Controllers\ProcurementsControllerTest.cs" />

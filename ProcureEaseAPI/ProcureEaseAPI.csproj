@@ -221,6 +221,7 @@
     <Compile Include="Controllers\CatalogsController.cs" />
     <Compile Include="Controllers\DepartmentsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ItemCodesController.cs" />
     <Compile Include="Controllers\OrganizationSettingsController.cs" />
     <Compile Include="Controllers\ProcureController.cs" />
     <Compile Include="Controllers\ProcurementMethodsController.cs" />
@@ -441,6 +442,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\ItemCodes\" />
     <Folder Include="Views\Procurments\" />
     <Folder Include="Views\Users\" />
   </ItemGroup>

@@ -70,8 +70,8 @@ namespace ProcureEaseAPI.Tests.Controllers
                 ItemCodeID = new Guid("05B5775D-6400-4FAA-8AC3-BD1EDCAB1CC0"),
                 ItemCode = "IT0100",
                 ItemName = "Keyboards",
-                UnitPrice = 70000,
-                Quantity = 20
+                UnitPrice = "70000",
+                Quantity = "20"
             });
             Items.Add(new DepartmentItems
             {
@@ -79,8 +79,8 @@ namespace ProcureEaseAPI.Tests.Controllers
                 ItemCodeID = new Guid("05B5775D-6400-4FAA-8AC3-BD1EDCAB1CC0"),
                 ItemCode = "IT0100",
                 ItemName = "Monitors",
-                UnitPrice = 50000,
-                Quantity = 20
+                UnitPrice = "70000",
+                Quantity = "70000"
             });
             List<DepartmentProject> Projects = new List<DepartmentProject>();
             Projects.Add(new DepartmentProject
@@ -191,8 +191,8 @@ namespace ProcureEaseAPI.Tests.Controllers
             Items.Add(new DepartmentItems
             {
                 ItemName = "API",
-                Quantity = 2000,
-                UnitPrice = 5000,
+                Quantity = "70000",
+                UnitPrice = "70000",
                 ItemCode = "IT0100",
                 ItemCodeID = new Guid("93e6ffa5-e700-45b0-bde7-6b3570dab27b"),
                 Deleted = false
@@ -223,8 +223,8 @@ namespace ProcureEaseAPI.Tests.Controllers
             Guid DepartmentID = new Guid("066AF5C4-3F41-419E-ADD5-77E8EC0E1E93");
             int BudgetYear = 2018;
             DepartmentItems Items = new DepartmentItems();
-            Items.Quantity = 2000;
-            Items.UnitPrice = 5000;
+            Items.Quantity = "70000";
+            Items.UnitPrice = "70000";
             Items.ItemName = "Office stationaries";
             Items.ItemCodeID = new Guid("93E6FFA5-E700-45B0-BDE7-6B3570DAB27B");
             Items.Deleted = false;
@@ -250,8 +250,8 @@ namespace ProcureEaseAPI.Tests.Controllers
             Guid DepartmentID = new Guid("066AF5C4-3F41-419E-ADD5-77E8EC0E1E93");
             int BudgetYear = 2018;
             DepartmentItems Items = new DepartmentItems();
-            Items.Quantity = 2000;
-            Items.UnitPrice = 5000;
+            Items.Quantity = "70000";
+            Items.UnitPrice = "70000";
             Items.ItemName = "Office stationaries";
             Items.ItemCodeID = new Guid("93E6FFA5-E700-45B0-BDE7-6B3570DAB27B");
             Items.Deleted = false;

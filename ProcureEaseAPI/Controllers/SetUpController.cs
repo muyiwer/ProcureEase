@@ -162,7 +162,7 @@ namespace ProcureEaseAPI.Controllers
                 {
                     x.ProcurementMethodID,
                     x.ProcurementMethod.Name,
-                    x.EnableProcurementMethod,
+                    Enabled = x.EnableProcurementMethod,
                 })
             }, JsonRequestBehavior.AllowGet);
         }
@@ -217,7 +217,7 @@ namespace ProcureEaseAPI.Controllers
                 {
                     x.ProcurementMethodID,
                     x.ProcurementMethod.Name,
-                    x.EnableProcurementMethod,
+                    Enabled = x.EnableProcurementMethod,
                 })
             }, JsonRequestBehavior.AllowGet);
         }
@@ -252,7 +252,7 @@ namespace ProcureEaseAPI.Controllers
                 {
                     x.ProjectCategoryID,
                     x.ProjectCategory.Name,
-                    x.EnableProjectCategory,
+                    Enabled =x.EnableProjectCategory,
                 })
             }, JsonRequestBehavior.AllowGet);
         }
@@ -308,7 +308,7 @@ namespace ProcureEaseAPI.Controllers
                 {
                     x.ProjectCategoryID,
                     x.ProjectCategory.Name,
-                    x.EnableProjectCategory
+                    Enabled = x.EnableProjectCategory
                 })
             }, JsonRequestBehavior.AllowGet);
         }

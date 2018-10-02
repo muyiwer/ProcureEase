@@ -133,7 +133,7 @@ namespace ProcureEaseAPI.Controllers
         public async Task SendMailToTechspecialist(RequestForDemo requestForDemo)
         {
 
-            var RecipientEmail = GetConfiguration("EmailHost");
+            var RecipientEmail = GetConfiguration("TechspecialistAdminEmail");
             string Subject = "Request For Demo";
             string Body = new EmailTemplateHelper().GetTemplateContent("RequestForDemoTemplate_Techspecialist");
             string newTemplateContent = string.Format(Body, requestForDemo.AdministratorEmail);

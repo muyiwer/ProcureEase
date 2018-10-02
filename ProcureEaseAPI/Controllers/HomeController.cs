@@ -1,6 +1,7 @@
 ﻿using ProcureEaseAPI.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -16,6 +17,20 @@ namespace ProcureEaseAPI.Controllers
     {
         private ProcureEaseEntities db = new ProcureEaseEntities();
         private CatalogsController catalog = new CatalogsController();
+
+        private string GetConfiguration(string key)
+        {
+            try
+            {
+                return ConfigurationManager.AppSettings[key];
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(Log.Event.CONFIGURATION, ex.Message);
+                return "";
+            }
+        }
+
 
         public ActionResult Index()
         {
@@ -118,7 +133,8 @@ namespace ProcureEaseAPI.Controllers
         #region ProcessSendMailToTechspecialist
         public async Task SendMailToTechspecialist(RequestForDemo requestForDemo)
         {
-            var RecipientEmail = "annieajeks@gmail.com";
+
+            var RecipientEmail = GetConfiguration("EmailHost");
             string Subject = "Request For Demo";
             string Body = new EmailTemplateHelper().GetTemplateContent("RequestForDemoTemplate_Techspecialist");
             string newTemplateContent = string.Format(Body, requestForDemo.AdministratorEmail);

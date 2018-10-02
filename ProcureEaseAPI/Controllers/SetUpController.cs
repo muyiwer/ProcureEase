@@ -41,7 +41,7 @@ namespace ProcureEaseAPI.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        [Providers.Authorize]
+        //[Providers.Authorize]
         public ActionResult SourceOfFunds()
         {
             string email = Request.Headers["Email"];
@@ -435,19 +435,23 @@ namespace ProcureEaseAPI.Controllers
             {
                 success = true,
                 message = "OK",
-                data = db.OrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
+                data =  new
                 {
-                    x.OrganizationID,
-                    x.OrganizationEmail,
-                    OrganizationName = x.OrganizationNameInFull,
-                    x.OrganizationNameAbbreviation,
-                    x.State,
-                    x.Country,
-                    x.AboutOrganization,
-                    x.OrganizationLogoPath,
-                    x.CreatedBy,
-                    TelephoneNumbers = db.TelephoneNumbers.Where(y => y.OrganizationID == x.OrganizationID).Select(y => y.TelephoneNumber),
-                    DepartmentSetup = db.Department.Where(y => y.OrganisationID == x.OrganizationID).Select(y => new
+                    BasicDetails = db.OrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        x.OrganizationID,
+                        x.OrganizationEmail,
+                        OrganizationName = x.OrganizationNameInFull,
+                        x.OrganizationNameAbbreviation,
+                        x.Address,
+                        x.State,
+                        x.Country,
+                        x.AboutOrganization,
+                        x.OrganizationLogoPath,
+                        x.CreatedBy,
+                        TelephoneNumbers = db.TelephoneNumbers.Where(y => y.OrganizationID == x.OrganizationID).Select(y => y.TelephoneNumber)
+                    }).FirstOrDefault(),
+                    DepartmentSetUp = db.Department.Where(y => y.OrganisationID == y.OrganizationSettings.OrganizationID).Select(y => new
                     {
                         Department = new
                         {
@@ -460,7 +464,7 @@ namespace ProcureEaseAPI.Controllers
                             FullName = db.UserProfile.Where(z => z.UserID == y.DepartmentHeadUserID).Select(z => z.FirstName + " " + z.LastName).FirstOrDefault()
                         }
                     }),
-                    UserManagement = db.UserProfile.Where(y => y.OrganizationID == x.OrganizationID && y.UserID == y.UserID).Select(y => new
+                    UserManagement = db.UserProfile.Where(y => y.OrganizationID == y.OrganizationSettings.OrganizationID && y.UserID == y.UserID).Select(y => new
                     {
                         User = new
                         {
@@ -474,35 +478,35 @@ namespace ProcureEaseAPI.Controllers
                         }
 
                     }),
-                    SourceOfFunds = db.SourceOfFundsOrganizationSettings.Where(y => y.OrganizationID == x.OrganizationID).Select(y => new
+                    SourceOfFunds = db.SourceOfFundsOrganizationSettings.Where(y => y.OrganizationID == y.OrganizationSettings.OrganizationID).Select(y => new
                     {
                         y.SourceOfFundID,
                         Name = y.SourceOfFunds.SourceOfFund,
                         Enabled = y.EnableSourceOFFund,
                     }),
-                    ProcurementMethod = db.ProcurementMethodOrganizationSettings.Where(y => y.OrganizationID == x.OrganizationID).Select(y => new
+                    ProcurementMethod = db.ProcurementMethodOrganizationSettings.Where(y => y.OrganizationID == y.OrganizationSettings.OrganizationID).Select(y => new
                     {
                         y.ProcurementMethodID,
                         y.ProcurementMethod.Name,
                         Enabled = y.EnableProcurementMethod,
                     }),
-                    ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(y => y.OrganizationID == x.OrganizationID).Select(y => new
+                    ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(y => y.OrganizationID == y.OrganizationSettings.OrganizationID).Select(y => new
                     {
                         y.ProjectCategoryID,
                         y.ProjectCategory.Name,
                         Enabled = y.EnableProjectCategory,
                     }),
-                    Users = db.UserProfile.Where(y => y.OrganizationID == x.OrganizationID).Select(y => new
+                    Users = db.UserProfile.Where(y => y.OrganizationID == y.OrganizationSettings.OrganizationID).Select(y => new
                     {
                         y.UserID,
                         FullName = y.FirstName + " " + y.LastName
                     }),
-                    Departments = db.Department.Where(y => y.OrganisationID == x.OrganizationID).Select(y => new
+                    Departments = db.Department.Where(y => y.OrganisationID == y.OrganizationSettings.OrganizationID).Select(y => new
                     {
                         y. DepartmentID,
                         y.DepartmentName
                     })
-                })
+                }
             }, JsonRequestBehavior.AllowGet);
         }
     }

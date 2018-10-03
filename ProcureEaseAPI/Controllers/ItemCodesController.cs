@@ -197,8 +197,58 @@ namespace ProcureEaseAPI.Controllers
             }
         }
 
+        [HttpDelete]
+        [Providers.Authorize]
+        public ActionResult Delete(string id = "")
+        {
+            try
+            {            
+            Guid guidID = new Guid();
+            try
+            {
+                guidID = Guid.Parse(id);
+            }
+            catch (FormatException ex)
+            {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                LogHelper.Log(Log.Event.DELETE_ITEM_CODE, "Guid format exeception");
+                return Error(ex.Message + ex.StackTrace);
+            }
+                ItemCode itemCode = db.ItemCode.Find(guidID);
+                if(itemCode == null)
+                {
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    LogHelper.Log(Log.Event.DELETE_ITEM_CODE, "ItemCodeID is null");
+                    return Error("ItemCodeID is null");
+                }
+                else
+                {
+                    db.ItemCode.Remove(itemCode);
+                    db.SaveChanges();
+                }
+                return Json(new
+                {
+                    success = true,
+                    message = "Item deleted successfully.",
+                    data = db.ItemCode.Select(x => new
+                    {
+                        ItemCode = x.ItemCode1,
+                        x.ItemCodeID,
+                        x.ItemName,
+                    }).OrderBy(x => x.ItemCode)
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                LogHelper.Log(Log.Event.DELETE_ITEM_CODE, "Guid format exeception");
+                return Error(ex.Message + ex.StackTrace);
+            }
 
-        private ActionResult Error(string message)
+        }
+
+
+            private ActionResult Error(string message)
         {
             return Json(new
             {

@@ -317,7 +317,7 @@ namespace ProcureEaseAPI.Controllers
                 })
             }, JsonRequestBehavior.AllowGet);
         }
-        [Providers.Authorize]
+        //[Providers.Authorize]
         [HttpPut]
         public async Task<ActionResult> UpdateBasicDetails(OrganizationSettings organizationSettings, HttpPostedFileBase image, params string[] TelephoneNumbers)
         {
@@ -377,9 +377,8 @@ namespace ProcureEaseAPI.Controllers
             {
                 success = true,
                 message = "Basic details added successfully!!!",
-                data = db.OrganizationSettings.Where(x => x.OrganizationID == organizationSettings.OrganizationID).Select(x => new
+                data = db.OrganizationSettings.Where(x => x.OrganizationID == organizationSettings.OrganizationID && x.TenantID == tenantId).Select(x => new
                 {
-                    TenantID = db.OrganizationSettings.Where(y => y.TenantID == tenantId).Select(y => y.TenantID).FirstOrDefault(),
                     x.OrganizationID,
                     x.OrganizationNameInFull,
                     x.OrganizationNameAbbreviation,
@@ -392,7 +391,7 @@ namespace ProcureEaseAPI.Controllers
                     DateModified = x.DateModified.Value.ToString(),
                     x.CreatedBy,
                     TelephoneNumbers = db.TelephoneNumbers.Where(y => y.OrganizationID == x.OrganizationID).Select(y => y.TelephoneNumber)
-                })
+                }).FirstOrDefault()
             }, JsonRequestBehavior.AllowGet);
         }
 

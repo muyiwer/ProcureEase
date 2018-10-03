@@ -74,7 +74,7 @@ namespace ProcureEaseAPI.Tests.Controllers
         {
             try
             {
-                Guid DepartmentID = new Guid("7EB73724-93CA-4D46-98CD-298AD0CE2573");
+                string DepartmentID = "7EB73724-93CA-4D46-98CD-298AD0CE2573";
                 Guid UserID = new Guid("140EC11C-BEFD-4DB3-AEE6-0C45339D3F05");
                 string DepartmentName = "SecondProcurement";
 

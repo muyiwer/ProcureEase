@@ -1,6 +1,7 @@
 ﻿using ProcureEaseAPI.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -75,7 +76,7 @@ namespace ProcureEaseAPI.Controllers
 
         // POST: ItemCodes
         [Providers.Authorize]
-        public ActionResult Add(string itemName, string itemCode)
+        public ActionResult Add(string ItemName, string ItemCode)
         {
             try
             {
@@ -90,24 +91,24 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }               
-                if (string.IsNullOrEmpty(itemCode))
+                if (string.IsNullOrEmpty(ItemCode))
                 {
                     LogHelper.Log(Log.Event.POST_ITEM_CODE, "ItemCode is null.");
                     Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     return Error("ItemCode is null.");
                 }
-                var checkIfItemCodeExist = db.ItemCode.Where(x => x.ItemCode1 == itemCode).ToList();
+                var checkIfItemCodeExist = db.ItemCode.Where(x => x.ItemCode1 == ItemCode).ToList();
                 if (checkIfItemCodeExist != null && checkIfItemCodeExist.Count > 0)
                 {
                     LogHelper.Log(Log.Event.POST_ITEM_CODE, "ItemCode already exist.");
                     Response.StatusCode = (int)HttpStatusCode.Conflict;
                     return Error("ItemCode already exist.");
                 }
-                ItemCode ItemCode = new ItemCode();
-                ItemCode.ItemCodeID = Guid.NewGuid();
-                ItemCode.ItemCode1 = itemCode;
-                ItemCode.ItemName = itemName;
-                db.ItemCode.Add(ItemCode);
+                ItemCode itemCode = new ItemCode();
+                itemCode.ItemCodeID = Guid.NewGuid();
+                itemCode.ItemCode1 = ItemCode;
+                itemCode.ItemName = ItemName;
+                db.ItemCode.Add(itemCode);
                 db.SaveChanges();
                 return Json(new {
                     success = true,
@@ -122,6 +123,75 @@ namespace ProcureEaseAPI.Controllers
             }catch(Exception ex)
             {
                 LogHelper.Log(Log.Event.POST_ITEM_CODE, ex.Message + ex.StackTrace);
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return Error("" + ex.Message + ex.StackTrace);
+            }
+        }
+
+        [HttpPut]
+        [Providers.Authorize]
+        public ActionResult UpdateItemCode(string ItemCode, string ItemCodeID, string ItemName)
+        {
+            try
+            {
+                Guid guidID = new Guid();               
+                try
+                {
+                    guidID = Guid.Parse(ItemCodeID);
+                }
+                catch (FormatException ex)
+                {
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    LogHelper.Log(Log.Event.ALL_DRAFT_PROCUREMENT_NEEDS, "Guid format exeception");
+                    return Error(ex.Message);
+                }
+                ItemCode items = db.ItemCode.Find(guidID);
+                if(items == null)
+                {
+                    LogHelper.Log(Log.Event.UPDATE_ITEM_CODE, "Invalid ItemCodeID with: " + ItemCodeID);
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Error("Invalid ItemCodeID with: " + ItemCodeID);
+                }
+                else
+                {
+                    if(ItemCode == items.ItemCode1)
+                    {
+                        items.ItemName = ItemName;
+                        items.ItemCode1 = ItemCode;
+                        db.Entry(items).State = EntityState.Modified;
+                    }
+                    else
+                    {
+                        var checkIfItemCodeExist = db.ItemCode.Where(x => x.ItemCode1 == ItemCode).ToList();
+                        if (checkIfItemCodeExist != null && checkIfItemCodeExist.Count > 0)
+                        {
+                            LogHelper.Log(Log.Event.POST_ITEM_CODE, "ItemCode already exist.");
+                            Response.StatusCode = (int)HttpStatusCode.Conflict;
+                            return Error("ItemCode already exist.");
+                        }
+                        else
+                        {
+                            items.ItemName = ItemName;
+                            items.ItemCode1 = ItemCode;
+                            db.Entry(items).State = EntityState.Modified;
+                        }
+                    }
+                    db.SaveChanges();
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Item updated successfully.",
+                        data = db.ItemCode.Select(x => new
+                        {
+                            ItemCode = x.ItemCode1,
+                            x.ItemCodeID,
+                            x.ItemName,
+                        }).OrderBy(x => x.ItemCode)
+                    }, JsonRequestBehavior.AllowGet);
+                }
+            }catch(Exception ex)
+            {
+                LogHelper.Log(Log.Event.UPDATE_ITEM_CODE, ex.Message + ex.StackTrace);
                 Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 return Error("" + ex.Message + ex.StackTrace);
             }

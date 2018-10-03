@@ -420,8 +420,10 @@ namespace ProcureEaseAPI.Controllers
                     UserName = UserProfile.UserEmail
                 };
                 var CheckUserDepartmentName = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.Department1.DepartmentName).FirstOrDefault();
+                var checkIfUserIsHeadOfDepartment = db.Department.Where(x => x.UserProfile.UserEmail == UserProfile.UserEmail).ToList();
+                bool IsHeadOfdepartment = checkIfUserIsHeadOfDepartment == null ? false : true;
                 var UserDepartmentName = CheckUserDepartmentName;
-                ApplicationUser User =  await authRepository.RegisterUser(UserModel,UserDepartmentName);
+                ApplicationUser User =  await authRepository.RegisterUser(UserModel,UserDepartmentName,IsHeadOfdepartment);
                 var Id = db.AspNetUsers.Where(x => x.Email == UserProfile.UserEmail).Select(x => x.Id).FirstOrDefault();
                 var getUserId = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.UserID).FirstOrDefault();
                 var userId = getUserId;

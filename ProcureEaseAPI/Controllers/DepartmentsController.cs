@@ -175,12 +175,12 @@ namespace ProcureEaseAPI.Controllers
                 }
                 if (string.IsNullOrEmpty(DepartmentID))
                 {
-                    LogHelper.Log(Log.Event.EDIT_DEPARTMENT, "DepartmentID not found");
+                    LogHelper.Log(Log.Event.EDIT_DEPARTMENT, "DepartmentID is null");
                     Response.StatusCode = (int)HttpStatusCode.NotFound;
                     return Json(new
                     {
                         success = false,
-                        message = "DepartmentID not found",
+                        message = "DepartmentID can not be null.",
                         data = new { }
                     });
                 }

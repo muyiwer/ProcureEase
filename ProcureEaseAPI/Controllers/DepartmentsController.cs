@@ -19,6 +19,7 @@ namespace ProcureEaseAPI.Controllers
 
         private ActionResult Error(string message)
         {
+            Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             return Json(new
             {
                 success = false,
@@ -29,6 +30,7 @@ namespace ProcureEaseAPI.Controllers
 
         private ActionResult ExceptionError(string message, string StackTrace)
         {
+            Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             return Json(new
             {
                 success = false,
@@ -48,6 +50,7 @@ namespace ProcureEaseAPI.Controllers
             {
                 if (tenantId == null)
                 {
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
                     return Json(new
                     {
                         success = false,
@@ -59,7 +62,7 @@ namespace ProcureEaseAPI.Controllers
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.GET_DEPARTMENT, ex.Message);
-                ExceptionError(ex.Message, ex.StackTrace);
+                return ExceptionError(ex.Message, ex.StackTrace);
             }
             Department department = new Department();
             return Json(new
@@ -94,6 +97,7 @@ namespace ProcureEaseAPI.Controllers
             {
                 if (tenantId == null)
                 {
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
                     return Json(new
                     {
                         success = false,
@@ -149,8 +153,8 @@ namespace ProcureEaseAPI.Controllers
 
         // PUT: Departments/Edit
         [HttpPut]
-        [Providers.Authorize]
-        public ActionResult Edit (Guid DepartmentID, Guid UserID, string DepartmentName)
+        //[Providers.Authorize]
+        public ActionResult Edit (string DepartmentID, Guid UserID, string DepartmentName)
         {
             string email = Request.Headers["Email"];
             var tenantId = catalog.GetTenantIDFromClientURL(email);
@@ -158,10 +162,10 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 DateTime dt = DateTime.Now;
-                var FindDepartment = db.Department.Find(DepartmentID);
                 var DepartmentHeadUserID = db.UserProfile.Where(x => x.UserID == UserID).Select(x => x.UserID).FirstOrDefault();
                 if (tenantId == null)
                 {
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
                     return Json(new
                     {
                         success = false,
@@ -169,9 +173,10 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                if (FindDepartment == null)
+                if (string.IsNullOrEmpty(DepartmentID))
                 {
                     LogHelper.Log(Log.Event.EDIT_DEPARTMENT, "DepartmentID not found");
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
                     return Json(new
                     {
                         success = false,
@@ -179,41 +184,56 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     });
                 }
-                var Id = db.UserProfile.Where(x => x.UserID == UserID).Select(x => x.Id).FirstOrDefault();
-                if(Id == null)
-                {
-                    FindDepartment.DepartmentHeadUserID = DepartmentHeadUserID;
-                    FindDepartment.DepartmentName = DepartmentName;
-                    FindDepartment.DateModified = dt;
-                    db.Entry(FindDepartment).State = EntityState.Modified;
-                }
                 else
                 {
-                    UserProfile userProfile = new UserProfile();
-                    userProfile.UserID = UserID;
-                    if (FindDepartment.DepartmentName == "Procurement" && FindDepartment.DepartmentHeadUserID != UserID)
+                    Guid guidID = new Guid();
+                    guidID = Guid.Parse(DepartmentID);
+
+                    var FindDepartment = db.Department.FirstOrDefault(x => x.DepartmentID == guidID && x.TenantID == tenantId);
+                    var Id = db.UserProfile.Where(x => x.UserID == UserID).Select(x => x.Id).FirstOrDefault();
+                    if (FindDepartment == null)
                     {
-                        authRepository.EditToProcurementOfficerRole(userProfile, Id);
+                        LogHelper.Log(Log.Event.EDIT_DEPARTMENT, "Department not found");
+                        Response.StatusCode = (int)HttpStatusCode.NotFound;
+                        return Json(new
+                        {
+                            success = false,
+                            message = "Department not found",
+                            data = new { }
+                        });
                     }
-                    if (FindDepartment.DepartmentName == "Procurement" && FindDepartment.DepartmentHeadUserID == UserID)
+                    if (Id == null)
                     {
-                        authRepository.EditToHeadOfProcumentRole(userProfile, Id);
+                        FindDepartment.DepartmentHeadUserID = DepartmentHeadUserID;
+                        FindDepartment.DepartmentName = DepartmentName;
+                        FindDepartment.DateModified = dt;
+                        db.SaveChanges();
                     }
-                    if (FindDepartment.DepartmentName != "Procurement" && FindDepartment.DepartmentHeadUserID != UserID)
+                    else
                     {
-                        authRepository.EditToEmployeeRole(userProfile, Id);
+                        FindDepartment.DepartmentHeadUserID = DepartmentHeadUserID;
+                        FindDepartment.DepartmentName = DepartmentName;
+                        FindDepartment.DateModified = dt;
+                        db.SaveChanges();
+                        UserProfile userProfile = new UserProfile();
+                        if (FindDepartment.DepartmentName == "Procurement" && FindDepartment.DepartmentHeadUserID != UserID)
+                        {
+                            authRepository.EditToProcurementOfficerRole(userProfile, Id);
+                        }
+                        if (FindDepartment.DepartmentName == "Procurement" && FindDepartment.DepartmentHeadUserID == UserID)
+                        {
+                            authRepository.EditToHeadOfProcumentRole(userProfile, Id);
+                        }
+                        if (FindDepartment.DepartmentName != "Procurement" && FindDepartment.DepartmentHeadUserID != UserID)
+                        {
+                            authRepository.EditToEmployeeRole(userProfile, Id);
+                        }
+                        if (FindDepartment.DepartmentName != "Procurement" && FindDepartment.DepartmentHeadUserID == UserID)
+                        {
+                            authRepository.EditToHeadOfDepartmentRole(userProfile, Id);
+                        }
                     }
-                    if (FindDepartment.DepartmentName != "Procurement" && FindDepartment.DepartmentHeadUserID == UserID)
-                    {
-                        authRepository.EditToHeadOfDepartmentRole(userProfile, Id);
-                    }
-                    FindDepartment.DepartmentHeadUserID = DepartmentHeadUserID;
-                    FindDepartment.DepartmentName = DepartmentName;
-                    FindDepartment.DateModified = dt;
-                    db.Entry(FindDepartment).State = EntityState.Modified;
                 }
-                
-                db.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -223,7 +243,7 @@ namespace ProcureEaseAPI.Controllers
             return Json(new
             {
                 success = true,
-                message = "Editted successfully",
+                message = "Edited successfully",
                 data = db.Department.Where(x => x.TenantID == tenantId).Select(x => new
                 {
                     Department = new
@@ -251,17 +271,30 @@ namespace ProcureEaseAPI.Controllers
             try
                 {
                     if (tenantId == null)
-                    {
-                        return Json(new
+                {
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    return Json(new
                         {
                             success = false,
                             message = "TenantId is null",
                             data = new { }
                         }, JsonRequestBehavior.AllowGet);
                     }
+
                     Department department = db.Department.Find(id);
+                if(department == null)
+                {
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Department not found",
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                     db.Department.Remove(department);
-                    db.SaveChanges();
+
+                db.SaveChanges();
                 return Json(new
                 {
                     success = true,
@@ -285,6 +318,7 @@ namespace ProcureEaseAPI.Controllers
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.DELETE_DEPARTMENT, ex.Message);
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 return Json(new
                 {
                     success = false,
@@ -306,6 +340,7 @@ namespace ProcureEaseAPI.Controllers
             {
                 if (tenantId == null)
                 {
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
                     return Json(new
                     {
                         success = false,
@@ -327,6 +362,7 @@ namespace ProcureEaseAPI.Controllers
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.GET_DEPARTMENT, ex.Message);
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 return Json(new
                 {
                     success = false,

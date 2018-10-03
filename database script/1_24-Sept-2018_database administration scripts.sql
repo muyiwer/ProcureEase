@@ -1,9 +1,25 @@
-select * from catalog
-select * from requestfordemo
-select * from organizationsettings
-select * from userprofile
-select * from aspnetusers
-select * from department
+select * from BudgetYear
+select * from Department
+select * from Adverts
+select * from ProjectCategory
+select * from AdvertCategory
+select * from Procurements
+select * from UserProfile
+select * from AspNetUsers
+select * from AspNetUserRoles
+select * from AspNetRoles
+
+select * from RequestForDemo
+select * from Catalog
+select * from OrganizationSettings
+
+select * from SourceOfFunds
+select * from SourceOfFundsOrganizationSettings
+
+select * from ProjectCategoryOrganizationSettings
+select * from ProcurementMethodOrganizationSettings
+
+select * from Department
 
 update department set departmentheaduserid = null where departmentheaduserid = '5C99B26F-CBA8-493E-ABD4-E049BB548DB5'
 delete from userprofile where useremail='oaro@techspecialistlimited.com'

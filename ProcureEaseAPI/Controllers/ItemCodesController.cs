@@ -241,7 +241,7 @@ namespace ProcureEaseAPI.Controllers
             catch (Exception ex)
             {
                 Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                LogHelper.Log(Log.Event.DELETE_ITEM_CODE, "Guid format exeception");
+                LogHelper.Log(Log.Event.DELETE_ITEM_CODE, ex.Message +ex.StackTrace);
                 return Error(ex.Message + ex.StackTrace);
             }
 

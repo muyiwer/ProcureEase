@@ -103,7 +103,7 @@ namespace ProcureEaseAPI.Tests.Controllers
             string ItemCodeID = "210F8DF4-34F9-4BA4-934A-A294972E447C";
             JsonResult result = (JsonResult)testUpdatetItemCode.UpdateItemCode(ItemCode, ItemCodeID, ItemName);
             Console.WriteLine(result.Data);
-            Assert.IsTrue((result.Data + "").Contains("Guid should contain 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)."));
+            Assert.IsTrue((result.Data + "").Contains("ItemCode already exist."));
         }
 
 
@@ -117,7 +117,29 @@ namespace ProcureEaseAPI.Tests.Controllers
             string ItemCodeID = "210F8DF4-34F9-4BA4-934A-A294972E447C";
             JsonResult result = (JsonResult)testUpdatetItemCode.UpdateItemCode(ItemCode, ItemCodeID, ItemName);
             Console.WriteLine(result.Data);
-            Assert.IsTrue((result.Data + "").Contains("Guid should contain 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)."));
+            Assert.IsTrue((result.Data + "").Contains("Item updated successfully."));
+        }
+
+        [TestMethod]
+        public void TestDeletetItemCodeID_Is_Null()
+        {
+            var testUpdatetItemCode = new ItemCodesController();
+            Mocker.MockContextHeader(testUpdatetItemCode);
+            string id = "";
+            JsonResult result = (JsonResult)testUpdatetItemCode.Delete(id);
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("ItemCodeID is null"));
+        }
+
+        [TestMethod]
+        public void TestDeletetItemCode_Successfully()
+        {
+            var testUpdatetItemCode = new ItemCodesController();
+            Mocker.MockContextHeader(testUpdatetItemCode);
+            string id = "210F8DF4-34F9-4BA4-934A-A294972E447C";
+            JsonResult result = (JsonResult)testUpdatetItemCode.Delete(id);
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("Item deleted successfully."));
         }
     }
 }

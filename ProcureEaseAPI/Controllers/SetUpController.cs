@@ -453,7 +453,7 @@ namespace ProcureEaseAPI.Controllers
                     {
                         x.OrganizationID,
                         x.OrganizationEmail,
-                        OrganizationName = x.OrganizationNameInFull,
+                        x.OrganizationNameInFull,
                         x.OrganizationNameAbbreviation,
                         x.Address,
                         x.State,

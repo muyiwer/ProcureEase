@@ -58,6 +58,7 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
+                Response.StatusCode = (int)HttpStatusCode.OK;
                 return Json(new
                 {
                     success = true,
@@ -130,6 +131,7 @@ namespace ProcureEaseAPI.Controllers
                 LogHelper.Log(Log.Event.ADD_DEPARTMENT, ex.Message + ex.StackTrace);
                 ExceptionError(ex.Message, ex.StackTrace);
             }
+            Response.StatusCode = (int)HttpStatusCode.OK;
             return Json(new
             {
                 success = true,
@@ -239,6 +241,7 @@ namespace ProcureEaseAPI.Controllers
                 LogHelper.Log(Log.Event.EDIT_DEPARTMENT, ex.Message);
                 ExceptionError(ex.Message, ex.StackTrace);
             }
+            Response.StatusCode = (int)HttpStatusCode.OK;
             return Json(new
             {
                 success = true,
@@ -293,6 +296,7 @@ namespace ProcureEaseAPI.Controllers
                 }
                 db.Department.Remove(department);
                 db.SaveChanges();
+                Response.StatusCode = (int)HttpStatusCode.OK;
                 return Json(new
                 {
                     success = true,
@@ -368,7 +372,7 @@ namespace ProcureEaseAPI.Controllers
                     data = new { }
                 }, JsonRequestBehavior.AllowGet);
             }
-
+            Response.StatusCode = (int)HttpStatusCode.OK;
             return Json(new
             {
                 success = true,

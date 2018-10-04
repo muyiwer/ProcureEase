@@ -1076,7 +1076,7 @@ namespace ProcureEaseAPI.Controllers
                             x.DepartmentName
                         })
                     }
-                }, JsonRequestBehavior.AllowGet);
+                }, JsonRequestBehavior.AllowGet); ;
             }
             catch (Exception ex)
             {

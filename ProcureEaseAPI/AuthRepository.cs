@@ -71,7 +71,7 @@ namespace ProcureEaseAPI
             var result = await _userManager.CreateAsync(user, userModel.Password);
             return user;
         }
-            public async Task<ApplicationUser> RegisterUser(AddUserModel userModel, string UserDepartment)
+            public async Task<ApplicationUser> RegisterUser(AddUserModel userModel, string UserDepartment,bool IsHeadOfdepartment )
         {
             var _userManager =  new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_ctx));
             ApplicationUser user = new ApplicationUser
@@ -82,13 +82,21 @@ namespace ProcureEaseAPI
             };
 
             var result = await _userManager.CreateAsync(user, userModel.Password);
-            if(UserDepartment == "Procurement")
+            if(UserDepartment == "Procurement" && IsHeadOfdepartment ==false)
             {
                 var AddUserToProcurement = _userManager.AddToRole(user.Id, "Procurement Officer");
             }
-            else
+            if(UserDepartment != "Procurement" && IsHeadOfdepartment == false)
             {
                 var AddUserToEmployee = _userManager.AddToRole(user.Id, "Employee");
+            }
+            if (UserDepartment == "Procurement" && IsHeadOfdepartment == true)
+            {
+                var AddUserToProcurement = _userManager.AddToRole(user.Id, "Procurement Head");
+            }
+            if(UserDepartment != "Procurement" && IsHeadOfdepartment == false)
+            {
+                var AddUserToEmployee = _userManager.AddToRole(user.Id, "Head of Department");
             }
             return user;
         }

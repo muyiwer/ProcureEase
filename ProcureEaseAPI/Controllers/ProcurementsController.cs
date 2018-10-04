@@ -344,6 +344,7 @@ namespace ProcureEaseAPI.Controllers
                     {
                         ProcurementID = ProcurementID,
                         ProjectName = project.ProjectName,
+                        ProjectCategoryID = project.ProjectCategoryID,
                         DateCreated = DateTimeSettings.CurrentDate(),                      
                         ProcurementStatusID = ProcurementStatusID,
                         DepartmentID = DepartmentID,
@@ -361,6 +362,7 @@ namespace ProcureEaseAPI.Controllers
                     {
                         ProcurementID = ProcurementID,
                         ProjectName = project.ProjectName,
+                        ProjectCategoryID = project.ProjectCategoryID,
                         DateCreated = DateTimeSettings.CurrentDate(),
                         ProcurementStatusID = ProcurementStatusID,
                         DepartmentID = DepartmentID,
@@ -608,7 +610,7 @@ namespace ProcureEaseAPI.Controllers
         //POST: Procurements/SendProcurementNeeds
         [HttpPost]
         [Providers.Authorize]
-        public ActionResult SentProcurement(Guid DepartmentID, int BudgetYear, List<DepartmentProject> Projects)
+        public ActionResult SentProcurement(Guid DepartmentID, List<DepartmentProject> Projects)
         {
             try
             {
@@ -630,13 +632,6 @@ namespace ProcureEaseAPI.Controllers
                     LogHelper.Log(Log.Event.SEND_PROCUREMENTS_NEEDS, "DepartmentID is Null or Department is not valid.");
                     Response.StatusCode = (int)HttpStatusCode.NotFound;
                     return Error("DepartmentID is Null or Department is not valid.");
-                }
-                var BudgetyearID = db.BudgetYear.Where(x => x.BudgetYear1.Value.Year == BudgetYear && x.TenantID == tenantId).Select(x => x.BudgetYearID).FirstOrDefault();
-                if (BudgetyearID == null)
-                {
-                    LogHelper.Log(Log.Event.SEND_PROCUREMENTS_NEEDS, "BudgetYear is Null.");
-                    Response.StatusCode = (int)HttpStatusCode.NotFound;
-                    return Error("BudgetYear is Null.");
                 }
                 #region ProcessUpdatedProjects
                 // process updated projects
@@ -660,7 +655,7 @@ namespace ProcureEaseAPI.Controllers
                             dbProcurement.ProjectName = project.ProjectName;
                             dbProcurement.ProjectCategoryID = project.ProjectCategoryID;
                             dbProcurement.DepartmentID = DepartmentID;
-                            dbProcurement.BudgetYearID = BudgetyearID;
+                            dbProcurement.BudgetYearID = project.BudgetYearID;
                             dbProcurement.DateModified = DateTimeSettings.CurrentDate();
                             dbProcurement.TenantID = tenantId;
                             db.Entry(dbProcurement).State = EntityState.Modified;
@@ -703,7 +698,7 @@ namespace ProcureEaseAPI.Controllers
                                 dbProcurement.ProjectName = project.ProjectName;
                                 dbProcurement.ProjectCategoryID = project.ProjectCategoryID;
                                 dbProcurement.DepartmentID = DepartmentID;
-                                dbProcurement.BudgetYearID = BudgetyearID;
+                                dbProcurement.BudgetYearID = project.BudgetYearID;
                                 dbProcurement.TenantID = tenantId;
                                 dbProcurement.DateModified = DateTimeSettings.CurrentDate();
                                 db.Entry(dbProcurement).State = EntityState.Modified;
@@ -737,7 +732,7 @@ namespace ProcureEaseAPI.Controllers
 
                 db.SaveChanges();
                 Response.StatusCode = (int)HttpStatusCode.Created;
-                return DraftNeedsJson(DepartmentID, BudgetYear, tenantId);
+                return SentProcurementJson(DepartmentID, tenantId);
             }
             catch (Exception ex)
             {
@@ -965,7 +960,7 @@ namespace ProcureEaseAPI.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        private ActionResult SentProcurementJson(Guid DepartmentID, int BudgetYear, Guid? tenantId)
+        private ActionResult SentProcurementJson(Guid DepartmentID, Guid? tenantId)
         {
             int ProcurementStatusID = 0;
             int.TryParse(GetConfiguration("PendingProcurementStatusID"), out ProcurementStatusID);
@@ -978,18 +973,18 @@ namespace ProcureEaseAPI.Controllers
                 data = new
                 {
                     DepartmentName = db.Department.Where(x => x.TenantID == tenantId && x.DepartmentID == DepartmentID).Select(x => x.DepartmentName).FirstOrDefault(),
-                    Projects = db.Procurements.Where(x => x.TenantID == tenantId && x.DepartmentID == DepartmentID && x.BudgetYear.BudgetYear1.Value.Year == BudgetYear && x.ProcurementStatusID == ProcurementStatusID).Select(x => new
+                    Projects = db.Procurements.Where(x => x.TenantID == tenantId && x.DepartmentID == DepartmentID  && x.ProcurementStatusID == ProcurementStatusID).Select(x => new
                     {
                         x.ProcurementID,
                         x.ProjectName,
                         DateCreated = x.DateCreated.Value.ToString(),
                         x.ProjectCategoryID,
                         x.ProcurementStatusID,
-                        TotalProjectCost = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(z => z.UnitPrice).Sum()
-                                     * db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(z => z.Quantity).Sum(),
-                        ProjectTotalCostStatus = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(y => y.UnitPrice != null == true || false).FirstOrDefault(),
+                        TotalProjectCost = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == DepartmentID  && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(z => z.UnitPrice).Sum()
+                                     * db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == DepartmentID  && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(z => z.Quantity).Sum(),
+                        ProjectTotalCostStatus = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == DepartmentID && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(y => y.UnitPrice != null == true || false).FirstOrDefault(),
                         Deleted = false,
-                        Items = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(z => new
+                        Items = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == DepartmentID  && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == ProcurementStatusID).Select(z => new
                         {
                             z.ItemID,
                             z.ItemName,

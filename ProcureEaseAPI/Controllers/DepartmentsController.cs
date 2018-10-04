@@ -58,31 +58,30 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
+                return Json(new
+                {
+                    success = true,
+                    message = "Ok",
+                    data = db.Department.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        Department = new
+                        {
+                            x.DepartmentID,
+                            x.DepartmentName
+                        },
+                        Head = new
+                        {
+                            DepartmentHeadStatus = db.UserProfile.Where(y => x.DepartmentHeadUserID == y.UserID).Select(y => (true) || (false)).FirstOrDefault(),
+                            FullName = db.UserProfile.Where(z => z.UserID == x.DepartmentHeadUserID).Select(y => y.FirstName + " " + y.LastName)
+                        }
+                    }),
+                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
                 LogHelper.Log(Log.Event.GET_DEPARTMENT, ex.Message);
                 return ExceptionError(ex.Message, ex.StackTrace);
             }
-            Department department = new Department();
-            return Json(new
-            {
-                success = true,
-                message = "Ok",
-                data = db.Department.Where(x=> x.TenantID == tenantId).Select(x => new
-                {
-                    Department = new
-                    {
-                        x.DepartmentID,
-                        x.DepartmentName
-                    },
-                    Head = new
-                    {
-                        DepartmentHeadStatus = db.UserProfile.Where(y => x.DepartmentHeadUserID == y.UserID).Select(y => (true) || (false)).FirstOrDefault(),
-                        FullName = db.UserProfile.Where(z => z.UserID == x.DepartmentHeadUserID).Select(y => y.FirstName + " " + y.LastName)
-                    }
-                }),
-            }, JsonRequestBehavior.AllowGet);
         }
 
         // POST: Departments/AddDepartment
@@ -153,7 +152,7 @@ namespace ProcureEaseAPI.Controllers
 
         // PUT: Departments/Edit
         [HttpPut]
-        //[Providers.Authorize]
+        [Providers.Authorize]
         public ActionResult Edit (string DepartmentID, Guid UserID, string DepartmentName)
         {
             string email = Request.Headers["Email"];
@@ -292,8 +291,7 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                    db.Department.Remove(department);
-
+                db.Department.Remove(department);
                 db.SaveChanges();
                 return Json(new
                 {

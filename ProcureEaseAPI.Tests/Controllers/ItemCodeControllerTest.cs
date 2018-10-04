@@ -80,5 +80,66 @@ namespace ProcureEaseAPI.Tests.Controllers
         }
 
 
+        [TestMethod]
+        public void TestUpdatetItemCode_Invalid_Guid()
+        {
+            var testUpdatetItemCode = new ItemCodesController();
+            Mocker.MockContextHeader(testUpdatetItemCode);
+            string ItemName = "Server";
+            string ItemCode = "IT0208";
+            string ItemCodeID = "223333";
+            JsonResult result = (JsonResult)testUpdatetItemCode.UpdateItemCode(ItemCode, ItemCodeID, ItemName );
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("Guid should contain 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)."));
+        }
+
+        [TestMethod]
+        public void TestUpdatetItemCode_Existed_ItemCode()
+        {
+            var testUpdatetItemCode = new ItemCodesController();
+            Mocker.MockContextHeader(testUpdatetItemCode);
+            string ItemName = "Server";
+            string ItemCode = "DW0100";
+            string ItemCodeID = "210F8DF4-34F9-4BA4-934A-A294972E447C";
+            JsonResult result = (JsonResult)testUpdatetItemCode.UpdateItemCode(ItemCode, ItemCodeID, ItemName);
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("ItemCode already exist."));
+        }
+
+
+        [TestMethod]
+        public void TestUpdatetItemCode_Successfully()
+        {
+            var testUpdatetItemCode = new ItemCodesController();
+            Mocker.MockContextHeader(testUpdatetItemCode);
+            string ItemName = "Server";
+            string ItemCode = "DW0900";
+            string ItemCodeID = "210F8DF4-34F9-4BA4-934A-A294972E447C";
+            JsonResult result = (JsonResult)testUpdatetItemCode.UpdateItemCode(ItemCode, ItemCodeID, ItemName);
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("Item updated successfully."));
+        }
+
+        [TestMethod]
+        public void TestDeletetItemCodeID_Is_Null()
+        {
+            var testUpdatetItemCode = new ItemCodesController();
+            Mocker.MockContextHeader(testUpdatetItemCode);
+            string id = "";
+            JsonResult result = (JsonResult)testUpdatetItemCode.Delete(id);
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("ItemCodeID is null"));
+        }
+
+        [TestMethod]
+        public void TestDeletetItemCode_Successfully()
+        {
+            var testUpdatetItemCode = new ItemCodesController();
+            Mocker.MockContextHeader(testUpdatetItemCode);
+            string id = "210F8DF4-34F9-4BA4-934A-A294972E447C";
+            JsonResult result = (JsonResult)testUpdatetItemCode.Delete(id);
+            Console.WriteLine(result.Data);
+            Assert.IsTrue((result.Data + "").Contains("Item deleted successfully."));
+        }
     }
 }

@@ -344,6 +344,7 @@ namespace ProcureEaseAPI.Controllers
                     {
                         ProcurementID = ProcurementID,
                         ProjectName = project.ProjectName,
+                        ProjectCategoryID = project.ProjectCategoryID,
                         DateCreated = DateTimeSettings.CurrentDate(),                      
                         ProcurementStatusID = ProcurementStatusID,
                         DepartmentID = DepartmentID,
@@ -361,6 +362,7 @@ namespace ProcureEaseAPI.Controllers
                     {
                         ProcurementID = ProcurementID,
                         ProjectName = project.ProjectName,
+                        ProjectCategoryID = project.ProjectCategoryID,
                         DateCreated = DateTimeSettings.CurrentDate(),
                         ProcurementStatusID = ProcurementStatusID,
                         DepartmentID = DepartmentID,

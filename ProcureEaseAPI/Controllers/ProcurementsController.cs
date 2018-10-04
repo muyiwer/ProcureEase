@@ -997,12 +997,12 @@ namespace ProcureEaseAPI.Controllers
                             Deleted = false
                         })
                     }),
-                    ProcureMentStatus = db.ProcurementStatus.Select(x => new
+                    ProcurementStatus = db.ProcurementStatus.Select(x => new
                     {
                         x.ProcurementStatusID,
                         x.Status
                     }),
-                    ProcureMentMethod = db.ProcurementMethodOrganizationSettings.Where(x=> x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
+                    ProcurementMethod = db.ProcurementMethodOrganizationSettings.Where(x=> x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
                     {
                         x.ProcurementMethodID,
                         x.ProcurementMethod.Name

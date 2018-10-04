@@ -1064,8 +1064,17 @@ namespace ProcureEaseAPI.Controllers
                             ProjectTotalCostStatus = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == x.DepartmentID && z.Procurements.BudgetYearID == x.BudgetYearID && z.Procurements.ProcurementStatusID != ProcurementStatusID).Select(y => y.UnitPrice == null == true || false).FirstOrDefault(),
                             x.DepartmentID,
                             x.BudgetYearID
-                        }).Distinct()
-
+                        }).Distinct(),
+                        BudgetYear = db.BudgetYear.Where(x => x.TenantID == tenantId).Select(x => new
+                        {
+                            x.BudgetYearID,
+                            BudgetYear = (int?)x.BudgetYear1.Value.Year
+                        }),
+                        Department = db.Department.Where(x => x.TenantID == tenantId).Select(x => new
+                        {
+                            x.DepartmentID,
+                            x.DepartmentName
+                        })
                     }
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -1579,7 +1588,7 @@ namespace ProcureEaseAPI.Controllers
                             Deleted = false
                         })
                     }),
-                    ProcureMentStatus = db.ProcurementStatus.Where(x=> x.TenantID == tenantId).Select(x => new
+                    ProcureMentStatus = db.ProcurementStatus.Select(x => new
                     {
                         x.ProcurementStatusID,
                         x.Status

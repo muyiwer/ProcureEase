@@ -1884,9 +1884,17 @@ namespace ProcureEaseAPI.Controllers
                             ProjectTotalCost = db.Items.Where(a => a.TenantID == tenantId && a.Procurements.DepartmentID == x.DepartmentID && a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.UnitPrice).Sum()
                                          * db.Items.Where(a => a.TenantID == tenantId && a.Procurements.DepartmentID == x.DepartmentID && a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.Quantity).Sum(),
                             x.DepartmentID,
+                            x.Department.DepartmentName,
                             x.BudgetYearID
-                        }).Distinct()
-
+                        }).Distinct(),
+                        BudgetYear = db.BudgetYear.Where(x=>x.TenantID==tenantId).Select(x=>new {
+                            x.BudgetYearID,
+                            BudgetYear = (int?)x.BudgetYear1.Value.Year
+                        }),
+                        Advert = db.Adverts.Where(x=>x.TenantID == tenantId).Select(x=>new {
+                            x.AdvertID,
+                            x.Headline
+                        })
                     }
                 }, JsonRequestBehavior.AllowGet);
             }

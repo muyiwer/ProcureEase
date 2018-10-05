@@ -1994,7 +1994,7 @@ namespace ProcureEaseAPI.Controllers
                                 var itemCodeId = db.ItemCode.Where(x => x.ItemCode1 == item.ItemCode).Select(x => x.ItemCodeID).FirstOrDefault();
                                 dbItem.UnitPrice = Convert.ToDouble(item.UnitPrice);
                                 dbItem.Quantity = Convert.ToDouble(item.Quantity);
-                                dbItem.ItemCodeID = item.ItemCodeID;
+                                dbItem.ItemCodeID = itemCodeId;
                                 dbItem.ItemName = item.ItemName;
                                 dbItem.Description = item.ItemDescription;
                                 dbItem.TenantID = tenantId;
@@ -2234,7 +2234,7 @@ namespace ProcureEaseAPI.Controllers
                     }, JsonRequestBehavior.AllowGet);
                 }
                 int ProcurementStatusID = 0;
-                int.TryParse(GetConfiguration("ApprovedProcurementStatusID"), out ProcurementStatusID);
+                int.TryParse(GetConfiguration("AttestedProcurementStatusID"), out ProcurementStatusID);
                 DateTimeSettings DateTimeSettings = new DateTimeSettings();
                 var CheckIfDepartmentIsValid = db.Department.Where(x => x.TenantID == tenantId && x.DepartmentID == DepartmentID).Select(x => x.DepartmentName).FirstOrDefault();
                 if (CheckIfDepartmentIsValid == null)
@@ -2278,6 +2278,7 @@ namespace ProcureEaseAPI.Controllers
                             dbProcurement.ProjectCategoryID = project.ProjectCategoryID;
                             dbProcurement.ProcurementMethodID = project.ProcurementMethodID;
                             dbProcurement.SourceOfFundID = project.SourceOfFundID;
+                            dbProcurement.ProcurementStatusID = ProcurementStatusID;
                             dbProcurement.DepartmentID = DepartmentID;
                             dbProcurement.BudgetYearID = BudgetyearID;
                             dbProcurement.DateModified = DateTimeSettings.CurrentDate();
@@ -2321,6 +2322,7 @@ namespace ProcureEaseAPI.Controllers
                                 dbProcurement.ProjectCategoryID = project.ProjectCategoryID;
                                 dbProcurement.ProcurementMethodID = project.ProcurementMethodID;
                                 dbProcurement.SourceOfFundID = project.SourceOfFundID;
+                                dbProcurement.ProcurementStatusID = ProcurementStatusID;
                                 dbProcurement.DepartmentID = DepartmentID;
                                 dbProcurement.BudgetYearID = BudgetyearID;
                                 dbProcurement.DateModified = DateTimeSettings.CurrentDate();
@@ -2389,8 +2391,10 @@ namespace ProcureEaseAPI.Controllers
         private void ProcessNewAttestedProcurementPlan(List<DepartmentProject> Projects, Guid DepartmentID, Guid BudgetyearID, Guid? tenantId)
         {
             #region   // process new procurement plan
+            int ProcurementStatusID = 0;
+            int.TryParse(GetConfiguration("AttestedProcurementStatusID"), out ProcurementStatusID);
             DateTimeSettings DateTimeSettings = new DateTimeSettings();
-            var newProjects = Projects.Where(x => x.ProcurementID == Guid.Empty && x.Attested == false);
+            var newProjects = Projects.Where(x => x.ProcurementID == Guid.Empty);
             foreach (DepartmentProject project in newProjects)
             {
                 // process items in the projects
@@ -2416,8 +2420,7 @@ namespace ProcureEaseAPI.Controllers
                         });
                     }
                     // insert project
-                    int ProcurementStatusID = 0;
-                    int.TryParse(GetConfiguration("ApprovedProcurementStatusID"), out ProcurementStatusID);
+                   
                     db.Procurements.Add(new Procurements()
                     {
                         ProcurementID = ProcurementID,
@@ -2445,6 +2448,7 @@ namespace ProcureEaseAPI.Controllers
                         ProjectCategoryID = project.ProjectCategoryID,
                         ProcurementMethodID = project.ProcurementMethodID,
                         SourceOfFundID = project.SourceOfFundID,
+                        ProcurementStatusID = ProcurementStatusID,
                         DepartmentID = DepartmentID,
                         BudgetYearID = BudgetyearID,
                         TenantID=tenantId
@@ -2478,8 +2482,6 @@ namespace ProcureEaseAPI.Controllers
                         });
                     }
                     // insert project
-                    int ProcurementStatusID = 0;
-                    int.TryParse(GetConfiguration("AttestedProcurementStatusID"), out ProcurementStatusID);
                     db.Procurements.Add(new Procurements()
                     {
                         ProcurementID = ProcurementID,

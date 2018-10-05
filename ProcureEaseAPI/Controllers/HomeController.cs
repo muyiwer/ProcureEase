@@ -170,7 +170,7 @@ namespace ProcureEaseAPI.Controllers
             try
             {
                 var clientUrl = Request.UrlReferrer.ToString();
-                string newTemplateContent = string.Format(Body, "http://" + clientUrl + ".procureease.com.ng", AdministratorFirstName, OrganizationFullName, Password);
+                string newTemplateContent = string.Format(Body, clientUrl , AdministratorFirstName, OrganizationFullName, Password);
                 Message message = new Message(AdministratorEmail, Subject, newTemplateContent);
                 EmailHelper emailHelper = new EmailHelper();
                 await emailHelper.AddEmailToQueue(message);
@@ -178,7 +178,7 @@ namespace ProcureEaseAPI.Controllers
             catch (NullReferenceException)
             {
                 var backendUrl = System.Web.HttpContext.Current.Request.Url.Host;
-                string newTemplateContent = string.Format(Body, "http://" + backendUrl + ".procureease.com.ng", AdministratorFirstName, OrganizationFullName, Password);
+                string newTemplateContent = string.Format(Body, backendUrl , AdministratorFirstName, OrganizationFullName, Password);
                 Message message = new Message(AdministratorEmail, Subject, newTemplateContent);
                 EmailHelper emailHelper = new EmailHelper();
                 await emailHelper.AddEmailToQueue(message);

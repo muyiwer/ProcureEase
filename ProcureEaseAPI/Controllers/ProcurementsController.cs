@@ -1856,7 +1856,6 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
-                db.Configuration.ProxyCreationEnabled = false;
                 string email = Request.Headers["Email"];
                 Guid? tenantId = catalog.GetTenantIDFromClientURL(email);
                 if (tenantId == null)
@@ -1878,9 +1877,8 @@ namespace ProcureEaseAPI.Controllers
                     {
                         TotalCost = db.Items.Where(a => a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.UnitPrice).Sum()
                                          * db.Items.Where(a => a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.Quantity).Sum(),
-                        ProjectSummary = db.Procurements.Where(x => x.TenantID == tenantId).Select(x => new
+                        ProcurementPlans = db.Procurements.Where(x => x.TenantID == tenantId).Select(x => new
                         {
-                            x.Department,
                             BudgetYear = (int?)x.BudgetYear.BudgetYear1.Value.Year,
                             TotalProject = db.Procurements.Where(a => a.TenantID == tenantId && a.DepartmentID == x.DepartmentID && a.BudgetYear.BudgetYear1.Value.Year == x.BudgetYear.BudgetYear1.Value.Year && a.ProcurementStatusID == ProcurementStatusID).Count(),
                             ProjectTotalCost = db.Items.Where(a => a.TenantID == tenantId && a.Procurements.DepartmentID == x.DepartmentID && a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.UnitPrice).Sum()

@@ -1667,7 +1667,7 @@ namespace ProcureEaseAPI.Controllers
                             Deleted = false
                         })
                     }),
-                    ProcurementStatus = db.ProcurementStatus.Where(x=> x.TenantID == tenantId).Select(x => new
+                    ProcurementStatus = db.ProcurementStatus.Select(x => new
                     {
                         x.ProcurementStatusID,
                         x.Status
@@ -1727,7 +1727,7 @@ namespace ProcureEaseAPI.Controllers
                             Deleted = false
                         })
                     }),
-                    ProcurementStatus = db.ProcurementStatus.Where(x => x.TenantID == tenantId).Select(x => new
+                    ProcurementStatus = db.ProcurementStatus.Select(x => new
                     {
                         x.ProcurementStatusID,
                         x.Status
@@ -1809,7 +1809,7 @@ namespace ProcureEaseAPI.Controllers
                             Deleted = false
                         })
                     }),
-                    ProcurementStatus = db.ProcurementStatus.Where(x => x.TenantID == tenantId).Select(x => new
+                    ProcurementStatus = db.ProcurementStatus.Select(x => new
                     {
                         x.ProcurementStatusID,
                         x.Status

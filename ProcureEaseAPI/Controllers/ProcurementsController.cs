@@ -1856,6 +1856,7 @@ namespace ProcureEaseAPI.Controllers
         {
             try
             {
+                db.Configuration.ProxyCreationEnabled = false;
                 string email = Request.Headers["Email"];
                 Guid? tenantId = catalog.GetTenantIDFromClientURL(email);
                 if (tenantId == null)

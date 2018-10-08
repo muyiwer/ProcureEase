@@ -10,6 +10,7 @@ namespace ProcureEaseAPI.Models
         public Guid ProcurementID { get; set; }
         public string ProjectName { get; set; }
         public Guid ProcurementMethodID { get; set; }
+        public Guid SourceOfFundID { get; set; }
         public Guid ProjectCategoryID { get; set; }
         public Guid ProcurementStatusID { get; set; }
         public Guid DepartmentID { get; set; }
@@ -26,11 +27,11 @@ namespace ProcureEaseAPI.Models
 
             public Guid ItemID { get; set; }
             public string ItemName { get; set; }
-            public string Description { get; set; }
+            public string ItemDescription { get; set; }
             public string ItemCode { get; set; }
             public Guid ItemCodeID { get; set; }
-            public double Quantity { get; set; }
-            public double UnitPrice { get; set; }
+            public string Quantity { get; set; }
+            public string UnitPrice { get; set; }
             public Guid ProcurementID { get; set; }
             public bool Deleted { get; set; }
             public virtual DepartmentProject Projects { get; set; }

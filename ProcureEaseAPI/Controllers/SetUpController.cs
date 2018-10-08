@@ -41,7 +41,7 @@ namespace ProcureEaseAPI.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        //[Providers.Authorize]
+        [Providers.Authorize]
         public ActionResult SourceOfFunds()
         {
             string email = Request.Headers["Email"];
@@ -76,9 +76,17 @@ namespace ProcureEaseAPI.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
+        public class Settings
+        {
+            public Guid SourceOfFundID { get; set; }
+            public Guid ProcurementMethodID { get; set; }
+            public Guid ProjectCategoryID { get; set; }
+            public bool Enabled { get; set; } 
+}
+
         // PUT: SetUp/UpdateSourceOfFunds
         [HttpPut]
-        public ActionResult UpdateSourceOfFunds(Guid SourceOfFundID, bool Enabled)
+        public ActionResult UpdateSourceOfFunds(List<Settings> list)
         {
             string email = Request.Headers["Email"];
             var tenantId = catalog.GetTenantIDFromClientURL(email);
@@ -94,21 +102,24 @@ namespace ProcureEaseAPI.Controllers
                     }, JsonRequestBehavior.AllowGet);
                 }
                 DateTime dt = DateTime.Now;
-                var CurrentSourceOfFundID = db.SourceOfFundsOrganizationSettings.FirstOrDefault(s => s.SourceOfFundID == SourceOfFundID);
 
-                if (CurrentSourceOfFundID == null)
+                foreach (Settings item in list)
                 {
-                    LogHelper.Log(Log.Event.UPDATE_SOURCEOFFUNDS, "SourceOfFundID not found");
-                    return Json(new
+                    var CurrentSourceOfFund = db.SourceOfFundsOrganizationSettings.FirstOrDefault(s => s.SourceOfFundID == item.SourceOfFundID && s.TenantID == tenantId);
+
+                    if (CurrentSourceOfFund == null)
                     {
-                        success = false,
-                        message = "SourceOfFundID not found",
-                        data = new { }
-                    }, JsonRequestBehavior.AllowGet);
+                        LogHelper.Log(Log.Event.UPDATE_SOURCEOFFUNDS, "SourceOfFundID not found");
+                        return Json(new
+                        {
+                            success = false,
+                            message = "SourceOfFundID not found",
+                            data = new { }
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+                    CurrentSourceOfFund.EnableSourceOFFund = item.Enabled;
+                    db.SaveChanges();
                 }
-                CurrentSourceOfFundID.EnableSourceOFFund = Enabled;
-                CurrentSourceOfFundID.DateModified = dt;
-                db.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -158,14 +169,14 @@ namespace ProcureEaseAPI.Controllers
                 {
                     x.ProcurementMethodID,
                     x.ProcurementMethod.Name,
-                    x.EnableProcurementMethod,
+                    Enabled = x.EnableProcurementMethod,
                 })
             }, JsonRequestBehavior.AllowGet);
         }
 
         // PUT: SetUp/UpdateProcurementMethod
         [HttpPut]
-        public ActionResult UpdateProcurementMethod(Guid ProcurementMethodID, bool Enabled)
+        public ActionResult UpdateProcurementMethod(List<Settings> list)
         {
             string email = Request.Headers["Email"];
             var tenantId = catalog.GetTenantIDFromClientURL(email);
@@ -181,21 +192,22 @@ namespace ProcureEaseAPI.Controllers
                     }, JsonRequestBehavior.AllowGet);
                 }
                 DateTime dt = DateTime.Now;
-                var currentProcurementMethodID = db.ProcurementMethodOrganizationSettings.FirstOrDefault(p => p.ProcurementMethodID == ProcurementMethodID);
-
-                if (currentProcurementMethodID == null)
+                foreach (Settings item in list)
                 {
-                    LogHelper.Log(Log.Event.UPDATE_PROCUREMENTMETHOD, "ProcurementMethodID not found");
-                    return Json(new
-                    {
-                        success = false,
-                        message = "ProcurementMethodID not found",
-                        data = new { }
-                    }, JsonRequestBehavior.AllowGet);
-                }
+                    var CurrentProcurementMethod = db.ProcurementMethodOrganizationSettings.FirstOrDefault(s => s.ProcurementMethodID == item.ProcurementMethodID && s.TenantID == tenantId);
 
-                currentProcurementMethodID.EnableProcurementMethod = Enabled;
-                currentProcurementMethodID.DateModified = dt;
+                    if (CurrentProcurementMethod == null)
+                    {
+                        LogHelper.Log(Log.Event.UPDATE_SOURCEOFFUNDS, "ProcurementID not found");
+                        return Json(new
+                        {
+                            success = false,
+                            message = "ProcurementID not found",
+                            data = new { }
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+                    CurrentProcurementMethod.EnableProcurementMethod = item.Enabled;
+                }
                 db.SaveChanges();
             }
             catch (Exception ex)
@@ -211,7 +223,7 @@ namespace ProcureEaseAPI.Controllers
                 {
                     x.ProcurementMethodID,
                     x.ProcurementMethod.Name,
-                    x.EnableProcurementMethod,
+                    Enabled = x.EnableProcurementMethod,
                 })
             }, JsonRequestBehavior.AllowGet);
         }
@@ -246,14 +258,14 @@ namespace ProcureEaseAPI.Controllers
                 {
                     x.ProjectCategoryID,
                     x.ProjectCategory.Name,
-                    x.EnableProjectCategory,
+                    Enabled =x.EnableProjectCategory,
                 })
             }, JsonRequestBehavior.AllowGet);
         }
 
         // PUT: SetUp/UpdateProjectCategory
         [HttpPut]
-        public ActionResult UpdateProjectCategory(Guid ProjectCategoryID, bool Enabled)
+        public ActionResult UpdateProjectCategory(List<Settings> list)
         {
             string email = Request.Headers["Email"];
             var tenantId = catalog.GetTenantIDFromClientURL(email);
@@ -269,21 +281,22 @@ namespace ProcureEaseAPI.Controllers
                     }, JsonRequestBehavior.AllowGet);
                 }
                 DateTime dt = DateTime.Now;
-                var currentProjectCategoryID = db.ProjectCategoryOrganizationSettings.FirstOrDefault(p => p.ProjectCategoryID == ProjectCategoryID);
-
-                if (currentProjectCategoryID == null)
+                foreach (Settings item in list)
                 {
-                    LogHelper.Log(Log.Event.UPDATE_PROJECTCATEGORY, "ProjectCategoryID not found");
-                    return Json(new
-                    {
-                        success = false,
-                        message = "ProjectCategoryID not found",
-                        data = new { }
-                    }, JsonRequestBehavior.AllowGet);
-                }
+                    var CurrentProjectCategory = db.ProjectCategoryOrganizationSettings.Where(s => s.ProjectCategoryID == item.ProjectCategoryID && s.TenantID == tenantId).FirstOrDefault();
 
-                currentProjectCategoryID.EnableProjectCategory = Enabled;
-                currentProjectCategoryID.DateModified = dt;
+                    if (CurrentProjectCategory == null)
+                    {
+                        LogHelper.Log(Log.Event.UPDATE_SOURCEOFFUNDS, "ProjectCategoryID not found");
+                        return Json(new
+                        {
+                            success = false,
+                            message = "ProjectCategoryID not found",
+                            data = new { }
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+                    CurrentProjectCategory.EnableProjectCategory = item.Enabled;
+                }
 
                 db.SaveChanges();
             }
@@ -300,7 +313,7 @@ namespace ProcureEaseAPI.Controllers
                 {
                     x.ProjectCategoryID,
                     x.ProjectCategory.Name,
-                    x.EnableProjectCategory
+                    Enabled = x.EnableProjectCategory
                 })
             }, JsonRequestBehavior.AllowGet);
         }
@@ -364,9 +377,8 @@ namespace ProcureEaseAPI.Controllers
             {
                 success = true,
                 message = "Basic details added successfully!!!",
-                data = db.OrganizationSettings.Where(x => x.OrganizationID == organizationSettings.OrganizationID).Select(x => new
+                data = db.OrganizationSettings.Where(x => x.OrganizationID == organizationSettings.OrganizationID && x.TenantID == tenantId).Select(x => new
                 {
-                    TenantID = db.OrganizationSettings.Where(y => y.TenantID == tenantId).Select(y => y.TenantID).FirstOrDefault(),
                     x.OrganizationID,
                     x.OrganizationNameInFull,
                     x.OrganizationNameAbbreviation,
@@ -379,7 +391,7 @@ namespace ProcureEaseAPI.Controllers
                     DateModified = x.DateModified.Value.ToString(),
                     x.CreatedBy,
                     TelephoneNumbers = db.TelephoneNumbers.Where(y => y.OrganizationID == x.OrganizationID).Select(y => y.TelephoneNumber)
-                })
+                }).FirstOrDefault()
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -408,7 +420,7 @@ namespace ProcureEaseAPI.Controllers
             }
         }
 
-       // [Providers.Authorize]
+        [Providers.Authorize]
         public ActionResult OrganizationSettings()
         {
             string email = Request.Headers["Email"];
@@ -441,7 +453,7 @@ namespace ProcureEaseAPI.Controllers
                     {
                         x.OrganizationID,
                         x.OrganizationEmail,
-                        OrganizationName = x.OrganizationNameInFull,
+                        x.OrganizationNameInFull,
                         x.OrganizationNameAbbreviation,
                         x.Address,
                         x.State,
@@ -451,7 +463,7 @@ namespace ProcureEaseAPI.Controllers
                         x.CreatedBy,
                         TelephoneNumbers = db.TelephoneNumbers.Where(y => y.OrganizationID == x.OrganizationID).Select(y => y.TelephoneNumber)
                     }).FirstOrDefault(),
-                    DepartmentSetUp = db.Department.Where(y => y.OrganisationID == y.OrganizationSettings.OrganizationID).Select(y => new
+                    DepartmentSetUp = db.Department.Where(y => y.TenantID == tenantId).Select(y => new
                     {
                         Department = new
                         {
@@ -464,7 +476,7 @@ namespace ProcureEaseAPI.Controllers
                             FullName = db.UserProfile.Where(z => z.UserID == y.DepartmentHeadUserID).Select(z => z.FirstName + " " + z.LastName).FirstOrDefault()
                         }
                     }),
-                    UserManagement = db.UserProfile.Where(y => y.OrganizationID == y.OrganizationSettings.OrganizationID && y.UserID == y.UserID).Select(y => new
+                    UserManagement = db.UserProfile.Where(y => y.TenantID == tenantId).Select(y => new
                     {
                         User = new
                         {
@@ -478,32 +490,32 @@ namespace ProcureEaseAPI.Controllers
                         }
 
                     }),
-                    SourceOfFunds = db.SourceOfFundsOrganizationSettings.Where(y => y.OrganizationID == y.OrganizationSettings.OrganizationID).Select(y => new
+                    SourceOfFunds = db.SourceOfFundsOrganizationSettings.Where(y => y.TenantID == tenantId).Select(y => new
                     {
                         y.SourceOfFundID,
                         Name = y.SourceOfFunds.SourceOfFund,
                         Enabled = y.EnableSourceOFFund,
                     }),
-                    ProcurementMethod = db.ProcurementMethodOrganizationSettings.Where(y => y.OrganizationID == y.OrganizationSettings.OrganizationID).Select(y => new
+                    ProcurementMethod = db.ProcurementMethodOrganizationSettings.Where(y => y.TenantID == tenantId).Select(y => new
                     {
                         y.ProcurementMethodID,
                         y.ProcurementMethod.Name,
                         Enabled = y.EnableProcurementMethod,
                     }),
-                    ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(y => y.OrganizationID == y.OrganizationSettings.OrganizationID).Select(y => new
+                    ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(y => y.TenantID == tenantId).Select(y => new
                     {
                         y.ProjectCategoryID,
                         y.ProjectCategory.Name,
                         Enabled = y.EnableProjectCategory,
                     }),
-                    Users = db.UserProfile.Where(y => y.OrganizationID == y.OrganizationSettings.OrganizationID).Select(y => new
+                    Users = db.UserProfile.Where(y =>y.TenantID == tenantId).Select(y => new
                     {
                         y.UserID,
                         FullName = y.FirstName + " " + y.LastName
                     }),
-                    Departments = db.Department.Where(y => y.OrganisationID == y.OrganizationSettings.OrganizationID).Select(y => new
+                    Departments = db.Department.Where(y => y.TenantID == tenantId).Select(y => new
                     {
-                        y. DepartmentID,
+                        y.DepartmentID,
                         y.DepartmentName
                     })
                 }

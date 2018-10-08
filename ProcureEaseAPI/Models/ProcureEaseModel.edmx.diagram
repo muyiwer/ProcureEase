@@ -11,7 +11,6 @@
         <EntityTypeShape EntityType="ProcureEaseModel.AdvertisedItems" Width="1.5" PointX="5.25" PointY="22" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.AdvertLotNumber" Width="1.5" PointX="5.25" PointY="30.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.Adverts" Width="1.5" PointX="10.5" PointY="38.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProcureEaseModel.AdvertStatus" Width="1.5" PointX="5.25" PointY="35" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.ApprovedItems" Width="1.5" PointX="5.25" PointY="38.375" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.AspNetRoles" Width="1.5" PointX="8.25" PointY="53.125" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.AspNetUserClaims" Width="1.5" PointX="7.5" PointY="41.625" IsExpanded="true" />
@@ -66,8 +65,10 @@
         <AssociationConnector Association="ProcureEaseModel.FK_Procurements_ProcurementStatus" ManuallyRouted="false" />
         <AssociationConnector Association="ProcureEaseModel.FK_ProjectCategoryOrganizationSettings_ProjectCategory" ManuallyRouted="false" />
         <AssociationConnector Association="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_SourceOfFunds" ManuallyRouted="false" />
-        <EntityTypeShape EntityType="ProcureEaseModel.Catalog" Width="1.5" PointX="3" PointY="36.875" />
-        <EntityTypeShape EntityType="ProcureEaseModel.RequestForDemo" Width="1.5" PointX="0.75" PointY="38.625" />
+        <EntityTypeShape EntityType="ProcureEaseModel.AdvertStatus" Width="1.5" PointX="5.25" PointY="15.375" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Adverts__AdvertS__0F624AF8" />
+        <EntityTypeShape EntityType="ProcureEaseModel.sysdiagrams" Width="1.5" PointX="3.375" PointY="0.75" />
+        <EntityTypeShape EntityType="ProcureEaseModel.Catalog" Width="1.5" PointX="3" PointY="35.125" />
         <AssociationConnector Association="ProcureEaseModel.FK_AdvertCategory_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_AdvertCategoryNumber_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_AdvertisedItems_Catalog" />
@@ -77,7 +78,6 @@
         <AssociationConnector Association="ProcureEaseModel.FK_ApprovedItems_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_AspNetUsers_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_BudgetYear_Catalog" />
-        <AssociationConnector Association="ProcureEaseModel.FK_Catalog_RequestForDemo" />
         <AssociationConnector Association="ProcureEaseModel.FK_Department_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_ItemCode_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_Items_Catalog" />
@@ -89,6 +89,8 @@
         <AssociationConnector Association="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_TelephoneNumbers_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_UserProfile_Catalog" />
+        <EntityTypeShape EntityType="ProcureEaseModel.RequestForDemo" Width="1.5" PointX="0.75" PointY="36.75" />
+        <AssociationConnector Association="ProcureEaseModel.FK_Catalog_RequestForDemo" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

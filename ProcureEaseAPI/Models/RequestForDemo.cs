@@ -30,6 +30,7 @@ namespace ProcureEaseAPI.Models
         public Nullable<System.DateTime> DateCreated { get; set; }
         public Nullable<System.DateTime> DemoStartDate { get; set; }
         public Nullable<System.DateTime> DemoEndDate { get; set; }
+        public Nullable<bool> IsOnboarded { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Catalog> Catalog { get; set; }

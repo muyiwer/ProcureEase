@@ -337,6 +337,9 @@
     <Compile Include="Models\SourceOfFundsOrganizationSettings.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\sysdiagrams.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\TelephoneNumbers.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
@@ -405,7 +408,9 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -442,7 +447,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\ItemCodes\" />
     <Folder Include="Views\Procurments\" />
     <Folder Include="Views\Users\" />
   </ItemGroup>

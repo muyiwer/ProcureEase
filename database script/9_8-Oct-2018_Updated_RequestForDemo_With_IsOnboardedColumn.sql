@@ -1,0 +1,1 @@
+Alter Table RequestForDemo Add IsOnboarded bit null

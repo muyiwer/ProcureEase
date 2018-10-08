@@ -1858,6 +1858,11 @@ namespace ProcureEaseAPI.Controllers
                     {
                         x.BudgetYearID,
                         BudgetYear = x.BudgetYear1.Value.Year
+                    }),
+                    Department = db.Department.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        x.DepartmentID,
+                        x.DepartmentName
                     })
                 }
             }, JsonRequestBehavior.AllowGet);
@@ -1923,6 +1928,11 @@ namespace ProcureEaseAPI.Controllers
                     {
                         x.BudgetYearID,
                         BudgetYear = x.BudgetYear1.Value.Year
+                    }),
+                    Department = db.Department.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        x.DepartmentID,
+                        x.DepartmentName
                     })
                 }
             }, JsonRequestBehavior.AllowGet);
@@ -1988,6 +1998,11 @@ namespace ProcureEaseAPI.Controllers
                     {
                         x.BudgetYearID,
                         BudgetYear = x.BudgetYear1.Value.Year
+                    }),
+                    Department = db.Department.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        x.DepartmentID,
+                        x.DepartmentName
                     })
                 }
             }, JsonRequestBehavior.AllowGet);
@@ -2067,6 +2082,11 @@ namespace ProcureEaseAPI.Controllers
                     {
                         x.BudgetYearID,
                         BudgetYear = x.BudgetYear1.Value.Year
+                    }),
+                    Department = db.Department.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        x.DepartmentID,
+                        x.DepartmentName
                     })
                 }
             }, JsonRequestBehavior.AllowGet);
@@ -2137,6 +2157,11 @@ namespace ProcureEaseAPI.Controllers
                     {
                         x.AdvertID,
                         x.Headline
+                    }),
+                    Department = db.Department.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        x.DepartmentID,
+                        x.DepartmentName
                     })
                 }
             }, JsonRequestBehavior.AllowGet);
@@ -2207,6 +2232,11 @@ namespace ProcureEaseAPI.Controllers
                     {
                         x.AdvertID,
                         x.Headline
+                    }),
+                    Department = db.Department.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        x.DepartmentID,
+                        x.DepartmentName
                     })
                 }
             }, JsonRequestBehavior.AllowGet);
@@ -2277,6 +2307,11 @@ namespace ProcureEaseAPI.Controllers
                     {
                         x.AdvertID,
                         x.Headline
+                    }),
+                    Department = db.Department.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        x.DepartmentID,
+                        x.DepartmentName
                     })
                 }
             }, JsonRequestBehavior.AllowGet);
@@ -2360,6 +2395,11 @@ namespace ProcureEaseAPI.Controllers
                     {
                         x.AdvertID,
                         x.Headline
+                    }),
+                    Department = db.Department.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        x.DepartmentID,
+                        x.DepartmentName
                     })
                 }
             }, JsonRequestBehavior.AllowGet);

@@ -54,6 +54,9 @@ namespace ProcureEaseAPI.Controllers
                     x.AdministratorFirstName,
                     x.AdministratorLastName,
                     x.AdministratorPhoneNumber,
+                    x.IsOnboarded,
+                    x.DemoStartDate,
+                    x.DemoEndDate,
                     DateCreated = x.DateCreated.Value.ToString()
                 }),
             }, JsonRequestBehavior.AllowGet);
@@ -97,6 +100,7 @@ namespace ProcureEaseAPI.Controllers
                 }
                 DateTime dt = DateTime.Now;
                 requestForDemo.RequestID = Guid.NewGuid();
+                requestForDemo.IsOnboarded = false;
                 requestForDemo.DateCreated = dt;
                 db.RequestForDemo.Add(requestForDemo);
                 db.SaveChanges();
@@ -123,6 +127,9 @@ namespace ProcureEaseAPI.Controllers
                     x.AdministratorFirstName,
                     x.AdministratorLastName,
                     x.AdministratorPhoneNumber,
+                    x.IsOnboarded,
+                    x.DemoEndDate,
+                    x.DemoStartDate,
                     DateCreated = x.DateCreated.Value.ToString()
                 })
             });
@@ -206,9 +213,9 @@ namespace ProcureEaseAPI.Controllers
                 }
                 if (GetEmail == null)
                 {
-                    LogHelper.Log(Log.Event.ONBOARDING, AdministratorEmail + "has not requested for a demo," + " " + "Email does not exist.");
+                    LogHelper.Log(Log.Event.ONBOARDING, AdministratorEmail + "has not requested a demo," + " " + "Email does not exist.");
                     Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    return Error(AdministratorEmail + " " + "has not requested for a Demo");
+                    return Error(AdministratorEmail + " " + "has not requested a Demo");
                 }
                 var OrganizationNameInFull = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.OrganizationFullName).FirstOrDefault();
                 var ThisTenant = db.Catalog.Where(x => x.RequestID == GetRequestID).Select(x => x.RequestID).FirstOrDefault();
@@ -240,6 +247,7 @@ namespace ProcureEaseAPI.Controllers
                     UpdateCatalog.DateModified = dt;
 
                     var UpdateRequestForDemo = db.RequestForDemo.Find(GetRequestID);
+                    UpdateRequestForDemo.IsOnboarded = true;
                     UpdateRequestForDemo.DemoStartDate = dt;
                     UpdateRequestForDemo.DemoEndDate = CurrentTime;
 
@@ -466,16 +474,35 @@ namespace ProcureEaseAPI.Controllers
 
         #region ProcessActivatateMDAAccount
         [HttpPost]
-        public ActionResult Activate(string AdministratorEmail)
+        public ActionResult Activate(string AdministratorEmail, bool IsOnboarded )
         {
             try
             {
                 DateTime dt = DateTime.Now;
                 var CurrentTime = DateTime.Now.AddYears(1);
-
                 var GetRequestID = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.RequestID).FirstOrDefault();
+                var GetAdministratorEmail = db.RequestForDemo.Where(x => x.RequestID == GetRequestID).Select(x => x.AdministratorEmail).FirstOrDefault();
+                var GetOrganizationFullName = db.RequestForDemo.Where(x => x.RequestID == GetRequestID).Select(x => x.OrganizationFullName).FirstOrDefault();
                 var GetTenantID = db.Catalog.Where(x => x.RequestID == GetRequestID).Select(x => x.TenantID).FirstOrDefault();
 
+                if (AdministratorEmail == null)
+                {
+                    LogHelper.Log(Log.Event.ACTIVATE, "AdministratorEmail is null");
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Error("Please Input AdministratorEmail");
+                }
+                if (GetAdministratorEmail == null)
+                {
+                    LogHelper.Log(Log.Event.ACTIVATE, "RequestID not found");
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    return Error("This AdministratorEmail cannot be found");
+                }
+                if (IsOnboarded == false)
+                {
+                    LogHelper.Log(Log.Event.ACTIVATE, "The Organization" + " " + "'" + GetOrganizationFullName + "'" + " " + "has not been Onboarded");
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    return Error("The Organization" + " " + " ' " + GetOrganizationFullName + " ' " + " " + "has not been Onboarded");
+                }
                 var Tenant = db.Catalog.Find(GetTenantID);
                 Tenant.IsDemo = false;
                 Tenant.IsActive = true;
@@ -492,7 +519,7 @@ namespace ProcureEaseAPI.Controllers
                     data = db.Catalog.Select(x => new
                     {
                         x.OrganizationID,
-                        OrganizationName = db.OrganizationSettings.Where(y => x.OrganizationID == y.OrganizationID).Select(y => y.OrganizationNameInFull).FirstOrDefault(),
+                        OrganizationName = db.OrganizationSettings.Where(y => y.OrganizationID == x.OrganizationID).Select(y => y.OrganizationNameInFull).FirstOrDefault(),
                         x.IsDemo,
                         x.IsActive
                     })
@@ -500,7 +527,7 @@ namespace ProcureEaseAPI.Controllers
             }
             catch (Exception ex)
             {
-                LogHelper.Log(Log.Event.ONBOARDING, ex.Message);
+                LogHelper.Log(Log.Event.ACTIVATE, ex.Message);
                 return Json(new
                 {
                     success = false,
@@ -511,7 +538,7 @@ namespace ProcureEaseAPI.Controllers
         }
         #endregion
 
-        #region ProcessDeActivatateMDAAccount
+        #region ProcessDeActivateMDAAccount
         [HttpPost]
         public ActionResult Deactivate(string AdministratorEmail)
         {
@@ -522,14 +549,6 @@ namespace ProcureEaseAPI.Controllers
 
                 var GetRequestID = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.RequestID).FirstOrDefault();
                 var GetTenantID = db.Catalog.Where(x => x.RequestID == GetRequestID).Select(x => x.TenantID).FirstOrDefault();
-                //var CheckActiveEndDate = db.Catalog.Where(x => x.RequestID == GetRequestID).Select(x => x.ActiveEndDate).FirstOrDefault();
-                //var NumberOfActiveDaysLeft =  (CheckActiveEndDate - CurrentTimeNow).Value.Days;  
-                //if (CheckActiveEndDate >= CurrentTimeNow)
-                //{
-                //    LogHelper.Log(Log.Event.DEACTIVATE, "This Account has" + " "  + NumberOfActiveDaysLeft + " active days left before deactivation" );
-                //    Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                //    return Error("This Account has" + " " + NumberOfActiveDaysLeft + " active days left before deactivation");
-                //}
                 var Tenant = db.Catalog.Find(GetTenantID);
                 Tenant.IsActive = false;
                 Tenant.DateModified = CurrentTimeNow;

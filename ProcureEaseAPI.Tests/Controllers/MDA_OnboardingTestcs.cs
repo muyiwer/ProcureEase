@@ -75,15 +75,27 @@ namespace ProcureEaseAPI.Tests.Controllers
         }
 
         [TestMethod]
-        public void TestActivate()
+        public void TestActivate_Unsuccessful()
         {
             string AdministatorEmail = "aajekuko@techspecialistlimited.com";
+            bool IsOnboarded = false;
             var testActivate = new HomeController();
-            JsonResult result = (JsonResult)testActivate.Activate(AdministatorEmail);
+            JsonResult result = (JsonResult)testActivate.Activate(AdministatorEmail, IsOnboarded);
+            Console.WriteLine(result.Data);
+            Assert.IsFalse((result.Data + "").Contains("This Organization has not been Onboarded"));
+        }
+
+        [TestMethod]
+        public void TestActivate_Successful()
+        {
+            string AdministatorEmail = "annieajeks@gmail.com";
+            bool IsOnboarded = true;
+            var testActivate = new HomeController();
+            JsonResult result = (JsonResult)testActivate.Activate(AdministatorEmail, IsOnboarded);
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("Organization Account has been Activated Successfully"));
         }
-        
+
         [TestMethod]
         public void TestDeactivate_successful()
         {

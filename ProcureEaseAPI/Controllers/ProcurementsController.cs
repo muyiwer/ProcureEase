@@ -1030,7 +1030,7 @@ namespace ProcureEaseAPI.Controllers
         // GET: Procurements/ProcurementNeedsSummary
         [Providers.Authorize]
         [HttpGet]
-        public ActionResult ProcurementNeedsSummary()
+        public ActionResult ProcurementNeedsSummary(string budgetYearId, string departmentId)
         {
             try
             {
@@ -1047,11 +1047,185 @@ namespace ProcureEaseAPI.Controllers
                 }
                 int ProcurementStatusID = 0;
                 int.TryParse(GetConfiguration("PendingProcurementStatusID"), out ProcurementStatusID);
-                var DepartmentName = db.Procurements.Where(x=> x.TenantID == tenantId).Select(x => x.DepartmentID).Distinct();
+                if (string.IsNullOrEmpty(budgetYearId) && string.IsNullOrEmpty(departmentId))
+                {
+                    return Json(new
+                    {
+                        success = true,
+                        message = "All procurement needs summary.",
+                        data = new
+                        {
+                            ProjectSummary = db.Procurements.Where(x => x.TenantID == tenantId).Select(x => new
+                            {
+                                x.Department.DepartmentName,
+                                BudgetYear = (int?)x.BudgetYear.BudgetYear1.Value.Year,
+                                PendingProcurements = db.Procurements.Where(a => a.TenantID == tenantId && a.DepartmentID == x.DepartmentID && a.BudgetYear.BudgetYear1.Value.Year == x.BudgetYear.BudgetYear1.Value.Year && a.ProcurementStatusID == ProcurementStatusID).Count(),
+                                ProjectTotalCost = db.Items.Where(a => a.TenantID == tenantId && a.Procurements.DepartmentID == x.DepartmentID && a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.UnitPrice).Sum()
+                                             * db.Items.Where(a => a.Procurements.DepartmentID == x.DepartmentID && a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.Quantity).Sum(),
+                                ProjectTotalCostStatus = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == x.DepartmentID && z.Procurements.BudgetYearID == x.BudgetYearID && z.Procurements.ProcurementStatusID != ProcurementStatusID).Select(y => y.UnitPrice == null == true || false).FirstOrDefault(),
+                                x.DepartmentID,
+                                x.BudgetYearID
+                            }).Distinct(),
+                            BudgetYear = db.BudgetYear.Where(x => x.TenantID == tenantId).Select(x => new
+                            {
+                                x.BudgetYearID,
+                                BudgetYear = (int?)x.BudgetYear1.Value.Year
+                            }),
+                            Department = db.Department.Where(x => x.TenantID == tenantId).Select(x => new
+                            {
+                                x.DepartmentID,
+                                x.DepartmentName
+                            })
+                        }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                if (!string.IsNullOrEmpty(budgetYearId) && !string.IsNullOrEmpty(departmentId))
+                {
+                    Guid budgetYearGuidId = new Guid();
+                    Guid DepartmentGuidId = new Guid();
+                    try
+                    {
+                        budgetYearGuidId = Guid.Parse(budgetYearId);
+                        DepartmentGuidId = Guid.Parse(departmentId);
+                    }
+                    catch (FormatException ex)
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = "" + ex.Message,
+                            data = new
+                            { }
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+                    return Json(new
+                    {
+                        success = true,
+                        message = "All procurement needs summary.",
+                        data = new
+                        {
+                            ProjectSummary = db.Procurements.Where(x => x.TenantID == tenantId && x.BudgetYearID==budgetYearGuidId &&  x.DepartmentID == DepartmentGuidId).Select(x => new
+                            {
+                                x.Department.DepartmentName,
+                                BudgetYear = (int?)x.BudgetYear.BudgetYear1.Value.Year,
+                                PendingProcurements = db.Procurements.Where(a => a.TenantID == tenantId && a.DepartmentID == x.DepartmentID && a.BudgetYear.BudgetYear1.Value.Year == x.BudgetYear.BudgetYear1.Value.Year && a.ProcurementStatusID == ProcurementStatusID).Count(),
+                                ProjectTotalCost = db.Items.Where(a => a.TenantID == tenantId && a.Procurements.DepartmentID == x.DepartmentID && a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.UnitPrice).Sum()
+                                             * db.Items.Where(a => a.Procurements.DepartmentID == x.DepartmentID && a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.Quantity).Sum(),
+                                ProjectTotalCostStatus = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == x.DepartmentID && z.Procurements.BudgetYearID == x.BudgetYearID && z.Procurements.ProcurementStatusID != ProcurementStatusID).Select(y => y.UnitPrice == null == true || false).FirstOrDefault(),
+                                x.DepartmentID,
+                                x.BudgetYearID
+                            }).Distinct(),
+                            BudgetYear = db.BudgetYear.Where(x => x.TenantID == tenantId).Select(x => new
+                            {
+                                x.BudgetYearID,
+                                BudgetYear = (int?)x.BudgetYear1.Value.Year
+                            }),
+                            Department = db.Department.Where(x => x.TenantID == tenantId).Select(x => new
+                            {
+                                x.DepartmentID,
+                                x.DepartmentName
+                            })
+                        }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                 if (!string.IsNullOrEmpty(budgetYearId) && string.IsNullOrEmpty(departmentId))
+                {
+                    Guid budgetYearGuidId = new Guid();
+                    try
+                    {
+                        budgetYearGuidId = Guid.Parse(budgetYearId);
+                    }
+                    catch (FormatException ex)
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = "" + ex.Message,
+                            data = new
+                            { }
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+                    return Json(new
+                    {
+                        success = true,
+                        message = "All procurement needs summary.",
+                        data = new
+                        {
+                            ProjectSummary = db.Procurements.Where(x => x.TenantID == tenantId && x.BudgetYearID == budgetYearGuidId).Select(x => new
+                            {
+                                x.Department.DepartmentName,
+                                BudgetYear = (int?)x.BudgetYear.BudgetYear1.Value.Year,
+                                PendingProcurements = db.Procurements.Where(a => a.TenantID == tenantId && a.DepartmentID == x.DepartmentID && a.BudgetYear.BudgetYear1.Value.Year == x.BudgetYear.BudgetYear1.Value.Year && a.ProcurementStatusID == ProcurementStatusID).Count(),
+                                ProjectTotalCost = db.Items.Where(a => a.TenantID == tenantId && a.Procurements.DepartmentID == x.DepartmentID && a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.UnitPrice).Sum()
+                                              * db.Items.Where(a => a.Procurements.DepartmentID == x.DepartmentID && a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.Quantity).Sum(),
+                                ProjectTotalCostStatus = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == x.DepartmentID && z.Procurements.BudgetYearID == x.BudgetYearID && z.Procurements.ProcurementStatusID != ProcurementStatusID).Select(y => y.UnitPrice == null == true || false).FirstOrDefault(),
+                                x.DepartmentID,
+                                x.BudgetYearID
+                            }).Distinct(),
+                            BudgetYear = db.BudgetYear.Where(x => x.TenantID == tenantId).Select(x => new
+                            {
+                                x.BudgetYearID,
+                                BudgetYear = (int?)x.BudgetYear1.Value.Year
+                            }),
+                            Department = db.Department.Where(x => x.TenantID == tenantId).Select(x => new
+                            {
+                                x.DepartmentID,
+                                x.DepartmentName
+                            })
+                        }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                if (string.IsNullOrEmpty(budgetYearId) && !string.IsNullOrEmpty(departmentId))
+                {
+                    Guid DepartmentGuidId = new Guid();
+                    try
+                    {
+                        DepartmentGuidId = Guid.Parse(departmentId);
+                    }
+                    catch (FormatException ex)
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = "" + ex.Message,
+                            data = new
+                            { }
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+                    return Json(new
+                    {
+                        success = true,
+                        message = "All procurement needs summary.",
+                        data = new
+                        {
+                            ProjectSummary = db.Procurements.Where(x => x.TenantID == tenantId && x.DepartmentID == DepartmentGuidId).Select(x => new
+                            {
+                                x.Department.DepartmentName,
+                                BudgetYear = (int?)x.BudgetYear.BudgetYear1.Value.Year,
+                                PendingProcurements = db.Procurements.Where(a => a.TenantID == tenantId && a.DepartmentID == x.DepartmentID && a.BudgetYear.BudgetYear1.Value.Year == x.BudgetYear.BudgetYear1.Value.Year && a.ProcurementStatusID == ProcurementStatusID).Count(),
+                                ProjectTotalCost = db.Items.Where(a => a.TenantID == tenantId && a.Procurements.DepartmentID == x.DepartmentID && a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.UnitPrice).Sum()
+                                              * db.Items.Where(a => a.Procurements.DepartmentID == x.DepartmentID && a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.Quantity).Sum(),
+                                ProjectTotalCostStatus = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == x.DepartmentID && z.Procurements.BudgetYearID == x.BudgetYearID && z.Procurements.ProcurementStatusID != ProcurementStatusID).Select(y => y.UnitPrice == null == true || false).FirstOrDefault(),
+                                x.DepartmentID,
+                                x.BudgetYearID
+                            }).Distinct(),
+                            BudgetYear = db.BudgetYear.Where(x => x.TenantID == tenantId).Select(x => new
+                            {
+                                x.BudgetYearID,
+                                BudgetYear = (int?)x.BudgetYear1.Value.Year
+                            }),
+                            Department = db.Department.Where(x => x.TenantID == tenantId).Select(x => new
+                            {
+                                x.DepartmentID,
+                                x.DepartmentName
+                            })
+                        }
+                    }, JsonRequestBehavior.AllowGet);
+                }
                 return Json(new
                 {
                     success = true,
-                    message = "Procurement needs summary.",
+                    message = "All procurement needs summary.",
                     data = new
                     {
                         ProjectSummary = db.Procurements.Where(x => x.TenantID == tenantId).Select(x => new
@@ -1076,7 +1250,7 @@ namespace ProcureEaseAPI.Controllers
                             x.DepartmentName
                         })
                     }
-                }, JsonRequestBehavior.AllowGet); ;
+                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -1088,7 +1262,7 @@ namespace ProcureEaseAPI.Controllers
         //GET: Procurements/ProcurementNeeds
         [HttpGet]
         [Providers.Authorize]
-        public ActionResult ProcurementNeeds(string id = "", string id2 = "")
+        public ActionResult ProcurementNeeds(string budgetYearId , string departmentId)
         {
             string email = Request.Headers["Email"];
             Guid? tenantId = catalog.GetTenantIDFromClientURL(email);
@@ -1101,33 +1275,72 @@ namespace ProcureEaseAPI.Controllers
                     data = new { }
                 }, JsonRequestBehavior.AllowGet);
             }
-            switch (string.IsNullOrEmpty(id) && (string.IsNullOrEmpty(id2)))
+            if (string.IsNullOrEmpty(budgetYearId ) && string.IsNullOrEmpty(departmentId))
             {
-                case true:
-                    {
-                        return AllProcurementNeedsJson();
-                    }
-                default:
-                    {
-                        Guid guidID = new Guid();
-                        Guid guidID2 = new Guid();
-                        try
-                        {
-                            guidID = Guid.Parse(id);
-                            guidID2 = Guid.Parse(id2);
-                        }
-                        catch (FormatException ex)
-                        {
-                            Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                            LogHelper.Log(Log.Event.ALL_DRAFT_PROCUREMENT_NEEDS, "Guid format exeception");
-                            return Error(ex.Message);
-                        }
-                        var BudgetYear = db.BudgetYear.Where(x => x.TenantID == tenantId && x.BudgetYearID == guidID2).Select(x => x.BudgetYear1.Value.Year).FirstOrDefault();
-                        Response.StatusCode = (int)HttpStatusCode.OK;
-                        return ProcurementNeedsJson(guidID, BudgetYear,tenantId);
-
-                    }
+                return AllProcurementNeedsJson();
             }
+            if (!string.IsNullOrEmpty(budgetYearId ) && !string.IsNullOrEmpty(departmentId))
+            {
+                Guid budgetYearGuidId = new Guid();
+                Guid DepartmentGuidId = new Guid();
+                try
+                {
+                    budgetYearGuidId = Guid.Parse(budgetYearId );
+                    DepartmentGuidId = Guid.Parse(departmentId);
+                }
+                catch (FormatException ex)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "" + ex.Message,
+                        data = new
+                        { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                int budgetYear = db.BudgetYear.Where(x => x.BudgetYearID == budgetYearGuidId).Select(x => x.BudgetYear1.Value.Year).FirstOrDefault();
+                return ProcurementNeedsJson(DepartmentGuidId, budgetYear, tenantId);
+            }
+            if (!string.IsNullOrEmpty(budgetYearId ) && string.IsNullOrEmpty(departmentId))
+            {
+                Guid budgetYearGuidId = new Guid();              
+                try
+                {
+                    budgetYearGuidId = Guid.Parse(budgetYearId );
+                }
+                catch (FormatException ex)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "" + ex.Message,
+                        data = new
+                        { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                int budgetYear = db.BudgetYear.Where(x => x.BudgetYearID == budgetYearGuidId).Select(x => x.BudgetYear1.Value.Year).FirstOrDefault();
+                return ProcurementNeedsByBudgetYearIDJson( budgetYear, tenantId);
+            }
+            if (string.IsNullOrEmpty(budgetYearId ) && !string.IsNullOrEmpty(departmentId))
+            {
+                Guid DepartmentGuidId = new Guid();
+                try
+                {
+                    DepartmentGuidId = Guid.Parse(departmentId);
+                }
+                catch (FormatException ex)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "" + ex.Message,
+                        data = new
+                        { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                return ProcurementNeedsByDepartmentIDJson(DepartmentGuidId, tenantId);
+            }
+            return AllProcurementNeedsJson();
         }
 
         //POST: Procurement/ProcurementNeedsToPlan
@@ -1503,7 +1716,7 @@ namespace ProcureEaseAPI.Controllers
         //GET: Procurements/DraftNeeds
         [HttpGet]
         [Providers.Authorize]
-        public ActionResult ProcurementPlan(string id = "", string id2 = "")
+        public ActionResult ProcurementPlan(string budgetYearId, string departmentId)
         {
             string email = Request.Headers["Email"];
             Guid? tenantId = catalog.GetTenantIDFromClientURL(email);
@@ -1516,34 +1729,72 @@ namespace ProcureEaseAPI.Controllers
                     data = new { }
                 }, JsonRequestBehavior.AllowGet);
             }
-            switch (string.IsNullOrEmpty(id) && (string.IsNullOrEmpty(id2)))
+            if (string.IsNullOrEmpty(budgetYearId) && string.IsNullOrEmpty(departmentId))
             {
-                case true:
-                    {
-                        Response.StatusCode = (int)HttpStatusCode.OK;
-                        return AllProcurementPlanJson();
-                    }
-                default:
-                    {
-                        Guid guidID = new Guid();
-                        Guid guidID2 = new Guid();
-                        try
-                        {
-                            guidID = Guid.Parse(id);
-                            guidID2 = Guid.Parse(id2);
-                        }
-                        catch (FormatException ex)
-                        {
-                            Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                            LogHelper.Log(Log.Event.ALL_DRAFT_PROCUREMENT_NEEDS, "Guid format exeception");
-                            return Error(ex.Message);
-                        }
-                        var BudgetYear = db.BudgetYear.Where(x => x.TenantID == tenantId && x.BudgetYearID == guidID2).Select(x => x.BudgetYear1.Value.Year).FirstOrDefault();
-                        Response.StatusCode = (int)HttpStatusCode.OK;
-                        return ProcurementPlanJson(guidID, BudgetYear,tenantId);
-
-                    }
+                return AllProcurementPlanJson();
             }
+            if (!string.IsNullOrEmpty(budgetYearId) && !string.IsNullOrEmpty(departmentId))
+            {
+                Guid budgetYearGuidId = new Guid();
+                Guid DepartmentGuidId = new Guid();
+                try
+                {
+                    budgetYearGuidId = Guid.Parse(budgetYearId);
+                    DepartmentGuidId = Guid.Parse(departmentId);
+                }
+                catch (FormatException ex)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "" + ex.Message,
+                        data = new
+                        { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                int budgetYear = db.BudgetYear.Where(x => x.BudgetYearID == budgetYearGuidId).Select(x => x.BudgetYear1.Value.Year).FirstOrDefault();
+                return ProcurementPlanJson(DepartmentGuidId, budgetYear, tenantId);
+            }
+            if (!string.IsNullOrEmpty(budgetYearId) && string.IsNullOrEmpty(departmentId))
+            {
+                Guid budgetYearGuidId = new Guid();
+                try
+                {
+                    budgetYearGuidId = Guid.Parse(budgetYearId);
+                }
+                catch (FormatException ex)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "" + ex.Message,
+                        data = new
+                        { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                int budgetYear = db.BudgetYear.Where(x => x.BudgetYearID == budgetYearGuidId).Select(x => x.BudgetYear1.Value.Year).FirstOrDefault();
+                return ProcurementPlanByBudgetYearIDJson(budgetYear, tenantId);
+            }
+            if (string.IsNullOrEmpty(budgetYearId) && !string.IsNullOrEmpty(departmentId))
+            {
+                Guid DepartmentGuidId = new Guid();
+                try
+                {
+                    DepartmentGuidId = Guid.Parse(departmentId);
+                }
+                catch (FormatException ex)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "" + ex.Message,
+                        data = new
+                        { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                return ProcurementPlanByDepartmentIDJson(DepartmentGuidId, tenantId);
+            }
+            return AllProcurementNeedsJson();      
         }
 
 
@@ -1594,6 +1845,136 @@ namespace ProcureEaseAPI.Controllers
                         x.Status
                     }),
                     ProcurementMethod = db.ProcurementMethodOrganizationSettings.Where(x=> x.TenantID == tenantId && x.EnableProcurementMethod==true).Select(x => new
+                    {
+                        x.ProcurementMethodID,
+                        x.ProcurementMethod.Name
+                    }),
+                    ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(x => x.TenantID == tenantId && x.EnableProjectCategory == true).Select(x => new
+                    {
+                        x.ProjectCategoryID,
+                        x.ProjectCategory.Name
+                    }),
+                    BudgetYear = db.BudgetYear.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        x.BudgetYearID,
+                        BudgetYear = x.BudgetYear1.Value.Year
+                    })
+                }
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        private ActionResult ProcurementNeedsByDepartmentIDJson(Guid DepartmentID, Guid? tenantId)
+        {
+            int draftProcurementStatusID = 0;
+            int.TryParse(GetConfiguration("DraftProcurementStatusID"), out draftProcurementStatusID);
+            int attestedProcurementStatusID = 0;
+            int.TryParse(GetConfiguration("AttestedProcurementStatusID"), out attestedProcurementStatusID);
+            int approvedProcurementStatusID = 0;
+            int.TryParse(GetConfiguration("ApprovedProcurementStatusID"), out approvedProcurementStatusID);
+            return Json(new
+            {
+                success = true,
+                Message = "All procurement needs.",
+                data = new
+                {
+                    DepartmentName = db.Department.Where(x => x.TenantID == tenantId && x.DepartmentID == DepartmentID).Select(x => x.DepartmentName).FirstOrDefault(),
+                    Projects = db.Procurements.Where(x => x.TenantID == tenantId && x.DepartmentID == DepartmentID && x.ProcurementStatusID != attestedProcurementStatusID && x.ProcurementStatusID != draftProcurementStatusID).Select(x => new
+                    {
+                        x.ProcurementID,
+                        x.ProjectName,
+                        DateCreated = x.DateCreated.Value.ToString(),
+                        x.ProcurementMethodID,
+                        x.ProjectCategoryID,
+                        x.ProcurementStatusID,
+                        TotalProjectCost = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == DepartmentID  && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID != draftProcurementStatusID && z.Procurements.ProcurementStatusID != attestedProcurementStatusID).Select(z => z.UnitPrice).Sum()
+                                     * db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == DepartmentID  && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID != draftProcurementStatusID && z.Procurements.ProcurementStatusID != attestedProcurementStatusID).Select(z => z.Quantity).Sum(),
+                        ProjectTotalCostStatus = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == DepartmentID && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID != draftProcurementStatusID && z.Procurements.ProcurementStatusID != attestedProcurementStatusID).Select(y => y.UnitPrice != null == true || false).FirstOrDefault(),
+                        Deleted = false,
+                        Approved = db.Procurements.Where(z => z.TenantID == tenantId && z.ProcurementStatusID == x.ProcurementStatusID).Select(z => z.ProcurementStatusID == approvedProcurementStatusID == true | false).FirstOrDefault(),
+                        Items = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == DepartmentID &&  z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID != draftProcurementStatusID && z.Procurements.ProcurementStatusID != attestedProcurementStatusID).Select(z => new
+                        {
+                            z.ItemID,
+                            z.ItemName,
+                            ItemDescription = z.Description,
+                            z.ItemCodeID,
+                            ItemCode = z.ItemCode.ItemCode1,
+                            z.Quantity,
+                            z.UnitPrice,
+                            EstimatedCost = z.UnitPrice * z.Quantity,
+                            Deleted = false
+                        })
+                    }),
+                    ProcurementStatus = db.ProcurementStatus.Select(x => new
+                    {
+                        x.ProcurementStatusID,
+                        x.Status
+                    }),
+                    ProcurementMethod = db.ProcurementMethodOrganizationSettings.Where(x => x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
+                    {
+                        x.ProcurementMethodID,
+                        x.ProcurementMethod.Name
+                    }),
+                    ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(x => x.TenantID == tenantId && x.EnableProjectCategory == true).Select(x => new
+                    {
+                        x.ProjectCategoryID,
+                        x.ProjectCategory.Name
+                    }),
+                    BudgetYear = db.BudgetYear.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        x.BudgetYearID,
+                        BudgetYear = x.BudgetYear1.Value.Year
+                    })
+                }
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        private ActionResult ProcurementNeedsByBudgetYearIDJson(int BudgetYear, Guid? tenantId)
+        {
+            int draftProcurementStatusID = 0;
+            int.TryParse(GetConfiguration("DraftProcurementStatusID"), out draftProcurementStatusID);
+            int attestedProcurementStatusID = 0;
+            int.TryParse(GetConfiguration("AttestedProcurementStatusID"), out attestedProcurementStatusID);
+            int approvedProcurementStatusID = 0;
+            int.TryParse(GetConfiguration("ApprovedProcurementStatusID"), out approvedProcurementStatusID);
+            return Json(new
+            {
+                success = true,
+                Message = "All procurement needs.",
+                data = new
+                {
+                    DepartmentName = "All departments",
+                    Projects = db.Procurements.Where(x => x.TenantID == tenantId  && x.BudgetYear.BudgetYear1.Value.Year == BudgetYear && x.ProcurementStatusID != attestedProcurementStatusID && x.ProcurementStatusID != draftProcurementStatusID).Select(x => new
+                    {
+                        x.ProcurementID,
+                        x.ProjectName,
+                        DateCreated = x.DateCreated.Value.ToString(),
+                        x.ProcurementMethodID,
+                        x.ProjectCategoryID,
+                        x.ProcurementStatusID,
+                        TotalProjectCost = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID != draftProcurementStatusID && z.Procurements.ProcurementStatusID != attestedProcurementStatusID).Select(z => z.UnitPrice).Sum()
+                                     * db.Items.Where(z => z.TenantID == tenantId  && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID != draftProcurementStatusID && z.Procurements.ProcurementStatusID != attestedProcurementStatusID).Select(z => z.Quantity).Sum(),
+                        ProjectTotalCostStatus = db.Items.Where(z => z.TenantID == tenantId  && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID != draftProcurementStatusID && z.Procurements.ProcurementStatusID != attestedProcurementStatusID).Select(y => y.UnitPrice != null == true || false).FirstOrDefault(),
+                        Deleted = false,
+                        Approved = db.Procurements.Where(z => z.TenantID == tenantId && z.ProcurementStatusID == x.ProcurementStatusID).Select(z => z.ProcurementStatusID == approvedProcurementStatusID == true | false).FirstOrDefault(),
+                        Items = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID != draftProcurementStatusID && z.Procurements.ProcurementStatusID != attestedProcurementStatusID).Select(z => new
+                        {
+                            z.ItemID,
+                            z.ItemName,
+                            ItemDescription = z.Description,
+                            z.ItemCodeID,
+                            ItemCode = z.ItemCode.ItemCode1,
+                            z.Quantity,
+                            z.UnitPrice,
+                            EstimatedCost = z.UnitPrice * z.Quantity,
+                            Deleted = false
+                        })
+                    }),
+                    ProcurementStatus = db.ProcurementStatus.Select(x => new
+                    {
+                        x.ProcurementStatusID,
+                        x.Status
+                    }),
+                    ProcurementMethod = db.ProcurementMethodOrganizationSettings.Where(x => x.TenantID == tenantId && x.EnableProcurementMethod == true).Select(x => new
                     {
                         x.ProcurementMethodID,
                         x.ProcurementMethod.Name
@@ -1761,6 +2142,147 @@ namespace ProcureEaseAPI.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
+        private ActionResult ProcurementPlanByBudgetYearIDJson(int BudgetYear, Guid? tenantId)
+        {
+            int approvedProcurementStatusID = 0;
+            int.TryParse(GetConfiguration("ApprovedProcurementStatusID"), out approvedProcurementStatusID);
+            return Json(new
+            {
+                success = true,
+                Message = "All procurement Plans.",
+                data = new
+                {
+                    TotalProjectCost = db.Items.Where(z => z.TenantID == tenantId  && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.Procurements.ProcurementStatusID == approvedProcurementStatusID).Select(z => z.UnitPrice).Sum()
+                                     * db.Items.Where(z => z.TenantID == tenantId && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.Procurements.ProcurementStatusID == approvedProcurementStatusID).Select(z => z.Quantity).Sum(),
+                    ProjectTotalCostStatus = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.Procurements.ProcurementStatusID == approvedProcurementStatusID).Select(y => y.UnitPrice != null == true || false).FirstOrDefault(),
+                    DepartmentName = db.Department.Where(x => x.TenantID == tenantId).Select(x => x.DepartmentName).FirstOrDefault(),
+                    Projects = db.Procurements.Where(x => x.TenantID == tenantId && x.BudgetYear.BudgetYear1.Value.Year == BudgetYear && x.ProcurementStatusID == approvedProcurementStatusID).Select(x => new
+                    {
+                        x.ProcurementID,
+                        x.ProjectName,
+                        DateCreated = x.DateCreated.Value.ToString(),
+                        x.ProcurementMethodID,
+                        x.ProjectCategoryID,
+                        x.ProcurementStatusID,
+                        Deleted = false,
+                        Items = db.Items.Where(z => z.TenantID == tenantId  && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == approvedProcurementStatusID).Select(z => new
+                        {
+                            z.ItemID,
+                            z.ItemName,
+                            ItemDescription = z.Description,
+                            z.ItemCodeID,
+                            ItemCode = z.ItemCode.ItemCode1,
+                            z.Quantity,
+                            z.UnitPrice,
+                            EstimatedCost = z.UnitPrice * z.Quantity,
+                            Deleted = false
+                        })
+                    }),
+                    ProcurementStatus = db.ProcurementStatus.Select(x => new
+                    {
+                        x.ProcurementStatusID,
+                        x.Status
+                    }),
+                    ProcurementMethod = db.ProcurementMethodOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        x.ProcurementMethodID,
+                        x.ProcurementMethod.Name
+                    }),
+                    SourceOfFunds = db.SourceOfFundsOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        x.SourceOfFundID,
+                        Name = x.SourceOfFunds.SourceOfFund
+                    }),
+                    ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        x.ProjectCategoryID,
+                        x.ProjectCategory.Name
+                    }),
+                    BudgetYear = db.BudgetYear.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        x.BudgetYearID,
+                        BudgetYear = x.BudgetYear1.Value.Year
+                    }),
+                    Adverts = db.Adverts.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        x.AdvertID,
+                        x.Headline
+                    })
+                }
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        private ActionResult ProcurementPlanByDepartmentIDJson(Guid DepartmentID, Guid? tenantId)
+        {
+            int approvedProcurementStatusID = 0;
+            int.TryParse(GetConfiguration("ApprovedProcurementStatusID"), out approvedProcurementStatusID);
+            return Json(new
+            {
+                success = true,
+                Message = "All procurement Plans.",
+                data = new
+                {
+                    TotalProjectCost = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == DepartmentID && z.Procurements.ProcurementStatusID == approvedProcurementStatusID).Select(z => z.UnitPrice).Sum()
+                                     * db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == DepartmentID  && z.Procurements.ProcurementStatusID == approvedProcurementStatusID).Select(z => z.Quantity).Sum(),
+                    ProjectTotalCostStatus = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == DepartmentID  && z.Procurements.ProcurementStatusID == approvedProcurementStatusID).Select(y => y.UnitPrice != null == true || false).FirstOrDefault(),
+                    DepartmentName = db.Department.Where(x => x.TenantID == tenantId && x.DepartmentID == DepartmentID).Select(x => x.DepartmentName).FirstOrDefault(),
+                    Projects = db.Procurements.Where(x => x.TenantID == tenantId && x.DepartmentID == DepartmentID  && x.ProcurementStatusID == approvedProcurementStatusID).Select(x => new
+                    {
+                        x.ProcurementID,
+                        x.ProjectName,
+                        DateCreated = x.DateCreated.Value.ToString(),
+                        x.ProcurementMethodID,
+                        x.ProjectCategoryID,
+                        x.ProcurementStatusID,
+                        Deleted = false,
+                        Items = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == DepartmentID  && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == approvedProcurementStatusID).Select(z => new
+                        {
+                            z.ItemID,
+                            z.ItemName,
+                            ItemDescription = z.Description,
+                            z.ItemCodeID,
+                            ItemCode = z.ItemCode.ItemCode1,
+                            z.Quantity,
+                            z.UnitPrice,
+                            EstimatedCost = z.UnitPrice * z.Quantity,
+                            Deleted = false
+                        })
+                    }),
+                    ProcurementStatus = db.ProcurementStatus.Select(x => new
+                    {
+                        x.ProcurementStatusID,
+                        x.Status
+                    }),
+                    ProcurementMethod = db.ProcurementMethodOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        x.ProcurementMethodID,
+                        x.ProcurementMethod.Name
+                    }),
+                    SourceOfFunds = db.SourceOfFundsOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        x.SourceOfFundID,
+                        Name = x.SourceOfFunds.SourceOfFund
+                    }),
+                    ProjectCategory = db.ProjectCategoryOrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        x.ProjectCategoryID,
+                        x.ProjectCategory.Name
+                    }),
+                    BudgetYear = db.BudgetYear.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        x.BudgetYearID,
+                        BudgetYear = x.BudgetYear1.Value.Year
+                    }),
+                    Adverts = db.Adverts.Where(x => x.TenantID == tenantId).Select(x => new
+                    {
+                        x.AdvertID,
+                        x.Headline
+                    })
+                }
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+
         private ActionResult AllProcurementPlanJson()
         {
             string email = Request.Headers["Email"];
@@ -1852,7 +2374,7 @@ namespace ProcureEaseAPI.Controllers
         // GET: Procurements/ProcurementPlanSummary
         [Providers.Authorize]
         [HttpGet]
-        public ActionResult ProcurementPlanSummary()
+        public ActionResult ProcurementPlanSummary(string budgetYearId, string departmentId)
         {
             try
             {
@@ -1869,6 +2391,176 @@ namespace ProcureEaseAPI.Controllers
                 }
                 int ProcurementStatusID = 0;
                 int.TryParse(GetConfiguration("ApprovedProcurementStatusID"), out ProcurementStatusID);
+                if (string.IsNullOrEmpty(budgetYearId) && string.IsNullOrEmpty(departmentId))
+                {
+                    return Json(new
+                    {
+                        success = true,
+                        message = "All procurement needs summary.",
+                        data = new
+                        {
+                            ProjectSummary = db.Procurements.Where(x => x.TenantID == tenantId).Select(x => new
+                            {
+                                x.Department.DepartmentName,
+                                BudgetYear = (int?)x.BudgetYear.BudgetYear1.Value.Year,
+                                PendingProcurements = db.Procurements.Where(a => a.TenantID == tenantId && a.DepartmentID == x.DepartmentID && a.BudgetYear.BudgetYear1.Value.Year == x.BudgetYear.BudgetYear1.Value.Year && a.ProcurementStatusID == ProcurementStatusID).Count(),
+                                ProjectTotalCost = db.Items.Where(a => a.TenantID == tenantId && a.Procurements.DepartmentID == x.DepartmentID && a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.UnitPrice).Sum()
+                                             * db.Items.Where(a => a.Procurements.DepartmentID == x.DepartmentID && a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.Quantity).Sum(),
+                                ProjectTotalCostStatus = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == x.DepartmentID && z.Procurements.BudgetYearID == x.BudgetYearID && z.Procurements.ProcurementStatusID != ProcurementStatusID).Select(y => y.UnitPrice == null == true || false).FirstOrDefault(),
+                                x.DepartmentID,
+                                x.BudgetYearID
+                            }).Distinct(),
+                            BudgetYear = db.BudgetYear.Where(x => x.TenantID == tenantId).Select(x => new
+                            {
+                                x.BudgetYearID,
+                                BudgetYear = (int?)x.BudgetYear1.Value.Year
+                            }),
+                            Department = db.Department.Where(x => x.TenantID == tenantId).Select(x => new
+                            {
+                                x.DepartmentID,
+                                x.DepartmentName
+                            })
+                        }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                if (!string.IsNullOrEmpty(budgetYearId) && !string.IsNullOrEmpty(departmentId))
+                {
+                    Guid budgetYearGuidId = new Guid();
+                    Guid DepartmentGuidId = new Guid();
+                    try
+                    {
+                        budgetYearGuidId = Guid.Parse(budgetYearId);
+                        DepartmentGuidId = Guid.Parse(departmentId);
+                    }
+                    catch (FormatException ex)
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = "" + ex.Message,
+                            data = new
+                            { }
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Procurement plan summary.",
+                        data = new
+                        {
+                            TotalCost = db.Items.Where(a => a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID && a.Procurements.BudgetYearID == budgetYearGuidId && a.Procurements.DepartmentID == DepartmentGuidId).Select(a => a.UnitPrice).Sum()
+                                        * db.Items.Where(a => a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID && a.Procurements.BudgetYearID == budgetYearGuidId && a.Procurements.DepartmentID == DepartmentGuidId).Select(a => a.Quantity).Sum(),
+                            ProcurementPlans = db.Procurements.Where(x => x.TenantID == tenantId && x.BudgetYearID == budgetYearGuidId && x.DepartmentID == DepartmentGuidId).Select(x => new
+                            {
+                                TotalProject = db.Procurements.Where(a => a.TenantID == tenantId && a.BudgetYearID == x.BudgetYearID && a.DepartmentID == x.DepartmentID && a.ProcurementStatusID == ProcurementStatusID).Count(),
+                                ProjectTotalCost = db.Items.Where(a => a.TenantID == tenantId && a.Procurements.BudgetYearID == x.BudgetYearID && a.Procurements.DepartmentID == x.DepartmentID && a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.UnitPrice).Sum()
+                                              * db.Items.Where(a => a.TenantID == tenantId && a.Procurements.BudgetYearID == x.BudgetYearID && a.Procurements.DepartmentID == x.DepartmentID && a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.Quantity).Sum(),
+                                x.DepartmentID,
+                                x.Department.DepartmentName,
+                                x.BudgetYearID
+                            }).Distinct(),
+                            BudgetYear = db.BudgetYear.Where(x => x.TenantID == tenantId).Select(x => new {
+                                x.BudgetYearID,
+                                BudgetYear = (int?)x.BudgetYear1.Value.Year
+                            }),
+                            Advert = db.Adverts.Where(x => x.TenantID == tenantId).Select(x => new {
+                                x.AdvertID,
+                                x.Headline
+                            })
+                        }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                if (!string.IsNullOrEmpty(budgetYearId) && string.IsNullOrEmpty(departmentId))
+                {
+                    Guid budgetYearGuidId = new Guid();
+                    try
+                    {
+                        budgetYearGuidId = Guid.Parse(budgetYearId);
+                    }
+                    catch (FormatException ex)
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = "" + ex.Message,
+                            data = new
+                            { }
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Procurement plan summary.",
+                        data = new
+                        {
+                            TotalCost = db.Items.Where(a => a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID && a.Procurements.BudgetYearID == budgetYearGuidId).Select(a => a.UnitPrice).Sum()
+                                        * db.Items.Where(a => a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID && a.Procurements.BudgetYearID == budgetYearGuidId).Select(a => a.Quantity).Sum(),
+                            ProcurementPlans = db.Procurements.Where(x => x.TenantID == tenantId && x.BudgetYearID== budgetYearGuidId).Select(x => new
+                            {
+                                TotalProject = db.Procurements.Where(a => a.TenantID == tenantId && a.BudgetYearID == x.BudgetYearID && a.ProcurementStatusID == ProcurementStatusID).Count(),
+                                ProjectTotalCost = db.Items.Where(a => a.TenantID == tenantId && a.Procurements.BudgetYearID == x.BudgetYearID && a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.UnitPrice).Sum()
+                                             * db.Items.Where(a => a.TenantID == tenantId && a.Procurements.BudgetYearID == x.BudgetYearID && a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.Quantity).Sum(),
+                                x.DepartmentID,
+                                x.Department.DepartmentName,
+                                x.BudgetYearID
+                            }).Distinct(),
+                            BudgetYear = db.BudgetYear.Where(x => x.TenantID == tenantId).Select(x => new {
+                                x.BudgetYearID,
+                                BudgetYear = (int?)x.BudgetYear1.Value.Year
+                            }),
+                            Advert = db.Adverts.Where(x => x.TenantID == tenantId).Select(x => new {
+                                x.AdvertID,
+                                x.Headline
+                            })
+                        }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                if (string.IsNullOrEmpty(budgetYearId) && !string.IsNullOrEmpty(departmentId))
+                {
+                    Guid DepartmentGuidId = new Guid();
+                    try
+                    {
+                        DepartmentGuidId = Guid.Parse(departmentId);
+                    }
+                    catch (FormatException ex)
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = "" + ex.Message,
+                            data = new
+                            { }
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Procurement plan summary.",
+                        data = new
+                        {
+                            TotalCost = db.Items.Where(a => a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID && a.Procurements.DepartmentID==DepartmentGuidId).Select(a => a.UnitPrice).Sum()
+                                       * db.Items.Where(a => a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID && a.Procurements.DepartmentID == DepartmentGuidId).Select(a => a.Quantity).Sum(),
+                            ProcurementPlans = db.Procurements.Where(x => x.TenantID == tenantId && x.DepartmentID == DepartmentGuidId).Select(x => new
+                            {                            
+                                TotalProject = db.Procurements.Where(a => a.TenantID == tenantId && a.DepartmentID == x.DepartmentID && a.ProcurementStatusID == ProcurementStatusID).Count(),
+                                ProjectTotalCost = db.Items.Where(a => a.TenantID == tenantId && a.Procurements.DepartmentID == x.DepartmentID && a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.UnitPrice).Sum()
+                                             * db.Items.Where(a => a.TenantID == tenantId && a.Procurements.DepartmentID == x.DepartmentID && a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.Quantity).Sum(),
+                                x.DepartmentID,
+                                x.Department.DepartmentName,
+                                x.BudgetYearID
+                            }).Distinct(),
+                            BudgetYear = db.BudgetYear.Where(x => x.TenantID == tenantId).Select(x => new {
+                                x.BudgetYearID,
+                                BudgetYear = (int?)x.BudgetYear1.Value.Year
+                            }),
+                            Advert = db.Adverts.Where(x => x.TenantID == tenantId).Select(x => new {
+                                x.AdvertID,
+                                x.Headline
+                            })
+                        }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+
                 return Json(new
                 {
                     success = true,

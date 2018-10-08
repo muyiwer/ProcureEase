@@ -180,7 +180,7 @@ namespace ProcureEaseAPI.Controllers
                 try
                 {
                    var clientUrl = Request.UrlReferrer.ToString();
-                    string newTemplateContent = string.Format(Body, " " + "http://" + clientUrl + ".procureease.com.ng" + "/#/signup/" + UserProfile.UserEmail);
+                    string newTemplateContent = string.Format(Body, " " +clientUrl + "/#/signup/" + UserProfile.UserEmail);
                     Message message = new Message(RecipientEmail, Subject, newTemplateContent);
                     EmailHelper emailHelper = new EmailHelper();
                     await emailHelper.AddEmailToQueue(message);
@@ -188,7 +188,7 @@ namespace ProcureEaseAPI.Controllers
                 catch (NullReferenceException)
                 {
                     var backendUrl = System.Web.HttpContext.Current.Request.Url.Host;
-                    string newTemplateContent = string.Format(Body, " " + "http://" + backendUrl + ".procureease.com.ng" + "/#/signup/" + UserProfile.UserEmail);
+                    string newTemplateContent = string.Format(Body, " "+ backendUrl + "/#/signup/" + UserProfile.UserEmail);
                     Message message = new Message(RecipientEmail, Subject, newTemplateContent);
                     EmailHelper emailHelper = new EmailHelper();
                     await emailHelper.AddEmailToQueue(message);
@@ -260,7 +260,7 @@ namespace ProcureEaseAPI.Controllers
                 try
                 {
                     var clientUrl = Request.UrlReferrer.ToString();
-                    string newTemplateContent = string.Format(Body, "http://" + clientUrl + ".procureease.com.ng" + "/#/resetpassword/" + UserEmail + "/" + PasswordToken);
+                    string newTemplateContent = string.Format(Body, clientUrl  + "/#!/resetpassword/" + UserEmail + "/" + PasswordToken);
                     Message message = new Message(RecipientEmail, Subject, newTemplateContent);
                     EmailHelper emailHelper = new EmailHelper();
                     await emailHelper.AddEmailToQueue(message);
@@ -268,7 +268,7 @@ namespace ProcureEaseAPI.Controllers
                 catch (NullReferenceException)
                 {
                     var backendUrl = System.Web.HttpContext.Current.Request.Url.Host;
-                    string newTemplateContent = string.Format(Body, "http://" + backendUrl + "/#/resetpassword/" + UserEmail + "/" + PasswordToken);
+                    string newTemplateContent = string.Format(Body,backendUrl + "/#/resetpassword/" + UserEmail + "/" + PasswordToken);
                     Message message = new Message(RecipientEmail, Subject, newTemplateContent);
                     EmailHelper emailHelper = new EmailHelper();
                     await emailHelper.AddEmailToQueue(message);

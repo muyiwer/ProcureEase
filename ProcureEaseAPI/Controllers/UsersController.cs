@@ -180,7 +180,7 @@ namespace ProcureEaseAPI.Controllers
                 try
                 {
                    var clientUrl = Request.UrlReferrer.ToString();
-                    string newTemplateContent = string.Format(Body, " " + "http://" + clientUrl + ".procureease.com.ng" + "/#/signup/" + UserProfile.UserEmail);
+                    string newTemplateContent = string.Format(Body, " " +clientUrl + "/#/signup/" + UserProfile.UserEmail);
                     Message message = new Message(RecipientEmail, Subject, newTemplateContent);
                     EmailHelper emailHelper = new EmailHelper();
                     await emailHelper.AddEmailToQueue(message);
@@ -188,7 +188,7 @@ namespace ProcureEaseAPI.Controllers
                 catch (NullReferenceException)
                 {
                     var backendUrl = System.Web.HttpContext.Current.Request.Url.Host;
-                    string newTemplateContent = string.Format(Body, " " + "http://" + backendUrl + ".procureease.com.ng" + "/#/signup/" + UserProfile.UserEmail);
+                    string newTemplateContent = string.Format(Body, " "+ backendUrl + "/#/signup/" + UserProfile.UserEmail);
                     Message message = new Message(RecipientEmail, Subject, newTemplateContent);
                     EmailHelper emailHelper = new EmailHelper();
                     await emailHelper.AddEmailToQueue(message);
@@ -260,7 +260,7 @@ namespace ProcureEaseAPI.Controllers
                 try
                 {
                     var clientUrl = Request.UrlReferrer.ToString();
-                    string newTemplateContent = string.Format(Body, "http://" + clientUrl + ".procureease.com.ng" + "/#/resetpassword/" + UserEmail + "/" + PasswordToken);
+                    string newTemplateContent = string.Format(Body, clientUrl  + "/#!/resetpassword/" + UserEmail + "/" + PasswordToken);
                     Message message = new Message(RecipientEmail, Subject, newTemplateContent);
                     EmailHelper emailHelper = new EmailHelper();
                     await emailHelper.AddEmailToQueue(message);
@@ -268,7 +268,7 @@ namespace ProcureEaseAPI.Controllers
                 catch (NullReferenceException)
                 {
                     var backendUrl = System.Web.HttpContext.Current.Request.Url.Host;
-                    string newTemplateContent = string.Format(Body, "http://" + backendUrl + "/#/resetpassword/" + UserEmail + "/" + PasswordToken);
+                    string newTemplateContent = string.Format(Body,backendUrl + "/#/resetpassword/" + UserEmail + "/" + PasswordToken);
                     Message message = new Message(RecipientEmail, Subject, newTemplateContent);
                     EmailHelper emailHelper = new EmailHelper();
                     await emailHelper.AddEmailToQueue(message);
@@ -420,8 +420,10 @@ namespace ProcureEaseAPI.Controllers
                     UserName = UserProfile.UserEmail
                 };
                 var CheckUserDepartmentName = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.Department1.DepartmentName).FirstOrDefault();
+                var checkIfUserIsHeadOfDepartment = db.Department.Where(x => x.UserProfile.UserEmail == UserProfile.UserEmail).ToList();
+                bool IsHeadOfdepartment = checkIfUserIsHeadOfDepartment == null ? false : true;
                 var UserDepartmentName = CheckUserDepartmentName;
-                ApplicationUser User =  await authRepository.RegisterUser(UserModel,UserDepartmentName);
+                ApplicationUser User =  await authRepository.RegisterUser(UserModel,UserDepartmentName,IsHeadOfdepartment);
                 var Id = db.AspNetUsers.Where(x => x.Email == UserProfile.UserEmail).Select(x => x.Id).FirstOrDefault();
                 var getUserId = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).Select(x => x.UserID).FirstOrDefault();
                 var userId = getUserId;
@@ -872,7 +874,7 @@ namespace ProcureEaseAPI.Controllers
 
         [HttpGet]
          [Providers.Authorize]
-        public ActionResult GetAllUsers(string departmentId = "")
+        public ActionResult GetAllUsers(string id = "")
         {
             string email = Request.Headers["Email"];
             var SubDomain = catalog.GetSubDomainFromClientURL(email);
@@ -887,7 +889,7 @@ namespace ProcureEaseAPI.Controllers
                     data = new { }
                 }, JsonRequestBehavior.AllowGet);
             }
-            if (string.IsNullOrEmpty(departmentId))
+            if (string.IsNullOrEmpty(id))
             {
                 return Json(new
                 {
@@ -908,7 +910,7 @@ namespace ProcureEaseAPI.Controllers
                 Guid departmentGuidId = new Guid();
                 try
                 {
-                    departmentGuidId = Guid.Parse(departmentId);
+                    departmentGuidId = Guid.Parse(id);
                 }
                 catch (FormatException ex)
                 {

@@ -331,6 +331,7 @@
           <Property Name="DateCreated" Type="datetime" />
           <Property Name="DemoStartDate" Type="datetime" />
           <Property Name="DemoEndDate" Type="datetime" />
+          <Property Name="IsOnboarded" Type="bit" />
         </EntityType>
         <EntityType Name="SourceOfFunds">
           <Key>
@@ -527,7 +528,9 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__Items__Procureme__49C3F6B7">
-          <End Role="Procurements" Type="Self.Procurements" Multiplicity="0..1" />
+          <End Role="Procurements" Type="Self.Procurements" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="Items" Type="Self.Items" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Procurements">
@@ -895,7 +898,9 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_ProcurementMethodOrganizationSettings_ProcurementMethod">
-          <End Role="ProcurementMethod" Type="Self.ProcurementMethod" Multiplicity="1" />
+          <End Role="ProcurementMethod" Type="Self.ProcurementMethod" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="ProcurementMethodOrganizationSettings" Type="Self.ProcurementMethodOrganizationSettings" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="ProcurementMethod">
@@ -979,7 +984,9 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_ProjectCategoryOrganizationSettings_ProjectCategory">
-          <End Role="ProjectCategory" Type="Self.ProjectCategory" Multiplicity="1" />
+          <End Role="ProjectCategory" Type="Self.ProjectCategory" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="ProjectCategoryOrganizationSettings" Type="Self.ProjectCategoryOrganizationSettings" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="ProjectCategory">
@@ -1015,7 +1022,9 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_SourceOfFundsOrganizationSettings_SourceOfFunds">
-          <End Role="SourceOfFunds" Type="Self.SourceOfFunds" Multiplicity="1" />
+          <End Role="SourceOfFunds" Type="Self.SourceOfFunds" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="SourceOfFundsOrganizationSettings" Type="Self.SourceOfFundsOrganizationSettings" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="SourceOfFunds">
@@ -1935,7 +1944,6 @@
             <End Role="AdvertStatus" EntitySet="AdvertStatus" />
             <End Role="Adverts" EntitySet="Adverts" />
           </AssociationSet>
-          <EntitySet Name="RequestForDemo" EntityType="ProcureEaseModel.RequestForDemo" />
           <EntitySet Name="sysdiagrams" EntityType="ProcureEaseModel.sysdiagrams" />
           <EntitySet Name="Catalog" EntityType="ProcureEaseModel.Catalog" />
           <AssociationSet Name="FK_AdvertCategory_Catalog" Association="ProcureEaseModel.FK_AdvertCategory_Catalog">
@@ -1973,10 +1981,6 @@
           <AssociationSet Name="FK_BudgetYear_Catalog" Association="ProcureEaseModel.FK_BudgetYear_Catalog">
             <End Role="Catalog" EntitySet="Catalog" />
             <End Role="BudgetYear" EntitySet="BudgetYear" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Catalog_RequestForDemo" Association="ProcureEaseModel.FK_Catalog_RequestForDemo">
-            <End Role="RequestForDemo" EntitySet="RequestForDemo" />
-            <End Role="Catalog" EntitySet="Catalog" />
           </AssociationSet>
           <AssociationSet Name="FK_Department_Catalog" Association="ProcureEaseModel.FK_Department_Catalog">
             <End Role="Catalog" EntitySet="Catalog" />
@@ -2021,6 +2025,11 @@
           <AssociationSet Name="FK_UserProfile_Catalog" Association="ProcureEaseModel.FK_UserProfile_Catalog">
             <End Role="Catalog" EntitySet="Catalog" />
             <End Role="UserProfile" EntitySet="UserProfile" />
+          </AssociationSet>
+          <EntitySet Name="RequestForDemo" EntityType="ProcureEaseModel.RequestForDemo" />
+          <AssociationSet Name="FK_Catalog_RequestForDemo" Association="ProcureEaseModel.FK_Catalog_RequestForDemo">
+            <End Role="RequestForDemo" EntitySet="RequestForDemo" />
+            <End Role="Catalog" EntitySet="Catalog" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="Procurements">
@@ -2393,22 +2402,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="RequestForDemo">
-          <Key>
-            <PropertyRef Name="RequestID" />
-          </Key>
-          <Property Name="RequestID" Type="Guid" Nullable="false" />
-          <Property Name="OrganizationFullName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
-          <Property Name="OrganizationShortName" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Name="AdministratorEmail" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="AdministratorFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="AdministratorLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="AdministratorPhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="DateCreated" Type="DateTime" Precision="3" />
-          <Property Name="DemoStartDate" Type="DateTime" Precision="3" />
-          <Property Name="DemoEndDate" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_Catalog_RequestForDemo" FromRole="RequestForDemo" ToRole="Catalog" />
-        </EntityType>
         <EntityType Name="sysdiagrams">
           <Key>
             <PropertyRef Name="diagram_id" />
@@ -2440,7 +2433,6 @@
           <NavigationProperty Name="ApprovedItems" Relationship="ProcureEaseModel.FK_ApprovedItems_Catalog" FromRole="Catalog" ToRole="ApprovedItems" />
           <NavigationProperty Name="AspNetUsers" Relationship="ProcureEaseModel.FK_AspNetUsers_Catalog" FromRole="Catalog" ToRole="AspNetUsers" />
           <NavigationProperty Name="BudgetYear" Relationship="ProcureEaseModel.FK_BudgetYear_Catalog" FromRole="Catalog" ToRole="BudgetYear" />
-          <NavigationProperty Name="RequestForDemo" Relationship="ProcureEaseModel.FK_Catalog_RequestForDemo" FromRole="Catalog" ToRole="RequestForDemo" />
           <NavigationProperty Name="Department" Relationship="ProcureEaseModel.FK_Department_Catalog" FromRole="Catalog" ToRole="Department" />
           <NavigationProperty Name="ItemCode" Relationship="ProcureEaseModel.FK_ItemCode_Catalog" FromRole="Catalog" ToRole="ItemCode" />
           <NavigationProperty Name="Items" Relationship="ProcureEaseModel.FK_Items_Catalog" FromRole="Catalog" ToRole="Items" />
@@ -2452,6 +2444,7 @@
           <NavigationProperty Name="SourceOfFundsOrganizationSettings" Relationship="ProcureEaseModel.FK_SourceOfFundsOrganizationSettings_Catalog" FromRole="Catalog" ToRole="SourceOfFundsOrganizationSettings" />
           <NavigationProperty Name="TelephoneNumbers" Relationship="ProcureEaseModel.FK_TelephoneNumbers_Catalog" FromRole="Catalog" ToRole="TelephoneNumbers" />
           <NavigationProperty Name="UserProfile" Relationship="ProcureEaseModel.FK_UserProfile_Catalog" FromRole="Catalog" ToRole="UserProfile" />
+          <NavigationProperty Name="RequestForDemo" Relationship="ProcureEaseModel.FK_Catalog_RequestForDemo" FromRole="Catalog" ToRole="RequestForDemo" />
         </EntityType>
         <Association Name="FK_AdvertCategory_Catalog">
           <End Type="ProcureEaseModel.Catalog" Role="Catalog" Multiplicity="0..1" />
@@ -2558,18 +2551,6 @@
             </Principal>
             <Dependent Role="BudgetYear">
               <PropertyRef Name="TenantID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Catalog_RequestForDemo">
-          <End Type="ProcureEaseModel.RequestForDemo" Role="RequestForDemo" Multiplicity="0..1" />
-          <End Type="ProcureEaseModel.Catalog" Role="Catalog" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="RequestForDemo">
-              <PropertyRef Name="RequestID" />
-            </Principal>
-            <Dependent Role="Catalog">
-              <PropertyRef Name="RequestID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2702,6 +2683,35 @@
             </Principal>
             <Dependent Role="UserProfile">
               <PropertyRef Name="TenantID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="RequestForDemo">
+          <Key>
+            <PropertyRef Name="RequestID" />
+          </Key>
+          <Property Name="RequestID" Type="Guid" Nullable="false" />
+          <Property Name="OrganizationFullName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="OrganizationShortName" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="AdministratorEmail" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AdministratorFirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="AdministratorLastName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="AdministratorPhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="DemoStartDate" Type="DateTime" Precision="3" />
+          <Property Name="DemoEndDate" Type="DateTime" Precision="3" />
+          <Property Name="IsOnboarded" Type="Boolean" />
+          <NavigationProperty Name="Catalog" Relationship="ProcureEaseModel.FK_Catalog_RequestForDemo" FromRole="RequestForDemo" ToRole="Catalog" />
+        </EntityType>
+        <Association Name="FK_Catalog_RequestForDemo">
+          <End Type="ProcureEaseModel.RequestForDemo" Role="RequestForDemo" Multiplicity="0..1" />
+          <End Type="ProcureEaseModel.Catalog" Role="Catalog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RequestForDemo">
+              <PropertyRef Name="RequestID" />
+            </Principal>
+            <Dependent Role="Catalog">
+              <PropertyRef Name="RequestID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3080,22 +3090,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="RequestForDemo">
-            <EntityTypeMapping TypeName="ProcureEaseModel.RequestForDemo">
-              <MappingFragment StoreEntitySet="RequestForDemo">
-                <ScalarProperty Name="DemoEndDate" ColumnName="DemoEndDate" />
-                <ScalarProperty Name="DemoStartDate" ColumnName="DemoStartDate" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="AdministratorPhoneNumber" ColumnName="AdministratorPhoneNumber" />
-                <ScalarProperty Name="AdministratorLastName" ColumnName="AdministratorLastName" />
-                <ScalarProperty Name="AdministratorFirstName" ColumnName="AdministratorFirstName" />
-                <ScalarProperty Name="AdministratorEmail" ColumnName="AdministratorEmail" />
-                <ScalarProperty Name="OrganizationShortName" ColumnName="OrganizationShortName" />
-                <ScalarProperty Name="OrganizationFullName" ColumnName="OrganizationFullName" />
-                <ScalarProperty Name="RequestID" ColumnName="RequestID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="sysdiagrams">
             <EntityTypeMapping TypeName="ProcureEaseModel.sysdiagrams">
               <MappingFragment StoreEntitySet="sysdiagrams">
@@ -3118,6 +3112,23 @@
                 <ScalarProperty Name="SubDomain" ColumnName="SubDomain" />
                 <ScalarProperty Name="RequestID" ColumnName="RequestID" />
                 <ScalarProperty Name="TenantID" ColumnName="TenantID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RequestForDemo">
+            <EntityTypeMapping TypeName="ProcureEaseModel.RequestForDemo">
+              <MappingFragment StoreEntitySet="RequestForDemo">
+                <ScalarProperty Name="IsOnboarded" ColumnName="IsOnboarded" />
+                <ScalarProperty Name="DemoEndDate" ColumnName="DemoEndDate" />
+                <ScalarProperty Name="DemoStartDate" ColumnName="DemoStartDate" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="AdministratorPhoneNumber" ColumnName="AdministratorPhoneNumber" />
+                <ScalarProperty Name="AdministratorLastName" ColumnName="AdministratorLastName" />
+                <ScalarProperty Name="AdministratorFirstName" ColumnName="AdministratorFirstName" />
+                <ScalarProperty Name="AdministratorEmail" ColumnName="AdministratorEmail" />
+                <ScalarProperty Name="OrganizationShortName" ColumnName="OrganizationShortName" />
+                <ScalarProperty Name="OrganizationFullName" ColumnName="OrganizationFullName" />
+                <ScalarProperty Name="RequestID" ColumnName="RequestID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

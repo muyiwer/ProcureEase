@@ -874,7 +874,7 @@ namespace ProcureEaseAPI.Controllers
 
         [HttpGet]
          [Providers.Authorize]
-        public ActionResult GetAllUsers(string departmentId = "")
+        public ActionResult GetAllUsers(string id = "")
         {
             string email = Request.Headers["Email"];
             var SubDomain = catalog.GetSubDomainFromClientURL(email);
@@ -889,7 +889,7 @@ namespace ProcureEaseAPI.Controllers
                     data = new { }
                 }, JsonRequestBehavior.AllowGet);
             }
-            if (string.IsNullOrEmpty(departmentId))
+            if (string.IsNullOrEmpty(id))
             {
                 return Json(new
                 {
@@ -910,7 +910,7 @@ namespace ProcureEaseAPI.Controllers
                 Guid departmentGuidId = new Guid();
                 try
                 {
-                    departmentGuidId = Guid.Parse(departmentId);
+                    departmentGuidId = Guid.Parse(id);
                 }
                 catch (FormatException ex)
                 {

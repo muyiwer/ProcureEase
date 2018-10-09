@@ -2114,6 +2114,7 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementMethodID,
                         x.ProjectCategoryID,
                         x.ProcurementStatusID,
+                        x.SourceOfFundID,
                         Deleted = false,
                         Items = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == DepartmentID && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == approvedProcurementStatusID).Select(z => new
                         {
@@ -2189,6 +2190,7 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementMethodID,
                         x.ProjectCategoryID,
                         x.ProcurementStatusID,
+                        x.SourceOfFundID,
                         Deleted = false,
                         Items = db.Items.Where(z => z.TenantID == tenantId  && z.Procurements.BudgetYear.BudgetYear1.Value.Year == BudgetYear && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == approvedProcurementStatusID).Select(z => new
                         {
@@ -2264,6 +2266,7 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementMethodID,
                         x.ProjectCategoryID,
                         x.ProcurementStatusID,
+                        x.SourceOfFundID,
                         Deleted = false,
                         Items = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == DepartmentID  && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == approvedProcurementStatusID).Select(z => new
                         {
@@ -2352,6 +2355,7 @@ namespace ProcureEaseAPI.Controllers
                         x.ProcurementMethodID,
                         x.ProjectCategoryID,
                         x.ProcurementStatusID,
+                        x.SourceOfFundID,
                         Deleted = false,
                         Items = db.Items.Where(z => z.TenantID == tenantId && z.ProcurementID == x.ProcurementID && z.Procurements.ProcurementStatusID == approvedProcurementStatusID).Select(z => new
                         {
@@ -2436,29 +2440,28 @@ namespace ProcureEaseAPI.Controllers
                     return Json(new
                     {
                         success = true,
-                        message = "All procurement needs summary.",
+                        message = "Procurement plan summary.",
                         data = new
                         {
-                            ProjectSummary = db.Procurements.Where(x => x.TenantID == tenantId).Select(x => new
+                            TotalCost = db.Items.Where(a => a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.UnitPrice).Sum()
+                                        * db.Items.Where(a => a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.Quantity).Sum(),
+                            ProcurementPlans = db.Procurements.Where(x => x.TenantID == tenantId).Select(x => new
                             {
-                                x.Department.DepartmentName,
                                 BudgetYear = (int?)x.BudgetYear.BudgetYear1.Value.Year,
-                                PendingProcurements = db.Procurements.Where(a => a.TenantID == tenantId && a.DepartmentID == x.DepartmentID && a.BudgetYear.BudgetYear1.Value.Year == x.BudgetYear.BudgetYear1.Value.Year && a.ProcurementStatusID == ProcurementStatusID).Count(),
+                                TotalProject = db.Procurements.Where(a => a.TenantID == tenantId && a.DepartmentID == x.DepartmentID && a.BudgetYear.BudgetYear1.Value.Year == x.BudgetYear.BudgetYear1.Value.Year && a.ProcurementStatusID == ProcurementStatusID).Count(),
                                 ProjectTotalCost = db.Items.Where(a => a.TenantID == tenantId && a.Procurements.DepartmentID == x.DepartmentID && a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.UnitPrice).Sum()
-                                             * db.Items.Where(a => a.Procurements.DepartmentID == x.DepartmentID && a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.Quantity).Sum(),
-                                ProjectTotalCostStatus = db.Items.Where(z => z.TenantID == tenantId && z.Procurements.DepartmentID == x.DepartmentID && z.Procurements.BudgetYearID == x.BudgetYearID && z.Procurements.ProcurementStatusID != ProcurementStatusID).Select(y => y.UnitPrice == null == true || false).FirstOrDefault(),
+                                             * db.Items.Where(a => a.TenantID == tenantId && a.Procurements.DepartmentID == x.DepartmentID && a.Procurements.ProcurementStatus.ProcurementStatusID == ProcurementStatusID).Select(a => a.Quantity).Sum(),
                                 x.DepartmentID,
+                                x.Department.DepartmentName,
                                 x.BudgetYearID
                             }).Distinct(),
-                            BudgetYear = db.BudgetYear.Where(x => x.TenantID == tenantId).Select(x => new
-                            {
+                            BudgetYear = db.BudgetYear.Where(x => x.TenantID == tenantId).Select(x => new {
                                 x.BudgetYearID,
                                 BudgetYear = (int?)x.BudgetYear1.Value.Year
                             }),
-                            Department = db.Department.Where(x => x.TenantID == tenantId).Select(x => new
-                            {
-                                x.DepartmentID,
-                                x.DepartmentName
+                            Advert = db.Adverts.Where(x => x.TenantID == tenantId).Select(x => new {
+                                x.AdvertID,
+                                x.Headline
                             })
                         }
                     }, JsonRequestBehavior.AllowGet);

@@ -12,23 +12,20 @@ namespace ProcureEaseAPI.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class ItemCode
+    public partial class ItemCodeCategory
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public ItemCode()
+        public ItemCodeCategory()
         {
-            this.Items = new HashSet<Items>();
+            this.ItemCode = new HashSet<ItemCode>();
         }
     
-        public System.Guid ItemCodeID { get; set; }
-        public string ItemCode1 { get; set; }
-        public string ItemName { get; set; }
-        public Nullable<System.Guid> TenantID { get; set; }
-        public Nullable<System.Guid> CategoryID { get; set; }
+        public System.Guid CategoryID { get; set; }
+        public string CategoryName { get; set; }
+        public Nullable<System.DateTime> DateCreated { get; set; }
+        public Nullable<System.DateTime> DateModified { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Items> Items { get; set; }
-        public virtual Catalog Catalog { get; set; }
-        public virtual ItemCodeCategory ItemCodeCategory { get; set; }
+        public virtual ICollection<ItemCode> ItemCode { get; set; }
     }
 }

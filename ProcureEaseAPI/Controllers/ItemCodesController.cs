@@ -34,12 +34,22 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = true,
                     message = "All item codes.",
-                    data = db.ItemCode.Select(x => new
+                    data = new
                     {
-                        ItemCode = x.ItemCode1,
-                        x.ItemCodeID,
-                        x.ItemName,
-                    }).OrderBy(x => x.ItemCode)
+                        Items = db.ItemCode.Select(x => new
+                        {
+                            ItemCode = x.ItemCode1,
+                            x.ItemCodeID,
+                            x.ItemName,
+                            x.CategoryID,
+                            CategoryName = x.ItemCodeCategory.CategoryName
+                        }).OrderBy(x => x.ItemCode),
+                        ItemCategories = db.ItemCodeCategory.Select(x => new
+                        {
+                            x.CategoryID,
+                            x.CategoryName
+                        })
+                    }
                 }, JsonRequestBehavior.AllowGet);
             }
             else
@@ -63,12 +73,20 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = true,
                     message = "All item codes.",
-                    data = db.ItemCode.Where(x=>x.ItemCodeID == itemCodeGuidId).Select(x => new
+                    data = new { Items = db.ItemCode.Where(x => x.ItemCodeID == itemCodeGuidId).Select(x => new
                     {
                         ItemCode = x.ItemCode1,
                         x.ItemCodeID,
                         x.ItemName,
-                    }).OrderBy(x => x.ItemCode)
+                        x.CategoryID,
+                        CategoryName = x.ItemCodeCategory.CategoryName
+                    }).OrderBy(x => x.ItemCode),
+                    ItemCategories = db.ItemCodeCategory.Select(x => new
+                    {
+                        x.CategoryID,
+                        x.CategoryName
+                    })
+                    }
                 }, JsonRequestBehavior.AllowGet);
             }
             
@@ -76,7 +94,7 @@ namespace ProcureEaseAPI.Controllers
 
         // POST: ItemCodes
         [Providers.Authorize]
-        public ActionResult Add(string ItemName, string ItemCode)
+        public ActionResult Add(string ItemName, string ItemCode,string CategoryID)
         {
             try
             {
@@ -97,6 +115,17 @@ namespace ProcureEaseAPI.Controllers
                     Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     return Error("ItemCode is null.");
                 }
+                Guid guidCategoryID = new Guid();
+                try
+                {
+                    guidCategoryID = Guid.Parse(CategoryID);
+                }
+                catch (FormatException ex)
+                {
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    LogHelper.Log(Log.Event.POST_ITEM_CODE, "Guid format exeception");
+                    return Error(ex.Message);
+                }
                 var checkIfItemCodeExist = db.ItemCode.Where(x => x.ItemCode1 == ItemCode).ToList();
                 if (checkIfItemCodeExist != null && checkIfItemCodeExist.Count > 0)
                 {
@@ -108,17 +137,26 @@ namespace ProcureEaseAPI.Controllers
                 itemCode.ItemCodeID = Guid.NewGuid();
                 itemCode.ItemCode1 = ItemCode;
                 itemCode.ItemName = ItemName;
+                itemCode.CategoryID = guidCategoryID;
                 db.ItemCode.Add(itemCode);
                 db.SaveChanges();
                 return Json(new {
                     success = true,
                     message = "Item created successfully.",
-                    data = db.ItemCode.Select(x => new
+                    data = new { Items = db.ItemCode.Select(x => new
                     {
                         ItemCode = x.ItemCode1,
                         x.ItemCodeID,
                         x.ItemName,
-                    }).OrderBy(x=>x.ItemCode)
+                        x.CategoryID,
+                        CategoryName = x.ItemCodeCategory.CategoryName
+                    }).OrderBy(x => x.ItemCode),
+                    ItemCategories = db.ItemCodeCategory.Select(x => new
+                    {
+                        x.CategoryID,
+                        x.CategoryName
+                    })
+                    }
                 }, JsonRequestBehavior.AllowGet);
             }catch(Exception ex)
             {
@@ -130,7 +168,7 @@ namespace ProcureEaseAPI.Controllers
 
         [HttpPut]
         [Providers.Authorize]
-        public ActionResult UpdateItemCode(string ItemCode, string ItemCodeID, string ItemName)
+        public ActionResult UpdateItemCode(string ItemCode, string ItemCodeID, string ItemName, string CategoryID)
         {
             try
             {
@@ -143,6 +181,17 @@ namespace ProcureEaseAPI.Controllers
                 {
                     Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     LogHelper.Log(Log.Event.ALL_DRAFT_PROCUREMENT_NEEDS, "Guid format exeception");
+                    return Error(ex.Message);
+                }
+                Guid guidCategoryID = new Guid();
+                try
+                {
+                    guidCategoryID = Guid.Parse(CategoryID);
+                }
+                catch (FormatException ex)
+                {
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    LogHelper.Log(Log.Event.POST_ITEM_CODE, "Guid format exeception");
                     return Error(ex.Message);
                 }
                 ItemCode items = db.ItemCode.Find(guidID);
@@ -158,6 +207,7 @@ namespace ProcureEaseAPI.Controllers
                     {
                         items.ItemName = ItemName;
                         items.ItemCode1 = ItemCode;
+                        items.CategoryID = guidCategoryID;
                         db.Entry(items).State = EntityState.Modified;
                     }
                     else
@@ -173,6 +223,7 @@ namespace ProcureEaseAPI.Controllers
                         {
                             items.ItemName = ItemName;
                             items.ItemCode1 = ItemCode;
+                            items.CategoryID = guidCategoryID;
                             db.Entry(items).State = EntityState.Modified;
                         }
                     }
@@ -181,12 +232,22 @@ namespace ProcureEaseAPI.Controllers
                     {
                         success = true,
                         message = "Item updated successfully.",
-                        data = db.ItemCode.Select(x => new
+                        data = new
                         {
-                            ItemCode = x.ItemCode1,
-                            x.ItemCodeID,
-                            x.ItemName,
-                        }).OrderBy(x => x.ItemCode)
+                            Items = db.ItemCode.Select(x => new
+                            {
+                                ItemCode = x.ItemCode1,
+                                x.ItemCodeID,
+                                x.ItemName,
+                                x.CategoryID,
+                               CategoryName = x.ItemCodeCategory.CategoryName
+                            }).OrderBy(x => x.ItemCode),
+                            ItemCategories = db.ItemCodeCategory.Select(x => new
+                            {
+                                x.CategoryID,
+                                x.CategoryName
+                            })
+                        }
                     }, JsonRequestBehavior.AllowGet);
                 }
             }catch(Exception ex)
@@ -230,12 +291,22 @@ namespace ProcureEaseAPI.Controllers
                 {
                     success = true,
                     message = "Item deleted successfully.",
-                    data = db.ItemCode.Select(x => new
+                    data = new
                     {
-                        ItemCode = x.ItemCode1,
-                        x.ItemCodeID,
-                        x.ItemName,
-                    }).OrderBy(x => x.ItemCode)
+                        Items = db.ItemCode.Select(x => new
+                        {
+                            ItemCode = x.ItemCode1,
+                            x.ItemCodeID,
+                            x.ItemName,
+                            x.CategoryID,
+                            CategoryName = x.ItemCodeCategory.CategoryName
+                        }).OrderBy(x => x.ItemCode),
+                        ItemCategories = db.ItemCodeCategory.Select(x => new
+                        {
+                            x.CategoryID,
+                            x.CategoryName
+                        })
+                    }
                 }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)

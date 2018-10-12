@@ -31,7 +31,6 @@ namespace ProcureEaseAPI.Models
         public virtual DbSet<AdvertisedItems> AdvertisedItems { get; set; }
         public virtual DbSet<AdvertLotNumber> AdvertLotNumber { get; set; }
         public virtual DbSet<Adverts> Adverts { get; set; }
-        public virtual DbSet<AdvertStatus> AdvertStatus { get; set; }
         public virtual DbSet<ApprovedItems> ApprovedItems { get; set; }
         public virtual DbSet<AspNetRoles> AspNetRoles { get; set; }
         public virtual DbSet<AspNetUserClaims> AspNetUserClaims { get; set; }
@@ -39,21 +38,24 @@ namespace ProcureEaseAPI.Models
         public virtual DbSet<AspNetUserRoles> AspNetUserRoles { get; set; }
         public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
         public virtual DbSet<BudgetYear> BudgetYear { get; set; }
-        public virtual DbSet<Department> Department { get; set; }
-        public virtual DbSet<ItemCode> ItemCode { get; set; }
         public virtual DbSet<Items> Items { get; set; }
         public virtual DbSet<OrganizationSettings> OrganizationSettings { get; set; }
-        public virtual DbSet<ProcurementMethod> ProcurementMethod { get; set; }
-        public virtual DbSet<ProcurementMethodOrganizationSettings> ProcurementMethodOrganizationSettings { get; set; }
-        public virtual DbSet<Procurements> Procurements { get; set; }
         public virtual DbSet<ProcurementStatus> ProcurementStatus { get; set; }
-        public virtual DbSet<ProjectCategory> ProjectCategory { get; set; }
-        public virtual DbSet<ProjectCategoryOrganizationSettings> ProjectCategoryOrganizationSettings { get; set; }
-        public virtual DbSet<SourceOfFunds> SourceOfFunds { get; set; }
-        public virtual DbSet<SourceOfFundsOrganizationSettings> SourceOfFundsOrganizationSettings { get; set; }
         public virtual DbSet<TelephoneNumbers> TelephoneNumbers { get; set; }
         public virtual DbSet<UserProfile> UserProfile { get; set; }
+        public virtual DbSet<Procurements> Procurements { get; set; }
+        public virtual DbSet<Department> Department { get; set; }
+        public virtual DbSet<ProcurementMethod> ProcurementMethod { get; set; }
+        public virtual DbSet<ProjectCategory> ProjectCategory { get; set; }
+        public virtual DbSet<SourceOfFunds> SourceOfFunds { get; set; }
+        public virtual DbSet<ProcurementMethodOrganizationSettings> ProcurementMethodOrganizationSettings { get; set; }
+        public virtual DbSet<ProjectCategoryOrganizationSettings> ProjectCategoryOrganizationSettings { get; set; }
+        public virtual DbSet<SourceOfFundsOrganizationSettings> SourceOfFundsOrganizationSettings { get; set; }
+        public virtual DbSet<AdvertStatus> AdvertStatus { get; set; }
+        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<Catalog> Catalog { get; set; }
         public virtual DbSet<RequestForDemo> RequestForDemo { get; set; }
+        public virtual DbSet<ItemCode> ItemCode { get; set; }
+        public virtual DbSet<ItemCodeCategory> ItemCodeCategory { get; set; }
     }
 }

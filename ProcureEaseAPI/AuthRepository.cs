@@ -69,6 +69,7 @@ namespace ProcureEaseAPI
                 EmailConfirmed = true
             };
             var result = await _userManager.CreateAsync(user, userModel.Password);
+            var AddUserRole = _userManager.AddToRole(user.Id, "MDA Administrator");
             return user;
         }
             public async Task<ApplicationUser> RegisterUser(AddUserModel userModel, string UserDepartment,bool IsHeadOfdepartment )

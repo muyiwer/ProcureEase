@@ -336,7 +336,7 @@ namespace ProcureEaseAPI.Controllers
                     }, JsonRequestBehavior.AllowGet);
                 }
                 DateTime dt = DateTime.Now;
-                var currentOrganizationDetails = db.OrganizationSettings.FirstOrDefault(o => o.OrganizationID == o.OrganizationID);
+                var currentOrganizationDetails = db.OrganizationSettings.Find(organizationSettings.OrganizationID);
                 var Organization = db.OrganizationSettings.Where(x => x.TenantID == tenantId).Select(x => x.OrganizationNameInFull).FirstOrDefault();
                 if (currentOrganizationDetails == null && tenantId == null)
                 {
@@ -348,7 +348,6 @@ namespace ProcureEaseAPI.Controllers
                         data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
-                currentOrganizationDetails.TenantID = tenantId;
                 currentOrganizationDetails.OrganizationNameInFull = organizationSettings.OrganizationNameInFull;
                 currentOrganizationDetails.OrganizationNameAbbreviation = organizationSettings.OrganizationNameAbbreviation;
                 currentOrganizationDetails.OrganizationEmail = organizationSettings.OrganizationEmail;

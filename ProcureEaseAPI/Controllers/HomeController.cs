@@ -49,14 +49,10 @@ namespace ProcureEaseAPI.Controllers
                 {
                     x.RequestID,
                     x.OrganizationFullName,
-                    x.OrganizationShortName,
                     x.AdministratorEmail,
-                    x.AdministratorFirstName,
-                    x.AdministratorLastName,
+                    AdministratorFullName = x.AdministratorFirstName + " " + x.AdministratorLastName,
                     x.AdministratorPhoneNumber,
                     x.IsOnboarded,
-                    x.DemoStartDate,
-                    x.DemoEndDate,
                     DateCreated = x.DateCreated.Value.ToString()
                 }),
             }, JsonRequestBehavior.AllowGet);
@@ -195,7 +191,7 @@ namespace ProcureEaseAPI.Controllers
 
         #region ProcessOnboarding
         [HttpPost]
-        public async Task<ActionResult>  Onboarding(string AdministratorEmail, string Password)
+        public async Task<ActionResult> Onboarding(string AdministratorEmail, string Password)
         {
             try
             {
@@ -225,18 +221,18 @@ namespace ProcureEaseAPI.Controllers
                     Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     return Error("Onboarding has been done for" + " " + OrganizationNameInFull + " " + "by the Email" + " " + AdministratorEmail);
                 }
-
                 else
                 {
                     db.Catalog.Add(new Catalog()
                     {
-                    TenantID = TenantID,
-                    RequestID = GetRequestID,
-                    IsDemo = true,
-                    IsActive = false,
-                    DateCreated = dt,
-                    DateModified = dt
-                });
+                        TenantID = TenantID,
+                        RequestID = GetRequestID,
+                        IsDemo = true,
+                        IsActive = true,
+                        DateCreated = dt,
+                        DateModified = dt
+                    });
+
                     Guid OrganizationID = Guid.NewGuid();
                     SaveTenantsRequestOnOrganizationSettings(GetRequestID, TenantID, OrganizationID);
 
@@ -259,12 +255,6 @@ namespace ProcureEaseAPI.Controllers
                     };
                     AuthRepository Repository = new AuthRepository();
                     ApplicationUser User = await Repository.RegisterAdmin(UserModel);
-
-                    var RoleId = db.AspNetRoles.Where(x => x.Name == "MDA Administrator").Select(x => x.Id).FirstOrDefault();
-                    AspNetUserRoles userRole = new AspNetUserRoles();
-                    userRole.UserId = User.Id;
-                    userRole.RoleId = RoleId;
-                    db.AspNetUserRoles.Add(userRole);
 
                     var GetAdministratorFirstName = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.AdministratorFirstName).FirstOrDefault();
                     var GetAdministratorLastName = db.RequestForDemo.Where(x => x.AdministratorEmail == AdministratorEmail).Select(x => x.AdministratorLastName).FirstOrDefault();
@@ -500,11 +490,10 @@ namespace ProcureEaseAPI.Controllers
                 if (IsOnboarded == false)
                 {
                     LogHelper.Log(Log.Event.ACTIVATE, "The Organization" + " " + "'" + GetOrganizationFullName + "'" + " " + "has not been Onboarded");
-                    Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     return Error("The Organization" + " " + " ' " + GetOrganizationFullName + " ' " + " " + "has not been Onboarded");
                 }
                 var Tenant = db.Catalog.Find(GetTenantID);
-                Tenant.IsDemo = false;
                 Tenant.IsActive = true;
                 Tenant.DateModified = dt;
 
@@ -588,7 +577,9 @@ namespace ProcureEaseAPI.Controllers
                 DateTime CurrentTimeNow = new DateTime();
                 CurrentTimeNow = DateTime.Now;
                 DateTime EndDate = CurrentTimeNow;
-
+                var backendUrl = System.Web.HttpContext.Current.Request.Url.Host; // we're expecting to get 'api.procureease.ng' on the server, or 'localhost' on our local
+                string[] domainParts = backendUrl.Split(new char[] { '.' });
+                string domain = (domainParts.Length == 3) ? domainParts[1] + '.' + domainParts[2] : backendUrl;
                 return Json(new
                 {
                     success = true,
@@ -596,8 +587,9 @@ namespace ProcureEaseAPI.Controllers
                     data = db.OrganizationSettings.Select(x => new
                     {
                         x.OrganizationID,
+                        x.OrganizationLogoPath,
                         x.OrganizationNameInFull,
-                        Subdomain = db.Catalog.Where(y => y.OrganizationID == x.OrganizationID).Select(y => y.SubDomain).FirstOrDefault(),
+                        Subdomain = x.OrganizationNameAbbreviation + "."  + domain
                     })
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -633,9 +625,7 @@ namespace ProcureEaseAPI.Controllers
                         Subdomain = db.Catalog.Where(y => y.OrganizationID == x.OrganizationID).Select(y => y.SubDomain).FirstOrDefault(),
                         IsDemo = db.Catalog.Where(y=> y.OrganizationID == x.OrganizationID).Select(y=> y.IsDemo).FirstOrDefault(),
                         IsActive = db.Catalog.Where(y => y.OrganizationID == x.OrganizationID).Select(y => y.IsActive).FirstOrDefault(),
-                        AccountStatus = db.Catalog.Where(y => y.OrganizationID == x.OrganizationID && (y.IsDemo == true || y.IsActive == true)).Select(y => (true) || (false)).FirstOrDefault(),
-                        NumberOfDemoDaysLeft = DbFunctions.DiffDays(CurrentTimeNow, db.RequestForDemo.Where(z => z.OrganizationFullName == x.OrganizationNameInFull).Select(z => z.DemoEndDate).FirstOrDefault()),
-                       // NumberOfActiveDaysLeft = DbFunctions.DiffDays(CurrentTimeNow, db.Catalog.Where(z => z.OrganizationID == x.OrganizationID).Select(z => z.ActiveEndDate).FirstOrDefault())
+                        NumberOfDemoDaysLeft = DbFunctions.DiffDays(CurrentTimeNow, db.RequestForDemo.Where(z => z.OrganizationFullName == x.OrganizationNameInFull).Select(z => z.DemoEndDate).FirstOrDefault())
                     })
                 }, JsonRequestBehavior.AllowGet);
             }

@@ -289,6 +289,9 @@
     <Compile Include="Models\ItemCode.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ItemCodeCategory.cs">
+      <DependentUpon>ProcureEaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Items.cs">
       <DependentUpon>ProcureEaseModel.tt</DependentUpon>
     </Compile>

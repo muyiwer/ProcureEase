@@ -27,7 +27,6 @@ namespace ProcureEaseAPI.Models
             this.AspNetUsers = new HashSet<AspNetUsers>();
             this.BudgetYear = new HashSet<BudgetYear>();
             this.Department = new HashSet<Department>();
-            this.ItemCode = new HashSet<ItemCode>();
             this.Items = new HashSet<Items>();
             this.OrganizationSettings = new HashSet<OrganizationSettings>();
             this.ProcurementMethodOrganizationSettings = new HashSet<ProcurementMethodOrganizationSettings>();
@@ -37,6 +36,7 @@ namespace ProcureEaseAPI.Models
             this.SourceOfFundsOrganizationSettings = new HashSet<SourceOfFundsOrganizationSettings>();
             this.TelephoneNumbers = new HashSet<TelephoneNumbers>();
             this.UserProfile = new HashSet<UserProfile>();
+            this.ItemCode = new HashSet<ItemCode>();
         }
     
         public System.Guid TenantID { get; set; }
@@ -69,8 +69,6 @@ namespace ProcureEaseAPI.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Department> Department { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ItemCode> ItemCode { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Items> Items { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrganizationSettings> OrganizationSettings { get; set; }
@@ -89,5 +87,7 @@ namespace ProcureEaseAPI.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserProfile> UserProfile { get; set; }
         public virtual RequestForDemo RequestForDemo { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ItemCode> ItemCode { get; set; }
     }
 }

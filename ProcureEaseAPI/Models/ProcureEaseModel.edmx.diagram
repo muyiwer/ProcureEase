@@ -19,7 +19,6 @@
         <EntityTypeShape EntityType="ProcureEaseModel.AspNetUsers" Width="1.5" PointX="5.25" PointY="41.625" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.BudgetYear" Width="1.5" PointX="5.25" PointY="46.875" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.Department" Width="1.5" PointX="15.75" PointY="44.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProcureEaseModel.ItemCode" Width="1.5" PointX="5.25" PointY="50.375" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.Items" Width="1.5" PointX="7.5" PointY="35" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.OrganizationSettings" Width="1.5" PointX="5.25" PointY="53.375" IsExpanded="true" />
         <EntityTypeShape EntityType="ProcureEaseModel.ProcurementMethod" Width="1.5" PointX="15.75" PointY="41.25" IsExpanded="true" />
@@ -79,7 +78,6 @@
         <AssociationConnector Association="ProcureEaseModel.FK_AspNetUsers_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_BudgetYear_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_Department_Catalog" />
-        <AssociationConnector Association="ProcureEaseModel.FK_ItemCode_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_Items_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_OrganizationSettings_Catalog" />
         <AssociationConnector Association="ProcureEaseModel.FK_ProcurementMethodOrganizationSettings_Catalog" />
@@ -91,7 +89,13 @@
         <AssociationConnector Association="ProcureEaseModel.FK_UserProfile_Catalog" />
         <EntityTypeShape EntityType="ProcureEaseModel.RequestForDemo" Width="1.5" PointX="0.75" PointY="36.75" />
         <AssociationConnector Association="ProcureEaseModel.FK_Catalog_RequestForDemo" />
-      </Diagram>
+        <EntityTypeShape EntityType="ProcureEaseModel.ItemCode" Width="1.5" PointX="5.25" PointY="11.875" />
+        <EntityTypeShape EntityType="ProcureEaseModel.ItemCodeCategory" Width="1.5" PointX="3" PointY="12.125" />
+        <AssociationConnector Association="ProcureEaseModel.FK_ItemCode_Catalog" />
+        <AssociationConnector Association="ProcureEaseModel.FK__ItemCode__Catego__29221CFB" />
+        <AssociationConnector Association="ProcureEaseModel.FK__ItemCode__Catego__756D6ECB" />
+        <AssociationConnector Association="ProcureEaseModel.FK__Items__ItemCodeI__04E4BC85" />
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

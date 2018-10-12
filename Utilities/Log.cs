@@ -68,7 +68,8 @@ namespace Utilities
             POST_ITEM_CODE,
             UPDATE_ITEM_CODE,
             DELETE_ITEM_CODE,
-            ACTIVATE
+            ACTIVATE,
+            ADD_ITEMCODE
         };
     }
 }

@@ -157,7 +157,7 @@ namespace ProcureEaseAPI.Controllers
                     }, JsonRequestBehavior.AllowGet);
                 }
                 var CheckIfEmailExist = db.UserProfile.Where(x => x.UserEmail == UserProfile.UserEmail).ToList();
-                if(CheckIfEmailExist != null)
+                if(CheckIfEmailExist != null && CheckIfEmailExist.Count > 0)
                 {
                     LogHelper.Log(Log.Event.ADD_USER, "User email already exists");
                     Response.StatusCode = (int)HttpStatusCode.Conflict;

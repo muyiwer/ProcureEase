@@ -48,7 +48,8 @@ namespace ProcureEaseAPI.Tests.Controllers
             Mocker.MockContextHeader(testAddtItemCode);
             string itemName = "Server";
             string itemCode = "";
-            JsonResult result = (JsonResult)testAddtItemCode.Add(itemName, itemCode);
+            string CategoryID = "";
+            JsonResult result = (JsonResult)testAddtItemCode.Add(itemName, itemCode, CategoryID);
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("ItemCode is null"));
         }
@@ -61,7 +62,8 @@ namespace ProcureEaseAPI.Tests.Controllers
             Mocker.MockContextHeader(testAddtItemCode);
             string itemName = "Server";
             string itemCode = "IT0208";
-            JsonResult result = (JsonResult)testAddtItemCode.Add(itemName, itemCode);
+            string CategoryID = "f1ced345-32aa-41f2-9045-90c02f2c209a";
+            JsonResult result = (JsonResult)testAddtItemCode.Add(itemName, itemCode, CategoryID);
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("ItemCode already exist."));
         }
@@ -74,7 +76,8 @@ namespace ProcureEaseAPI.Tests.Controllers
             Mocker.MockContextHeader(testAddtItemCode);
             string itemName = "Server";
             string itemCode = "IT0300";
-            JsonResult result = (JsonResult)testAddtItemCode.Add(itemName,itemCode);
+            string CategoryID = "f1ced345-32aa-41f2-9045-90c02f2c209a";
+            JsonResult result = (JsonResult)testAddtItemCode.Add(itemName,itemCode, CategoryID);
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("All item codes"));
         }
@@ -88,7 +91,8 @@ namespace ProcureEaseAPI.Tests.Controllers
             string ItemName = "Server";
             string ItemCode = "IT0208";
             string ItemCodeID = "223333";
-            JsonResult result = (JsonResult)testUpdatetItemCode.UpdateItemCode(ItemCode, ItemCodeID, ItemName );
+            string CategoryID = "f1ced345-32aa-41f2-9045-90c02f2c209a";
+            JsonResult result = (JsonResult)testUpdatetItemCode.UpdateItemCode(ItemCode, ItemCodeID, ItemName, CategoryID);
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("Guid should contain 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)."));
         }
@@ -101,7 +105,8 @@ namespace ProcureEaseAPI.Tests.Controllers
             string ItemName = "Server";
             string ItemCode = "DW0100";
             string ItemCodeID = "210F8DF4-34F9-4BA4-934A-A294972E447C";
-            JsonResult result = (JsonResult)testUpdatetItemCode.UpdateItemCode(ItemCode, ItemCodeID, ItemName);
+            string CategoryID = "f1ced345-32aa-41f2-9045-90c02f2c209a";
+            JsonResult result = (JsonResult)testUpdatetItemCode.UpdateItemCode(ItemCode, ItemCodeID, ItemName,CategoryID );
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("ItemCode already exist."));
         }
@@ -115,7 +120,8 @@ namespace ProcureEaseAPI.Tests.Controllers
             string ItemName = "Server";
             string ItemCode = "DW0900";
             string ItemCodeID = "210F8DF4-34F9-4BA4-934A-A294972E447C";
-            JsonResult result = (JsonResult)testUpdatetItemCode.UpdateItemCode(ItemCode, ItemCodeID, ItemName);
+            string CategoryID = "f1ced345-32aa-41f2-9045-90c02f2c209a";
+            JsonResult result = (JsonResult)testUpdatetItemCode.UpdateItemCode(ItemCode, ItemCodeID, ItemName, CategoryID);
             Console.WriteLine(result.Data);
             Assert.IsTrue((result.Data + "").Contains("Item updated successfully."));
         }
